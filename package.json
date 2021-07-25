@@ -1,12 +1,12 @@
 {
 	"name": "@jdeighan/coffee-utils",
 	"type": "module",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "A set of utility functions for CoffeeScript",
 	"main": "coffee_utils.js",
 	"exports": {
-		".":        "./coffee_utils.js",
-		"./fs":     "./fs_utils.js",
+		".": "./coffee_utils.js",
+		"./fs": "./fs_utils.js",
 		"./indent": "./indent_utils.js"
 	},
 	"engines": {
