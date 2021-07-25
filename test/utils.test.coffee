@@ -10,7 +10,7 @@ import {
 	escapeStr,
 	truncateBlock,
 	} from '../coffee_utils.js'
-import {AvaTester} from 'ava-tester'
+import {AvaTester} from '@jdeighan/ava-tester'
 
 tester = new AvaTester()
 

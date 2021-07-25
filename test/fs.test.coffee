@@ -1,7 +1,7 @@
 # fs.test.coffee
 
 import {withExt} from '../fs_utils.js'
-import {AvaTester} from 'ava-tester'
+import {AvaTester} from '@jdeighan/ava-tester'
 
 tester = new AvaTester()
 

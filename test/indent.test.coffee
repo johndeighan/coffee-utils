@@ -9,7 +9,7 @@ import {
 	indentedStr,
 	indentedBlock,
 	} from '../indent_utils.js'
-import {AvaTester} from 'ava-tester'
+import {AvaTester} from '@jdeighan/ava-tester'
 
 tester = new AvaTester()
 

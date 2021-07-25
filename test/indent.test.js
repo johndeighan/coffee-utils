@@ -14,7 +14,7 @@ import {
 
 import {
   AvaTester
-} from 'ava-tester';
+} from '@jdeighan/ava-tester';
 
 tester = new AvaTester();
 
