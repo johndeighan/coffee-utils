@@ -1,0 +1,37 @@
+{
+	"name": "coffee-utils",
+	"type": "module",
+	"version": "1.0.0",
+	"description": "A set of utility functions for CoffeeScript",
+	"main": "coffee_utils.js",
+	"exports": {
+		".": "./coffee_utils.js",
+		"fs": "./fs_utils.js",
+		"indent": "./indent_utils.js"
+	},
+	"scripts": {
+		"pretest": "cls && coffee -c .",
+		"test": "ava ./test/*.test.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/johndeighan/coffee-utils.git"
+	},
+	"keywords": [
+		"coffeescript"
+	],
+	"author": "John Deighan",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/johndeighan/coffee-utils/issues"
+	},
+	"homepage": "https://github.com/johndeighan/coffee-utils#readme",
+	"devDependencies": {
+		"ava": "^3.15.0",
+		"ava-tester": "^1.0.2",
+		"coffeescript": "^2.5.1"
+	},
+	"dependencies": {
+		"js-yaml": "^3.14.1"
+	}
+}
