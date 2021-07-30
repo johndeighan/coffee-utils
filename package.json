@@ -5,9 +5,10 @@
 	"description": "A set of utility functions for CoffeeScript",
 	"main": "coffee_utils.js",
 	"exports": {
-		".": "./coffee_utils.js",
-		"./fs": "./fs_utils.js",
-		"./indent": "./indent_utils.js"
+		".":         "./src/coffee_utils.js",
+		"./fs":      "./src/fs_utils.js",
+		"./indent":  "./src/indent_utils.js",
+		"./heredoc": "./src/heredoc_utils.js"
 	},
 	"engines": {
 		"node": ">=12.0.0"

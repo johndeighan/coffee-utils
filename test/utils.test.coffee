@@ -9,7 +9,7 @@ import {
 	words,
 	escapeStr,
 	truncateBlock,
-	} from '../coffee_utils.js'
+	} from '../src/coffee_utils.js'
 import {AvaTester} from '@jdeighan/ava-tester'
 
 tester = new AvaTester()

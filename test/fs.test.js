@@ -4,7 +4,7 @@ var tester;
 
 import {
   withExt
-} from '../fs_utils.js';
+} from '../src/fs_utils.js';
 
 import {
   AvaTester
