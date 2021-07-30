@@ -10,7 +10,7 @@ import {
   splitLine,
   indentedStr,
   indentedBlock
-} from '../indent_utils.js';
+} from '../src/indent_utils.js';
 
 import {
   AvaTester
