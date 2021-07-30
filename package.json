@@ -1,13 +1,13 @@
 {
 	"name": "@jdeighan/coffee-utils",
 	"type": "module",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "A set of utility functions for CoffeeScript",
 	"main": "coffee_utils.js",
 	"exports": {
-		".":         "./src/coffee_utils.js",
-		"./fs":      "./src/fs_utils.js",
-		"./indent":  "./src/indent_utils.js",
+		".": "./src/coffee_utils.js",
+		"./fs": "./src/fs_utils.js",
+		"./indent": "./src/indent_utils.js",
 		"./heredoc": "./src/heredoc_utils.js"
 	},
 	"engines": {
