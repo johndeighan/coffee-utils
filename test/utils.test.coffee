@@ -4,6 +4,7 @@ import {
 	isTAML,
 	taml,
 	normalize,
+	stringToArray,
 	isEmpty,
 	nonEmpty,
 	words,
@@ -81,3 +82,17 @@ tester.equal 83, truncateBlock("""
 			line 1
 			line 2
 			""" + '\n'
+
+# ---------------------------------------------------------------------------
+
+tester.equal 87, stringToArray("abc\nxyz\n"), [
+	'abc'
+	'xyz'
+	]
+
+# ---------------------------------------------------------------------------
+
+tester.equal 87, stringToArray("abc\nxyz\n\n\n\n"), [
+	'abc'
+	'xyz'
+	]

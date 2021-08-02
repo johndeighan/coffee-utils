@@ -178,10 +178,17 @@ export var taml = function(strOrArray) {
 // ---------------------------------------------------------------------------
 //   stringToArray - split a string into lines
 export var stringToArray = function(str) {
+  var lLines, len;
   if (isEmpty(str)) {
     return [];
   } else {
-    return str.split(/\r?\n/);
+    lLines = str.split(/\r?\n/);
+    len = lLines.length;
+    while ((len > 0) && isEmpty(lLines[len - 1])) {
+      lLines.pop();
+      len -= 1;
+    }
+    return lLines;
   }
 };
 
@@ -204,10 +211,10 @@ export var normalize = function(content) {
     throw new Error("normalize(): not a string");
   }
   lLines = (function() {
-    var i, len, ref, results;
+    var i, len1, ref, results;
     ref = stringToArray(content);
     results = [];
-    for (i = 0, len = ref.length; i < len; i++) {
+    for (i = 0, len1 = ref.length; i < len1; i++) {
       line = ref[i];
       line = line.trim();
       results.push(line.replace(/\s+/g, ' '));
@@ -224,7 +231,7 @@ export var normalize = function(content) {
 //   dumpOutput - for debugging
 //      --- output can be a string or an array
 export var dumpOutput = function(output, label = "output", logger = console.log) {
-  var i, len, line, results;
+  var i, len1, line, results;
   logger(sep_eq);
   logger(titleLine(label));
   logger(sep_eq);
@@ -232,7 +239,7 @@ export var dumpOutput = function(output, label = "output", logger = console.log)
     return logger(output);
   } else if (typeof output === 'object') {
     results = [];
-    for (i = 0, len = output.length; i < len; i++) {
+    for (i = 0, len1 = output.length; i < len1; i++) {
       line = output[i];
       results.push(logger(line));
     }
@@ -283,10 +290,10 @@ export var escapeStr = function(str) {
     error("escapeStr(): not a string");
   }
   lParts = (function() {
-    var i, len, ref, results;
+    var i, len1, ref, results;
     ref = str.split('');
     results = [];
-    for (i = 0, len = ref.length; i < len; i++) {
+    for (i = 0, len1 = ref.length; i < len1; i++) {
       ch = ref[i];
       if (ch === '\n') {
         results.push('\\n');

@@ -170,7 +170,12 @@ export stringToArray = (str) ->
 	if isEmpty(str)
 		return []
 	else
-		return str.split(/\r?\n/)
+		lLines = str.split(/\r?\n/)
+		len = lLines.length
+		while (len > 0) && isEmpty(lLines[len-1])
+			lLines.pop()
+			len -= 1
+		return lLines
 
 # ---------------------------------------------------------------------------
 #   arrayToString - every line has trailing newline
