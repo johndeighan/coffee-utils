@@ -133,6 +133,12 @@ export var error = function(message) {
 };
 
 // ---------------------------------------------------------------------------
+//   warn - issue a warning
+export var warn = function(message) {
+  return say(`WARNING: ${message}`);
+};
+
+// ---------------------------------------------------------------------------
 //   say - print to the console
 export var say = function(str, label = '') {
   if (label) {

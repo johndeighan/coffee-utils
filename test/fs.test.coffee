@@ -1,11 +1,32 @@
 # fs.test.coffee
 
-import {withExt} from '../src/fs_utils.js'
+import assert from 'assert'
+import {dirname} from 'path';
+import {fileURLToPath} from 'url';
+import {existsSync, copyFileSync, readFileSync, writeFileSync} from 'fs'
+
+import {withExt, getSubDirs, pathTo} from '../src/fs_utils.js'
 import {AvaTester} from '@jdeighan/ava-tester'
 
 tester = new AvaTester()
 
+__dirname = dirname(fileURLToPath(`import.meta.url`));
+
 # ---------------------------------------------------------------------------
 
-tester.equal 75, withExt('file.starbucks', 'svelte'), 'file.svelte'
+tester.equal 17, withExt('file.starbucks', 'svelte'), 'file.svelte'
 
+# ---------------------------------------------------------------------------
+
+(() ->
+	fname = 'heredoc.test.coffee'
+	tester.truthy 18, existsSync("#{__dirname}/#{fname}")
+	tester.falsy 19, existsSync("#{__dirname}/nosuchfile.test.coffee")
+	tester.equal 20, pathTo("#{fname}", __dirname), "#{__dirname}/#{fname}"
+	)()
+
+# ---------------------------------------------------------------------------
+
+tester.equal 30, getSubDirs(__dirname), ['subdirectory']
+tester.equal 31, pathTo('test.txt', __dirname), \
+		"#{__dirname}/subdirectory/test.txt"

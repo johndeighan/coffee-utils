@@ -124,6 +124,13 @@ export error = (message) ->
 	throw new Error(message)
 
 # ---------------------------------------------------------------------------
+#   warn - issue a warning
+
+export warn = (message) ->
+
+	say "WARNING: #{message}"
+
+# ---------------------------------------------------------------------------
 #   say - print to the console
 
 export say = (str, label='') ->
