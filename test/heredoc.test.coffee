@@ -7,14 +7,16 @@ tester = new AvaTester()
 
 # ---------------------------------------------------------------------------
 
-tester.equal 11, numHereDocs("where <<"), 0
-tester.equal 12, numHereDocs("where <<<"), 1
-tester.equal 13, numHereDocs("where <<< is <<<"), 2
-tester.equal 14, numHereDocs("where <<< is <<< or <<<"), 3
+tester.equal 10, numHereDocs("where <<"), 0
+tester.equal 11, numHereDocs("where <<<"), 1
+tester.equal 12, numHereDocs("where <<< is <<<"), 2
+tester.equal 13, numHereDocs("where <<< is <<< or <<<"), 3
+tester.equal 14, numHereDocs("<<< <<< <<<"), 3
+tester.equal 15, numHereDocs("<<<<<<<<<"), 3
 
 # ---------------------------------------------------------------------------
 
-tester.equal 18, build([
+tester.equal 19, build([
 				'a multi',
 				'line string',
 				]),
@@ -22,7 +24,7 @@ tester.equal 18, build([
 
 # ---------------------------------------------------------------------------
 
-tester.equal 26, patch("let x = <<<;", [[
+tester.equal 27, patch("let x = <<<;", [[
 				'a multi',
 				'line string',
 				]]),
@@ -31,7 +33,7 @@ tester.equal 26, patch("let x = <<<;", [[
 
 # ---------------------------------------------------------------------------
 
-tester.equal 35, build([
+tester.equal 36, build([
 				'\t\ta multi',
 				'\t\tline string',
 				]),
@@ -39,7 +41,7 @@ tester.equal 35, build([
 
 # ---------------------------------------------------------------------------
 
-tester.equal 43, patch("let x = <<<; let y = <<<;", [[
+tester.equal 44, patch("let x = <<<; let y = <<<;", [[
 				'\t\ta multi',
 				'\t\tline string',
 				],[
@@ -50,13 +52,13 @@ tester.equal 43, patch("let x = <<<; let y = <<<;", [[
 
 # ---------------------------------------------------------------------------
 
-tester.equal 54, build(undefined), ''
-tester.equal 55, build(null), ''
-tester.equal 56, build([]), ''
+tester.equal 55, build(undefined), ''
+tester.equal 56, build(null), ''
+tester.equal 57, build([]), ''
 
 # --- build standard HEREDOC
 
-tester.equal 60, build([
+tester.equal 61, build([
 			'first line',
 			'second line',
 			]),
@@ -64,11 +66,11 @@ tester.equal 60, build([
 
 # --- TAML
 
-tester.equal 68,
+tester.equal 69,
 		build(['---', '- first', '- second']),
 		['first', 'second']
 
-tester.equal 72,
+tester.equal 73,
 		build(['---', 'key: first', 'value: second']),
 		{key: "first", value: "second"}
 
@@ -92,3 +94,32 @@ tester.equal 89,
 			'value: two',
 			]]),
 		'let lItems = {"key":"one","value":"two"};'
+
+# ---------------------------------------------------------------------------
+# test providing a callback to patch()
+
+tester.equal 89,
+		patch("let lItems = <<<;", [[
+			'---',
+			'key: one',
+			'value: two',
+			]], (lLines) -> return 'xxx'),
+		'let lItems = xxx;'
+
+# ---------------------------------------------------------------------------
+# test providing a callback to patch()
+
+(() ->
+	converter = (lLines) ->
+
+		count = lLines.length
+		return "#{count} lines"
+
+	tester.equal 89,
+			patch("let lItems = <<<;", [[
+				'---',
+				'key: one',
+				'value: two',
+				]], converter),
+			'let lItems = 3 lines;'
+	)()
