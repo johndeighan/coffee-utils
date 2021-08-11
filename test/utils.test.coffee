@@ -7,33 +7,40 @@ import {
 	stringToArray,
 	isEmpty,
 	nonEmpty,
+	isComment,
 	words,
 	escapeStr,
 	truncateBlock,
 	} from '../src/coffee_utils.js'
 import {AvaTester} from '@jdeighan/ava-tester'
 
-tester = new AvaTester()
+simple = new AvaTester()
 
 # ---------------------------------------------------------------------------
 
-tester.truthy 25, isEmpty('')
-tester.truthy 26, isEmpty('  \t\t')
-tester.truthy 27, isEmpty([])
-tester.truthy 2826, isEmpty({})
+simple.truthy 21, isEmpty('')
+simple.truthy 22, isEmpty('  \t\t')
+simple.truthy 23, isEmpty([])
+simple.truthy 24, isEmpty({})
 
-tester.truthy 30, nonEmpty('a')
-tester.truthy 31, nonEmpty('.')
-tester.truthy 32, nonEmpty([2])
-tester.truthy 33, nonEmpty({width: 2})
+simple.truthy 26, nonEmpty('a')
+simple.truthy 27, nonEmpty('.')
+simple.truthy 28, nonEmpty([2])
+simple.truthy 29, nonEmpty({width: 2})
 
-tester.truthy 35, isTAML("---\n- first\n- second")
-tester.falsy  36, isTAML("x---\n")
-tester.equal  37, taml("---\n- a\n- b"), ['a','b']
+simple.truthy 31, isComment("# a comment")
+simple.truthy 32, isComment("#\ta comment")
+simple.truthy 33, isComment("   # a comment")
+simple.falsy  34, isComment("not much")
+simple.falsy  35, isComment("#foreach x in lItems")
+
+simple.truthy 37, isTAML("---\n- first\n- second")
+simple.falsy  38, isTAML("x---\n")
+simple.equal  39, taml("---\n- a\n- b"), ['a','b']
 
 # ---------------------------------------------------------------------------
 
-tester.equal 41, normalize("""
+simple.equal 43, normalize("""
 			line 1
 			line 2
 			"""), """
@@ -41,7 +48,7 @@ tester.equal 41, normalize("""
 			line 2
 			""" + '\n'
 
-tester.equal 49, normalize("""
+simple.equal 51, normalize("""
 			line 1
 
 			line 2
@@ -50,7 +57,7 @@ tester.equal 49, normalize("""
 			line 2
 			""" + '\n'
 
-tester.equal 49, normalize("""
+simple.equal 60, normalize("""
 
 			line 1
 
@@ -64,16 +71,16 @@ tester.equal 49, normalize("""
 
 # ---------------------------------------------------------------------------
 
-tester.equal 70, words('a b c'), ['a', 'b', 'c']
-tester.equal 71, words('  a   b   c  '), ['a', 'b', 'c']
+simple.equal 74, words('a b c'), ['a', 'b', 'c']
+simple.equal 75, words('  a   b   c  '), ['a', 'b', 'c']
 
 # ---------------------------------------------------------------------------
 
-tester.equal 79, escapeStr("\t\tXXX\n"), "\\t\\tXXX\\n"
+simple.equal 79, escapeStr("\t\tXXX\n"), "\\t\\tXXX\\n"
 
 # ---------------------------------------------------------------------------
 
-tester.equal 83, truncateBlock("""
+simple.equal 83, truncateBlock("""
 			line 1
 			line 2
 			line 3
@@ -85,14 +92,14 @@ tester.equal 83, truncateBlock("""
 
 # ---------------------------------------------------------------------------
 
-tester.equal 87, stringToArray("abc\nxyz\n"), [
+simple.equal 95, stringToArray("abc\nxyz\n"), [
 	'abc'
 	'xyz'
 	]
 
 # ---------------------------------------------------------------------------
 
-tester.equal 87, stringToArray("abc\nxyz\n\n\n\n"), [
+simple.equal 102, stringToArray("abc\nxyz\n\n\n\n"), [
 	'abc'
 	'xyz'
 	]

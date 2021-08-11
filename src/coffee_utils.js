@@ -25,11 +25,6 @@ export var setDebugging = function(flag = false) {
 };
 
 // ---------------------------------------------------------------------------
-export var defined = function(item) {
-  return (item !== undef) && (item !== null);
-};
-
-// ---------------------------------------------------------------------------
 export var debug = function(item, label = undef) {
   if (debugging) {
     if (isString(item)) {
@@ -94,6 +89,15 @@ export var nonEmpty = function(x) {
     return Object.keys(x).length > 0;
   } else {
     return error("isEmpty(): Invalid parameter");
+  }
+};
+
+// ---------------------------------------------------------------------------
+export var isComment = function(str) {
+  if (str.match(/^\s*\#\s/)) {
+    return true;
+  } else {
+    return false;
   }
 };
 

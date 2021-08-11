@@ -2,8 +2,8 @@
 
 import yaml from 'js-yaml'
 
-export sep_dash = '-'.repeat 42
-export sep_eq = '='.repeat 42
+export sep_dash = '-'.repeat(42)
+export sep_eq = '='.repeat(42)
 `export const undef = undefined`
 
 export getHello = () -> return "Hello, CoffeeScript!"
@@ -13,12 +13,6 @@ export setUnitTesting = (flag=true) -> unitTesting = flag
 
 export debugging = false
 export setDebugging = (flag=false) -> debugging = flag
-
-# ---------------------------------------------------------------------------
-
-export defined = (item) ->
-
-	return (item != undef) && (item != null)
 
 # ---------------------------------------------------------------------------
 
@@ -80,6 +74,12 @@ export nonEmpty = (x) ->
 		return Object.keys(x).length > 0
 	else
 		error "isEmpty(): Invalid parameter"
+
+# ---------------------------------------------------------------------------
+
+export isComment = (str) ->
+
+	return if str.match(/^\s*\#\s/) then true else false
 
 # ---------------------------------------------------------------------------
 
