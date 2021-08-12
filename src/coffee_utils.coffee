@@ -26,7 +26,8 @@ export debug = (item, lOthers...) ->
 	if not debugging
 		return
 
-	enter = exit = false
+	enter = (item.indexOf('enter') == 0)
+	exit =  (item.indexOf('exit') == 0)
 	label = undef
 
 	for str in lOthers

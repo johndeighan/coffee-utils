@@ -40,7 +40,8 @@ export var debug = function(item, ...lOthers) {
   if (!debugging) {
     return;
   }
-  enter = exit = false;
+  enter = item.indexOf('enter') === 0;
+  exit = item.indexOf('exit') === 0;
   label = undef;
   for (i = 0, len1 = lOthers.length; i < len1; i++) {
     str = lOthers[i];
