@@ -150,6 +150,18 @@ export isHash = (x) ->
 	return typeof x == 'object'
 
 # ---------------------------------------------------------------------------
+
+export isFunction = (x) ->
+
+	return typeof x == 'function'
+
+# ---------------------------------------------------------------------------
+
+export isInteger = (x) ->
+
+	return Number.isInteger(x)
+
+# ---------------------------------------------------------------------------
 #   pass - do nothing
 
 export pass = () ->

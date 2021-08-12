@@ -174,6 +174,16 @@ export var isHash = function(x) {
 };
 
 // ---------------------------------------------------------------------------
+export var isFunction = function(x) {
+  return typeof x === 'function';
+};
+
+// ---------------------------------------------------------------------------
+export var isInteger = function(x) {
+  return Number.isInteger(x);
+};
+
+// ---------------------------------------------------------------------------
 //   pass - do nothing
 export var pass = function() {};
 
