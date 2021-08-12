@@ -1,6 +1,7 @@
 # coffee_utils.coffee
 
 import yaml from 'js-yaml'
+import {indentedStr} from './indent_utils.js'
 
 export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
@@ -9,21 +10,53 @@ export sep_eq = '='.repeat(42)
 export getHello = () -> return "Hello, CoffeeScript!"
 
 export unitTesting = false
-export setUnitTesting = (flag=true) -> unitTesting = flag
+export setUnitTesting = (flag) -> unitTesting = flag
 
+debugLevel = 0           # controls amount of indentation
 export debugging = false
-export setDebugging = (flag=false) -> debugging = flag
+export setDebugging = (flag) ->
+	debugging = flag
+	debugLevel = 0
 
 # ---------------------------------------------------------------------------
 
-export debug = (item, label=undef) ->
+export debug = (item, lOthers...) ->
+	# --- lOthers may include a label, plus one of 'enter', 'exit'
 
-	if debugging
-		if isString(item)
-			say escapeStr(item), label
+	if not debugging
+		return
+
+	enter = exit = false
+	label = undef
+
+	for str in lOthers
+		if str == 'enter'
+			enter = true
+		else if str == 'exit'
+			exit = true
 		else
-			say item, label
+			label = str
+
+	if isString(item)
+		say indentedStr(escapeStr(item), debugLevel), label
+	else
+		say indentedStr(item, debugLevel), label
+	if enter
+		debugLevel += 1
+	if exit && (debugLevel > 0)
+		debugLevel -= 1
 	return
+
+# ---------------------------------------------------------------------------
+#   say - print to the console
+
+export say = (str, label='') ->
+	if label
+		console.log label
+	if typeof str == 'object'
+		console.dir str
+	else
+		console.log str
 
 # ---------------------------------------------------------------------------
 
@@ -129,17 +162,6 @@ export error = (message) ->
 export warn = (message) ->
 
 	say "WARNING: #{message}"
-
-# ---------------------------------------------------------------------------
-#   say - print to the console
-
-export say = (str, label='') ->
-	if label
-		console.log label
-	if typeof str == 'object'
-		console.dir str
-	else
-		console.log str
 
 # ---------------------------------------------------------------------------
 #   ask - ask a question
