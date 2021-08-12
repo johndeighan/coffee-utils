@@ -38,10 +38,14 @@ export debug = (item, lOthers...) ->
 		else
 			label = str
 
+	if label
+		say '   '.repeat(debugLevel) + label
+
 	if isString(item)
-		say '   '.repeat(debugLevel) + escapeStr(item), label
+		say '   '.repeat(debugLevel) + escapeStr(item)
 	else
-		say item, label
+		say item
+
 	if enter
 		debugLevel += 1
 	if exit && (debugLevel > 0)
