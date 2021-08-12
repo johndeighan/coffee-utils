@@ -54,9 +54,9 @@ export var debug = function(item, ...lOthers) {
     }
   }
   if (isString(item)) {
-    say(indentedStr(escapeStr(item), debugLevel), label);
+    say('   '.repeat(debugLevel) + escapeStr(item), label);
   } else {
-    say(indentedStr(item, debugLevel), label);
+    say(item, label);
   }
   if (enter) {
     debugLevel += 1;

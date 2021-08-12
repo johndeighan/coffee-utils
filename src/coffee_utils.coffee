@@ -39,9 +39,9 @@ export debug = (item, lOthers...) ->
 			label = str
 
 	if isString(item)
-		say indentedStr(escapeStr(item), debugLevel), label
+		say '   '.repeat(debugLevel) + escapeStr(item), label
 	else
-		say indentedStr(item, debugLevel), label
+		say item, label
 	if enter
 		debugLevel += 1
 	if exit && (debugLevel > 0)
