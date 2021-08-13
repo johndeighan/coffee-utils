@@ -30,7 +30,7 @@ setDebugging(true, myLogger, myDumper)
 	debug 'something'
 	debug 'more'
 	debug 'return 42'
-	simple.equal 32, lLines, [
+	simple.equal 33, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   more"
@@ -48,12 +48,33 @@ setDebugging(true, myLogger, myDumper)
 	debug 'something else'
 	debug 'return abc'
 	debug 'return 42'
-	simple.equal 49, lLines, [
+	simple.equal 51, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   enter newfunc"
 		"│   │   something else"
 		"│   └─> return abc"
+		"└─> return 42"
+		]
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	lLines = []
+	obj = {
+		first: 1
+		second: 2
+		}
+	debug 'enter myfunc'
+	debug 'something'
+	debug obj, 'obj:'
+	debug 'return 42'
+	simple.equal 32, lLines, [
+		"enter myfunc"
+		"│   something"
+		"│   obj:"
+		"│   {\"first\":1,\"second\":2}"
 		"└─> return 42"
 		]
 	)()

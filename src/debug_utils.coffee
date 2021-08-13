@@ -5,6 +5,7 @@ import {
 	say,
 	error,
 	isString,
+	stringToArray,
 	setLogger,
 	escapeStr,
 	} from '@jdeighan/coffee-utils'
@@ -55,6 +56,7 @@ export debug = (item, label=undef) ->
 		prefix = indent.repeat(debugLevel-1) + arrow
 	else
 		prefix = indent.repeat(debugLevel)
+
 	if not item?
 		if label
 			say prefix +  label + " undef"
@@ -68,7 +70,8 @@ export debug = (item, label=undef) ->
 	else
 		if label
 			say prefix + label
-		say item
+		for str in stringToArray(JSON.stringify(item))
+			say prefix + str
 
 	if enter
 		debugLevel += 1

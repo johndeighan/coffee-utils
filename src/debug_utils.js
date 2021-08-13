@@ -7,6 +7,7 @@ import {
   say,
   error,
   isString,
+  stringToArray,
   setLogger,
   escapeStr
 } from '@jdeighan/coffee-utils';
@@ -43,7 +44,7 @@ export var setDebugging = function(flag, loggerFunc = undef, dumperFunc = undef)
 
 // ---------------------------------------------------------------------------
 export var debug = function(item, label = undef) {
-  var enter, exit, prefix;
+  var enter, exit, i, len, prefix, ref, str;
   if (!debugging) {
     return;
   }
@@ -83,7 +84,11 @@ export var debug = function(item, label = undef) {
     if (label) {
       say(prefix + label);
     }
-    say(item);
+    ref = stringToArray(JSON.stringify(item));
+    for (i = 0, len = ref.length; i < len; i++) {
+      str = ref[i];
+      say(prefix + str);
+    }
   }
   if (enter) {
     debugLevel += 1;
