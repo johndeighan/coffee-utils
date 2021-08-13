@@ -26,7 +26,7 @@ import {
   undef,
   error,
   unitTesting
-} from './coffee_utils.js';
+} from '@jdeighan/coffee-utils';
 
 __dirname = dirname(fileURLToPath(import.meta.url));
 

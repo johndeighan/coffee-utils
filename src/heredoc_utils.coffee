@@ -6,8 +6,8 @@ import {
 	taml,
 	warn,
 	error,
-	debug,
 	} from '@jdeighan/coffee-utils'
+import {debug} from '@jdeighan/coffee-utils/debug'
 import {undentedBlock} from '@jdeighan/coffee-utils/indent'
 
 # ---------------------------------------------------------------------------

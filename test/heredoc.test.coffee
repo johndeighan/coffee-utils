@@ -1,7 +1,7 @@
-# 03heredoc.test.coffee
+# heredoc.test.coffee
 
-import {numHereDocs, patch, build} from '../src/heredoc_utils.js'
 import {AvaTester} from '@jdeighan/ava-tester'
+import {numHereDocs, patch, build} from '@jdeighan/coffee-utils/heredoc'
 
 tester = new AvaTester()
 

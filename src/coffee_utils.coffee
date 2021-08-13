@@ -1,19 +1,14 @@
 # coffee_utils.coffee
 
 import yaml from 'js-yaml'
-import {indentedStr} from './indent_utils.js'
+import {indentedStr} from '@jdeighan/coffee-utils/indent'
 
 export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
 `export const undef = undefined`
 
-export getHello = () -> return "Hello, CoffeeScript!"
-
 export unitTesting = false
 export setUnitTesting = (flag) -> unitTesting = flag
-
-debugLevel = 0           # controls amount of indentation
-export debugging = false
 
 logger = console.log    # for strings
 dumper = console.dir    # for data structures
@@ -27,19 +22,6 @@ export setLogger = (loggerFunc, dumperFunc) ->
 	return
 
 # ---------------------------------------------------------------------------
-
-export setDebugging = (flag, loggerFunc=undef, dumperFunc=undef) ->
-
-	debugging = flag
-	debugLevel = 0
-	if flag
-		if loggerFunc
-			logger = loggerFunc
-		if dumperFunc
-			dumper = dumperFunc
-	return
-
-# ---------------------------------------------------------------------------
 #   say - print to the console
 
 export say = (str, label='') ->
@@ -50,48 +32,6 @@ export say = (str, label='') ->
 		dumper str
 	else
 		logger str
-
-# ---------------------------------------------------------------------------
-
-export debug = (item, label=undef) ->
-
-	if not debugging
-		return
-
-	# --- determine if we're entering or returning from a function
-	enter = exit = false
-	if label
-		if not isString(label)
-			error "debug(): label must be a string"
-		enter = (label.indexOf('enter') == 0)
-		exit =  (label.indexOf('return') == 0)
-	else
-		if not isString(item)
-			error "debug(): single parameter must be a string"
-		enter = (item.indexOf('enter') == 0)
-		exit =  (item.indexOf('return') == 0)
-
-	prefix = '   '.repeat(debugLevel)
-	if not item?
-		if label
-			say prefix +  label + " undef"
-		else
-			say prefix + " undef"
-	else if isString(item)
-		if label
-			say prefix +  label + " '" + escapeStr(item) + "'"
-		else
-			say prefix + escapeStr(item)
-	else
-		if label
-			say prefix + label
-		say item
-
-	if enter
-		debugLevel += 1
-	if exit && (debugLevel > 0)
-		debugLevel -= 1
-	return
 
 # ---------------------------------------------------------------------------
 

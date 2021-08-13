@@ -1,12 +1,12 @@
 # fs.test.coffee
 
-import assert from 'assert'
+import {strict as assert} from 'assert'
 import {dirname} from 'path';
 import {fileURLToPath} from 'url';
 import {existsSync, copyFileSync, readFileSync, writeFileSync} from 'fs'
 
-import {withExt, getSubDirs, pathTo} from '../src/fs_utils.js'
 import {AvaTester} from '@jdeighan/ava-tester'
+import {withExt, getSubDirs, pathTo} from '@jdeighan/coffee-utils/fs'
 
 tester = new AvaTester()
 

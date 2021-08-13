@@ -8,7 +8,8 @@
 		".": "./src/coffee_utils.js",
 		"./fs": "./src/fs_utils.js",
 		"./indent": "./src/indent_utils.js",
-		"./heredoc": "./src/heredoc_utils.js"
+		"./heredoc": "./src/heredoc_utils.js",
+		"./debug": "./src/debug_utils.js"
 	},
 	"engines": {
 		"node": ">=12.0.0"

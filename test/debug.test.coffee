@@ -1,14 +1,11 @@
 # debug.test.coffee
 
 import {AvaTester} from '@jdeighan/ava-tester'
-import {
-	undef,
-	setDebugging,
-	debug,
-	} from '../src/coffee_utils.js'
+
+import {undef, say} from '@jdeighan/coffee-utils'
+import {setDebugging, debug} from '@jdeighan/coffee-utils/debug'
 
 simple = new AvaTester()
-
 
 # ---------------------------------------------------------------------------
 
@@ -22,7 +19,7 @@ setDebugging(true, myLogger, myDumper)
 (() ->
 	lLines = []
 	debug('abc')
-	simple.equal 25, lLines, ['abc']
+	simple.equal 22, lLines, ['abc']
 	)()
 
 # ---------------------------------------------------------------------------
@@ -31,11 +28,13 @@ setDebugging(true, myLogger, myDumper)
 	lLines = []
 	debug 'enter myfunc'
 	debug 'something'
+	debug 'more'
 	debug 'return 42'
-	simple.equal 34, lLines, [
+	simple.equal 32, lLines, [
 		"enter myfunc"
-		"   something"
-		"   return 42"
+		"│   something"
+		"│   more"
+		"└─> return 42"
 		]
 	)()
 
@@ -49,13 +48,13 @@ setDebugging(true, myLogger, myDumper)
 	debug 'something else'
 	debug 'return abc'
 	debug 'return 42'
-	simple.equal 34, lLines, [
+	simple.equal 49, lLines, [
 		"enter myfunc"
-		"   something"
-		"   enter newfunc"
-		"      something else"
-		"      return abc"
-		"   return 42"
+		"│   something"
+		"│   enter newfunc"
+		"│   │   something else"
+		"│   └─> return abc"
+		"└─> return 42"
 		]
 	)()
 

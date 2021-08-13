@@ -7,9 +7,12 @@ import {
   isTAML,
   taml,
   warn,
-  error,
-  debug
+  error
 } from '@jdeighan/coffee-utils';
+
+import {
+  debug
+} from '@jdeighan/coffee-utils/debug';
 
 import {
   undentedBlock

@@ -1,5 +1,6 @@
 # utils.test.coffee
 
+import {AvaTester} from '@jdeighan/ava-tester'
 import {
 	isTAML,
 	taml,
@@ -11,8 +12,7 @@ import {
 	words,
 	escapeStr,
 	truncateBlock,
-	} from '../src/coffee_utils.js'
-import {AvaTester} from '@jdeighan/ava-tester'
+	} from '@jdeighan/coffee-utils'
 
 simple = new AvaTester()
 

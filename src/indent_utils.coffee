@@ -1,6 +1,6 @@
 # indent_utils.coffee
 
-import {undef, error, arrayToString} from './coffee_utils.js'
+import {undef, error, arrayToString} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
 #        NOTE: Currently, only TAB indentation is supported

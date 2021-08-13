@@ -1,5 +1,6 @@
 # indent.test.coffee
 
+import {AvaTester} from '@jdeighan/ava-tester'
 import {
 	indentLevel,
 	indentation,
@@ -8,8 +9,7 @@ import {
 	splitLine,
 	indentedStr,
 	indentedBlock,
-	} from '../src/indent_utils.js'
-import {AvaTester} from '@jdeighan/ava-tester'
+	} from '@jdeighan/coffee-utils/indent'
 
 tester = new AvaTester()
 
