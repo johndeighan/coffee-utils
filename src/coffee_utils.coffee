@@ -53,26 +53,23 @@ export say = (str, label='') ->
 
 # ---------------------------------------------------------------------------
 
-export debug = (item, lOthers...) ->
-	# --- lOthers may include a label, plus one of 'enter', 'return'
+export debug = (item, label=undef) ->
 
 	if not debugging
 		return
 
-	if isString(item)
+	# --- determine if we're entering or returning from a function
+	enter = exit = false
+	if label
+		if not isString(label)
+			error "debug(): label must be a string"
+		enter = (label.indexOf('enter') == 0)
+		exit =  (label.indexOf('return') == 0)
+	else
+		if not isString(item)
+			error "debug(): single parameter must be a string"
 		enter = (item.indexOf('enter') == 0)
 		exit =  (item.indexOf('return') == 0)
-	else
-		enter = exit = undef
-
-	label = undef
-	for str in lOthers
-		if str == 'enter'
-			enter = true
-		else if str == 'return'
-			exit = true
-		else
-			label = str
 
 	prefix = '   '.repeat(debugLevel)
 	if isString(item)

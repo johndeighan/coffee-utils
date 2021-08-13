@@ -67,28 +67,25 @@ export var say = function(str, label = '') {
 };
 
 // ---------------------------------------------------------------------------
-export var debug = function(item, ...lOthers) {
-  var enter, exit, i, label, len1, prefix, str;
-  // --- lOthers may include a label, plus one of 'enter', 'return'
+export var debug = function(item, label = undef) {
+  var enter, exit, prefix;
   if (!debugging) {
     return;
   }
-  if (isString(item)) {
+  // --- determine if we're entering or returning from a function
+  enter = exit = false;
+  if (label) {
+    if (!isString(label)) {
+      error("debug(): label must be a string");
+    }
+    enter = label.indexOf('enter') === 0;
+    exit = label.indexOf('return') === 0;
+  } else {
+    if (!isString(item)) {
+      error("debug(): single parameter must be a string");
+    }
     enter = item.indexOf('enter') === 0;
     exit = item.indexOf('return') === 0;
-  } else {
-    enter = exit = undef;
-  }
-  label = undef;
-  for (i = 0, len1 = lOthers.length; i < len1; i++) {
-    str = lOthers[i];
-    if (str === 'enter') {
-      enter = true;
-    } else if (str === 'return') {
-      exit = true;
-    } else {
-      label = str;
-    }
   }
   prefix = '   '.repeat(debugLevel);
   if (isString(item)) {
