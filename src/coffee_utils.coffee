@@ -14,36 +14,75 @@ export setUnitTesting = (flag) -> unitTesting = flag
 
 debugLevel = 0           # controls amount of indentation
 export debugging = false
-export setDebugging = (flag) ->
+
+logger = console.log    # for strings
+dumper = console.dir    # for data structures
+
+# ---------------------------------------------------------------------------
+
+export setLogger = (loggerFunc, dumperFunc) ->
+
+	logger = loggerFunc
+	dumper = dumperFunc
+	return
+
+# ---------------------------------------------------------------------------
+
+export setDebugging = (flag, loggerFunc=undef, dumperFunc=undef) ->
+
 	debugging = flag
 	debugLevel = 0
+	if flag
+		if loggerFunc
+			logger = loggerFunc
+		if dumperFunc
+			dumper = dumperFunc
+	return
+
+# ---------------------------------------------------------------------------
+#   say - print to the console
+
+export say = (str, label='') ->
+
+	if label
+		logger label
+	if typeof str == 'object'
+		dumper str
+	else
+		logger str
 
 # ---------------------------------------------------------------------------
 
 export debug = (item, lOthers...) ->
-	# --- lOthers may include a label, plus one of 'enter', 'exit'
+	# --- lOthers may include a label, plus one of 'enter', 'return'
 
 	if not debugging
 		return
 
-	enter = (item.indexOf('enter') == 0)
-	exit =  (item.indexOf('exit') == 0)
-	label = undef
+	if isString(item)
+		enter = (item.indexOf('enter') == 0)
+		exit =  (item.indexOf('return') == 0)
+	else
+		enter = exit = undef
 
+	label = undef
 	for str in lOthers
 		if str == 'enter'
 			enter = true
-		else if str == 'exit'
+		else if str == 'return'
 			exit = true
 		else
 			label = str
 
-	if label
-		say '   '.repeat(debugLevel) + label
-
+	prefix = '   '.repeat(debugLevel)
 	if isString(item)
-		say '   '.repeat(debugLevel) + escapeStr(item)
+		if label
+			say prefix +  label + ' ' + escapeStr(item)
+		else
+			say prefix + escapeStr(item)
 	else
+		if label
+			say prefix + label
 		say item
 
 	if enter
@@ -51,17 +90,6 @@ export debug = (item, lOthers...) ->
 	if exit && (debugLevel > 0)
 		debugLevel -= 1
 	return
-
-# ---------------------------------------------------------------------------
-#   say - print to the console
-
-export say = (str, label='') ->
-	if label
-		console.log label
-	if typeof str == 'object'
-		console.dir str
-	else
-		console.log str
 
 # ---------------------------------------------------------------------------
 
