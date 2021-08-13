@@ -74,7 +74,7 @@ export debug = (item, label=undef) ->
 	prefix = '   '.repeat(debugLevel)
 	if isString(item)
 		if label
-			say prefix +  label + ' ' + escapeStr(item)
+			say prefix +  label + " '" + escapeStr(item) + "'"
 		else
 			say prefix + escapeStr(item)
 	else
