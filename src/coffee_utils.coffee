@@ -72,7 +72,12 @@ export debug = (item, label=undef) ->
 		exit =  (item.indexOf('return') == 0)
 
 	prefix = '   '.repeat(debugLevel)
-	if isString(item)
+	if not item?
+		if label
+			say prefix +  label + " undef"
+		else
+			say prefix + " undef"
+	else if isString(item)
 		if label
 			say prefix +  label + " '" + escapeStr(item) + "'"
 		else

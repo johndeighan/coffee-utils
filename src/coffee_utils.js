@@ -88,7 +88,13 @@ export var debug = function(item, label = undef) {
     exit = item.indexOf('return') === 0;
   }
   prefix = '   '.repeat(debugLevel);
-  if (isString(item)) {
+  if (item == null) {
+    if (label) {
+      say(prefix + label + " undef");
+    } else {
+      say(prefix + " undef");
+    }
+  } else if (isString(item)) {
     if (label) {
       say(prefix + label + " '" + escapeStr(item) + "'");
     } else {
