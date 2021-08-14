@@ -3,7 +3,8 @@
 import {
   undef,
   error,
-  arrayToString
+  arrayToString,
+  stringToArray
 } from '@jdeighan/coffee-utils';
 
 // ---------------------------------------------------------------------------
@@ -130,4 +131,58 @@ export var indentedBlock = function(content, level = 0) {
   })();
   result = lLines.join('\n');
   return result;
+};
+
+// ---------------------------------------------------------------------------
+//    tabify - convert leading spaces to TAB characters
+//             if numSpaces is not defined, then the first line
+//             that contains at least one space sets it
+export var tabify = function(str, numSpaces = undef) {
+  var _, i, lLines, lMatches, len, n, prefix, ref, theRest;
+  lLines = [];
+  ref = stringToArray(str);
+  for (i = 0, len = ref.length; i < len; i++) {
+    str = ref[i];
+    lMatches = str.match(/^(\s*)(.*)$/);
+    [_, prefix, theRest] = lMatches;
+    if (prefix === '') {
+      lLines.push(theRest);
+    } else {
+      n = prefix.length;
+      if (prefix.indexOf('\t') !== -1) {
+        error("tabify(): leading TAB characters not allowed");
+      }
+      if (numSpaces == null) {
+        numSpaces = n;
+      }
+      if (n % numSpaces !== 0) {
+        error("tabify(): Invalid # of leading space chars");
+      }
+      lLines.push('\t'.repeat(n / numSpaces) + theRest);
+    }
+  }
+  return arrayToString(lLines);
+};
+
+// ---------------------------------------------------------------------------
+//    untabify - convert leading TABs to spaces
+export var untabify = function(str, numSpaces = 3) {
+  var _, i, lLines, lMatches, len, n, prefix, ref, theRest;
+  lLines = [];
+  ref = stringToArray(str);
+  for (i = 0, len = ref.length; i < len; i++) {
+    str = ref[i];
+    lMatches = str.match(/^(\s*)(.*)$/);
+    [_, prefix, theRest] = lMatches;
+    if (prefix === '') {
+      lLines.push(theRest);
+    } else {
+      n = prefix.length;
+      if (prefix !== '\t'.repeat(n)) {
+        error("tabify(): leading ws not all TAB characters");
+      }
+      lLines.push(' '.repeat(n * numSpaces) + theRest);
+    }
+  }
+  return arrayToString(lLines);
 };

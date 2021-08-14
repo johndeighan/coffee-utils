@@ -1,11 +1,13 @@
 # debug_utils.coffee
 
+import yaml from 'js-yaml'
 import {
 	undef,
 	say,
 	error,
 	isString,
 	stringToArray,
+	tamlStringify,
 	setLogger,
 	escapeStr,
 	} from '@jdeighan/coffee-utils'
@@ -21,6 +23,14 @@ arrow = corner + hbar + arrowhead + ' '
 
 debugLevel = 0           # controls amount of indentation
 export debugging = false
+stringifier = tamlStringify
+
+# ---------------------------------------------------------------------------
+
+export setStringifier = (func) ->
+
+	stringifier = func
+	return
 
 # ---------------------------------------------------------------------------
 
@@ -70,8 +80,8 @@ export debug = (item, label=undef) ->
 	else
 		if label
 			say prefix + label
-		for str in stringToArray(JSON.stringify(item))
-			say prefix + str
+		for str in stringToArray(stringifier(item))
+			say prefix + '   ' + str.replace(/\t/g, '   ')
 
 	if enter
 		debugLevel += 1

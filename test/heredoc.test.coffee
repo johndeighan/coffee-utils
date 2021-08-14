@@ -28,7 +28,7 @@ tester.equal 27, patch("let x = <<<;", [[
 				'a multi',
 				'line string',
 				]]),
-		"let x = \"a multi\\nline string\\n\";"
+		"let x = \"a multi\\nline string\";"
 
 
 # ---------------------------------------------------------------------------
@@ -48,7 +48,7 @@ tester.equal 44, patch("let x = <<<; let y = <<<;", [[
 				'\ta new',
 				'\tstring',
 				]]),
-		"let x = \"a multi\\nline string\\n\"; let y = \"a new\\nstring\\n\";"
+		"let x = \"a multi\\nline string\"; let y = \"a new\\nstring\";"
 
 # ---------------------------------------------------------------------------
 

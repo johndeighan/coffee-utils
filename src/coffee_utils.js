@@ -5,7 +5,9 @@ var dumper, logger;
 import yaml from 'js-yaml';
 
 import {
-  indentedStr
+  indentedStr,
+  tabify,
+  untabify
 } from '@jdeighan/coffee-utils/indent';
 
 export var sep_dash = '-'.repeat(42);
@@ -181,14 +183,27 @@ export var isTAML = function(str) {
 
 // ---------------------------------------------------------------------------
 //   taml - convert valid TAML string to a data structure
-export var taml = function(strOrArray) {
-  if (!strOrArray) {
-    return 'null';
+export var taml = function(str) {
+  if (str == null) {
+    return 'undef';
   }
-  if (typeof strOrArray === 'object') {
-    strOrArray = arrayToString(strOrArray);
+  return yaml.load(untabify(str, 1));
+};
+
+// ---------------------------------------------------------------------------
+//   tamlDump - convert valid TAML string to a data structure
+export var tamlStringify = function(obj) {
+  var str;
+  if (obj == null) {
+    return 'undef';
   }
-  return yaml.load(strOrArray.replace(/\t/g, '  '));
+  str = yaml.dump(obj, {
+    skipInvalid: true,
+    indent: 1,
+    sortKeys: true,
+    lineWidth: -1
+  });
+  return tabify(str);
 };
 
 // ---------------------------------------------------------------------------
@@ -214,7 +229,7 @@ export var arrayToString = function(lLines) {
   if (lLines.length === 0) {
     return '';
   } else {
-    return rtrim(lLines.join('\n')) + '\n';
+    return rtrim(lLines.join('\n'));
   }
 };
 

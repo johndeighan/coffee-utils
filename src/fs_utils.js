@@ -24,6 +24,7 @@ import {
   say,
   taml,
   undef,
+  rtrim,
   error,
   unitTesting
 } from '@jdeighan/coffee-utils';
@@ -63,6 +64,7 @@ export var slurpTAML = function(filepath) {
 // ---------------------------------------------------------------------------
 //   barf - write a string to a file
 export var barf = function(filepath, contents) {
+  contents = rtrim(contents) + '\n';
   return writeFileSync(filepath, contents, {
     encoding: 'utf8'
   });

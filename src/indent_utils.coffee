@@ -1,6 +1,11 @@
 # indent_utils.coffee
 
-import {undef, error, arrayToString} from '@jdeighan/coffee-utils'
+import {
+	undef,
+	error,
+	arrayToString,
+	stringToArray,
+	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
 #        NOTE: Currently, only TAB indentation is supported
@@ -102,4 +107,46 @@ export indentedBlock = (content, level=0) ->
 		if line then "#{indent}#{line}" else ""
 	result = lLines.join('\n')
 	return result
+
+# ---------------------------------------------------------------------------
+#    tabify - convert leading spaces to TAB characters
+#             if numSpaces is not defined, then the first line
+#             that contains at least one space sets it
+
+export tabify = (str, numSpaces=undef) ->
+
+	lLines = []
+	for str in stringToArray(str)
+		lMatches = str.match(/^(\s*)(.*)$/)
+		[_, prefix, theRest] = lMatches
+		if prefix == ''
+			lLines.push theRest
+		else
+			n = prefix.length
+			if (prefix.indexOf('\t') != -1)
+				error "tabify(): leading TAB characters not allowed"
+			if not numSpaces?
+				numSpaces = n
+			if (n % numSpaces != 0)
+				error "tabify(): Invalid # of leading space chars"
+			lLines.push '\t'.repeat(n / numSpaces) + theRest
+	return arrayToString(lLines)
+
+# ---------------------------------------------------------------------------
+#    untabify - convert leading TABs to spaces
+
+export untabify = (str, numSpaces=3) ->
+
+	lLines = []
+	for str in stringToArray(str)
+		lMatches = str.match(/^(\s*)(.*)$/)
+		[_, prefix, theRest] = lMatches
+		if prefix == ''
+			lLines.push theRest
+		else
+			n = prefix.length
+			if (prefix != '\t'.repeat(n))
+				error "tabify(): leading ws not all TAB characters"
+			lLines.push ' '.repeat(n * numSpaces) + theRest
+	return arrayToString(lLines)
 

@@ -11,7 +11,14 @@ import {
 	readdirSync,
 	} from 'fs'
 
-import {say, taml, undef, error, unitTesting} from '@jdeighan/coffee-utils'
+import {
+	say,
+	taml,
+	undef,
+	rtrim,
+	error,
+	unitTesting,
+	} from '@jdeighan/coffee-utils'
 
 __dirname = dirname(fileURLToPath(`import.meta.url`));
 
@@ -52,6 +59,8 @@ export slurpTAML = (filepath) ->
 #   barf - write a string to a file
 
 export barf = (filepath, contents) ->
+
+	contents = rtrim(contents) + '\n'
 	writeFileSync(filepath, contents, {encoding: 'utf8'})
 
 # --- Capable of removing leading whitespace which is found on

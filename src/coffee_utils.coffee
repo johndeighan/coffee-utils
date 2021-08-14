@@ -1,7 +1,7 @@
 # coffee_utils.coffee
 
 import yaml from 'js-yaml'
-import {indentedStr} from '@jdeighan/coffee-utils/indent'
+import {indentedStr, tabify, untabify} from '@jdeighan/coffee-utils/indent'
 
 export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
@@ -170,13 +170,26 @@ export isTAML = (str) ->
 # ---------------------------------------------------------------------------
 #   taml - convert valid TAML string to a data structure
 
-export taml = (strOrArray) ->
+export taml = (str) ->
 
-	if not strOrArray
-		return 'null'
-	if typeof strOrArray == 'object'
-		strOrArray = arrayToString(strOrArray)
-	return yaml.load(strOrArray.replace(/\t/g, '  '))
+	if not str?
+		return 'undef'
+	return yaml.load(untabify(str, 1))
+
+# ---------------------------------------------------------------------------
+#   tamlDump - convert valid TAML string to a data structure
+
+export tamlStringify = (obj) ->
+
+	if not obj?
+		return 'undef'
+	str = yaml.dump(obj, {
+			skipInvalid: true
+			indent: 1
+			sortKeys: true
+			lineWidth: -1
+			})
+	return tabify(str)
 
 # ---------------------------------------------------------------------------
 #   stringToArray - split a string into lines
@@ -201,7 +214,7 @@ export arrayToString = (lLines) ->
 	if lLines.length == 0
 		return ''
 	else
-		return rtrim(lLines.join('\n')) + '\n'
+		return rtrim(lLines.join('\n'))
 
 # ---------------------------------------------------------------------------
 #   normalize - remove blank lines, trim each line
