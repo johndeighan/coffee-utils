@@ -11,7 +11,19 @@ export unitTesting = false
 export setUnitTesting = (flag) -> unitTesting = flag
 
 logger = console.log    # for strings
-dumper = console.dir    # for data structures
+
+# ---------------------------------------------------------------------------
+
+export tamlDumper = (obj) ->
+
+	str = tamlStringify(obj)
+	str = str.replace(/\t/g, '   ')  # because fr***ing Windows Terminal
+	                                 # has no way of adjusting display
+	                                 # of TAB chars
+	console.log(str)
+	return
+
+dumper = tamlDumper
 
 # ---------------------------------------------------------------------------
 
@@ -24,14 +36,14 @@ export setLogger = (loggerFunc, dumperFunc) ->
 # ---------------------------------------------------------------------------
 #   say - print to the console
 
-export say = (str, label='') ->
+export say = (obj, label='') ->
 
 	if label
 		logger label
-	if typeof str == 'object'
-		dumper str
+	if typeof obj == 'string'
+		logger obj
 	else
-		logger str
+		dumper obj
 
 # ---------------------------------------------------------------------------
 
@@ -177,7 +189,7 @@ export taml = (str) ->
 	return yaml.load(untabify(str, 1))
 
 # ---------------------------------------------------------------------------
-#   tamlDump - convert valid TAML string to a data structure
+#   tamlStringify - convert a data structure into a valid TAML string
 
 export tamlStringify = (obj) ->
 
@@ -302,3 +314,5 @@ export truncateBlock = (str, numLines) ->
 	lLines = stringToArray str
 	lLines.length = numLines
 	return arrayToString lLines
+
+# ---------------------------------------------------------------------------

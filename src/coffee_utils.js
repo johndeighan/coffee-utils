@@ -24,8 +24,18 @@ export var setUnitTesting = function(flag) {
 
 logger = console.log; // for strings
 
-dumper = console.dir; // for data structures
 
+// ---------------------------------------------------------------------------
+export var tamlDumper = function(obj) {
+  var str;
+  str = tamlStringify(obj);
+  str = str.replace(/\t/g, '   '); // because fr***ing Windows Terminal
+  // has no way of adjusting display
+  // of TAB chars
+  console.log(str);
+};
+
+dumper = tamlDumper;
 
 // ---------------------------------------------------------------------------
 export var setLogger = function(loggerFunc, dumperFunc) {
@@ -35,14 +45,14 @@ export var setLogger = function(loggerFunc, dumperFunc) {
 
 // ---------------------------------------------------------------------------
 //   say - print to the console
-export var say = function(str, label = '') {
+export var say = function(obj, label = '') {
   if (label) {
     logger(label);
   }
-  if (typeof str === 'object') {
-    return dumper(str);
+  if (typeof obj === 'string') {
+    return logger(obj);
   } else {
-    return logger(str);
+    return dumper(obj);
   }
 };
 
@@ -191,7 +201,7 @@ export var taml = function(str) {
 };
 
 // ---------------------------------------------------------------------------
-//   tamlDump - convert valid TAML string to a data structure
+//   tamlStringify - convert a data structure into a valid TAML string
 export var tamlStringify = function(obj) {
   var str;
   if (obj == null) {
@@ -347,3 +357,5 @@ export var truncateBlock = function(str, numLines) {
   lLines.length = numLines;
   return arrayToString(lLines);
 };
+
+// ---------------------------------------------------------------------------
