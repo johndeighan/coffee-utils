@@ -1,7 +1,7 @@
 # fs_utils.coffee
 
 import assert from 'assert'
-import {dirname} from 'path';
+import {dirname, resolve, parse} from 'path';
 import {fileURLToPath} from 'url';
 import {
 	existsSync,
@@ -20,7 +20,13 @@ import {
 	unitTesting,
 	} from '@jdeighan/coffee-utils'
 
-__dirname = dirname(fileURLToPath(`import.meta.url`));
+# ---------------------------------------------------------------------------
+#    mydir() - pass argument `import.meta.url` and it will return
+#              the directory your file is in
+
+export mydir = (url) ->
+
+	return dirname(fileURLToPath(url));
 
 # ---------------------------------------------------------------------------
 #   backup - back up a file
@@ -92,16 +98,29 @@ export getSubDirs = (dir) ->
 		.sort()
 
 # ---------------------------------------------------------------------------
-#    Later, search subdirectories
+#    Get path to parent directory of a directory
 
-export pathTo = (fname, dir) ->
+export getParentDir = (dir) ->
+
+	hParts = parse(dir)
+	if (hParts.dir == hParts.root)
+		return undef
+	return resolve(dir, '..')
+
+# ---------------------------------------------------------------------------
+
+export pathTo = (fname, dir, direction="down") ->
 
 	assert existsSync(dir), "Directory #{dir} does not exist"
 	if existsSync("#{dir}/#{fname}")
 		return "#{dir}/#{fname}"
-	else
+	else if (direction == 'down')
 		# --- Search all directories in this directory
 		for subdir in getSubDirs(dir)
 			if fpath = pathTo(fname, "#{dir}/#{subdir}")
 				return fpath
+	else if (direction == 'up')
+		pass
+	else
+		error "pathTo(): Invalid direction '#{direction}'"
 	return undef
