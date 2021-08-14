@@ -24,6 +24,7 @@ import {
   say,
   taml,
   undef,
+  pass,
   rtrim,
   error,
   unitTesting
@@ -140,7 +141,11 @@ export var pathTo = function(fname, dir, direction = "down") {
       }
     }
   } else if (direction === 'up') {
-    pass;
+    while (dir = getParentDir(dir)) {
+      if (existsSync(`${dir}/${fname}`)) {
+        return `${dir}/${fname}`;
+      }
+    }
   } else {
     error(`pathTo(): Invalid direction '${direction}'`);
   }

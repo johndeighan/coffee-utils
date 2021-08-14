@@ -15,6 +15,7 @@ import {
 	say,
 	taml,
 	undef,
+	pass,
 	rtrim,
 	error,
 	unitTesting,
@@ -120,7 +121,9 @@ export pathTo = (fname, dir, direction="down") ->
 			if fpath = pathTo(fname, "#{dir}/#{subdir}")
 				return fpath
 	else if (direction == 'up')
-		pass
+		while dir = getParentDir(dir)
+			if existsSync("#{dir}/#{fname}")
+				return "#{dir}/#{fname}"
 	else
 		error "pathTo(): Invalid direction '#{direction}'"
 	return undef
