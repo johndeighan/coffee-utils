@@ -198,7 +198,7 @@ export tamlStringify = (obj) ->
 	str = yaml.dump(obj, {
 			skipInvalid: true
 			indent: 1
-			sortKeys: true
+			sortKeys: false
 			lineWidth: -1
 			})
 	return tabify(str)
