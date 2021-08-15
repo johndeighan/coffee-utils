@@ -201,7 +201,7 @@ export tamlStringify = (obj) ->
 			sortKeys: false
 			lineWidth: -1
 			})
-	return tabify(str)
+	return "---\n" + tabify(str)
 
 # ---------------------------------------------------------------------------
 #   stringToArray - split a string into lines

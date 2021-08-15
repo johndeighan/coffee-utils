@@ -74,6 +74,7 @@ setDebugging(true, myLogger, myDumper)
 		"enter myfunc"
 		"│   something"
 		"│   obj:"
+		"│      ---"
 		"│      first: 1"
 		"│      second: 2"
 		"└─> return 42"

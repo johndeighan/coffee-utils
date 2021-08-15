@@ -213,7 +213,7 @@ export var tamlStringify = function(obj) {
     sortKeys: false,
     lineWidth: -1
   });
-  return tabify(str);
+  return "---\n" + tabify(str);
 };
 
 // ---------------------------------------------------------------------------
