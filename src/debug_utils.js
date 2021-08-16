@@ -2,8 +2,6 @@
 // debug_utils.coffee
 var arrow, arrowhead, corner, debugLevel, hbar, indent, stringifier, vbar;
 
-import yaml from 'js-yaml';
-
 import {
   undef,
   say,

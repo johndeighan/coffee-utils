@@ -1,7 +1,11 @@
 # coffee_utils.coffee
 
 import yaml from 'js-yaml'
-import {indentedStr, tabify, untabify} from '@jdeighan/coffee-utils/indent'
+import {
+	indentedStr,
+	tabify,
+	untabify,
+	} from '@jdeighan/coffee-utils/indent'
 
 export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
