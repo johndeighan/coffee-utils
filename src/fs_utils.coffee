@@ -20,6 +20,7 @@ import {
 	error,
 	unitTesting,
 	} from '@jdeighan/coffee-utils'
+import {debug} from '@jdeighan/coffee-utils/debug'
 
 # ---------------------------------------------------------------------------
 #    mydir() - pass argument `import.meta.url` and it will return
@@ -112,22 +113,29 @@ export getParentDir = (dir) ->
 
 export pathTo = (fname, dir, direction="down") ->
 
+	debug "enter pathTo('#{fname}','#{dir}','#{direction}')"
 	if unitTesting
+		debug "return #{dir}/#{fname} - unit testing"
 		return "#{dir}/#{fname}"
 	assert existsSync(dir), "Directory #{dir} does not exist"
 	if existsSync("#{dir}/#{fname}")
+		debug "return #{dir}/#{fname} - file exists"
 		return "#{dir}/#{fname}"
 	else if (direction == 'down')
 		# --- Search all directories in this directory
 		for subdir in getSubDirs(dir)
 			if fpath = pathTo(fname, "#{dir}/#{subdir}")
+				debug "return #{fpath}"
 				return fpath
 	else if (direction == 'up')
 		while dir = getParentDir(dir)
+			debug "check #{dir}"
 			if existsSync("#{dir}/#{fname}")
+				debug "return #{dir}/#{fname}"
 				return "#{dir}/#{fname}"
 	else
 		error "pathTo(): Invalid direction '#{direction}'"
+	debug "return undef - file not found"
 	return undef
 
 # ---------------------------------------------------------------------------

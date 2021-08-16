@@ -34,6 +34,10 @@ import {
   unitTesting
 } from '@jdeighan/coffee-utils';
 
+import {
+  debug
+} from '@jdeighan/coffee-utils/debug';
+
 // ---------------------------------------------------------------------------
 //    mydir() - pass argument `import.meta.url` and it will return
 //              the directory your file is in
@@ -132,11 +136,14 @@ export var getParentDir = function(dir) {
 // ---------------------------------------------------------------------------
 export var pathTo = function(fname, dir, direction = "down") {
   var fpath, i, len, ref, subdir;
+  debug(`enter pathTo('${fname}','${dir}','${direction}')`);
   if (unitTesting) {
+    debug(`return ${dir}/${fname} - unit testing`);
     return `${dir}/${fname}`;
   }
   assert(existsSync(dir), `Directory ${dir} does not exist`);
   if (existsSync(`${dir}/${fname}`)) {
+    debug(`return ${dir}/${fname} - file exists`);
     return `${dir}/${fname}`;
   } else if (direction === 'down') {
     ref = getSubDirs(dir);
@@ -144,18 +151,22 @@ export var pathTo = function(fname, dir, direction = "down") {
     for (i = 0, len = ref.length; i < len; i++) {
       subdir = ref[i];
       if (fpath = pathTo(fname, `${dir}/${subdir}`)) {
+        debug(`return ${fpath}`);
         return fpath;
       }
     }
   } else if (direction === 'up') {
     while (dir = getParentDir(dir)) {
+      debug(`check ${dir}`);
       if (existsSync(`${dir}/${fname}`)) {
+        debug(`return ${dir}/${fname}`);
         return `${dir}/${fname}`;
       }
     }
   } else {
     error(`pathTo(): Invalid direction '${direction}'`);
   }
+  debug("return undef - file not found");
   return undef;
 };
 
