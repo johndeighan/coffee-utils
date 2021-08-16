@@ -9,7 +9,9 @@
 		"./fs": "./src/fs_utils.js",
 		"./indent": "./src/indent_utils.js",
 		"./heredoc": "./src/heredoc_utils.js",
-		"./debug": "./src/debug_utils.js"
+		"./debug": "./src/debug_utils.js",
+		"./convert": "./src/convert_utils.js",
+		"./svelte": "./src/svelte_utils.js"
 	},
 	"engines": {
 		"node": ">=12.0.0"
@@ -38,6 +40,10 @@
 		"coffeescript": "^2.5.1"
 	},
 	"dependencies": {
-		"js-yaml": "^3.14.1"
+		"@jdeighan/env": "^1.0.2",
+		"@jdeighan/string-input": "^1.0.25",
+		"js-yaml": "^3.14.1",
+		"marked": "^3.0.0",
+		"sass": "^1.37.5"
 	}
 }

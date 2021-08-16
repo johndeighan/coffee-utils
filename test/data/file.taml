@@ -1,0 +1,7 @@
+---
+-
+	first: 1
+	second: 2
+-
+	kind: cmd
+	cmd: include

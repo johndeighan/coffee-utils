@@ -1,7 +1,7 @@
 # fs_utils.coffee
 
-import assert from 'assert'
-import {dirname, resolve, parse} from 'path';
+import {strict as assert} from 'assert'
+import {dirname, resolve, parse as parse_fname} from 'path';
 import {fileURLToPath} from 'url';
 import {
 	existsSync,
@@ -103,7 +103,7 @@ export getSubDirs = (dir) ->
 
 export getParentDir = (dir) ->
 
-	hParts = parse(dir)
+	hParts = parse_fname(dir)
 	if (hParts.dir == hParts.root)
 		return undef
 	return resolve(dir, '..')
@@ -112,6 +112,8 @@ export getParentDir = (dir) ->
 
 export pathTo = (fname, dir, direction="down") ->
 
+	if unitTesting
+		return "#{dir}/#{fname}"
 	assert existsSync(dir), "Directory #{dir} does not exist"
 	if existsSync("#{dir}/#{fname}")
 		return "#{dir}/#{fname}"
