@@ -46,6 +46,11 @@ export var mydir = function(url) {
 };
 
 // ---------------------------------------------------------------------------
+export var mkpath = function(...lParts) {
+  return lParts.join('/');
+};
+
+// ---------------------------------------------------------------------------
 //   backup - back up a file
 
 // --- If report is true, missing source files are not an error
