@@ -1,11 +1,7 @@
 # heredoc_utils.coffee
 
 import {
-	say,
-	isTAML,
-	taml,
-	warn,
-	error,
+	say, isTAML, taml, warn, error, rtrim,
 	} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {undentedBlock} from '@jdeighan/coffee-utils/indent'
@@ -23,7 +19,7 @@ export numHereDocs = (str) ->
 
 # ---------------------------------------------------------------------------
 
-export patch = (line, lSections) ->
+export patch = (line, lSections, evaluate=false) ->
 
 	lParts = []     # joined at the end
 	pos = 0
@@ -32,37 +28,27 @@ export patch = (line, lSections) ->
 		if start == -1
 			error "patch(): Missing HEREDOC marker"
 
-		lParts.push line.substring pos, start
-		lParts.push lLines.join(' ')
+		lParts.push line.substring(pos, start)
+		if evaluate
+			lParts.push JSON.stringify(build(lLines))
+		else
+			lParts.push joinLines(lLines)
 		pos = start + 3
 
 	if line.indexOf('<<<', pos) != -1
 		n = numHereDocs(line)
 		error "patch(): Not all #{n} HEREDOC markers were replaced" \
 			+ "in '#{line}'"
-	lParts.push line.substring pos, line.length
+	lParts.push line.substring(pos, line.length)
 	return lParts.join('')
 
 # ---------------------------------------------------------------------------
 
-export patchEx = (line, lSections) ->
+joinLines = (lLines) ->
 
-	lParts = []     # joined at the end
-	pos = 0
-	for lLines in lSections
-		start = line.indexOf('<<<', pos)
-		if start == -1
-			error "patch(): Missing HEREDOC marker"
-		lParts.push line.substring pos, start
-		lParts.push JSON.stringify(build(lLines))
-		pos = start + 3
-
-	if line.indexOf('<<<', pos) != -1
-		n = numHereDocs(line)
-		error "patch(): Not all #{n} HEREDOC markers were replaced" \
-			+ "in '#{line}'"
-	lParts.push line.substring pos, line.length
-	return lParts.join('')
+	lNewLines = for line in lLines
+		line.trim()
+	return lNewLines.join(' ')
 
 # ---------------------------------------------------------------------------
 
