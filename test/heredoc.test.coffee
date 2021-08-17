@@ -1,7 +1,9 @@
 # heredoc.test.coffee
 
 import {AvaTester} from '@jdeighan/ava-tester'
-import {numHereDocs, patch, build} from '@jdeighan/coffee-utils/heredoc'
+import {
+	numHereDocs, patch, build, patchEx,
+	} from '@jdeighan/coffee-utils/heredoc'
 
 tester = new AvaTester()
 
@@ -24,7 +26,7 @@ tester.equal 19, build([
 
 # ---------------------------------------------------------------------------
 
-tester.equal 27, patch("let x = <<<;", [[
+tester.equal 27, patchEx("let x = <<<;", [[
 				'a multi',
 				'line string',
 				]]),
@@ -41,7 +43,7 @@ tester.equal 36, build([
 
 # ---------------------------------------------------------------------------
 
-tester.equal 44, patch("let x = <<<; let y = <<<;", [[
+tester.equal 44, patchEx("let x = <<<; let y = <<<;", [[
 				'\t\ta multi',
 				'\t\tline string',
 				],[
@@ -78,7 +80,7 @@ tester.equal 73,
 # ---------------------------------------------------------------------------
 
 tester.equal 79,
-		patch("let lItems = <<<;", [[
+		patchEx("let lItems = <<<;", [[
 			'---',
 			'- one',
 			'- two',
@@ -88,38 +90,9 @@ tester.equal 79,
 # ---------------------------------------------------------------------------
 
 tester.equal 89,
-		patch("let lItems = <<<;", [[
+		patchEx("let lItems = <<<;", [[
 			'---',
 			'key: one',
 			'value: two',
 			]]),
 		'let lItems = {"key":"one","value":"two"};'
-
-# ---------------------------------------------------------------------------
-# test providing a callback to patch()
-
-tester.equal 89,
-		patch("let lItems = <<<;", [[
-			'---',
-			'key: one',
-			'value: two',
-			]], (lLines) -> return 'xxx'),
-		'let lItems = xxx;'
-
-# ---------------------------------------------------------------------------
-# test providing a callback to patch()
-
-(() ->
-	converter = (lLines) ->
-
-		count = lLines.length
-		return "#{count} lines"
-
-	tester.equal 89,
-			patch("let lItems = <<<;", [[
-				'---',
-				'key: one',
-				'value: two',
-				]], converter),
-			'let lItems = 3 lines;'
-	)()

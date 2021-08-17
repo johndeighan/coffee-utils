@@ -23,16 +23,17 @@ export numHereDocs = (str) ->
 
 # ---------------------------------------------------------------------------
 
-export patch = (line, lSections, callBack=stdCallback) ->
+export patch = (line, lSections) ->
 
 	lParts = []     # joined at the end
 	pos = 0
 	for lLines in lSections
 		start = line.indexOf('<<<', pos)
 		if start == -1
-			error "patch(): No HEREDOC marker found"
+			error "patch(): Missing HEREDOC marker"
+
 		lParts.push line.substring pos, start
-		lParts.push callBack(lLines)
+		lParts.push lLines.join(' ')
 		pos = start + 3
 
 	if line.indexOf('<<<', pos) != -1
@@ -44,9 +45,24 @@ export patch = (line, lSections, callBack=stdCallback) ->
 
 # ---------------------------------------------------------------------------
 
-stdCallback = (lLines) ->
+export patchEx = (line, lSections) ->
 
-	return JSON.stringify(build(lLines))
+	lParts = []     # joined at the end
+	pos = 0
+	for lLines in lSections
+		start = line.indexOf('<<<', pos)
+		if start == -1
+			error "patch(): Missing HEREDOC marker"
+		lParts.push line.substring pos, start
+		lParts.push JSON.stringify(build(lLines))
+		pos = start + 3
+
+	if line.indexOf('<<<', pos) != -1
+		n = numHereDocs(line)
+		error "patch(): Not all #{n} HEREDOC markers were replaced" \
+			+ "in '#{line}'"
+	lParts.push line.substring pos, line.length
+	return lParts.join('')
 
 # ---------------------------------------------------------------------------
 
