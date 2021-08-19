@@ -350,6 +350,15 @@ export var escapeStr = function(str) {
 };
 
 // ---------------------------------------------------------------------------
+export var oneline = function(obj) {
+  if (isString(obj)) {
+    return escapeStr(obj);
+  } else {
+    return JSON.stringify(obj);
+  }
+};
+
+// ---------------------------------------------------------------------------
 // truncateBlock - limit block to a certain number of lines
 export var truncateBlock = function(str, numLines) {
   var lLines;

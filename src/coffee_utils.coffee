@@ -311,6 +311,15 @@ export escapeStr = (str) ->
 	return lParts.join('')
 
 # ---------------------------------------------------------------------------
+
+export oneline = (obj) ->
+
+	if isString(obj)
+		return escapeStr(obj)
+	else
+		return JSON.stringify(obj)
+
+# ---------------------------------------------------------------------------
 # truncateBlock - limit block to a certain number of lines
 
 export truncateBlock = (str, numLines) ->
