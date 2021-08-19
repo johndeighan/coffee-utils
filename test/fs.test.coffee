@@ -23,7 +23,7 @@ simple.equal 21, withExt('file.starbucks', 'svelte'), 'file.svelte'
 # ---------------------------------------------------------------------------
 
 (() ->
-	fname = 'heredoc.test.coffee'
+	fname = 'debug.test.coffee'
 
 
 	simple.truthy 29, existsSync("#{dir}/#{fname}")

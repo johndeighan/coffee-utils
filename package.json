@@ -8,7 +8,6 @@
 		".": "./src/coffee_utils.js",
 		"./fs": "./src/fs_utils.js",
 		"./indent": "./src/indent_utils.js",
-		"./heredoc": "./src/heredoc_utils.js",
 		"./debug": "./src/debug_utils.js",
 		"./svelte": "./src/svelte_utils.js"
 	},
