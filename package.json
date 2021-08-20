@@ -17,7 +17,9 @@
 	"scripts": {
 		"build": "cls && coffee -c .",
 		"pretest": "cls && coffee -c .",
-		"test": "ava ./test/*.test.js"
+		"test": "ava ./test/*.test.js",
+		"prefinaltest": "cls && coffee -c .",
+		"finaltest": "cross-env FINALTEST=yes ava ./test/*.test.js"
 	},
 	"repository": {
 		"type": "git",
@@ -36,6 +38,7 @@
 		"@jdeighan/ava-tester": "^1.0.2"
 	},
 	"dependencies": {
+		"cross-env": "^7.0.3",
 		"js-yaml": "^3.14.1"
 	}
 }
