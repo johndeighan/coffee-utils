@@ -9,7 +9,8 @@
 		"./fs": "./src/fs_utils.js",
 		"./indent": "./src/indent_utils.js",
 		"./debug": "./src/debug_utils.js",
-		"./svelte": "./src/svelte_utils.js"
+		"./svelte": "./src/svelte_utils.js",
+		"./package.json": "./package.json"
 	},
 	"engines": {
 		"node": ">=12.0.0"
