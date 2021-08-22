@@ -75,7 +75,11 @@ export var backup = function(file, from, to, report = false) {
 // ---------------------------------------------------------------------------
 //   slurp - read an entire file into a string
 export var slurp = function(filepath) {
-  return readFileSync(filepath, 'utf8').toString();
+  var contents;
+  debug(`enter slurp '${filepath}'`);
+  contents = readFileSync(filepath, 'utf8').toString();
+  debug("return from slurp()");
+  return contents;
 };
 
 // ---------------------------------------------------------------------------
@@ -94,10 +98,6 @@ export var barf = function(filepath, contents) {
     encoding: 'utf8'
   });
 };
-
-// --- Capable of removing leading whitespace which is found on
-//     the first line from all lines,
-//     Can handle an array of strings or a multi-line string
 
 // ---------------------------------------------------------------------------
 //   withExt - change file extention in a file name

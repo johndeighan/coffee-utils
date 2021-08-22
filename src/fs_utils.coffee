@@ -4,21 +4,12 @@ import {strict as assert} from 'assert'
 import {dirname, resolve, parse as parse_fname} from 'path';
 import {fileURLToPath} from 'url';
 import {
-	existsSync,
-	copyFileSync,
-	readFileSync,
-	writeFileSync,
-	readdirSync,
+	existsSync, copyFileSync, readFileSync, writeFileSync, readdirSync,
 	} from 'fs'
 
 import {
-	say,
-	taml,
-	undef,
-	pass,
-	rtrim,
-	error,
-	unitTesting,
+	say, taml, undef, pass,
+	rtrim, error, unitTesting,
 	} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
 
@@ -60,7 +51,10 @@ export backup = (file, from, to, report=false) ->
 #   slurp - read an entire file into a string
 
 export slurp = (filepath) ->
-	return readFileSync(filepath, 'utf8').toString()
+	debug "enter slurp '#{filepath}'"
+	contents = readFileSync(filepath, 'utf8').toString()
+	debug "return from slurp()"
+	return contents
 
 # ---------------------------------------------------------------------------
 #   slurpTAML - read TAML from a file
@@ -76,10 +70,6 @@ export barf = (filepath, contents) ->
 
 	contents = rtrim(contents) + '\n'
 	writeFileSync(filepath, contents, {encoding: 'utf8'})
-
-# --- Capable of removing leading whitespace which is found on
-#     the first line from all lines,
-#     Can handle an array of strings or a multi-line string
 
 # ---------------------------------------------------------------------------
 #   withExt - change file extention in a file name
