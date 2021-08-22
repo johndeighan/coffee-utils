@@ -51,7 +51,9 @@ export backup = (file, from, to, report=false) ->
 #   slurp - read an entire file into a string
 
 export slurp = (filepath) ->
+
 	debug "enter slurp '#{filepath}'"
+	filepath = filepath.replace(/\//g, "\\")
 	contents = readFileSync(filepath, 'utf8').toString()
 	debug "return from slurp()"
 	return contents
@@ -69,6 +71,7 @@ export slurpTAML = (filepath) ->
 export barf = (filepath, contents) ->
 
 	contents = rtrim(contents) + '\n'
+	filepath = filepath.replace(/\//g, "\\")
 	writeFileSync(filepath, contents, {encoding: 'utf8'})
 
 # ---------------------------------------------------------------------------

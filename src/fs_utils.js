@@ -77,6 +77,7 @@ export var backup = function(file, from, to, report = false) {
 export var slurp = function(filepath) {
   var contents;
   debug(`enter slurp '${filepath}'`);
+  filepath = filepath.replace(/\//g, "\\");
   contents = readFileSync(filepath, 'utf8').toString();
   debug("return from slurp()");
   return contents;
@@ -94,6 +95,7 @@ export var slurpTAML = function(filepath) {
 //   barf - write a string to a file
 export var barf = function(filepath, contents) {
   contents = rtrim(contents) + '\n';
+  filepath = filepath.replace(/\//g, "\\");
   return writeFileSync(filepath, contents, {
     encoding: 'utf8'
   });
