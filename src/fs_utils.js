@@ -179,9 +179,9 @@ export var pathTo = function(fname, dir, direction = "down") {
 
 // ---------------------------------------------------------------------------
 hExtToEnvVar = {
-  '.md': 'DIR_MARKDOWN',
-  '.taml': 'DIR_DATA',
-  '.txt': 'DIR_DATA'
+  '.md': 'dir_markdown',
+  '.taml': 'dir_data',
+  '.txt': 'dir_data'
 };
 
 // ---------------------------------------------------------------------------
