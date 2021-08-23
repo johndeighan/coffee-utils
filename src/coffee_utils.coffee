@@ -277,12 +277,27 @@ export titleLine = (title, char='=', padding=2, linelen=42) ->
 #   rtrim - strip trailing whitespace
 
 export rtrim = (line) ->
+
 	lMatches = line.match(/\s+$/)
 	if lMatches?
 		n = lMatches[0].length   # num chars to remove
 		return line.substring(0, line.length - n)
 	else
 		return line
+
+# ---------------------------------------------------------------------------
+#   rtrunc - strip nChars chars from right of a string
+
+export rtrunc = (str, nChars) ->
+
+	return str.substring(0, str.length - nChars)
+
+# ---------------------------------------------------------------------------
+#   ltrunc - strip nChars chars from left of a string
+
+export ltrunc = (str, nChars) ->
+
+	return str.substring(nChars)
 
 # ---------------------------------------------------------------------------
 #   deepCopy - deep copy an array or object

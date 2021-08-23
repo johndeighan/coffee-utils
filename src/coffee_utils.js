@@ -314,6 +314,18 @@ export var rtrim = function(line) {
 };
 
 // ---------------------------------------------------------------------------
+//   rtrunc - strip nChars chars from right of a string
+export var rtrunc = function(str, nChars) {
+  return str.substring(0, str.length - nChars);
+};
+
+// ---------------------------------------------------------------------------
+//   ltrunc - strip nChars chars from left of a string
+export var ltrunc = function(str, nChars) {
+  return str.substring(nChars);
+};
+
+// ---------------------------------------------------------------------------
 //   deepCopy - deep copy an array or object
 export var deepCopy = function(obj) {
   return JSON.parse(JSON.stringify(obj));
