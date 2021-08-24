@@ -40,6 +40,6 @@
 	},
 	"dependencies": {
 		"cross-env": "^7.0.3",
-		"js-yaml": "^3.14.1"
+		"js-yaml": "^4.1.0"
 	}
 }
