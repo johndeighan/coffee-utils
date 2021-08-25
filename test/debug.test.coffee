@@ -12,7 +12,10 @@ simple = new AvaTester()
 lLines = undef
 myLogger = (str) -> lLines.push(str)
 myDumper = (x) -> lLines.push(JSON.stringify(x))
-setDebugging(true, myLogger, myDumper)
+setDebugging(true, {
+	loggerFunc: myLogger
+	dumperFunc: myDumper
+	})
 
 # ---------------------------------------------------------------------------
 
@@ -78,6 +81,33 @@ setDebugging(true, myLogger, myDumper)
 		"│      first: 1"
 		"│      second: 2"
 		"└─> return 42"
+		]
+	)()
+
+# ---------------------------------------------------------------------------
+# test option ifMatches
+
+(() ->
+	lLines = []
+
+	setDebugging(true, {
+		loggerFunc: myLogger
+		dumperFunc: myDumper
+		ifMatches: /something/
+		})
+
+	obj = {
+		first: 1
+		second: 2
+		}
+
+	debug 'enter myfunc'
+	debug 'something'
+	debug obj, 'obj:'
+	debug 'return 42'
+
+	simple.equal 109, lLines, [
+		"something"
 		]
 	)()
 

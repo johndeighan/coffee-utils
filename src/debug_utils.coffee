@@ -1,14 +1,8 @@
 # debug_utils.coffee
 
 import {
-	undef,
-	say,
-	error,
-	isString,
-	stringToArray,
-	tamlStringify,
-	setLogger,
-	escapeStr,
+	undef, say, pass, error, isString, stringToArray,
+	tamlStringify, setLogger, escapeStr,
 	} from '@jdeighan/coffee-utils'
 import {
 	indentedStr,
@@ -27,6 +21,8 @@ debugLevel = 0           # controls amount of indentation
 export debugging = false
 stringifier = tamlStringify
 
+ifMatches = undef
+
 # ---------------------------------------------------------------------------
 
 export setStringifier = (func) ->
@@ -36,12 +32,18 @@ export setStringifier = (func) ->
 
 # ---------------------------------------------------------------------------
 
-export setDebugging = (flag, loggerFunc=undef, dumperFunc=undef) ->
+export setDebugging = (flag, hOptions={}) ->
 
 	debugging = flag
 	debugLevel = 0
-	if flag && loggerFunc && dumperFunc
-		setLogger loggerFunc, dumperFunc
+	if flag
+		{loggerFunc, dumperFunc, ifMatches: regexp} = hOptions
+		if loggerFunc && dumperFunc
+			setLogger loggerFunc, dumperFunc
+		if regexp
+			ifMatches = regexp
+	else
+		ifMatches = undef
 	return
 
 # ---------------------------------------------------------------------------
@@ -49,6 +51,10 @@ export setDebugging = (flag, loggerFunc=undef, dumperFunc=undef) ->
 export debug = (item, label=undef) ->
 
 	if not debugging
+		return
+
+	toTest = label || item
+	if isString(toTest) && ifMatches? && not toTest.match(ifMatches)
 		return
 
 	# --- determine if we're entering or returning from a function

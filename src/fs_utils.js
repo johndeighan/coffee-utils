@@ -47,7 +47,7 @@ export var mydir = function(url) {
 
 // ---------------------------------------------------------------------------
 export var mkpath = function(...lParts) {
-  return lParts.join('/');
+  return lParts.join('/').replace(/\\/g, '/');
 };
 
 // ---------------------------------------------------------------------------

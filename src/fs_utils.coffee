@@ -25,7 +25,7 @@ export mydir = (url) ->
 
 export mkpath = (lParts...) ->
 
-	return lParts.join('/')
+	return lParts.join('/').replace(/\\/g, '/')
 
 # ---------------------------------------------------------------------------
 #   backup - back up a file
