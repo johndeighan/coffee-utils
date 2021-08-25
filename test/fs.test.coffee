@@ -44,3 +44,7 @@ simple.equal 39, pathTo('test.txt', dir), \
 simple.equal 44, mkpath('/usr/lib', 'johnd'), '/usr/lib/johnd'
 simple.equal 45, mkpath("c:", 'local/user'), 'c:/local/user'
 simple.equal 46, mkpath('/usr', 'lib', 'local', 'johnd'), '/usr/lib/local/johnd'
+
+simple.equal 48, mkpath('\\usr\\lib', 'johnd'), '/usr/lib/johnd'
+simple.equal 49, mkpath("c:", 'local\\user'), 'c:/local/user'
+simple.equal 50, mkpath('\\usr', 'lib', 'local', 'johnd'), '/usr/lib/local/johnd'
