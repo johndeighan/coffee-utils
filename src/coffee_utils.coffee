@@ -103,7 +103,7 @@ export nonEmpty = (x) ->
 
 export isComment = (str) ->
 
-	return if str.match(/^\s*\#\s/) then true else false
+	return if str.match(/^\s*\#(?:\s|$)/) then true else false
 
 # ---------------------------------------------------------------------------
 

@@ -25,14 +25,19 @@ simple.truthy 24, isComment("#\ta comment")
 simple.truthy 25, isComment("   # a comment")
 simple.falsy  26, isComment("not much")
 simple.falsy  27, isComment("#foreach x in lItems")
+simple.truthy 28, isComment('#')
+simple.truthy 29, isComment('   #')
+simple.falsy  30, isComment('#for')
+simple.falsy  31, isComment('   #for')
+simple.falsy  32, isComment('#for line in lLines')
 
-simple.truthy 29, isTAML("---\n- first\n- second")
-simple.falsy  30, isTAML("x---\n")
-simple.equal  31, taml("---\n- a\n- b"), ['a','b']
+simple.truthy 34, isTAML("---\n- first\n- second")
+simple.falsy  35, isTAML("x---\n")
+simple.equal  36, taml("---\n- a\n- b"), ['a','b']
 
 # ---------------------------------------------------------------------------
 
-simple.equal 35, normalize("""
+simple.equal 40, normalize("""
 			line 1
 			line 2
 			"""), """
@@ -40,7 +45,7 @@ simple.equal 35, normalize("""
 			line 2
 			""" + '\n'
 
-simple.equal 43, normalize("""
+simple.equal 48, normalize("""
 			line 1
 
 			line 2
@@ -49,7 +54,7 @@ simple.equal 43, normalize("""
 			line 2
 			""" + '\n'
 
-simple.equal 52, normalize("""
+simple.equal 57, normalize("""
 
 			line 1
 
@@ -63,16 +68,16 @@ simple.equal 52, normalize("""
 
 # ---------------------------------------------------------------------------
 
-simple.equal 66, words('a b c'), ['a', 'b', 'c']
-simple.equal 67, words('  a   b   c  '), ['a', 'b', 'c']
+simple.equal 71, words('a b c'), ['a', 'b', 'c']
+simple.equal 72, words('  a   b   c  '), ['a', 'b', 'c']
 
 # ---------------------------------------------------------------------------
 
-simple.equal 71, escapeStr("\t\tXXX\n"), "\\t\\tXXX\\n"
+simple.equal 76, escapeStr("\t\tXXX\n"), "\\t\\tXXX\\n"
 
 # ---------------------------------------------------------------------------
 
-simple.equal 75, truncateBlock("""
+simple.equal 80, truncateBlock("""
 			line 1
 			line 2
 			line 3
@@ -84,19 +89,19 @@ simple.equal 75, truncateBlock("""
 
 # ---------------------------------------------------------------------------
 
-simple.equal 87, stringToArray("abc\nxyz\n"), [
+simple.equal 92, stringToArray("abc\nxyz\n"), [
 	'abc'
 	'xyz'
 	]
 
 # ---------------------------------------------------------------------------
 
-simple.equal 94, stringToArray("abc\nxyz\n\n\n\n"), [
+simple.equal 99, stringToArray("abc\nxyz\n\n\n\n"), [
 	'abc'
 	'xyz'
 	]
 
 # ---------------------------------------------------------------------------
 
-simple.equal 101, rtrunc('/user/lib/.env', 5), '/user/lib'
-simple.equal 102, ltrunc('abcdefg', 3), 'defg'
+simple.equal 106, rtrunc('/user/lib/.env', 5), '/user/lib'
+simple.equal 107, ltrunc('abcdefg', 3), 'defg'

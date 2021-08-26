@@ -115,7 +115,7 @@ export var nonEmpty = function(x) {
 
 // ---------------------------------------------------------------------------
 export var isComment = function(str) {
-  if (str.match(/^\s*\#\s/)) {
+  if (str.match(/^\s*\#(?:\s|$)/)) {
     return true;
   } else {
     return false;
