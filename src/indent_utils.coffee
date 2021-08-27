@@ -1,7 +1,7 @@
 # indent_utils.coffee
 
 import {
-	undef, error, arrayToString, stringToArray,
+	undef, error, arrayToString, stringToArray, escapeStr,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------

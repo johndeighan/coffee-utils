@@ -4,7 +4,8 @@ import {
   undef,
   error,
   arrayToString,
-  stringToArray
+  stringToArray,
+  escapeStr
 } from '@jdeighan/coffee-utils';
 
 // ---------------------------------------------------------------------------
