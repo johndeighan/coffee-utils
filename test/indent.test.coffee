@@ -3,7 +3,7 @@
 import {AvaTester} from '@jdeighan/ava-tester'
 import {
 	indentLevel, indentation, undentedStr, undentedBlock, splitLine,
-	indentedStr, indentedBlock, tabify, untabify,
+	indented, indentedStr, indentedBlock, tabify, untabify,
 	} from '@jdeighan/coffee-utils/indent'
 
 simple = new AvaTester()
@@ -111,3 +111,5 @@ simple.equal 66, indentedStr("abc", 0), "abc"
 
 simple.equal 112, indentedStr("export name = undef", 1), "\texport name = undef"
 simple.equal 113, indentedBlock("export name = undef", 1), "\texport name = undef"
+simple.equal 114, indented("export name = undef", 1), "\texport name = undef"
+simple.equal 115, indented("export name = undef", 2), "\t\texport name = undef"

@@ -134,6 +134,12 @@ export var indentedBlock = function(content, level = 0) {
 };
 
 // ---------------------------------------------------------------------------
+//   indented - should replace both indentedStr() and indentedBlock()
+export var indented = function(content, level = 0) {
+  return indentedBlock(content, level);
+};
+
+// ---------------------------------------------------------------------------
 //    tabify - convert leading spaces to TAB characters
 //             if numSpaces is not defined, then the first line
 //             that contains at least one space sets it

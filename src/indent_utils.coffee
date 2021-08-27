@@ -1,10 +1,7 @@
 # indent_utils.coffee
 
 import {
-	undef,
-	error,
-	arrayToString,
-	stringToArray,
+	undef, error, arrayToString, stringToArray,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
@@ -107,6 +104,13 @@ export indentedBlock = (content, level=0) ->
 		if line then "#{indent}#{line}" else ""
 	result = lLines.join('\n')
 	return result
+
+# ---------------------------------------------------------------------------
+#   indented - should replace both indentedStr() and indentedBlock()
+
+export indented = (content, level=0) ->
+
+	return indentedBlock(content, level)
 
 # ---------------------------------------------------------------------------
 #    tabify - convert leading spaces to TAB characters
