@@ -150,7 +150,6 @@ export untabify = (str, numSpaces=3) ->
 		else
 			n = prefix.length
 			if (prefix != '\t'.repeat(n))
-				error "tabify(): leading ws not all TAB characters"
+				error "untabify(): not all TABs: '#{escapeStr(prefix)}'"
 			lLines.push ' '.repeat(n * numSpaces) + theRest
 	return arrayToString(lLines)
-
