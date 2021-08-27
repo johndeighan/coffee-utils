@@ -5,7 +5,6 @@ import {
 	isTAML, taml, normalize, stringToArray, isEmpty, ltrunc, rtrunc,
 	nonEmpty, isComment, words, escapeStr, truncateBlock,
 	} from '@jdeighan/coffee-utils'
-
 simple = new AvaTester()
 
 # ---------------------------------------------------------------------------
