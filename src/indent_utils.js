@@ -185,7 +185,7 @@ export var untabify = function(str, numSpaces = 3) {
     } else {
       n = prefix.length;
       if (prefix !== '\t'.repeat(n)) {
-        error(`untabify(): not all TABs: '${escapeStr(prefix)}'`);
+        error(`untabify(): not all TABs: prefix='${escapeStr(prefix)}'`);
       }
       lLines.push(' '.repeat(n * numSpaces) + theRest);
     }
