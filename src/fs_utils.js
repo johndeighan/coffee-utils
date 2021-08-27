@@ -42,12 +42,17 @@ import {
 //    mydir() - pass argument `import.meta.url` and it will return
 //              the directory your file is in
 export var mydir = function(url) {
-  return dirname(fileURLToPath(url));
+  return mkpath(dirname(fileURLToPath(url)));
 };
 
 // ---------------------------------------------------------------------------
 export var mkpath = function(...lParts) {
   return lParts.join('/').replace(/\\/g, '/');
+};
+
+// ---------------------------------------------------------------------------
+export var getFullPath = function(filepath) {
+  return mkpath(resolve(filepath));
 };
 
 // ---------------------------------------------------------------------------

@@ -1,7 +1,9 @@
 # fs_utils.coffee
 
 import {strict as assert} from 'assert'
-import {dirname, resolve, parse as parse_fname} from 'path';
+import {
+	dirname, resolve, parse as parse_fname,
+	} from 'path';
 import {fileURLToPath} from 'url';
 import {
 	existsSync, copyFileSync, readFileSync, writeFileSync, readdirSync,
@@ -19,13 +21,19 @@ import {debug} from '@jdeighan/coffee-utils/debug'
 
 export mydir = (url) ->
 
-	return dirname(fileURLToPath(url));
+	return mkpath(dirname(fileURLToPath(url)));
 
 # ---------------------------------------------------------------------------
 
 export mkpath = (lParts...) ->
 
 	return lParts.join('/').replace(/\\/g, '/')
+
+# ---------------------------------------------------------------------------
+
+export getFullPath = (filepath) ->
+
+	return mkpath(resolve(filepath))
 
 # ---------------------------------------------------------------------------
 #   backup - back up a file

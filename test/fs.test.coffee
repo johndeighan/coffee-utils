@@ -1,20 +1,24 @@
 # fs.test.coffee
 
 import {strict as assert} from 'assert'
-import {dirname} from 'path';
+import {dirname, resolve} from 'path';
 import {fileURLToPath} from 'url';
-import {existsSync, copyFileSync, readFileSync, writeFileSync} from 'fs'
+import {
+	existsSync, copyFileSync, readFileSync, writeFileSync,
+	} from 'fs'
 
 import {AvaTester} from '@jdeighan/ava-tester'
 import {say, undef} from '@jdeighan/coffee-utils'
+import {debug} from '@jdeighan/coffee-utils/debug'
 import {
 	mydir, mkpath, withExt,
-	getSubDirs, pathTo,
+	getSubDirs, pathTo, getFullPath,
 	} from '@jdeighan/coffee-utils/fs'
 
 simple = new AvaTester()
 
 dir = mydir(`import.meta.url`)
+assert existsSync(dir)
 
 # ---------------------------------------------------------------------------
 
@@ -24,7 +28,6 @@ simple.equal 21, withExt('file.starbucks', 'svelte'), 'file.svelte'
 
 (() ->
 	fname = 'debug.test.coffee'
-
 
 	simple.truthy 29, existsSync("#{dir}/#{fname}")
 	simple.falsy 30, existsSync("#{dir}/nosuchfile.test.coffee")
@@ -48,3 +51,33 @@ simple.equal 46, mkpath('/usr', 'lib', 'local', 'johnd'), '/usr/lib/local/johnd'
 simple.equal 48, mkpath('\\usr\\lib', 'johnd'), '/usr/lib/johnd'
 simple.equal 49, mkpath("c:", 'local\\user'), 'c:/local/user'
 simple.equal 50, mkpath('\\usr', 'lib', 'local', 'johnd'), '/usr/lib/local/johnd'
+
+# ---------------------------------------------------------------------------
+# test getFullPath()
+
+# --- current working directory is the root dir, i.e. parent of this directory
+wd = mkpath(process.cwd())
+
+myfname = 'fs.test.coffee'
+mypath = mkpath(dir, myfname)
+rootdir = mkpath(resolve(dir, '..'))
+assert rootdir == wd, "#{rootdir} should equal #{wd}"
+
+debug "Current Working Directory = '#{wd}'"
+debug "dir = '#{dir}'"
+debug "myfname = '#{myfname}'"
+debug "mypath = '#{mypath}'"
+debug "rootdir = '#{rootdir}'"
+
+# --- given a full path, only change \ to /
+simple.equal 72, getFullPath(mypath), mypath
+
+# --- given a simple file name, prepend the current working directory
+simple.equal 75, getFullPath(myfname), mkpath(rootdir, myfname)
+
+# --- leading . should be resolved
+simple.equal 78, getFullPath("./#{myfname}"), mkpath(rootdir, myfname)
+
+# --- leading .. should be resolved
+simple.equal 81, getFullPath("./test/../#{myfname}"), mkpath(rootdir, myfname)
+
