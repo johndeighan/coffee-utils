@@ -2,7 +2,8 @@
 
 import {strict as assert} from 'assert'
 import {
-	undef, error, arrayToString, stringToArray, escapeStr, isInteger,
+	undef, error, arrayToString, stringToArray, escapeStr,
+	oneline, isInteger, isString, isArray,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
@@ -21,6 +22,7 @@ export splitLine = (line) ->
 
 # ---------------------------------------------------------------------------
 #   indentation - return appropriate indentation string for given level
+#   export only to allow unit testing
 
 export indentation = (level) ->
 
@@ -37,32 +39,41 @@ export indentLevel = (str) ->
 # ---------------------------------------------------------------------------
 #   indented - add indentation to each string in a block
 
-export indented = (str, level=0) ->
+export indented = (input, level=0) ->
 
-	assert (typeof str == 'string'), "indented(): not a string"
 	if level == 0
-		return str
+		return input
 
 	toAdd = indentation(level)
-	lLines = for line in stringToArray(str)
-		"#{toAdd}#{line}"
-	return arrayToString(lLines)
+	if isArray(input)
+		lLines = for line in input
+			"#{toAdd}#{line}"
+		return lLines
+	else
+		lLines = for line in stringToArray(input)
+			"#{toAdd}#{line}"
+		return arrayToString(lLines)
 
 # ---------------------------------------------------------------------------
 #   undented - string with 1st line indentation removed for each line
 #            - unless level is set, in which case exactly that
 #              indentation is removed
 
-export undented = (str, level=undef) ->
+export undented = (input, level=undef) ->
 
-	assert (typeof str == 'string'), "undented(): not a string"
-	if not str? || (str == '')
-		return ''
+	if level? && (level==0)
+		return input
 
-	# --- split, undent, then reassemble
-	lLines = stringToArray(str)
-	if lLines.length == 0
-		return ''
+	if isString(input)
+		lLines = stringToArray(input)
+		if (lLines.length == 0)
+			return ''
+	else if isArray(input)
+		lLines = input
+		if (lLines.length == 0)
+			return []
+	else
+		error "undented(): Not an array or string: #{oneline(input)}"
 
 	# --- determine what to remove from beginning of each line
 	if level?
@@ -78,7 +89,10 @@ export undented = (str, level=undef) ->
 			"undented(): '#{escapeStr(line)}' does not start with '#{escapeStr(toRemove)}'"
 		line.substr(nToRemove)
 
-	return arrayToString(lNewLines)
+	if isString(input)
+		return arrayToString(lNewLines)
+	else
+		return lNewLines
 
 # ---------------------------------------------------------------------------
 #    tabify - convert leading spaces to TAB characters

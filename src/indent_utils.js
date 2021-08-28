@@ -10,7 +10,10 @@ import {
   arrayToString,
   stringToArray,
   escapeStr,
-  isInteger
+  oneline,
+  isInteger,
+  isString,
+  isArray
 } from '@jdeighan/coffee-utils';
 
 // ---------------------------------------------------------------------------
@@ -31,6 +34,7 @@ export var splitLine = function(line) {
 
 // ---------------------------------------------------------------------------
 //   indentation - return appropriate indentation string for given level
+//   export only to allow unit testing
 export var indentation = function(level) {
   return '\t'.repeat(level);
 };
@@ -45,40 +49,59 @@ export var indentLevel = function(str) {
 
 // ---------------------------------------------------------------------------
 //   indented - add indentation to each string in a block
-export var indented = function(str, level = 0) {
+export var indented = function(input, level = 0) {
   var lLines, line, toAdd;
-  assert(typeof str === 'string', "indented(): not a string");
   if (level === 0) {
-    return str;
+    return input;
   }
   toAdd = indentation(level);
-  lLines = (function() {
-    var i, len, ref, results;
-    ref = stringToArray(str);
-    results = [];
-    for (i = 0, len = ref.length; i < len; i++) {
-      line = ref[i];
-      results.push(`${toAdd}${line}`);
-    }
-    return results;
-  })();
-  return arrayToString(lLines);
+  if (isArray(input)) {
+    lLines = (function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = input.length; i < len; i++) {
+        line = input[i];
+        results.push(`${toAdd}${line}`);
+      }
+      return results;
+    })();
+    return lLines;
+  } else {
+    lLines = (function() {
+      var i, len, ref, results;
+      ref = stringToArray(input);
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        line = ref[i];
+        results.push(`${toAdd}${line}`);
+      }
+      return results;
+    })();
+    return arrayToString(lLines);
+  }
 };
 
 // ---------------------------------------------------------------------------
 //   undented - string with 1st line indentation removed for each line
 //            - unless level is set, in which case exactly that
 //              indentation is removed
-export var undented = function(str, level = undef) {
+export var undented = function(input, level = undef) {
   var lLines, lMatches, lNewLines, line, nToRemove, toRemove;
-  assert(typeof str === 'string', "undented(): not a string");
-  if ((str == null) || (str === '')) {
-    return '';
+  if ((level != null) && (level === 0)) {
+    return input;
   }
-  // --- split, undent, then reassemble
-  lLines = stringToArray(str);
-  if (lLines.length === 0) {
-    return '';
+  if (isString(input)) {
+    lLines = stringToArray(input);
+    if (lLines.length === 0) {
+      return '';
+    }
+  } else if (isArray(input)) {
+    lLines = input;
+    if (lLines.length === 0) {
+      return [];
+    }
+  } else {
+    error(`undented(): Not an array or string: ${oneline(input)}`);
   }
   // --- determine what to remove from beginning of each line
   if (level != null) {
@@ -99,7 +122,11 @@ export var undented = function(str, level = undef) {
     }
     return results;
   })();
-  return arrayToString(lNewLines);
+  if (isString(input)) {
+    return arrayToString(lNewLines);
+  } else {
+    return lNewLines;
+  }
 };
 
 // ---------------------------------------------------------------------------
