@@ -3,7 +3,7 @@
 import {strict as assert} from 'assert'
 import {
 	undef, error, arrayToString, stringToArray, escapeStr,
-	oneline, isInteger, isString, isArray,
+	oneline, isInteger, isString, isArray, isEmpty,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
@@ -84,10 +84,15 @@ export undented = (input, level=undef) ->
 		toRemove = lMatches[0]
 	nToRemove = toRemove.length
 
-	lNewLines = for line in lLines
-		assert (line.indexOf(toRemove)==0),
-			"undented(): '#{escapeStr(line)}' does not start with '#{escapeStr(toRemove)}'"
-		line.substr(nToRemove)
+	lNewLines = []
+	for line in lLines
+		if isEmpty(line)
+			lNewLines.push('')
+		else
+			assert (line.indexOf(toRemove)==0),
+				"undented(): '#{escapeStr(line)}' does not start with \
+					'#{escapeStr(toRemove)}'"
+			lNewLines.push(line.substr(nToRemove))
 
 	if isString(input)
 		return arrayToString(lNewLines)

@@ -13,7 +13,8 @@ import {
   oneline,
   isInteger,
   isString,
-  isArray
+  isArray,
+  isEmpty
 } from '@jdeighan/coffee-utils';
 
 // ---------------------------------------------------------------------------
@@ -86,7 +87,7 @@ export var indented = function(input, level = 0) {
 //            - unless level is set, in which case exactly that
 //              indentation is removed
 export var undented = function(input, level = undef) {
-  var lLines, lMatches, lNewLines, line, nToRemove, toRemove;
+  var i, lLines, lMatches, lNewLines, len, line, nToRemove, toRemove;
   if ((level != null) && (level === 0)) {
     return input;
   }
@@ -112,16 +113,16 @@ export var undented = function(input, level = undef) {
     toRemove = lMatches[0];
   }
   nToRemove = toRemove.length;
-  lNewLines = (function() {
-    var i, len, results;
-    results = [];
-    for (i = 0, len = lLines.length; i < len; i++) {
-      line = lLines[i];
+  lNewLines = [];
+  for (i = 0, len = lLines.length; i < len; i++) {
+    line = lLines[i];
+    if (isEmpty(line)) {
+      lNewLines.push('');
+    } else {
       assert(line.indexOf(toRemove) === 0, `undented(): '${escapeStr(line)}' does not start with '${escapeStr(toRemove)}'`);
-      results.push(line.substr(nToRemove));
+      lNewLines.push(line.substr(nToRemove));
     }
-    return results;
-  })();
+  }
   if (isString(input)) {
     return arrayToString(lNewLines);
   } else {
