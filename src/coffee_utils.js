@@ -5,7 +5,6 @@ var dumper, logger;
 import yaml from 'js-yaml';
 
 import {
-  indentedStr,
   tabify,
   untabify
 } from '@jdeighan/coffee-utils/indent';

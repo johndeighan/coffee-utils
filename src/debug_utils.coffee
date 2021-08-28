@@ -4,10 +4,6 @@ import {
 	undef, say, pass, error, isString, stringToArray,
 	tamlStringify, setLogger, escapeStr,
 	} from '@jdeighan/coffee-utils'
-import {
-	indentedStr,
-	indentedBlock,
-	} from '@jdeighan/coffee-utils/indent'
 
 vbar = '│'       # unicode 2502
 hbar = '─'       # unicode 2500

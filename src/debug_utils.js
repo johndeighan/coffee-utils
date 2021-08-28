@@ -14,11 +14,6 @@ import {
   escapeStr
 } from '@jdeighan/coffee-utils';
 
-import {
-  indentedStr,
-  indentedBlock
-} from '@jdeighan/coffee-utils/indent';
-
 vbar = '│'; // unicode 2502
 
 hbar = '─'; // unicode 2500

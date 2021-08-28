@@ -1,7 +1,8 @@
 # indent_utils.coffee
 
+import {strict as assert} from 'assert'
 import {
-	undef, error, arrayToString, stringToArray, escapeStr,
+	undef, error, arrayToString, stringToArray, escapeStr, isInteger,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
@@ -19,15 +20,6 @@ export splitLine = (line) ->
 	return [lMatches[1].length, lMatches[2].trim()]
 
 # ---------------------------------------------------------------------------
-#   indentedStr - add indentation to a string
-
-export indentedStr = (str, level=0) ->
-
-	if typeof str != 'string'
-		throw new Error("indentedStr(): not a string")
-	return indentation(level) + str
-
-# ---------------------------------------------------------------------------
 #   indentation - return appropriate indentation string for given level
 
 export indentation = (level) ->
@@ -43,74 +35,50 @@ export indentLevel = (str) ->
 	return lMatches[0].length
 
 # ---------------------------------------------------------------------------
-#   undentedStr - remove indentation from a simple string
-#                 i.e. it should NOT include any newline chars
-#      if level is provided, only that level of indentation is removed
+#   indented - add indentation to each string in a block
 
-export undentedStr = (str, level=undef) ->
+export indented = (str, level=0) ->
 
-	if level?
-		return str.substring(level)
-	else
-		# --- this will always match
-		lMatches = str.match(/^\s*(.*)$/)
-		return lMatches[1]
-
-# ---------------------------------------------------------------------------
-#   undentedBlock - string with 1st line indentation removed for each line
-#            - you can pass in an array, but result is always a string
-
-export undentedBlock = (strOrArray) ->
-
-	if not strOrArray?
-		return ''
-	isType = typeof strOrArray
-	if isType == 'object'
-		lLines = strOrArray      # it's really an array
-		if lLines.length == 0
-			return ''
-
-		# --- Check for a prefix on the 1st line
-		lMatches = lLines[0].match(/^(\s+)/)
-		if not lMatches?
-			return arrayToString(lLines)
-
-		prefix = lMatches[1]
-		prefixLen = prefix.length
-		lStripped = for str in lLines
-			if str.indexOf(prefix) == 0
-				str.substring(prefixLen)
-			else
-				str
-		return arrayToString(lStripped)
-	else if isType == 'string'
-		# --- It's a string - split, undent, then reassemble
-		return undentedBlock(strOrArray.split(/\r?\n/))
-	else
-		throw new Error("undentedBlock(): #{isType} is not an array or string")
-
-# ---------------------------------------------------------------------------
-#   indentedBlock - add indentation to each string in a block
-
-export indentedBlock = (content, level=0) ->
-
-	if typeof content != 'string'
-		error "indentedBlock(): not a string"
+	assert (typeof str == 'string'), "indented(): not a string"
 	if level == 0
-		return content
+		return str
 
-	indent = '\t'.repeat(level)
-	lLines = for line in content.split(/\r?\n/)
-		if line then "#{indent}#{line}" else ""
-	result = lLines.join('\n')
-	return result
+	toAdd = indentation(level)
+	lLines = for line in stringToArray(str)
+		"#{toAdd}#{line}"
+	return arrayToString(lLines)
 
 # ---------------------------------------------------------------------------
-#   indented - should replace both indentedStr() and indentedBlock()
+#   undented - string with 1st line indentation removed for each line
+#            - unless level is set, in which case exactly that
+#              indentation is removed
 
-export indented = (content, level=0) ->
+export undented = (str, level=undef) ->
 
-	return indentedBlock(content, level)
+	assert (typeof str == 'string'), "undented(): not a string"
+	if not str? || (str == '')
+		return ''
+
+	# --- split, undent, then reassemble
+	lLines = stringToArray(str)
+	if lLines.length == 0
+		return ''
+
+	# --- determine what to remove from beginning of each line
+	if level?
+		assert isInteger(level), "undented(): level must be an integer"
+		toRemove = indentation(level)
+	else
+		lMatches = lLines[0].match(/^\s*/)
+		toRemove = lMatches[0]
+	nToRemove = toRemove.length
+
+	lNewLines = for line in lLines
+		assert (line.indexOf(toRemove)==0),
+			"undented(): '#{escapeStr(line)}' does not start with '#{escapeStr(toRemove)}'"
+		line.substr(nToRemove)
+
+	return arrayToString(lNewLines)
 
 # ---------------------------------------------------------------------------
 #    tabify - convert leading spaces to TAB characters

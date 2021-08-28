@@ -1,9 +1,12 @@
 # indent.test.coffee
 
+import {strict as assert} from 'assert'
+
 import {AvaTester} from '@jdeighan/ava-tester'
+import {isInteger} from '@jdeighan/coffee-utils'
 import {
-	indentLevel, indentation, undentedStr, undentedBlock, splitLine,
-	indented, indentedStr, indentedBlock, tabify, untabify,
+	indentLevel, indentation, undented, splitLine,
+	indented, tabify, untabify,
 	} from '@jdeighan/coffee-utils/indent'
 
 simple = new AvaTester()
@@ -22,28 +25,16 @@ simple.equal 28, indentation(2), "\t\t"
 
 # ---------------------------------------------------------------------------
 
-simple.equal 32, undentedStr("abc"), "abc"
-simple.equal 33, undentedStr("\tabc"), "abc"
-simple.equal 34, undentedStr("\t\tabc"), "abc"
-simple.equal 35, undentedStr("\t\tabc", 0), "\t\tabc"
-simple.equal 36, undentedStr("\t\tabc", 1), "\tabc"
-simple.equal 37, undentedStr("\t\tabc", 2), "abc"
+simple.equal 32, undented("abc"), "abc"
+simple.equal 33, undented("\tabc"), "abc"
+simple.equal 34, undented("\t\tabc"), "abc"
+simple.equal 35, undented("\t\tabc", 0), "\t\tabc"
+simple.equal 36, undented("\t\tabc", 1), "\tabc"
+simple.equal 37, undented("\t\tabc", 2), "abc"
 
 # ---------------------------------------------------------------------------
 
-simple.equal 41, undentedBlock([
-		"\t\tfirst",
-		"\t\tsecond",
-		"\t\t\tthird",
-		]), """
-		first
-		second
-			third
-		""" + '\n'
-
-# ---------------------------------------------------------------------------
-
-simple.equal 53, undentedBlock("\t\tfirst\n\t\tsecond\n\t\t\tthird\n"),
+simple.equal 53, undented("\t\tfirst\n\t\tsecond\n\t\t\tthird\n"),
 		"first\nsecond\n\tthird\n",
 
 # ---------------------------------------------------------------------------
@@ -54,9 +45,9 @@ simple.equal 60, splitLine("\t\tabc"), [2, "abc"]
 
 # ---------------------------------------------------------------------------
 
-simple.equal 64, indentedStr("abc", 0), "abc"
-simple.equal 65, indentedStr("abc", 0), "abc"
-simple.equal 66, indentedStr("abc", 0), "abc"
+simple.equal 64, indented("abc", 0), "abc"
+simple.equal 65, indented("abc", 1), "\tabc"
+simple.equal 66, indented("abc", 2), "\t\tabc"
 
 # ---------------------------------------------------------------------------
 
@@ -109,7 +100,5 @@ simple.equal 66, indentedStr("abc", 0), "abc"
 
 # ---------------------------------------------------------------------------
 
-simple.equal 112, indentedStr("export name = undef", 1), "\texport name = undef"
-simple.equal 113, indentedBlock("export name = undef", 1), "\texport name = undef"
-simple.equal 114, indented("export name = undef", 1), "\texport name = undef"
-simple.equal 115, indented("export name = undef", 2), "\t\texport name = undef"
+simple.equal 112, indented("export name = undef", 1), "\texport name = undef"
+simple.equal 113, indented("export name = undef", 2), "\t\texport name = undef"
