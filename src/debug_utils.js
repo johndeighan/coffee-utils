@@ -63,7 +63,7 @@ export var setDebugging = function(flag, hOptions = {}) {
 
 // ---------------------------------------------------------------------------
 export var debug = function(item, label = undef) {
-  var entering, exiting, i, len, prefix, ref, str, toTest;
+  var entering, exiting, i, len, n, prefix, ref, str, toTest;
   if (!debugging) {
     return;
   }
@@ -87,7 +87,8 @@ export var debug = function(item, label = undef) {
     exiting = item.indexOf('return') === 0;
   }
   if (exiting) {
-    prefix = indent.repeat(debugLevel - 1) + arrow;
+    n = debugLevel === 0 ? 0 : debugLevel - 1;
+    prefix = indent.repeat(n) + arrow;
   } else {
     prefix = indent.repeat(debugLevel);
   }

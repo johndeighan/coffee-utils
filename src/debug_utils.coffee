@@ -67,7 +67,8 @@ export debug = (item, label=undef) ->
 		exiting =  (item.indexOf('return') == 0)
 
 	if exiting
-		prefix = indent.repeat(debugLevel-1) + arrow
+		n = if (debugLevel==0) then 0 else debugLevel-1
+		prefix = indent.repeat(n) + arrow
 	else
 		prefix = indent.repeat(debugLevel)
 
