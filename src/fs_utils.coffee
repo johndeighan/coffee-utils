@@ -10,7 +10,7 @@ import {
 	} from 'fs'
 
 import {
-	say, taml, undef, pass,
+	say, undef, pass,
 	rtrim, error, unitTesting,
 	} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
@@ -65,13 +65,6 @@ export slurp = (filepath) ->
 	contents = readFileSync(filepath, 'utf8').toString()
 	debug "return from slurp()"
 	return contents
-
-# ---------------------------------------------------------------------------
-#   slurpTAML - read TAML from a file
-
-export slurpTAML = (filepath) ->
-	contents = slurp(filepath)
-	return taml(contents)
 
 # ---------------------------------------------------------------------------
 #   barf - write a string to a file

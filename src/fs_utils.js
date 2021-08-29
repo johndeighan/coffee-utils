@@ -26,7 +26,6 @@ import {
 
 import {
   say,
-  taml,
   undef,
   pass,
   rtrim,
@@ -86,14 +85,6 @@ export var slurp = function(filepath) {
   contents = readFileSync(filepath, 'utf8').toString();
   debug("return from slurp()");
   return contents;
-};
-
-// ---------------------------------------------------------------------------
-//   slurpTAML - read TAML from a file
-export var slurpTAML = function(filepath) {
-  var contents;
-  contents = slurp(filepath);
-  return taml(contents);
 };
 
 // ---------------------------------------------------------------------------

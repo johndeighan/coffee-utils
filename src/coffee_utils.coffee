@@ -1,5 +1,6 @@
 # coffee_utils.coffee
 
+import {strict as assert} from 'assert'
 import yaml from 'js-yaml'
 import {
 	tabify, untabify,
@@ -12,27 +13,39 @@ export sep_eq = '='.repeat(42)
 export unitTesting = false
 export setUnitTesting = (flag) -> unitTesting = flag
 
-logger = console.log    # for strings
+export logger = console.log    # for strings
 
 # ---------------------------------------------------------------------------
+# the default stringifier
 
-export tamlDumper = (obj) ->
+export tamlStringifier = (obj) ->
 
-	str = tamlStringify(obj)
+	str = yaml.dump(obj, {
+			skipInvalid: true
+			indent: 1
+			sortKeys: false
+			lineWidth: -1
+			})
+	str = "---\n" + tabify(str)
 	str = str.replace(/\t/g, '   ')  # because fr***ing Windows Terminal
 	                                 # has no way of adjusting display
 	                                 # of TAB chars
-	console.log(str)
-	return
+	return str
 
-dumper = tamlDumper
+export stringifier = tamlStringifier
 
 # ---------------------------------------------------------------------------
 
-export setLogger = (loggerFunc, dumperFunc) ->
+export setLogger = (loggerFunc) ->
 
 	logger = loggerFunc
-	dumper = dumperFunc
+	return
+
+# ---------------------------------------------------------------------------
+
+export setStringifier = (stringifierFunc) ->
+
+	stringifier = stringifierFunc
 	return
 
 # ---------------------------------------------------------------------------
@@ -42,10 +55,10 @@ export say = (obj, label='') ->
 
 	if label
 		logger label
-	if typeof obj == 'string'
-		logger obj
-	else
-		dumper obj
+	if not isString(obj)
+		obj = stringifier(obj)
+	logger obj
+	return
 
 # ---------------------------------------------------------------------------
 
@@ -172,38 +185,19 @@ export ask = (prompt) ->
 	return 'yes'
 
 # ---------------------------------------------------------------------------
-#   isTAML - is the string valid TAML?
 
-export isTAML = (str) ->
-	if typeof str == 'object'
-		if not str || str.length == 0
-			return false
-		return str[0].indexOf('---') == 0
-	return str.indexOf('---') == 0
+export firstLine = (input) ->
 
-# ---------------------------------------------------------------------------
-#   taml - convert valid TAML string to a data structure
-
-export taml = (str) ->
-
-	if not str?
-		return 'undef'
-	return yaml.load(untabify(str, 1))
-
-# ---------------------------------------------------------------------------
-#   tamlStringify - convert a data structure into a valid TAML string
-
-export tamlStringify = (obj) ->
-
-	if not obj?
-		return 'undef'
-	str = yaml.dump(obj, {
-			skipInvalid: true
-			indent: 1
-			sortKeys: false
-			lineWidth: -1
-			})
-	return "---\n" + tabify(str)
+	if isArray(input)
+		if (input.length==0)
+			return undef
+		return input[0]
+	assert isString(input), "firstLine(): Not an array or string"
+	pos = input.indexOf('\n')
+	if (pos == -1)
+		return input
+	else
+		return input.substring(0, pos)
 
 # ---------------------------------------------------------------------------
 #   stringToArray - split a string into lines

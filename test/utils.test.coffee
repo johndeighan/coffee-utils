@@ -2,7 +2,7 @@
 
 import {AvaTester} from '@jdeighan/ava-tester'
 import {
-	isTAML, taml, normalize, stringToArray, isEmpty, ltrunc, rtrunc,
+	normalize, stringToArray, isEmpty, ltrunc, rtrunc,
 	nonEmpty, isComment, words, escapeStr, truncateBlock,
 	} from '@jdeighan/coffee-utils'
 simple = new AvaTester()
@@ -29,10 +29,6 @@ simple.truthy 29, isComment('   #')
 simple.falsy  30, isComment('#for')
 simple.falsy  31, isComment('   #for')
 simple.falsy  32, isComment('#for line in lLines')
-
-simple.truthy 34, isTAML("---\n- first\n- second")
-simple.falsy  35, isTAML("x---\n")
-simple.equal  36, taml("---\n- a\n- b"), ['a','b']
 
 # ---------------------------------------------------------------------------
 

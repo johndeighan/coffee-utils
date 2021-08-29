@@ -2,7 +2,7 @@
 
 import {
 	undef, say, pass, error, isString, stringToArray,
-	tamlStringify, setLogger, escapeStr,
+	setLogger, setStringifier, escapeStr, stringifier,
 	} from '@jdeighan/coffee-utils'
 
 vbar = '│'       # unicode 2502
@@ -15,16 +15,7 @@ arrow = corner + hbar + arrowhead + ' '
 
 debugLevel = 0           # controls amount of indentation
 export debugging = false
-stringifier = tamlStringify
-
 ifMatches = undef
-
-# ---------------------------------------------------------------------------
-
-export setStringifier = (func) ->
-
-	stringifier = func
-	return
 
 # ---------------------------------------------------------------------------
 
@@ -33,9 +24,11 @@ export setDebugging = (flag, hOptions={}) ->
 	debugging = flag
 	debugLevel = 0
 	if flag
-		{loggerFunc, dumperFunc, ifMatches: regexp} = hOptions
-		if loggerFunc && dumperFunc
-			setLogger loggerFunc, dumperFunc
+		{loggerFunc, stringifierFunc, ifMatches: regexp} = hOptions
+		if loggerFunc
+			setLogger loggerFunc
+		if stringifierFunc
+			setStringifier stringifierFunc
 		if regexp
 			ifMatches = regexp
 	else
