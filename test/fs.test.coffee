@@ -7,7 +7,7 @@ import {
 	existsSync, copyFileSync, readFileSync, writeFileSync,
 	} from 'fs'
 
-import {AvaTester} from '@jdeighan/ava-tester'
+import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {say, undef} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {
@@ -15,7 +15,7 @@ import {
 	getSubDirs, pathTo, getFullPath,
 	} from '@jdeighan/coffee-utils/fs'
 
-simple = new AvaTester()
+simple = new UnitTester()
 
 dir = mydir(`import.meta.url`)
 assert existsSync(dir)

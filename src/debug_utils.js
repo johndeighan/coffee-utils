@@ -12,7 +12,8 @@ import {
   setLogger,
   setStringifier,
   escapeStr,
-  stringifier
+  stringifier,
+  tamlStringifier
 } from '@jdeighan/coffee-utils';
 
 vbar = '│'; // unicode 2502
@@ -46,12 +47,18 @@ export var setDebugging = function(flag, hOptions = {}) {
     } = hOptions);
     if (loggerFunc) {
       setLogger(loggerFunc);
+    } else {
+      setLogger(console.log);
     }
     if (stringifierFunc) {
       setStringifier(stringifierFunc);
+    } else {
+      setStringifier(tamlStringifier);
     }
     if (regexp) {
       ifMatches = regexp;
+    } else {
+      ifMatches = undef;
     }
   } else {
     ifMatches = undef;

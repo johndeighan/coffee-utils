@@ -2,14 +2,14 @@
 
 import {strict as assert} from 'assert'
 
-import {AvaTester} from '@jdeighan/ava-tester'
+import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {isInteger} from '@jdeighan/coffee-utils'
 import {
 	indentLevel, indentation, undented, splitLine,
 	indented, tabify, untabify,
 	} from '@jdeighan/coffee-utils/indent'
 
-simple = new AvaTester()
+simple = new UnitTester()
 
 # ---------------------------------------------------------------------------
 

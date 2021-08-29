@@ -2,7 +2,7 @@
 
 import {
 	undef, say, pass, error, isString, stringToArray,
-	setLogger, setStringifier, escapeStr, stringifier,
+	setLogger, setStringifier, escapeStr, stringifier, tamlStringifier,
 	} from '@jdeighan/coffee-utils'
 
 vbar = '│'       # unicode 2502
@@ -27,10 +27,16 @@ export setDebugging = (flag, hOptions={}) ->
 		{loggerFunc, stringifierFunc, ifMatches: regexp} = hOptions
 		if loggerFunc
 			setLogger loggerFunc
+		else
+			setLogger console.log
 		if stringifierFunc
 			setStringifier stringifierFunc
+		else
+			setStringifier tamlStringifier
 		if regexp
 			ifMatches = regexp
+		else
+			ifMatches = undef
 	else
 		ifMatches = undef
 	return

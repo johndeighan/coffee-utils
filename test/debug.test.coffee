@@ -1,20 +1,18 @@
 # debug.test.coffee
 
-import {AvaTester} from '@jdeighan/ava-tester'
-
 import {undef, say} from '@jdeighan/coffee-utils'
 import {setDebugging, debug} from '@jdeighan/coffee-utils/debug'
+import {UnitTester} from '@jdeighan/coffee-utils/test'
 
-simple = new AvaTester()
+simple = new UnitTester()
 
 # ---------------------------------------------------------------------------
 
 lLines = undef
+
 myLogger = (str) -> lLines.push(str)
-myDumper = (x) -> lLines.push(JSON.stringify(x))
 setDebugging(true, {
 	loggerFunc: myLogger
-	dumperFunc: myDumper
 	})
 
 # ---------------------------------------------------------------------------
@@ -22,7 +20,7 @@ setDebugging(true, {
 (() ->
 	lLines = []
 	debug('abc')
-	simple.equal 22, lLines, ['abc']
+	simple.equal 24, lLines, ['abc']
 	)()
 
 # ---------------------------------------------------------------------------
@@ -33,7 +31,7 @@ setDebugging(true, {
 	debug 'something'
 	debug 'more'
 	debug 'return 42'
-	simple.equal 33, lLines, [
+	simple.equal 35, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   more"
@@ -51,7 +49,7 @@ setDebugging(true, {
 	debug 'something else'
 	debug 'return abc'
 	debug 'return 42'
-	simple.equal 51, lLines, [
+	simple.equal 53, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   enter newfunc"
@@ -73,7 +71,7 @@ setDebugging(true, {
 	debug 'something'
 	debug obj, 'obj:'
 	debug 'return 42'
-	simple.equal 32, lLines, [
+	simple.equal 75, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   obj:"
@@ -92,7 +90,6 @@ setDebugging(true, {
 
 	setDebugging(true, {
 		loggerFunc: myLogger
-		dumperFunc: myDumper
 		ifMatches: /something/
 		})
 
@@ -106,8 +103,35 @@ setDebugging(true, {
 	debug obj, 'obj:'
 	debug 'return 42'
 
-	simple.equal 109, lLines, [
+	simple.equal 108, lLines, [
 		"something"
+		]
+	)()
+
+# ---------------------------------------------------------------------------
+# test alternate stringifier
+
+(() ->
+	setDebugging(true, {
+		loggerFunc: myLogger
+		stringifierFunc: JSON.stringify
+		})
+
+	lLines = []
+	obj = {
+		first: 1
+		second: 2
+		}
+	debug 'enter myfunc'
+	debug 'something'
+	debug obj, 'obj:'
+	debug 'return 42'
+	simple.equal 75, lLines, [
+		"enter myfunc"
+		"│   something"
+		"│   obj:"
+		"│      {\"first\":1,\"second\":2}"
+		"└─> return 42"
 		]
 	)()
 
