@@ -137,27 +137,3 @@ export pathTo = (fname, dir, direction="down") ->
 		error "pathTo(): Invalid direction '#{direction}'"
 	debug "return undef - file not found"
 	return undef
-
-# ---------------------------------------------------------------------------
-
-hExtToEnvVar = {
-	'.md':   'dir_markdown',
-	'.taml': 'dir_data',
-	'.txt':  'dir_data',
-	}
-
-# ---------------------------------------------------------------------------
-
-export findFile = (fname) ->
-
-	{root, dir, base, ext} = parse_fname(fname.trim())
-	assert not root && not dir, "findFile():" \
-		+ " root='#{root}', dir='#{dir}'" \
-		+ " - full path not allowed"
-	envvar = hExtToEnvVar[ext]
-	assert envvar, "findFile() doesn't work for ext '#{ext}'"
-	dir = process.env[envvar]
-	assert dir, "No env var set for file extension '#{ext}'"
-	fullpath = pathTo(base, dir)   # guarantees that file exists
-	assert fullpath, "findFile(): Can't find file #{fname}"
-	return fullpath
