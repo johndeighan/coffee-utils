@@ -372,3 +372,26 @@ export var truncateBlock = function(str, numLines) {
 };
 
 // ---------------------------------------------------------------------------
+export var removeCR = function(block) {
+  return block.replace(/\r/g, '');
+};
+
+// ---------------------------------------------------------------------------
+export var splitBlock = function(block) {
+  var pos;
+  block = removeCR(block);
+  if (pos = block.indexOf("\n")) {
+    // --- pos is also the length of the 1st line
+    //     2nd arg to substr() is number of characters to return
+    return [block.substr(0, pos), block.substr(pos + 1)];
+  } else {
+    return [block, ''];
+  }
+};
+
+// ---------------------------------------------------------------------------
+export var CWS = function(block) {
+  return block.trim().replace(/\s+/g, ' ');
+};
+
+// ---------------------------------------------------------------------------
