@@ -7,6 +7,10 @@ import {
 import yaml from 'js-yaml';
 
 import {
+  debug
+} from '@jdeighan/coffee-utils/debug';
+
+import {
   tabify,
   untabify
 } from '@jdeighan/coffee-utils/indent';

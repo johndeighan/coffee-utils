@@ -7,10 +7,12 @@ import {
 import {fileURLToPath} from 'url';
 import {
 	existsSync, copyFileSync, readFileSync, writeFileSync, readdirSync,
+	createReadStream,
 	} from 'fs'
+import {createInterface} from 'readline'
 
 import {
-	say, undef, pass,
+	say, undef, pass, firstLine,
 	rtrim, error, unitTesting,
 	} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
@@ -137,3 +139,46 @@ export pathTo = (fname, dir, direction="down") ->
 		error "pathTo(): Invalid direction '#{direction}'"
 	debug "return undef - file not found"
 	return undef
+
+# ---------------------------------------------------------------------------
+
+```
+export async function forEachLine(filepath, func) {
+
+const fileStream = createReadStream(filepath);
+const rl = createInterface({
+	input: fileStream,
+	crlfDelay: Infinity
+	});
+
+// Note: we use the crlfDelay option to recognize all instances of CR LF
+// ('\r\n') in input.txt as a single line break.
+
+for await (const line of rl) {
+	// Each line in input.txt will be successively available here as `line`.
+	if (func(line)) {
+		rl.close();      // close if true return value
+		return;
+		}
+	}
+} // forEachLine()
+```
+# ---------------------------------------------------------------------------
+
+export forEachBlock = (filepath, func, sep='='.repeat(78)) ->
+
+	lLines = []
+
+	callback = (line) ->
+		if (line == sep)
+			result = func(lLines.join('\n'))
+			lLines = []
+			if result
+				return true    # close the file
+		else
+			lLines.push line
+		return undef
+
+	await forEachLine filepath, callback
+	func(lLines.join('\n'))
+	return

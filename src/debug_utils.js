@@ -32,7 +32,7 @@ debugLevel = 0; // controls amount of indentation
 
 export var debugging = false;
 
-ifMatches = undef;
+ifMatches = void 0;
 
 // ---------------------------------------------------------------------------
 export var setDebugging = function(flag, hOptions = {}) {

@@ -15,7 +15,7 @@ arrow = corner + hbar + arrowhead + ' '
 
 debugLevel = 0           # controls amount of indentation
 export debugging = false
-ifMatches = undef
+ifMatches = undefined
 
 # ---------------------------------------------------------------------------
 

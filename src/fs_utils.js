@@ -19,13 +19,19 @@ import {
   copyFileSync,
   readFileSync,
   writeFileSync,
-  readdirSync
+  readdirSync,
+  createReadStream
 } from 'fs';
+
+import {
+  createInterface
+} from 'readline';
 
 import {
   say,
   undef,
   pass,
+  firstLine,
   rtrim,
   error,
   unitTesting
@@ -169,4 +175,48 @@ export var pathTo = function(fname, dir, direction = "down") {
   }
   debug("return undef - file not found");
   return undef;
+};
+
+
+export async function forEachLine(filepath, func) {
+
+const fileStream = createReadStream(filepath);
+const rl = createInterface({
+	input: fileStream,
+	crlfDelay: Infinity
+	});
+
+// Note: we use the crlfDelay option to recognize all instances of CR LF
+// ('\r\n') in input.txt as a single line break.
+
+for await (const line of rl) {
+	// Each line in input.txt will be successively available here as `line`.
+	if (func(line)) {
+		rl.close();      // close if true return value
+		return;
+		}
+	}
+} // forEachLine()
+// ---------------------------------------------------------------------------
+;
+
+// ---------------------------------------------------------------------------
+export var forEachBlock = async function(filepath, func, sep = '='.repeat(78)) {
+  var callback, lLines;
+  lLines = [];
+  callback = function(line) {
+    var result;
+    if (line === sep) {
+      result = func(lLines.join('\n'));
+      lLines = [];
+      if (result) {
+        return true; // close the file
+      }
+    } else {
+      lLines.push(line);
+    }
+    return undef;
+  };
+  await forEachLine(filepath, callback);
+  func(lLines.join('\n'));
 };
