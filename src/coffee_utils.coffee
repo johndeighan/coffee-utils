@@ -146,7 +146,18 @@ export isArray = (x) ->
 
 export isHash = (x) ->
 
-	return typeof x == 'object'
+	return (typeof x == 'object') && not isArray(x)
+
+# ---------------------------------------------------------------------------
+
+export isArrayOfHashes = (lItems) ->
+
+	if not isArray(lItems)
+		return false
+	for item in lItems
+		if not isHash(item)
+			return false
+	return true
 
 # ---------------------------------------------------------------------------
 

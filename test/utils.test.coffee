@@ -4,7 +4,7 @@ import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {
 	normalize, stringToArray, isEmpty, ltrunc, rtrunc,
 	nonEmpty, isComment, words, escapeStr, truncateBlock,
-	removeCR, splitBlock, CWS,
+	removeCR, splitBlock, CWS, isArrayOfHashes,
 	} from '@jdeighan/coffee-utils'
 
 simple = new UnitTester()
@@ -114,3 +114,15 @@ simple.equal 112, CWS("""
 		def
 				ghi
 		"""), "abc def ghi"
+
+# ---------------------------------------------------------------------------
+
+simple.truthy 120, isArrayOfHashes([])
+simple.truthy 121, isArrayOfHashes([{}, {}])
+simple.truthy 122, isArrayOfHashes([{a: 1, b:2}, {}])
+simple.truthy 123, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}])
+
+simple.falsy  125, isArrayOfHashes({})
+simple.falsy  126, isArrayOfHashes([1,2,3])
+simple.falsy  127, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, 4])
+simple.falsy  128, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}, [1,2]])

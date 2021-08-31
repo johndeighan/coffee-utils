@@ -159,7 +159,22 @@ export var isArray = function(x) {
 
 // ---------------------------------------------------------------------------
 export var isHash = function(x) {
-  return typeof x === 'object';
+  return (typeof x === 'object') && !isArray(x);
+};
+
+// ---------------------------------------------------------------------------
+export var isArrayOfHashes = function(lItems) {
+  var i, item, len1;
+  if (!isArray(lItems)) {
+    return false;
+  }
+  for (i = 0, len1 = lItems.length; i < len1; i++) {
+    item = lItems[i];
+    if (!isHash(item)) {
+      return false;
+    }
+  }
+  return true;
 };
 
 // ---------------------------------------------------------------------------
