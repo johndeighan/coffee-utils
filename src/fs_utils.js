@@ -94,11 +94,18 @@ export var slurp = function(filepath) {
 // ---------------------------------------------------------------------------
 //   barf - write a string to a file
 export var barf = function(filepath, contents) {
-  contents = rtrim(contents) + '\n';
-  filepath = filepath.replace(/\//g, "\\");
-  return writeFileSync(filepath, contents, {
-    encoding: 'utf8'
-  });
+  var err;
+  debug(`enter barf('${filepath}', ${contents.length} chars)`);
+  contents = rtrim(contents) + "\n";
+  try {
+    writeFileSync(filepath, contents, {
+      encoding: 'utf8'
+    });
+  } catch (error1) {
+    err = error1;
+    say(`barf(): write failed: ${err.message}`);
+  }
+  debug("return from barf()");
 };
 
 // ---------------------------------------------------------------------------

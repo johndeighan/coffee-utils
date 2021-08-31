@@ -73,9 +73,14 @@ export slurp = (filepath) ->
 
 export barf = (filepath, contents) ->
 
-	contents = rtrim(contents) + '\n'
-	filepath = filepath.replace(/\//g, "\\")
-	writeFileSync(filepath, contents, {encoding: 'utf8'})
+	debug "enter barf('#{filepath}', #{contents.length} chars)"
+	contents = rtrim(contents) + "\n"
+	try
+		writeFileSync(filepath, contents, {encoding: 'utf8'})
+	catch err
+		say "barf(): write failed: #{err.message}"
+	debug "return from barf()"
+	return
 
 # ---------------------------------------------------------------------------
 #   withExt - change file extention in a file name
