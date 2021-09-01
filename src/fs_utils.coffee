@@ -103,7 +103,7 @@ export getSubDirs = (dir) ->
 
 	return readdirSync(dir, {withFileTypes: true}) \
 		.filter((d) => d.isDirectory()) \
-		.map((d) => d.name) \
+		.map((d) => mkpath(d.name)) \
 		.sort()
 
 # ---------------------------------------------------------------------------
@@ -114,7 +114,7 @@ export getParentDir = (dir) ->
 	hParts = parse_fname(dir)
 	if (hParts.dir == hParts.root)
 		return undef
-	return resolve(dir, '..')
+	return mkpath(resolve(dir, '..'))
 
 # ---------------------------------------------------------------------------
 
@@ -127,7 +127,7 @@ export pathTo = (fname, dir, direction="down") ->
 	assert existsSync(dir), "Directory #{dir} does not exist"
 	if existsSync("#{dir}/#{fname}")
 		debug "return #{dir}/#{fname} - file exists"
-		return "#{dir}/#{fname}"
+		return mkpath("#{dir}/#{fname}")
 	else if (direction == 'down')
 		# --- Search all directories in this directory
 		for subdir in getSubDirs(dir)
