@@ -48,8 +48,19 @@ export debug = (item, label=undef) ->
 	if not debugging
 		return
 
-	toTest = label || item
-	if isString(toTest) && ifMatches? && not toTest.match(ifMatches)
+	if ifMatches?
+		toTest = label || item
+		if isString(toTest) && not toTest.match(ifMatches)
+			return
+
+	# --- if item is 'tree', just print label && increment debugLevel
+	#     if item is 'untree', print nothing && decrement debugLevel
+	if (item == 'tree')
+		say '   '.repeat(debugLevel) + label
+		debugLevel += 1
+		return
+	else if (item == 'untree')
+		debugLevel -= 1
 		return
 
 	# --- determine if we're entering or returning from a function

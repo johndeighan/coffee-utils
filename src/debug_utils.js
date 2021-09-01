@@ -71,8 +71,20 @@ export var debug = function(item, label = undef) {
   if (!debugging) {
     return;
   }
-  toTest = label || item;
-  if (isString(toTest) && (ifMatches != null) && !toTest.match(ifMatches)) {
+  if (ifMatches != null) {
+    toTest = label || item;
+    if (isString(toTest) && !toTest.match(ifMatches)) {
+      return;
+    }
+  }
+  // --- if item is 'tree', just print label && increment debugLevel
+  //     if item is 'untree', print nothing && decrement debugLevel
+  if (item === 'tree') {
+    say('   '.repeat(debugLevel) + label);
+    debugLevel += 1;
+    return;
+  } else if (item === 'untree') {
+    debugLevel -= 1;
     return;
   }
   // --- determine if we're entering or returning from a function
