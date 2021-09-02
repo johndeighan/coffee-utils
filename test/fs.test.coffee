@@ -12,7 +12,7 @@ import {say, undef} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {
 	mydir, mkpath, withExt,
-	getSubDirs, pathTo, getFullPath, forEachLine, forEachBlock,
+	getSubDirs, pathTo, getFullPath,
 	} from '@jdeighan/coffee-utils/fs'
 
 simple = new UnitTester()
@@ -80,18 +80,3 @@ simple.equal 78, getFullPath("./#{myfname}"), mkpath(rootdir, myfname)
 
 # --- leading .. should be resolved
 simple.equal 81, getFullPath("./test/../#{myfname}"), mkpath(rootdir, myfname)
-
-# ---------------------------------------------------------------------------
-# test forEachBlock()
-
-(() ->
-	lBlocks = []
-	callback = (block) ->
-		lBlocks.push block
-		return undef
-
-	filepath = "c:/Users/johnd/coffee-utils/test/data/file3.txt"
-	await forEachBlock filepath, callback, '-'.repeat(10)
-
-	simple.equal 96, lBlocks, ["abc\ndef", "abc\ndef\nghi", "abc\ndef\nghi\njkl"]
-	)()

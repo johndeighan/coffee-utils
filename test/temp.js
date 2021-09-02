@@ -8,8 +8,9 @@ import {
 
 import {
   forEachLine,
-  forEachBlock
-} from '@jdeighan/coffee-utils/fs';
+  forEachBlock,
+  forEachSetOfBlocks
+} from '@jdeighan/coffee-utils/block';
 
 import {
   setDebugging
@@ -18,13 +19,40 @@ import {
 // ---------------------------------------------------------------------------
 (async function() {
   var callback, filepath;
-  filepath = "c:/Users/johnd/coffee-utils/test/data/file3.txt";
-  callback = function(block) {
-    console.log(sep_eq);
-    console.log(block);
-    return undef;
+  filepath = "c:/Users/johnd/coffee-utils/test/data/file2.txt";
+  callback = function(line, lineNum) {
+    console.log(`[${lineNum}] '${line}'`);
   };
-  await forEachBlock(filepath, callback, '-'.repeat(10));
+  await forEachLine(filepath, callback);
+  return say(sep_eq);
+});
+
+// ---------------------------------------------------------------------------
+(async function() {
+  var callback, filepath;
+  filepath = "c:/Users/johnd/coffee-utils/test/data/file3.txt";
+  callback = function(block, lineNum) {
+    console.log(`[${lineNum}] ----------------`);
+    console.log(block);
+  };
+  await forEachBlock(filepath, callback);
+  return say(sep_eq);
+});
+
+// ---------------------------------------------------------------------------
+(async function() {
+  var callback, filepath;
+  filepath = "c:/Users/johnd/coffee-utils/test/data/file4.txt";
+  callback = function(lBlocks, lineNum) {
+    var block, i, len;
+    console.log(`[${lineNum}] ================`);
+    for (i = 0, len = lBlocks.length; i < len; i++) {
+      block = lBlocks[i];
+      console.log(block);
+      console.log('-'.repeat(8));
+    }
+  };
+  await forEachSetOfBlocks(filepath, callback);
   return say(sep_eq);
 })();
 
