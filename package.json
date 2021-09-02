@@ -1,17 +1,17 @@
 {
 	"name": "@jdeighan/coffee-utils",
 	"type": "module",
-	"version": "1.2.5",
+	"version": "1.2.6",
 	"description": "A set of utility functions for CoffeeScript",
 	"main": "coffee_utils.js",
 	"exports": {
-		".":        "./src/coffee_utils.js",
-		"./fs":     "./src/fs_utils.js",
-		"./block":  "./src/block_utils.js",
+		".": "./src/coffee_utils.js",
+		"./fs": "./src/fs_utils.js",
+		"./block": "./src/block_utils.js",
 		"./indent": "./src/indent_utils.js",
-		"./debug":  "./src/debug_utils.js",
+		"./debug": "./src/debug_utils.js",
 		"./svelte": "./src/svelte_utils.js",
-		"./test":   "./src/UnitTester.js",
+		"./test": "./src/UnitTester.js",
 		"./package.json": "./package.json"
 	},
 	"engines": {
