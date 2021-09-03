@@ -114,9 +114,20 @@ export nonEmpty = (x) ->
 
 # ---------------------------------------------------------------------------
 
+commentRegexp = /^\s*\#(?:\s|$)/
+
+# ---------------------------------------------------------------------------
+
+export setCommentRegexp = (regexp) ->
+
+	commentRegexp = regexp
+	return
+
+# ---------------------------------------------------------------------------
+
 export isComment = (str) ->
 
-	return if str.match(/^\s*\#(?:\s|$)/) then true else false
+	return if str.match(commentRegexp) then true else false
 
 # ---------------------------------------------------------------------------
 

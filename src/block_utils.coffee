@@ -5,7 +5,9 @@ import {
 	} from 'fs'
 import {createInterface} from 'readline'
 
-import {say, isEmpty, nonEmpty, error} from '@jdeighan/coffee-utils'
+import {
+	say, isEmpty, nonEmpty, error, isComment,
+	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
 
@@ -25,7 +27,7 @@ var lineNum = 0
 for await (const line of rl) {
 	lineNum += 1
 	// Each line will be successively available here as 'line'
-	if (func(line, lineNum)) {
+	if (! isComment(line) && func(line, lineNum)) {
 		rl.close();      // close if true return value
 		return;
 		}

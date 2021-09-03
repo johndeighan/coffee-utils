@@ -11,6 +11,27 @@ simple = new UnitTester()
 simple.equal 11, 2+2, 4
 
 # ---------------------------------------------------------------------------
+# test forEachLine()
+
+(() ->
+	lLines = []
+
+	callback = (line) ->
+		lLines.push line
+		return
+
+	filepath = "c:/Users/johnd/coffee-utils/test/data/file2.txt"
+	await forEachLine filepath, callback
+
+	simple.equal 26, lLines, [
+			"abc",
+			"def",
+			"ghi",
+			"jkl",
+			]
+	)()
+
+# ---------------------------------------------------------------------------
 # test forEachBlock()
 
 (() ->
