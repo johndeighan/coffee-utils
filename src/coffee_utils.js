@@ -106,6 +106,16 @@ export var say = function(obj, label = '') {
 };
 
 // ---------------------------------------------------------------------------
+//   pass - do nothing
+export var pass = function() {};
+
+// ---------------------------------------------------------------------------
+//   error - throw an error
+export var error = function(message) {
+  throw new Error(message);
+};
+
+// ---------------------------------------------------------------------------
 export var localStore = function(key, value = undef) {
   if (typeof localStorage === 'undefined') {
     return;
@@ -227,16 +237,6 @@ export var isFunction = function(x) {
 // ---------------------------------------------------------------------------
 export var isInteger = function(x) {
   return Number.isInteger(x);
-};
-
-// ---------------------------------------------------------------------------
-//   pass - do nothing
-export var pass = function() {};
-
-// ---------------------------------------------------------------------------
-//   error - throw an error
-export var error = function(message) {
-  throw new Error(message);
 };
 
 // ---------------------------------------------------------------------------

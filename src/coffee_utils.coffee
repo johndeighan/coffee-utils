@@ -96,6 +96,18 @@ export say = (obj, label='') ->
 	return
 
 # ---------------------------------------------------------------------------
+#   pass - do nothing
+
+export pass = () ->
+
+# ---------------------------------------------------------------------------
+#   error - throw an error
+
+export error = (message) ->
+
+	throw new Error(message)
+
+# ---------------------------------------------------------------------------
 
 export localStore = (key, value=undef) ->
 
@@ -214,18 +226,6 @@ export isFunction = (x) ->
 export isInteger = (x) ->
 
 	return Number.isInteger(x)
-
-# ---------------------------------------------------------------------------
-#   pass - do nothing
-
-export pass = () ->
-
-# ---------------------------------------------------------------------------
-#   error - throw an error
-
-export error = (message) ->
-
-	throw new Error(message)
 
 # ---------------------------------------------------------------------------
 #   warn - issue a warning
