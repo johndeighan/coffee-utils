@@ -13,7 +13,7 @@ export sep_eq = '='.repeat(42)
 export unitTesting = false
 export setUnitTesting = (flag) -> unitTesting = flag
 
-export logger = console.log    # for strings
+logger = console.log          # for strings
 
 # ---------------------------------------------------------------------------
 # the default stringifier
@@ -32,20 +32,55 @@ export tamlStringifier = (obj) ->
 	                                 # of TAB chars
 	return str
 
-export stringifier = tamlStringifier
+# ---------------------------------------------------------------------------
+
+stringifier = tamlStringifier # for non-strings
 
 # ---------------------------------------------------------------------------
 
-export setLogger = (loggerFunc) ->
+export setLogger = (func) ->
 
-	logger = loggerFunc
+	assert isFunction(func), "setLogger() not a function"
+	logger = func
 	return
 
 # ---------------------------------------------------------------------------
 
-export setStringifier = (stringifierFunc) ->
+export setStringifier = (func) ->
 
-	stringifier = stringifierFunc
+	assert isFunction(func), "setStringifier() not a function"
+	stringifier = func
+	return
+
+# ---------------------------------------------------------------------------
+
+export currentLogger = () ->
+
+	return logger
+
+# ---------------------------------------------------------------------------
+
+export currentStringifier = () ->
+
+	return stringifier
+
+# ---------------------------------------------------------------------------
+
+export stringify = (item) ->
+
+	assert isFunction(stringifier), "stringify(): stringifier not a function"
+	return stringifier(item)
+
+# ---------------------------------------------------------------------------
+#   say - print to the console
+
+export log = (obj, label='') ->
+
+	if label
+		logger label
+	if not isString(obj)
+		obj = stringifier(obj)
+	logger obj
 	return
 
 # ---------------------------------------------------------------------------

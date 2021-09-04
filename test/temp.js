@@ -12,10 +12,6 @@ import {
   forEachSetOfBlocks
 } from '@jdeighan/coffee-utils/block';
 
-import {
-  setDebugging
-} from '@jdeighan/coffee-utils/debug';
-
 // ---------------------------------------------------------------------------
 (async function() {
   var callback, filepath;

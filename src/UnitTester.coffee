@@ -8,7 +8,7 @@ import {
 	isString, isFunction, isInteger, isArray,
 	} from '@jdeighan/coffee-utils'
 import {
-	debug, debugging, setDebugging,
+	debug, debugging, startDebugging, endDebugging,
 	} from '@jdeighan/coffee-utils/debug'
 
 # ---------------------------------------------------------------------------
@@ -169,14 +169,11 @@ export class UnitTester
 		if (lineNum < 0) && process.env.FINALTEST
 			error "Negative line numbers not allowed in FINALTEST"
 
-		saveDebugging = undef
-		if lineNum < -100000
-			saveDebugging = debugging
-			setDebugging(true)
-
 		if not @testing || (@maxLineNum && (lineNum > @maxLineNum))
-			if saveDebugging? then setDebugging(saveDebugging)
 			return
+
+		if lineNum < -100000
+			startDebugging()
 
 		assert isInteger(lineNum),
 			"UnitTester.test(): arg 1 must be an integer"
@@ -201,7 +198,8 @@ export class UnitTester
 			else
 				say got, "GOT:"
 			say expected, "EXPECTED:"
-			if saveDebugging? then setDebugging(saveDebugging)
+			if lineNum < -100000
+				endDebugging()
 			return
 
 		# --- We need to save this here because in the tests themselves,
@@ -215,7 +213,8 @@ export class UnitTester
 		else
 			test "line #{lineNum}", (t) ->
 				t[whichTest](got, expected)
-		if saveDebugging? then setDebugging(saveDebugging)
+		if lineNum < -100000
+			endDebugging()
 		return
 
 	# ........................................................................

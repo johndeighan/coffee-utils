@@ -4,7 +4,6 @@ import {say, undef, sep_eq} from '@jdeighan/coffee-utils'
 import {
 	forEachLine, forEachBlock, forEachSetOfBlocks,
 	} from '@jdeighan/coffee-utils/block'
-import {setDebugging} from '@jdeighan/coffee-utils/debug'
 
 # ---------------------------------------------------------------------------
 

@@ -20,7 +20,8 @@ import {
 import {
   debug,
   debugging,
-  setDebugging
+  startDebugging,
+  endDebugging
 } from '@jdeighan/coffee-utils/debug';
 
 // ---------------------------------------------------------------------------
@@ -170,21 +171,16 @@ export var UnitTester = class UnitTester {
 
   // ........................................................................
   test(lineNum, input, expected) {
-    var err, errMsg, got, saveDebugging, whichTest;
+    var err, errMsg, got, whichTest;
     this.lineNum = lineNum; // set an object property
     if ((lineNum < 0) && process.env.FINALTEST) {
       error("Negative line numbers not allowed in FINALTEST");
     }
-    saveDebugging = undef;
-    if (lineNum < -100000) {
-      saveDebugging = debugging;
-      setDebugging(true);
-    }
     if (!this.testing || (this.maxLineNum && (lineNum > this.maxLineNum))) {
-      if (saveDebugging != null) {
-        setDebugging(saveDebugging);
-      }
       return;
+    }
+    if (lineNum < -100000) {
+      startDebugging();
     }
     assert(isInteger(lineNum), "UnitTester.test(): arg 1 must be an integer");
     lineNum = this.getLineNum(lineNum); // corrects for duplicates
@@ -210,8 +206,8 @@ export var UnitTester = class UnitTester {
         say(got, "GOT:");
       }
       say(expected, "EXPECTED:");
-      if (saveDebugging != null) {
-        setDebugging(saveDebugging);
+      if (lineNum < -100000) {
+        endDebugging();
       }
       return;
     }
@@ -228,8 +224,8 @@ export var UnitTester = class UnitTester {
         return t[whichTest](got, expected);
       });
     }
-    if (saveDebugging != null) {
-      setDebugging(saveDebugging);
+    if (lineNum < -100000) {
+      endDebugging();
     }
   }
 

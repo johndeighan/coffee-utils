@@ -1,8 +1,9 @@
 # debug_utils.coffee
 
+import {strict as assert} from 'assert'
 import {
-	undef, say, pass, error, isString, stringToArray,
-	setLogger, setStringifier, escapeStr, stringifier, tamlStringifier,
+	undef, say, pass, error, isString, isFunction, stringToArray, escapeStr,
+	currentLogger, currentStringifier, setLogger, setStringifier, stringify,
 	} from '@jdeighan/coffee-utils'
 
 vbar = '│'       # unicode 2502
@@ -15,46 +16,59 @@ arrow = corner + hbar + arrowhead + ' '
 
 debugLevel = 0           # controls amount of indentation
 
-# --- Settings for variable debugging:
-#        false   = debugging turned off
-#        true    = debugging turned on
-#        'force' = debugging always on, log calls to setDebugging()
+# --- items on lDebugStack are hashes:
+#        debugging: <boolean>
+#        ifMatches: <regexp> or undef
+#        logger: <function> or undef
+#        stringifier: <function> or undef
 
+lDebugStack = []
 export debugging = false
 
 ifMatches = undefined
 
 # ---------------------------------------------------------------------------
 
-export setDebugging = (flag, hOptions={}) ->
+export startDebugging = (hOptions={}) ->
 	# --- Valid options:
-	#        loggerFunc - set the function for logging
-	#        stringifierFunc - set the function for stringifying
-	#        regexp - set ifMatches
-	#        force - turn on permanently
+	#        debuggingOff - if set, temporarily turns debugging off
+	#        ifMatches - set ifMatches
+	#        logger - set the function for logging
+	#        stringifier - set the function for stringifying
 
-	debugLevel = 0
-	if (debugging != 'force')
-		if (flag==true) || (flag==false) || (flag=='force')
-			debugging = flag
-		else
-			error "setDebugging(): Invalid value for flag: '#{flag}'"
-	if flag
-		{loggerFunc, stringifierFunc, ifMatches: regexp} = hOptions
-		if loggerFunc
-			setLogger loggerFunc
-		else
-			setLogger console.log
-		if stringifierFunc
-			setStringifier stringifierFunc
-		else
-			setStringifier tamlStringifier
-		if regexp
-			ifMatches = regexp
-		else
-			ifMatches = undef
+	# --- save current settings
+	lDebugStack.push({
+		debugging,
+		ifMatches,
+		logger: currentLogger(),
+		stringifier: currentStringifier(),
+		})
+
+	# --- set current settings from hOptions
+	if hOptions.debuggingOff
+		debugging = false
 	else
-		ifMatches = undef
+		debugging = true
+	ifMatches = hOptions.ifMatches
+	if hOptions.logger
+		assert isFunction(hOptions.logger),
+			"startDebugging() logger not a function"
+		setLogger hOptions.logger
+	if hOptions.stringifier && isFunction(hOptions.stringifier)
+		assert isFunction(hOptions.stringifier),
+			"startDebugging() stringifier not a function"
+		setStringifier hOptions.stringifier
+
+# ---------------------------------------------------------------------------
+
+export endDebugging = () ->
+
+	assert (lDebugStack.length > 0), "endDebugging(): empty stack"
+	hInfo = lDebugStack.pop()
+	debugging = hInfo.debugging
+	ifMatches = hInfo.ifMatches
+	setLogger hInfo.logger
+	setStringifier hInfo.stringifier
 	return
 
 # ---------------------------------------------------------------------------
@@ -111,7 +125,7 @@ export debug = (item, label=undef) ->
 	else
 		if label
 			say prefix + label
-		for str in stringToArray(stringifier(item))
+		for str in stringToArray(stringify(item))
 			# --- We're exiting, but we want the normal prefix
 			prefix = indent.repeat(debugLevel)
 			say prefix + '   ' + str.replace(/\t/g, '   ')

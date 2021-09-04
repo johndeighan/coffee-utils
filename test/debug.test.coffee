@@ -1,7 +1,7 @@
 # debug.test.coffee
 
 import {undef, say} from '@jdeighan/coffee-utils'
-import {setDebugging, debug} from '@jdeighan/coffee-utils/debug'
+import {startDebugging, debug} from '@jdeighan/coffee-utils/debug'
 import {UnitTester} from '@jdeighan/coffee-utils/test'
 
 simple = new UnitTester()
@@ -9,10 +9,9 @@ simple = new UnitTester()
 # ---------------------------------------------------------------------------
 
 lLines = undef
-
 myLogger = (str) -> lLines.push(str)
-setDebugging(true, {
-	loggerFunc: myLogger
+startDebugging({
+	logger: myLogger,
 	})
 
 # ---------------------------------------------------------------------------
@@ -20,7 +19,7 @@ setDebugging(true, {
 (() ->
 	lLines = []
 	debug('abc')
-	simple.equal 24, lLines, ['abc']
+	simple.equal 22, lLines, ['abc']
 	)()
 
 # ---------------------------------------------------------------------------
@@ -31,7 +30,7 @@ setDebugging(true, {
 	debug 'something'
 	debug 'more'
 	debug 'return 42'
-	simple.equal 35, lLines, [
+	simple.equal 33, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   more"
@@ -49,7 +48,7 @@ setDebugging(true, {
 	debug 'something else'
 	debug 'return abc'
 	debug 'return 42'
-	simple.equal 53, lLines, [
+	simple.equal 51, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   enter newfunc"
@@ -71,7 +70,7 @@ setDebugging(true, {
 	debug 'something'
 	debug obj, 'obj:'
 	debug 'return 42'
-	simple.equal 75, lLines, [
+	simple.equal 73, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   obj:"
@@ -88,8 +87,8 @@ setDebugging(true, {
 (() ->
 	lLines = []
 
-	setDebugging(true, {
-		loggerFunc: myLogger
+	startDebugging({
+		logger: myLogger
 		ifMatches: /something/
 		})
 
@@ -103,7 +102,7 @@ setDebugging(true, {
 	debug obj, 'obj:'
 	debug 'return 42'
 
-	simple.equal 108, lLines, [
+	simple.equal 105, lLines, [
 		"something"
 		]
 	)()
@@ -112,9 +111,9 @@ setDebugging(true, {
 # test alternate stringifier
 
 (() ->
-	setDebugging(true, {
-		loggerFunc: myLogger
-		stringifierFunc: JSON.stringify
+	startDebugging({
+		logger: myLogger
+		stringifier: JSON.stringify
 		})
 
 	lLines = []
@@ -126,7 +125,7 @@ setDebugging(true, {
 	debug 'something'
 	debug obj, 'obj:'
 	debug 'return 42'
-	simple.equal 75, lLines, [
+	simple.equal 128, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   obj:"
