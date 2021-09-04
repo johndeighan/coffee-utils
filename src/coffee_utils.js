@@ -131,7 +131,7 @@ export var nonEmpty = function(x) {
 };
 
 // ---------------------------------------------------------------------------
-commentRegexp = /^\s*\#(?:\s|$)/;
+commentRegexp = /^\s*\#+(?:\s|$)/;
 
 // ---------------------------------------------------------------------------
 export var setCommentRegexp = function(regexp) {
@@ -290,28 +290,9 @@ export var normalize = function(content) {
 };
 
 // ---------------------------------------------------------------------------
-//   dumpOutput - for debugging
-//      --- output can be a string or an array
-export var dumpOutput = function(output, label = "output", logger = console.log) {
-  var i, len1, line, results;
-  logger(sep_eq);
-  logger(titleLine(label));
-  logger(sep_eq);
-  if (typeof output === 'string') {
-    return logger(output);
-  } else if (typeof output === 'object') {
-    results = [];
-    for (i = 0, len1 = output.length; i < len1; i++) {
-      line = output[i];
-      results.push(logger(line));
-    }
-    return results;
-  }
-};
-
-// ---------------------------------------------------------------------------
 export var titleLine = function(title, char = '=', padding = 2, linelen = 42) {
   var nLeft, nRight, strLeft, strMiddle, strRight, titleLen;
+  // --- used in logger
   titleLen = title.length + 2 * padding;
   nLeft = Math.floor((linelen - titleLen) / 2);
   nRight = linelen - nLeft - titleLen;

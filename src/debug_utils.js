@@ -30,6 +30,11 @@ arrow = corner + hbar + arrowhead + ' ';
 
 debugLevel = 0; // controls amount of indentation
 
+
+// --- Settings for variable debugging:
+//        undef   = debugging turned off
+//        true    = debugging turned on
+//        'force' = debugging always on, log calls to setDebugging()
 export var debugging = false;
 
 ifMatches = void 0;
@@ -37,6 +42,11 @@ ifMatches = void 0;
 // ---------------------------------------------------------------------------
 export var setDebugging = function(flag, hOptions = {}) {
   var loggerFunc, regexp, stringifierFunc;
+  // --- Valid options:
+  //        loggerFunc - set the function for logging
+  //        stringifierFunc - set the function for stringifying
+  //        regexp - set ifMatches
+  //        force - turn on permanently
   debugging = flag;
   debugLevel = 0;
   if (flag) {

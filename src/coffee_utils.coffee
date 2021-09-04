@@ -4,9 +4,7 @@ import {strict as assert} from 'assert'
 import yaml from 'js-yaml'
 
 import {debug} from '@jdeighan/coffee-utils/debug'
-import {
-	tabify, untabify,
-	} from '@jdeighan/coffee-utils/indent'
+import {tabify, untabify} from '@jdeighan/coffee-utils/indent'
 
 export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
@@ -114,7 +112,7 @@ export nonEmpty = (x) ->
 
 # ---------------------------------------------------------------------------
 
-commentRegexp = /^\s*\#(?:\s|$)/
+commentRegexp = /^\s*\#+(?:\s|$)/
 
 # ---------------------------------------------------------------------------
 
@@ -263,23 +261,9 @@ export normalize = (content) ->
 	return lLines.join('\n')
 
 # ---------------------------------------------------------------------------
-#   dumpOutput - for debugging
-#      --- output can be a string or an array
-
-export dumpOutput = (output, label="output", logger=console.log) ->
-
-	logger sep_eq
-	logger titleLine(label)
-	logger sep_eq
-	if typeof output == 'string'
-		logger output
-	else if typeof output == 'object'
-		for line in output
-			logger line
-
-# ---------------------------------------------------------------------------
 
 export titleLine = (title, char='=', padding=2, linelen=42) ->
+	# --- used in logger
 
 	titleLen = title.length + 2 * padding
 	nLeft = Math.floor((linelen - titleLen) / 2)
