@@ -16,7 +16,7 @@ arrow = corner + hbar + arrowhead + ' '
 debugLevel = 0           # controls amount of indentation
 
 # --- Settings for variable debugging:
-#        undef   = debugging turned off
+#        false   = debugging turned off
 #        true    = debugging turned on
 #        'force' = debugging always on, log calls to setDebugging()
 
@@ -33,8 +33,12 @@ export setDebugging = (flag, hOptions={}) ->
 	#        regexp - set ifMatches
 	#        force - turn on permanently
 
-	debugging = flag
 	debugLevel = 0
+	if (debugging != 'force')
+		if (flag==true) || (flag==false) || (flag=='force')
+			debugging = flag
+		else
+			error "setDebugging(): Invalid value for flag: '#{flag}'"
 	if flag
 		{loggerFunc, stringifierFunc, ifMatches: regexp} = hOptions
 		if loggerFunc
