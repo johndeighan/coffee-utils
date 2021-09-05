@@ -110,6 +110,7 @@ export error = (message) ->
 # ---------------------------------------------------------------------------
 
 export localStore = (key, value=undef) ->
+	# --- if value is undef, returns the current value
 
 	if typeof localStorage == 'undefined'
 		return
@@ -122,6 +123,48 @@ export localStore = (key, value=undef) ->
 			return JSON.parse(localStorage.getItem(key))
 		else
 			return undef
+
+# ---------------------------------------------------------------------------
+
+export getClassName = (obj) ->
+
+	if (typeof obj != 'object')
+		return undef
+	return obj.constructor.name
+
+# ---------------------------------------------------------------------------
+
+export isString = (x) ->
+
+	return typeof x == 'string' || x instanceof String
+
+# ---------------------------------------------------------------------------
+
+export isNumber = (x) ->
+
+	return typeof x == 'number' || x instanceof Number
+
+# ---------------------------------------------------------------------------
+
+export isObject = (x) ->
+
+	return (typeof x == 'object') \
+			&& not isString(x) \
+			&& not isArray(x) \
+			&& not isHash(x) \
+			&& not isNumber(x)
+
+# ---------------------------------------------------------------------------
+
+export isArray = (x) ->
+
+	return Array.isArray(x)
+
+# ---------------------------------------------------------------------------
+
+export isHash = (x) ->
+
+	return (getClassName(x) == 'Object')
 
 # ---------------------------------------------------------------------------
 #   isEmpty
@@ -182,30 +225,6 @@ export words = (str) ->
 
 # ---------------------------------------------------------------------------
 
-export isString = (x) ->
-
-	return typeof x == 'string' || x instanceof String
-
-# ---------------------------------------------------------------------------
-
-export isObject = (x) ->
-
-	return typeof x == 'object'
-
-# ---------------------------------------------------------------------------
-
-export isArray = (x) ->
-
-	return Array.isArray(x)
-
-# ---------------------------------------------------------------------------
-
-export isHash = (x) ->
-
-	return (typeof x == 'object') && not isArray(x)
-
-# ---------------------------------------------------------------------------
-
 export isArrayOfHashes = (lItems) ->
 
 	if not isArray(lItems)
@@ -225,7 +244,12 @@ export isFunction = (x) ->
 
 export isInteger = (x) ->
 
-	return Number.isInteger(x)
+	if (typeof x == 'number')
+		return Number.isInteger(x)
+	else if (getClassName(x) == 'Number')
+		return Number.isInteger(x.valueOf())
+	else
+		return false
 
 # ---------------------------------------------------------------------------
 #   warn - issue a warning

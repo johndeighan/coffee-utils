@@ -117,6 +117,7 @@ export var error = function(message) {
 
 // ---------------------------------------------------------------------------
 export var localStore = function(key, value = undef) {
+  // --- if value is undef, returns the current value
   if (typeof localStorage === 'undefined') {
     return;
   }
@@ -130,6 +131,39 @@ export var localStore = function(key, value = undef) {
       return undef;
     }
   }
+};
+
+// ---------------------------------------------------------------------------
+export var getClassName = function(obj) {
+  if (typeof obj !== 'object') {
+    return undef;
+  }
+  return obj.constructor.name;
+};
+
+// ---------------------------------------------------------------------------
+export var isString = function(x) {
+  return typeof x === 'string' || x instanceof String;
+};
+
+// ---------------------------------------------------------------------------
+export var isNumber = function(x) {
+  return typeof x === 'number' || x instanceof Number;
+};
+
+// ---------------------------------------------------------------------------
+export var isObject = function(x) {
+  return (typeof x === 'object') && !isString(x) && !isArray(x) && !isHash(x) && !isNumber(x);
+};
+
+// ---------------------------------------------------------------------------
+export var isArray = function(x) {
+  return Array.isArray(x);
+};
+
+// ---------------------------------------------------------------------------
+export var isHash = function(x) {
+  return getClassName(x) === 'Object';
 };
 
 // ---------------------------------------------------------------------------
@@ -195,26 +229,6 @@ export var words = function(str) {
 };
 
 // ---------------------------------------------------------------------------
-export var isString = function(x) {
-  return typeof x === 'string' || x instanceof String;
-};
-
-// ---------------------------------------------------------------------------
-export var isObject = function(x) {
-  return typeof x === 'object';
-};
-
-// ---------------------------------------------------------------------------
-export var isArray = function(x) {
-  return Array.isArray(x);
-};
-
-// ---------------------------------------------------------------------------
-export var isHash = function(x) {
-  return (typeof x === 'object') && !isArray(x);
-};
-
-// ---------------------------------------------------------------------------
 export var isArrayOfHashes = function(lItems) {
   var i, item, len1;
   if (!isArray(lItems)) {
@@ -236,7 +250,13 @@ export var isFunction = function(x) {
 
 // ---------------------------------------------------------------------------
 export var isInteger = function(x) {
-  return Number.isInteger(x);
+  if (typeof x === 'number') {
+    return Number.isInteger(x);
+  } else if (getClassName(x) === 'Number') {
+    return Number.isInteger(x.valueOf());
+  } else {
+    return false;
+  }
 };
 
 // ---------------------------------------------------------------------------
