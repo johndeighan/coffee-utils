@@ -120,9 +120,6 @@ export getParentDir = (dir) ->
 export pathTo = (fname, dir, direction="down") ->
 
 	debug "enter pathTo('#{fname}','#{dir}','#{direction}')"
-	if unitTesting
-		debug "return #{dir}/#{fname} - unit testing"
-		return "#{dir}/#{fname}"
 	assert existsSync(dir), "Directory #{dir} does not exist"
 	if existsSync("#{dir}/#{fname}")
 		debug "return #{dir}/#{fname} - file exists"

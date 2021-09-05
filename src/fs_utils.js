@@ -147,10 +147,6 @@ export var getParentDir = function(dir) {
 export var pathTo = function(fname, dir, direction = "down") {
   var fpath, i, len, ref, subdir;
   debug(`enter pathTo('${fname}','${dir}','${direction}')`);
-  if (unitTesting) {
-    debug(`return ${dir}/${fname} - unit testing`);
-    return `${dir}/${fname}`;
-  }
   assert(existsSync(dir), `Directory ${dir} does not exist`);
   if (existsSync(`${dir}/${fname}`)) {
     debug(`return ${dir}/${fname} - file exists`);
