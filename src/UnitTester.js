@@ -11,6 +11,8 @@ import {
   say,
   error,
   stringToArray,
+  currentLogger,
+  setLogger,
   isString,
   isFunction,
   isInteger,
@@ -97,9 +99,14 @@ export var UnitTester = class UnitTester {
 
   // ........................................................................
   fails(lineNum, func, expected) {
-    var err, ok;
+    var err, logger, ok;
     assert(expected == null, "UnitTester: fails doesn't allow expected");
     assert(isFunction(func), "UnitTester: fails requires a function");
+    // --- disable logging
+    logger = currentLogger();
+    setLogger(function(x) {
+      return pass;
+    });
     try {
       func();
       ok = true;
@@ -107,6 +114,7 @@ export var UnitTester = class UnitTester {
       err = error1;
       ok = false;
     }
+    setLogger(logger);
     this.setWhichTest('falsy');
     this.test(lineNum, ok, expected);
   }
@@ -114,8 +122,8 @@ export var UnitTester = class UnitTester {
   // ........................................................................
   succeeds(lineNum, func, expected) {
     var err, ok;
-    assert(expected == null, "UnitTester: fails doesn't allow expected");
-    assert(isFunction(func), "UnitTester: fails requires a function");
+    assert(expected == null, "UnitTester: succeeds doesn't allow expected");
+    assert(isFunction(func), "UnitTester: succeeds requires a function");
     try {
       func();
       ok = true;

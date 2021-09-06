@@ -4,7 +4,7 @@ import {strict as assert} from 'assert'
 import test from 'ava'
 
 import {
-	undef, say, error, stringToArray,
+	undef, say, error, stringToArray, currentLogger, setLogger
 	isString, isFunction, isInteger, isArray,
 	} from '@jdeighan/coffee-utils'
 import {
@@ -97,13 +97,19 @@ export class UnitTester
 	# ........................................................................
 
 	fails: (lineNum, func, expected) ->
+
 		assert not expected?, "UnitTester: fails doesn't allow expected"
 		assert isFunction(func), "UnitTester: fails requires a function"
+
+		# --- disable logging
+		logger = currentLogger()
+		setLogger (x) -> pass
 		try
 			func()
 			ok = true
 		catch err
 			ok = false
+		setLogger logger
 		@setWhichTest 'falsy'
 		@test lineNum, ok, expected
 		return
@@ -111,8 +117,9 @@ export class UnitTester
 	# ........................................................................
 
 	succeeds: (lineNum, func, expected) ->
-		assert not expected?, "UnitTester: fails doesn't allow expected"
-		assert isFunction(func), "UnitTester: fails requires a function"
+
+		assert not expected?, "UnitTester: succeeds doesn't allow expected"
+		assert isFunction(func), "UnitTester: succeeds requires a function"
 		try
 			func()
 			ok = true
