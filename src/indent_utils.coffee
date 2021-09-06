@@ -13,10 +13,8 @@ import {
 
 export splitLine = (line) ->
 
-	if not line?
-		throw new Error("splitLine(): line is undef")
-	if typeof line != 'string'
-		throw new Error("splitLine(): line is not a string")
+	assert line?, "splitLine(): line is undef"
+	assert (typeof line == 'string'), "splitLine(): line is not a string"
 	lMatches = line.match(/^(\s*)(.*)$/)
 	return [lMatches[1].length, lMatches[2].trim()]
 
@@ -33,7 +31,7 @@ export indentation = (level) ->
 
 export indentLevel = (str) ->
 
-	lMatches = /^\t*/.exec(str)
+	lMatches = str.match(/^\t*/)
 	return lMatches[0].length
 
 # ---------------------------------------------------------------------------
@@ -58,6 +56,7 @@ export indented = (input, level=0) ->
 #   undented - string with 1st line indentation removed for each line
 #            - unless level is set, in which case exactly that
 #              indentation is removed
+#            - returns same type as input, i.e. either string or array
 
 export undented = (input, level=undef) ->
 

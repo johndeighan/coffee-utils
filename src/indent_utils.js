@@ -23,12 +23,8 @@ import {
 //   splitLine - separate a line into {level, line}
 export var splitLine = function(line) {
   var lMatches;
-  if (line == null) {
-    throw new Error("splitLine(): line is undef");
-  }
-  if (typeof line !== 'string') {
-    throw new Error("splitLine(): line is not a string");
-  }
+  assert(line != null, "splitLine(): line is undef");
+  assert(typeof line === 'string', "splitLine(): line is not a string");
   lMatches = line.match(/^(\s*)(.*)$/);
   return [lMatches[1].length, lMatches[2].trim()];
 };
@@ -44,7 +40,7 @@ export var indentation = function(level) {
 //   indentLevel - determine indent level of a string
 export var indentLevel = function(str) {
   var lMatches;
-  lMatches = /^\t*/.exec(str);
+  lMatches = str.match(/^\t*/);
   return lMatches[0].length;
 };
 
@@ -86,6 +82,7 @@ export var indented = function(input, level = 0) {
 //   undented - string with 1st line indentation removed for each line
 //            - unless level is set, in which case exactly that
 //              indentation is removed
+//            - returns same type as input, i.e. either string or array
 export var undented = function(input, level = undef) {
   var i, lLines, lMatches, lNewLines, len, line, nToRemove, toRemove;
   if ((level != null) && (level === 0)) {

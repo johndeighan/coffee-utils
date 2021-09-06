@@ -102,3 +102,9 @@ simple.equal 66, indented("abc", 2), "\t\tabc"
 
 simple.equal 112, indented("export name = undef", 1), "\texport name = undef"
 simple.equal 113, indented("export name = undef", 2), "\t\texport name = undef"
+
+# ---------------------------------------------------------------------------
+# make sure indentLevel() works for blocks
+
+simple.equal 109, indentLevel("\t\tabc\n\t\tdef\n\t\t\tghi"), 2
+
