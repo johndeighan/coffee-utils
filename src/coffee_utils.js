@@ -125,12 +125,18 @@ export var error = function(message) {
 
 // ---------------------------------------------------------------------------
 //   croak - throws an error after possibly printing useful info
-export var croak = function(message, obj, label) {
+export var croak = function(err, obj, label) {
+  var message;
+  message = (typeof err === 'object') ? err.message : err;
   log(`ERROR: ${message}`);
   if (obj != null) {
     log(obj, label);
   }
-  throw new Error(message);
+  if (typeof err === 'object') {
+    throw err;
+  } else {
+    throw new Error(message);
+  }
 };
 
 // ---------------------------------------------------------------------------

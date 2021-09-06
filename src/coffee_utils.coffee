@@ -116,12 +116,16 @@ export error = (message) ->
 # ---------------------------------------------------------------------------
 #   croak - throws an error after possibly printing useful info
 
-export croak = (message, obj, label) ->
+export croak = (err, obj, label) ->
 
+	message = if (typeof err == 'object') then err.message else err
 	log "ERROR: #{message}"
 	if obj?
 		log obj, label
-	throw new Error(message)
+	if (typeof err == 'object')
+		throw err
+	else
+		throw new Error(message)
 
 # ---------------------------------------------------------------------------
 
