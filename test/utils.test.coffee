@@ -181,6 +181,7 @@ simple.equal 140, stringify({a:"word", b:"blind"}), """
 	log 'a'
 	log 'b'
 	log 'c'
+	setLogger()    # reset
 
 	simple.equal 171, lItems, ['a','b','c']
 	)()
@@ -191,10 +192,9 @@ simple.equal 140, stringify({a:"word", b:"blind"}), """
 	say 'a'
 	say 'b'
 	say 'c'
+	setLogger()    # reset
 
 	simple.equal 179, lItems, ['a','b','c']
-
-	setLogger console.log
 	)()
 
 simple.fails 187, () -> error("an error message")
@@ -303,4 +303,5 @@ simple.equal 284, CWS("""
 				a: 1
 				b: 2
 			"""
+	setLogger()
 	)()

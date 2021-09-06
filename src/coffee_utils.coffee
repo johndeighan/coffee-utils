@@ -78,7 +78,7 @@ export stringify = (item) ->
 	return stringifier(item)
 
 # ---------------------------------------------------------------------------
-#   say - print to the console
+#   log - print to the console
 
 export log = (obj, label='') ->
 

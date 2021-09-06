@@ -90,7 +90,7 @@ export var stringify = function(item) {
 };
 
 // ---------------------------------------------------------------------------
-//   say - print to the console
+//   log - print to the console
 export var log = function(obj, label = '') {
   if (label) {
     logger(titleLine(label));
