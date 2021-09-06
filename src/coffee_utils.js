@@ -55,14 +55,22 @@ stringifier = tamlStringifier; // for non-strings
 
 // ---------------------------------------------------------------------------
 export var setLogger = function(func) {
-  assert(isFunction(func), "setLogger() not a function");
-  logger = func;
+  if (func != null) {
+    assert(isFunction(func), "setLogger() not a function");
+    logger = func;
+  } else {
+    logger = console.log;
+  }
 };
 
 // ---------------------------------------------------------------------------
 export var setStringifier = function(func) {
-  assert(isFunction(func), "setStringifier() not a function");
-  stringifier = func;
+  if (func != null) {
+    assert(isFunction(func), "setStringifier() not a function");
+    stringifier = func;
+  } else {
+    stringifier = tamlStringifier;
+  }
 };
 
 // ---------------------------------------------------------------------------
@@ -85,7 +93,7 @@ export var stringify = function(item) {
 //   say - print to the console
 export var log = function(obj, label = '') {
   if (label) {
-    logger(label);
+    logger(titleLine(label));
   }
   if (!isString(obj)) {
     obj = stringifier(obj);
@@ -112,6 +120,16 @@ export var pass = function() {};
 // ---------------------------------------------------------------------------
 //   error - throw an error
 export var error = function(message) {
+  throw new Error(message);
+};
+
+// ---------------------------------------------------------------------------
+//   croak - throws an error after possibly printing useful info
+export var croak = function(message, obj, label) {
+  log(`ERROR: ${message}`);
+  if (obj != null) {
+    log(obj, label);
+  }
   throw new Error(message);
 };
 

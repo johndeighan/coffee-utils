@@ -9,7 +9,7 @@ import {
 	words, escapeStr, truncateBlock,
 	removeCR, splitBlock, CWS, isArrayOfHashes,
 	tamlStringifier, stringify, setStringifier,
-	setLogger, log, firstLine, oneline,
+	setLogger, log, firstLine, oneline, croak,
 	} from '@jdeighan/coffee-utils'
 
 simple = new UnitTester()
@@ -285,3 +285,22 @@ simple.equal 284, CWS("""
 		a simple
 		error message
 		"""), "a simple error message"
+
+# ---------------------------------------------------------------------------
+# test croak()
+
+(() ->
+	lLines = []
+	setLogger (line) -> lLines.push(line)
+
+	obj = {a:1, b:2}
+	try
+		croak "bad stuff", obj, "An Object"
+	simple.equal 298, arrayToString(lLines), """
+			ERROR: bad stuff
+			============== An Object ===============
+			---
+				a: 1
+				b: 2
+			"""
+	)()

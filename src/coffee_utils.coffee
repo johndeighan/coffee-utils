@@ -40,16 +40,22 @@ stringifier = tamlStringifier # for non-strings
 
 export setLogger = (func) ->
 
-	assert isFunction(func), "setLogger() not a function"
-	logger = func
+	if func?
+		assert isFunction(func), "setLogger() not a function"
+		logger = func
+	else
+		logger = console.log
 	return
 
 # ---------------------------------------------------------------------------
 
 export setStringifier = (func) ->
 
-	assert isFunction(func), "setStringifier() not a function"
-	stringifier = func
+	if func?
+		assert isFunction(func), "setStringifier() not a function"
+		stringifier = func
+	else
+		stringifier = tamlStringifier
 	return
 
 # ---------------------------------------------------------------------------
@@ -77,7 +83,7 @@ export stringify = (item) ->
 export log = (obj, label='') ->
 
 	if label
-		logger label
+		logger titleLine(label)
 	if not isString(obj)
 		obj = stringifier(obj)
 	logger obj
@@ -105,6 +111,16 @@ export pass = () ->
 
 export error = (message) ->
 
+	throw new Error(message)
+
+# ---------------------------------------------------------------------------
+#   croak - throws an error after possibly printing useful info
+
+export croak = (message, obj, label) ->
+
+	log "ERROR: #{message}"
+	if obj?
+		log obj, label
 	throw new Error(message)
 
 # ---------------------------------------------------------------------------
