@@ -11,6 +11,16 @@ import {
 
 # ---------------------------------------------------------------------------
 
+export joinBlocks = (lBlocks...) ->
+
+	str = ''
+	for blk in lBlocks
+		if nonEmpty(blk)
+			str += "\n" + blk
+	return str
+
+# ---------------------------------------------------------------------------
+
 ```
 export async function forEachLine(filepath, func) {
 

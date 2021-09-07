@@ -18,6 +18,19 @@ import {
   isComment
 } from '@jdeighan/coffee-utils';
 
+// ---------------------------------------------------------------------------
+export var joinBlocks = function(...lBlocks) {
+  var blk, i, len, str;
+  str = '';
+  for (i = 0, len = lBlocks.length; i < len; i++) {
+    blk = lBlocks[i];
+    if (nonEmpty(blk)) {
+      str += "\n" + blk;
+    }
+  }
+  return str;
+};
+
 
 export async function forEachLine(filepath, func) {
 
