@@ -87,6 +87,8 @@ export log = (obj, label='') ->
 	if not isString(obj)
 		obj = stringifier(obj)
 	logger obj
+	if label
+		logger titleLine()
 	return
 
 # ---------------------------------------------------------------------------
@@ -343,6 +345,9 @@ export normalize = (content) ->
 
 export titleLine = (title, char='=', padding=2, linelen=42) ->
 	# --- used in logger
+
+	if not title
+		return char.repeat(linelen)
 
 	titleLen = title.length + 2 * padding
 	nLeft = Math.floor((linelen - titleLen) / 2)

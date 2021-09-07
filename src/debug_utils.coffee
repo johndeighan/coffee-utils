@@ -2,7 +2,7 @@
 
 import {strict as assert} from 'assert'
 import {
-	undef, say, pass, error, isString, isFunction, stringToArray, escapeStr,
+	undef, log, pass, error, isString, isFunction, stringToArray, escapeStr,
 	currentLogger, currentStringifier, setLogger, setStringifier, stringify,
 	} from '@jdeighan/coffee-utils'
 
@@ -86,7 +86,7 @@ export debug = (item, label=undef) ->
 	# --- if item is 'tree', just print label && increment debugLevel
 	#     if item is 'untree', print nothing && decrement debugLevel
 	if (item == 'tree')
-		say '   '.repeat(debugLevel) + label
+		log '   '.repeat(debugLevel) + label
 		debugLevel += 1
 		return
 	else if (item == 'untree')
@@ -114,21 +114,21 @@ export debug = (item, label=undef) ->
 
 	if not item?
 		if label
-			say prefix +  label + " undef"
+			log prefix +  label + " undef"
 		else
-			say prefix + " undef"
+			log prefix + " undef"
 	else if isString(item)
 		if label
-			say prefix +  label + " '" + escapeStr(item) + "'"
+			log prefix +  label + " '" + escapeStr(item) + "'"
 		else
-			say prefix + escapeStr(item)
+			log prefix + escapeStr(item)
 	else
 		if label
-			say prefix + label
+			log prefix + label
 		for str in stringToArray(stringify(item))
 			# --- We're exiting, but we want the normal prefix
 			prefix = indent.repeat(debugLevel)
-			say prefix + '   ' + str.replace(/\t/g, '   ')
+			log prefix + '   ' + str.replace(/\t/g, '   ')
 
 	if entering
 		debugLevel += 1

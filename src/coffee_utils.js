@@ -99,6 +99,9 @@ export var log = function(obj, label = '') {
     obj = stringifier(obj);
   }
   logger(obj);
+  if (label) {
+    logger(titleLine());
+  }
 };
 
 // ---------------------------------------------------------------------------
@@ -369,6 +372,9 @@ export var normalize = function(content) {
 export var titleLine = function(title, char = '=', padding = 2, linelen = 42) {
   var nLeft, nRight, strLeft, strMiddle, strRight, titleLen;
   // --- used in logger
+  if (!title) {
+    return char.repeat(linelen);
+  }
   titleLen = title.length + 2 * padding;
   nLeft = Math.floor((linelen - titleLen) / 2);
   nRight = linelen - nLeft - titleLen;

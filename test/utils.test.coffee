@@ -6,7 +6,7 @@ import {
 	isEmpty, nonEmpty, isComment, getClassName, isNumber,
 	isFunction, isInteger, arrayToString, rtrim,
 	normalize, stringToArray, ltrunc, rtrunc,
-	words, escapeStr, truncateBlock,
+	words, escapeStr, truncateBlock, titleLine,
 	removeCR, splitBlock, CWS, isArrayOfHashes,
 	tamlStringifier, stringify, setStringifier,
 	setLogger, log, firstLine, oneline, croak,
@@ -40,6 +40,9 @@ simple.truthy 30, isComment('   ###')
 simple.falsy  31, isComment('#for')
 simple.falsy  32, isComment('   #for')
 simple.falsy  33, isComment('#for line in lLines')
+
+simple.equal  44, titleLine('a thing').length, 42
+simple.equal  45, titleLine('a thing','-',5,90).length, 90
 
 # ---------------------------------------------------------------------------
 
@@ -298,10 +301,11 @@ simple.equal 284, CWS("""
 		croak "bad stuff", obj, "An Object"
 	simple.equal 298, arrayToString(lLines), """
 			ERROR: bad stuff
-			============== An Object ===============
+			==============  An Object  ===============
 			---
 				a: 1
 				b: 2
+			==========================================
 			"""
 	setLogger()
 	)()
