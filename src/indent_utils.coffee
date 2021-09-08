@@ -53,26 +53,28 @@ export indented = (input, level=0) ->
 		return arrayToString(lLines)
 
 # ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
 #   undented - string with 1st line indentation removed for each line
 #            - unless level is set, in which case exactly that
 #              indentation is removed
-#            - returns same type as input, i.e. either string or array
+#            - returns same type as text, i.e. either string or array
 
-export undented = (input, level=undef) ->
+export undented = (text, level=undef) ->
 
 	if level? && (level==0)
-		return input
+		return text
 
-	if isString(input)
-		lLines = stringToArray(input)
+	if isString(text)
+		lLines = stringToArray(text)
 		if (lLines.length == 0)
 			return ''
-	else if isArray(input)
-		lLines = input
+	else if isArray(text)
+		lLines = text
 		if (lLines.length == 0)
 			return []
 	else
-		error "undented(): Not an array or string: #{oneline(input)}"
+		error "undented(): Not an array or string: #{oneline(text)}"
 
 	# --- determine what to remove from beginning of each line
 	if level?
@@ -89,11 +91,11 @@ export undented = (input, level=undef) ->
 			lNewLines.push('')
 		else
 			assert (line.indexOf(toRemove)==0),
-				"undented(): '#{escapeStr(line)}' does not start with \
-					'#{escapeStr(toRemove)}'"
+				"undented(): Error removing '#{escapeStr(toRemove)}' \
+					from '#{oneline(text)}'"
 			lNewLines.push(line.substr(nToRemove))
 
-	if isString(input)
+	if isString(text)
 		return arrayToString(lNewLines)
 	else
 		return lNewLines
