@@ -2,7 +2,7 @@
 
 import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {
-	say, error, warn, isString, isObject, isArray, isHash,
+	say, undef, error, warn, isString, isObject, isArray, isHash,
 	isEmpty, nonEmpty, isComment, getClassName, isNumber,
 	isFunction, isInteger, arrayToString, rtrim,
 	normalize, stringToArray, ltrunc, rtrunc,
@@ -282,8 +282,8 @@ simple.equal 277, firstLine("""
 
 # ---------------------------------------------------------------------------
 
-simple.equal 285, oneline("\t\tabc"), "\\t\\tabc"
-simple.equal 286, oneline("\t\tabc\nxyz"), "\\t\\tabc\\nxyz"
+simple.equal 285, oneline(undef), "undef"
+simple.equal 286, oneline("\t\tabc\nxyz"), "'\\t\\tabc\\nxyz'"
 simple.equal 287, oneline({a:1, b:'xyz'}), '{"a":1,"b":"xyz"}'
 
 # ---------------------------------------------------------------------------

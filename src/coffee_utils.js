@@ -447,10 +447,14 @@ export var escapeStr = function(str) {
 
 // ---------------------------------------------------------------------------
 export var oneline = function(obj) {
-  if (isString(obj)) {
-    return escapeStr(obj);
+  if (obj != null) {
+    if (isString(obj)) {
+      return `'${escapeStr(obj)}'`;
+    } else {
+      return JSON.stringify(obj);
+    }
   } else {
-    return JSON.stringify(obj);
+    return 'undef';
   }
 };
 

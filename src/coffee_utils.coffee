@@ -413,10 +413,13 @@ export escapeStr = (str) ->
 
 export oneline = (obj) ->
 
-	if isString(obj)
-		return escapeStr(obj)
+	if obj?
+		if isString(obj)
+			return "'#{escapeStr(obj)}'"
+		else
+			return JSON.stringify(obj)
 	else
-		return JSON.stringify(obj)
+		return 'undef'
 
 # ---------------------------------------------------------------------------
 # truncateBlock - limit block to a certain number of lines
