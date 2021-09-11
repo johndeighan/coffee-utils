@@ -8,7 +8,7 @@ import {
 	isString, isFunction, isInteger, isArray,
 	} from '@jdeighan/coffee-utils'
 import {
-	debug, debugging, startDebugging, endDebugging,
+	debug, debugging, setDebugging,
 	} from '@jdeighan/coffee-utils/debug'
 
 # ---------------------------------------------------------------------------
@@ -180,7 +180,7 @@ export class UnitTester
 			return
 
 		if lineNum < -100000
-			startDebugging()
+			setDebugging true
 
 		assert isInteger(lineNum),
 			"UnitTester.test(): arg 1 must be an integer"
@@ -206,7 +206,7 @@ export class UnitTester
 				say got, "GOT:"
 			say expected, "EXPECTED:"
 			if lineNum < -100000
-				endDebugging()
+				setDebugging false
 			return
 
 		# --- We need to save this here because in the tests themselves,
@@ -221,7 +221,7 @@ export class UnitTester
 			test "line #{lineNum}", (t) ->
 				t[whichTest](got, expected)
 		if lineNum < -100000
-			endDebugging()
+			setDebugging false
 		return
 
 	# ........................................................................

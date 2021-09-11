@@ -2,9 +2,8 @@
 
 import {strict as assert} from 'assert'
 import {
-	undef, log, error, warn, isString, isFunction,
-	stringToArray, oneline, currentLogger, currentStringifier,
-	setLogger, setStringifier, stringify, escapeStr,
+	undef, log, error,croak, warn, words, isString, isFunction,
+	stringToArray, oneline, stringify, escapeStr, isNumber,
 	} from '@jdeighan/coffee-utils'
 
 vbar = '│'       # unicode 2502
@@ -17,59 +16,40 @@ arrow = corner + hbar + arrowhead + ' '
 
 debugLevel = 0   # controls amount of indentation - we ensure it's never < 0
 
-# --- items on lDebugStack are hashes:
-#        debugging: <boolean>
-#        ifMatches: <regexp> or undef
-#        logger: <function> or undef
-#        stringifier: <function> or undef
-
+# --- items on lDebugStack are booleans
 lDebugStack = []
 export debugging = false
 
 ifMatches = undefined
 
+# --- turn debugging on when in one of these functions
+#     when returning from one of these functions, restore previous setting
+lDebugFuncs = undefined
+
 # ---------------------------------------------------------------------------
 
-export startDebugging = (hOptions={}) ->
-	# --- Valid options:
-	#        debuggingOff - if set, temporarily turns debugging off
-	#        ifMatches - set ifMatches
-	#        logger - set the function for logging
-	#        stringifier - set the function for stringifying
+export debugIfLineMatches = (regexp=undef) ->
 
-	# --- save current settings
-	lDebugStack.push({
-		debugging,
-		ifMatches,
-		logger: currentLogger(),
-		stringifier: currentStringifier(),
-		})
+	ifMatches = regexp
+	return
 
-	# --- set current settings from hOptions
-	if hOptions.debuggingOff
-		debugging = false
-	else
+# ---------------------------------------------------------------------------
+
+export setDebugging = (x) ->
+
+	if (x==true)
+		# --- save current setting
+		lDebugStack.push(debugging)
 		debugging = true
-	ifMatches = hOptions.ifMatches
-	if hOptions.logger
-		assert isFunction(hOptions.logger),
-			"startDebugging() logger not a function"
-		setLogger hOptions.logger
-	if hOptions.stringifier && isFunction(hOptions.stringifier)
-		assert isFunction(hOptions.stringifier),
-			"startDebugging() stringifier not a function"
-		setStringifier hOptions.stringifier
-
-# ---------------------------------------------------------------------------
-
-export endDebugging = () ->
-
-	assert (lDebugStack.length > 0), "endDebugging(): empty stack"
-	hInfo = lDebugStack.pop()
-	debugging = hInfo.debugging
-	ifMatches = hInfo.ifMatches
-	setLogger hInfo.logger
-	setStringifier hInfo.stringifier
+	else if (x==false)
+		assert (lDebugStack.length > 0), "mismatched setDebugging() calls"
+		debugging = lDebugStack.pop()
+	else if isString(x)
+		lDebugFuncs = words(x)
+	else if isArray(x)
+		lDebugFuncs = x
+	else
+		croak "setDebugging(): bad parameter #{oneline(x)}"
 	return
 
 # ---------------------------------------------------------------------------
@@ -83,65 +63,84 @@ getPrefix = (level) ->
 
 # ---------------------------------------------------------------------------
 
-export debug = (item, label=undef) ->
+export debug = (lArgs...) ->
 
-	if not debugging
+	maxOneLine = 32
+
+	nArgs = lArgs.length
+	assert ((nArgs >= 1) && (nArgs <= 2)), "debug(); Bad # args #{nArgs}"
+	str = lArgs[0]
+	if (nArgs==2)
+		item = lArgs[1]
+
+	# --- str must always be a string
+	#     if 2 args, then str is meant to be a label for the item
+
+	if not debugging && not lDebugFuncs?
 		return
 
-	if ifMatches?
-		toTest = label || item
-		if isString(toTest) && not toTest.match(ifMatches)
-			return
-
-	# --- if item is 'tree', just print label && increment debugLevel
-	#     if item is 'untree', print nothing && decrement debugLevel
-	if (item == 'tree')
-		log getPrefix(debugLevel) + label
-		debugLevel += 1
-		return
-	else if (item == 'untree') && (debugLevel > 0)
-		debugLevel -= 1
-		return
+	assert isString(str),
+			"debug(): 1st arg #{oneline(str)} should be a string"
 
 	# --- determine if we're entering or returning from a function
 	entering = exiting = false
-	if label
-		assert isString(label), "debug(): label must be a string"
-		entering = (label.indexOf('enter') == 0)
-		exiting =  (label.indexOf('return') == 0)
-	else
-		assert isString(item), "debug(): single parameter must be a string"
-		entering = (item.indexOf('enter') == 0)
-		exiting =  (item.indexOf('return') == 0)
+	curFunction = undef
+	if (lMatches=str.match(///^
+			\s*
+			enter
+			\s+
+			([A-Za-z_][A-Za-z0-9_]*)
+			///))
+		entering = true
+		curFunction = lMatches[1]
+	else if (lMatches=str.match(///^
+			\s*
+			return
+			.*
+			from
+			\s+
+			([A-Za-z_][A-Za-z0-9_]*)
+			///))
+		exiting = true
+		curFunction = lMatches[1]
 
-	if exiting
-		n = if (debugLevel==0) then 0 else debugLevel-1
-		prefix = indent.repeat(n) + arrow
-	else
-		prefix = indent.repeat(debugLevel)
+	if curFunction && lDebugFuncs && lDebugFuncs.includes(curFunction)
+		if entering
+			setDebugging true
+		if exiting
+			setDebugging false
 
-	if not item?
-		if label
-			log prefix +  label + " undef"
+	if debugging && (not ifMatches? || str.match(ifMatches))
+
+		# --- set the prefix, i.e. indentation to use
+		if exiting
+			if (debugLevel==0)
+				prefix = arrow
+			else
+				prefix = indent.repeat(debugLevel-1) + arrow
 		else
-			log prefix + " undef"
-	else if isString(item)
-		if item.match(/\n/)    # it's a multi-line string
-			if label
-				log prefix + label
-			for line in stringToArray(item)
-				log prefix + escapeStr(line)
-		else if label
-			log prefix +  label + " " + escapeStr(item)
-		else
-			log prefix + escapeStr(item)
-	else
-		if label
-			log prefix + label
-		for str in stringToArray(stringify(item))
-			# --- We're exiting, but we want the normal prefix
 			prefix = indent.repeat(debugLevel)
-			log prefix + '   ' + str.replace(/\t/g, '   ')
+
+		# --- Output ---
+		if (nArgs==1)
+			log "#{prefix}#{str}"
+		else if not item?
+			log "#{prefix}#{str} = undef"
+		else if isNumber(item)
+			log "#{prefix}#{str} = #{item}"
+		else if isString(item)
+			esc = escapeStr(item)
+			if (esc.length <= maxOneLine)
+				log "#{prefix}#{str} = '#{esc}'"
+			else
+				log "#{prefix}#{str}:"
+				for line in stringToArray(item)
+					log prefix + '   ' + escapeStr(line)
+		else
+			# --- It's some type of object
+			log "#{prefix}#{str}:"
+			for str in stringToArray(stringify(item))
+				log prefix + '   ' + str
 
 	if entering
 		debugLevel += 1

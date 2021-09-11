@@ -22,8 +22,7 @@ import {
 import {
   debug,
   debugging,
-  startDebugging,
-  endDebugging
+  setDebugging
 } from '@jdeighan/coffee-utils/debug';
 
 // ---------------------------------------------------------------------------
@@ -188,7 +187,7 @@ export var UnitTester = class UnitTester {
       return;
     }
     if (lineNum < -100000) {
-      startDebugging();
+      setDebugging(true);
     }
     assert(isInteger(lineNum), "UnitTester.test(): arg 1 must be an integer");
     lineNum = this.getLineNum(lineNum); // corrects for duplicates
@@ -215,7 +214,7 @@ export var UnitTester = class UnitTester {
       }
       say(expected, "EXPECTED:");
       if (lineNum < -100000) {
-        endDebugging();
+        setDebugging(false);
       }
       return;
     }
@@ -233,7 +232,7 @@ export var UnitTester = class UnitTester {
       });
     }
     if (lineNum < -100000) {
-      endDebugging();
+      setDebugging(false);
     }
   }
 
