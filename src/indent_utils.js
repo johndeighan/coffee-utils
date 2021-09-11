@@ -33,6 +33,7 @@ export var splitLine = function(line) {
 //   indentation - return appropriate indentation string for given level
 //   export only to allow unit testing
 export var indentation = function(level) {
+  assert(level >= 0, "indented(): negative level");
   return '\t'.repeat(level);
 };
 
@@ -48,6 +49,7 @@ export var indentLevel = function(str) {
 //   indented - add indentation to each string in a block
 export var indented = function(input, level = 0) {
   var lLines, line, toAdd;
+  assert(level >= 0, "indented(): negative level");
   if (level === 0) {
     return input;
   }
@@ -77,8 +79,6 @@ export var indented = function(input, level = 0) {
     return arrayToString(lLines);
   }
 };
-
-// ---------------------------------------------------------------------------
 
 // ---------------------------------------------------------------------------
 //   undented - string with 1st line indentation removed for each line

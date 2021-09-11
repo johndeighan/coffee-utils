@@ -2,8 +2,9 @@
 
 import {strict as assert} from 'assert'
 import {
-	undef, log, pass, error, isString, isFunction, stringToArray, escapeStr,
-	currentLogger, currentStringifier, setLogger, setStringifier, stringify,
+	undef, log, error, warn, isString, isFunction,
+	stringToArray, oneline, currentLogger, currentStringifier,
+	setLogger, setStringifier, stringify, escapeStr,
 	} from '@jdeighan/coffee-utils'
 
 vbar = '│'       # unicode 2502
@@ -14,7 +15,7 @@ arrowhead = '>'
 indent = vbar + '   '
 arrow = corner + hbar + arrowhead + ' '
 
-debugLevel = 0           # controls amount of indentation
+debugLevel = 0   # controls amount of indentation - we ensure it's never < 0
 
 # --- items on lDebugStack are hashes:
 #        debugging: <boolean>
@@ -73,6 +74,15 @@ export endDebugging = () ->
 
 # ---------------------------------------------------------------------------
 
+getPrefix = (level) ->
+
+	if (level < 0)
+		warn "You have mismatched debug 'enter'/'return' somewhere!"
+		return ''
+	return '   '.repeat(level)
+
+# ---------------------------------------------------------------------------
+
 export debug = (item, label=undef) ->
 
 	if not debugging
@@ -86,10 +96,10 @@ export debug = (item, label=undef) ->
 	# --- if item is 'tree', just print label && increment debugLevel
 	#     if item is 'untree', print nothing && decrement debugLevel
 	if (item == 'tree')
-		log '   '.repeat(debugLevel) + label
+		log getPrefix(debugLevel) + label
 		debugLevel += 1
 		return
-	else if (item == 'untree')
+	else if (item == 'untree') && (debugLevel > 0)
 		debugLevel -= 1
 		return
 
@@ -119,7 +129,7 @@ export debug = (item, label=undef) ->
 			log prefix + " undef"
 	else if isString(item)
 		if label
-			log prefix +  label + " '" + escapeStr(item) + "'"
+			log prefix +  label + " " + oneline(item)
 		else
 			log prefix + escapeStr(item)
 	else

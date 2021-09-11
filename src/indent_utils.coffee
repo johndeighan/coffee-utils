@@ -24,6 +24,7 @@ export splitLine = (line) ->
 
 export indentation = (level) ->
 
+	assert (level >= 0), "indented(): negative level"
 	return '\t'.repeat(level)
 
 # ---------------------------------------------------------------------------
@@ -39,6 +40,7 @@ export indentLevel = (str) ->
 
 export indented = (input, level=0) ->
 
+	assert (level >= 0), "indented(): negative level"
 	if level == 0
 		return input
 
@@ -51,8 +53,6 @@ export indented = (input, level=0) ->
 		lLines = for line in stringToArray(input)
 			"#{toAdd}#{line}"
 		return arrayToString(lLines)
-
-# ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
 #   undented - string with 1st line indentation removed for each line

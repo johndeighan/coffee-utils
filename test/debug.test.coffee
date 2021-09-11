@@ -18,7 +18,7 @@ startDebugging({
 
 (() ->
 	lLines = []
-	debug('abc')
+	debug 'abc'
 	simple.equal 22, lLines, ['abc']
 	)()
 
