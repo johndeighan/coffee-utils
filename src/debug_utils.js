@@ -19,7 +19,8 @@ import {
   oneline,
   stringify,
   escapeStr,
-  isNumber
+  isNumber,
+  isArray
 } from '@jdeighan/coffee-utils';
 
 vbar = '│'; // unicode 2502

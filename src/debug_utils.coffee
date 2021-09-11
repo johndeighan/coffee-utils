@@ -3,7 +3,7 @@
 import {strict as assert} from 'assert'
 import {
 	undef, log, error,croak, warn, words, isString, isFunction,
-	stringToArray, oneline, stringify, escapeStr, isNumber,
+	stringToArray, oneline, stringify, escapeStr, isNumber, isArray,
 	} from '@jdeighan/coffee-utils'
 
 vbar = '│'       # unicode 2502
