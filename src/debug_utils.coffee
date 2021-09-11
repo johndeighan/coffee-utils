@@ -106,13 +106,11 @@ export debug = (item, label=undef) ->
 	# --- determine if we're entering or returning from a function
 	entering = exiting = false
 	if label
-		if not isString(label)
-			error "debug(): label must be a string"
+		assert isString(label), "debug(): label must be a string"
 		entering = (label.indexOf('enter') == 0)
 		exiting =  (label.indexOf('return') == 0)
 	else
-		if not isString(item)
-			error "debug(): single parameter must be a string"
+		assert isString(item), "debug(): single parameter must be a string"
 		entering = (item.indexOf('enter') == 0)
 		exiting =  (item.indexOf('return') == 0)
 
@@ -128,8 +126,13 @@ export debug = (item, label=undef) ->
 		else
 			log prefix + " undef"
 	else if isString(item)
-		if label
-			log prefix +  label + " " + oneline(item)
+		if item.match(/\n/)    # it's a multi-line string
+			if label
+				log prefix + label
+			for line in stringToArray(item)
+				log prefix + escapeStr(line)
+		else if label
+			log prefix +  label + " " + escapeStr(item)
 		else
 			log prefix + escapeStr(item)
 	else

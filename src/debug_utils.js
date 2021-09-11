@@ -103,7 +103,7 @@ getPrefix = function(level) {
 
 // ---------------------------------------------------------------------------
 export var debug = function(item, label = undef) {
-  var entering, exiting, i, len, n, prefix, ref, str, toTest;
+  var entering, exiting, i, j, len, len1, line, n, prefix, ref, ref1, str, toTest;
   if (!debugging) {
     return;
   }
@@ -126,15 +126,11 @@ export var debug = function(item, label = undef) {
   // --- determine if we're entering or returning from a function
   entering = exiting = false;
   if (label) {
-    if (!isString(label)) {
-      error("debug(): label must be a string");
-    }
+    assert(isString(label), "debug(): label must be a string");
     entering = label.indexOf('enter') === 0;
     exiting = label.indexOf('return') === 0;
   } else {
-    if (!isString(item)) {
-      error("debug(): single parameter must be a string");
-    }
+    assert(isString(item), "debug(): single parameter must be a string");
     entering = item.indexOf('enter') === 0;
     exiting = item.indexOf('return') === 0;
   }
@@ -151,8 +147,17 @@ export var debug = function(item, label = undef) {
       log(prefix + " undef");
     }
   } else if (isString(item)) {
-    if (label) {
-      log(prefix + label + " " + oneline(item));
+    if (item.match(/\n/)) { // it's a multi-line string
+      if (label) {
+        log(prefix + label);
+      }
+      ref = stringToArray(item);
+      for (i = 0, len = ref.length; i < len; i++) {
+        line = ref[i];
+        log(prefix + escapeStr(line));
+      }
+    } else if (label) {
+      log(prefix + label + " " + escapeStr(item));
     } else {
       log(prefix + escapeStr(item));
     }
@@ -160,9 +165,9 @@ export var debug = function(item, label = undef) {
     if (label) {
       log(prefix + label);
     }
-    ref = stringToArray(stringify(item));
-    for (i = 0, len = ref.length; i < len; i++) {
-      str = ref[i];
+    ref1 = stringToArray(stringify(item));
+    for (j = 0, len1 = ref1.length; j < len1; j++) {
+      str = ref1[j];
       // --- We're exiting, but we want the normal prefix
       prefix = indent.repeat(debugLevel);
       log(prefix + '   ' + str.replace(/\t/g, '   '));
