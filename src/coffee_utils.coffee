@@ -278,7 +278,7 @@ export isInteger = (x) ->
 
 export warn = (message) ->
 
-	say "WARNING: #{message}"
+	log "WARNING: #{message}"
 
 # ---------------------------------------------------------------------------
 #   ask - ask a question
@@ -398,8 +398,7 @@ export escapeStr = (str) ->
 	if not str?
 		return 'undef'
 	if typeof str != 'string'
-		say "STRING: '#{str}'"
-		error "escapeStr(): not a string"
+		croak "escapeStr(): not a string", str, 'STRING'
 	lParts = for ch in str.split('')
 		if ch == '\n'
 			'\\n'

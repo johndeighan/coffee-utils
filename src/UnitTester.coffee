@@ -4,7 +4,7 @@ import {strict as assert} from 'assert'
 import test from 'ava'
 
 import {
-	undef, say, error, stringToArray, currentLogger, setLogger
+	undef, log, error, stringToArray, currentLogger, setLogger
 	isString, isFunction, isInteger, isArray,
 	} from '@jdeighan/coffee-utils'
 import {
@@ -193,18 +193,18 @@ export class UnitTester
 				got = @normalize(got)
 		catch err
 			errMsg = err.message || 'UNKNOWN ERROR'
-			say "got ERROR: #{errMsg}"
+			log "got ERROR: #{errMsg}"
 
 		if isString(expected)
 			expected = @normalize(expected)
 
 		if @justshow
-			say "line #{lineNum}"
+			log "line #{lineNum}"
 			if errMsg
-				say "GOT ERROR #{errMsg}"
+				log "GOT ERROR #{errMsg}"
 			else
-				say got, "GOT:"
-			say expected, "EXPECTED:"
+				log got, "GOT:"
+			log expected, "EXPECTED:"
 			if lineNum < -100000
 				setDebugging false
 			return

@@ -11,7 +11,7 @@ import {
 	} from 'fs'
 
 import {
-	say, undef, pass, firstLine,
+	log, undef, pass, firstLine,
 	rtrim, error, unitTesting,
 	} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
@@ -61,10 +61,10 @@ export backup = (file, from, to, report=false) ->
 
 export slurp = (filepath) ->
 
-	debug "enter slurp '#{filepath}'"
+	debug "enter slurp('#{filepath}')"
 	filepath = filepath.replace(/\//g, "\\")
 	contents = readFileSync(filepath, 'utf8').toString()
-	debug "return from slurp()"
+	debug "return from slurp()", contents
 	return contents
 
 # ---------------------------------------------------------------------------
@@ -72,12 +72,12 @@ export slurp = (filepath) ->
 
 export barf = (filepath, contents) ->
 
-	debug "enter barf('#{filepath}', #{contents.length} chars)"
+	debug "enter barf('#{filepath}')", contents
 	contents = rtrim(contents) + "\n"
 	try
 		writeFileSync(filepath, contents, {encoding: 'utf8'})
 	catch err
-		say "barf(): write failed: #{err.message}"
+		log "barf(): write failed: #{err.message}"
 	debug "return from barf()"
 	return
 
@@ -122,21 +122,21 @@ export pathTo = (fname, dir, direction="down") ->
 	debug "enter pathTo('#{fname}','#{dir}','#{direction}')"
 	assert existsSync(dir), "Directory #{dir} does not exist"
 	if existsSync("#{dir}/#{fname}")
-		debug "return #{dir}/#{fname} - file exists"
+		debug "return from pathTo: #{dir}/#{fname} - file exists"
 		return mkpath("#{dir}/#{fname}")
 	else if (direction == 'down')
 		# --- Search all directories in this directory
 		for subdir in getSubDirs(dir)
 			if fpath = pathTo(fname, "#{dir}/#{subdir}")
-				debug "return #{fpath}"
+				debug "return from pathTo: #{fpath}"
 				return fpath
 	else if (direction == 'up')
 		while dir = getParentDir(dir)
 			debug "check #{dir}"
 			if existsSync("#{dir}/#{fname}")
-				debug "return #{dir}/#{fname}"
+				debug "return from pathTo(): #{dir}/#{fname}"
 				return "#{dir}/#{fname}"
 	else
 		error "pathTo(): Invalid direction '#{direction}'"
-	debug "return undef - file not found"
+	debug "return undef from pathTo - file not found"
 	return undef

@@ -8,7 +8,7 @@ import test from 'ava';
 
 import {
   undef,
-  say,
+  log,
   error,
   stringToArray,
   currentLogger,
@@ -200,19 +200,19 @@ export var UnitTester = class UnitTester {
     } catch (error1) {
       err = error1;
       errMsg = err.message || 'UNKNOWN ERROR';
-      say(`got ERROR: ${errMsg}`);
+      log(`got ERROR: ${errMsg}`);
     }
     if (isString(expected)) {
       expected = this.normalize(expected);
     }
     if (this.justshow) {
-      say(`line ${lineNum}`);
+      log(`line ${lineNum}`);
       if (errMsg) {
-        say(`GOT ERROR ${errMsg}`);
+        log(`GOT ERROR ${errMsg}`);
       } else {
-        say(got, "GOT:");
+        log(got, "GOT:");
       }
-      say(expected, "EXPECTED:");
+      log(expected, "EXPECTED:");
       if (lineNum < -100000) {
         setDebugging(false);
       }

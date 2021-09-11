@@ -289,7 +289,7 @@ export var isInteger = function(x) {
 // ---------------------------------------------------------------------------
 //   warn - issue a warning
 export var warn = function(message) {
-  return say(`WARNING: ${message}`);
+  return log(`WARNING: ${message}`);
 };
 
 // ---------------------------------------------------------------------------
@@ -423,8 +423,7 @@ export var escapeStr = function(str) {
     return 'undef';
   }
   if (typeof str !== 'string') {
-    say(`STRING: '${str}'`);
-    error("escapeStr(): not a string");
+    croak("escapeStr(): not a string", str, 'STRING');
   }
   lParts = (function() {
     var i, len1, ref, results;

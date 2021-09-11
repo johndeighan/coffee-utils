@@ -11,7 +11,7 @@ import {
 } from 'readline';
 
 import {
-  say,
+  log,
   isEmpty,
   nonEmpty,
   error,
