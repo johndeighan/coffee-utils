@@ -4,10 +4,10 @@ import {strict as assert} from 'assert'
 import yaml from 'js-yaml'
 
 import {
-	undef, isFunction, escapeStr, stringToArray,
+	undef, isNumber, isString, isHash, isFunction,
+	escapeStr, stringToArray,
 	} from '@jdeighan/coffee-utils'
 import {tabify} from '@jdeighan/coffee-utils/indent'
-import {debug} from '@jdeighan/coffee-utils/debug'
 
 logger = console.log          # for strings
 
@@ -71,28 +71,33 @@ export currentStringifier = () ->
 maxOneLine = 32
 
 # ---------------------------------------------------------------------------
-#   log - print to the console
 
 export log = (lArgs...) ->
-	# --- (str, item, prefix)
+	# --- (str, item, hOptions)
+	#     valid options:
+	#        prefix
+	#        logItem
 
-	console.log "enter log()"
-	nArgs = lArgs.length
-	if (nArgs==0)
+	if (lArgs.length==0)
 		return
+	prefix = ''
 	str = lArgs[0]
-	if (nArgs >= 2)
-		item = lArgs[1]    # might be undef
-	if (nArgs >= 3)
-		prefix = lArgs[2]
-	else
-		prefix = ''
+	switch lArgs.length
+		when 1
+			logItem = false
+		when 2
+			item = lArgs[1]
+			logItem = true
+		else
+			item = lArgs[1]      # might not be logged, though
+			hOptions = lArgs[2]
+			assert isHash(hOptions), "log(): 3rd arg must be a hash"
+			if hOptions.prefix?
+				prefix = hOptions.prefix
+			if hOptions.logItem?
+				logItem = hOptions.logItem
 
-	debug "nArgs = #{nArgs}"
-	debug "str = '#{str}'"
-	debug "item", item
-
-	if (nArgs==1)
+	if (not logItem)
 		logger "#{prefix}#{str}"
 	else if not item?
 		logger "#{prefix}#{str} = undef"
@@ -115,7 +120,6 @@ export log = (lArgs...) ->
 			logger "#{prefix}#{str}:"
 			for str in stringToArray(stringify(item))
 				logger "#{prefix}   #{str}"
-	debug "return from log()"
 	return
 
 # ---------------------------------------------------------------------------

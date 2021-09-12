@@ -24,7 +24,6 @@ import {
 } from 'fs';
 
 import {
-  log,
   undef,
   pass,
   firstLine,
@@ -32,6 +31,10 @@ import {
   error,
   unitTesting
 } from '@jdeighan/coffee-utils';
+
+import {
+  log
+} from '@jdeighan/coffee-utils/log';
 
 import {
   debug

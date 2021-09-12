@@ -10,6 +10,9 @@ import yaml from 'js-yaml';
 
 import {
   undef,
+  isNumber,
+  isString,
+  isHash,
   isFunction,
   escapeStr,
   stringToArray
@@ -18,10 +21,6 @@ import {
 import {
   tabify
 } from '@jdeighan/coffee-utils/indent';
-
-import {
-  debug
-} from '@jdeighan/coffee-utils/debug';
 
 logger = console.log; // for strings
 
@@ -81,28 +80,37 @@ export var currentStringifier = function() {
 maxOneLine = 32;
 
 // ---------------------------------------------------------------------------
-//   log - print to the console
 export var log = function(...lArgs) {
-  var esc, i, item, j, json, len, len1, line, nArgs, prefix, ref, ref1, str;
-  // --- (str, item, prefix)
-  console.log("enter log()");
-  nArgs = lArgs.length;
-  if (nArgs === 0) {
+  var esc, hOptions, i, item, j, json, len, len1, line, logItem, prefix, ref, ref1, str;
+  // --- (str, item, hOptions)
+  //     valid options:
+  //        prefix
+  //        logItem
+  if (lArgs.length === 0) {
     return;
   }
+  prefix = '';
   str = lArgs[0];
-  if (nArgs >= 2) {
-    item = lArgs[1];
+  switch (lArgs.length) {
+    case 1:
+      logItem = false;
+      break;
+    case 2:
+      item = lArgs[1];
+      logItem = true;
+      break;
+    default:
+      item = lArgs[1];
+      hOptions = lArgs[2];
+      assert(isHash(hOptions), "log(): 3rd arg must be a hash");
+      if (hOptions.prefix != null) {
+        prefix = hOptions.prefix;
+      }
+      if (hOptions.logItem != null) {
+        logItem = hOptions.logItem;
+      }
   }
-  if (nArgs >= 3) {
-    prefix = lArgs[2];
-  } else {
-    prefix = '';
-  }
-  debug(`nArgs = ${nArgs}`);
-  debug(`str = '${str}'`);
-  debug("item", item);
-  if (nArgs === 1) {
+  if (!logItem) {
     logger(`${prefix}${str}`);
   } else if (item == null) {
     logger(`${prefix}${str} = undef`);
@@ -134,7 +142,6 @@ export var log = function(...lArgs) {
       }
     }
   }
-  debug("return from log()");
 };
 
 // ---------------------------------------------------------------------------

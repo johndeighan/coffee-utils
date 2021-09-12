@@ -11,12 +11,15 @@ import {
 } from 'readline';
 
 import {
-  log,
   isEmpty,
   nonEmpty,
   error,
   isComment
 } from '@jdeighan/coffee-utils';
+
+import {
+  log
+} from '@jdeighan/coffee-utils/log';
 
 // ---------------------------------------------------------------------------
 export var joinBlocks = function(...lBlocks) {

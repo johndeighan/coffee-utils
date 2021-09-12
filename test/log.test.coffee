@@ -3,7 +3,7 @@
 import {undef, arrayToString} from '@jdeighan/coffee-utils'
 import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {
-	stringify, setStringifier, log, setLogger, tamlStringifier,
+	stringify, setStringifier, log, setLogger, tamlStringify,
 	} from '@jdeighan/coffee-utils/log'
 
 simple = new UnitTester()
@@ -16,6 +16,7 @@ class LogTester extends UnitTester
 		return arrayToString(lLines)
 	normalize: (text) ->
 		return text
+
 tester = new LogTester()
 
 # ---------------------------------------------------------------------------
@@ -28,7 +29,7 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'enter myfunc'
-	tester.equal 28, lLines, """
+	tester.equal 32, lLines, """
 			enter myfunc
 			"""
 	)()
@@ -40,7 +41,7 @@ setLogger (str) -> lLines.push(str)
 	log 'abc'
 	log 'def'
 	log 'ghi'
-	tester.equal 40, lLines, """
+	tester.equal 44, lLines, """
 			abc
 			def
 			ghi
@@ -54,7 +55,7 @@ setLogger (str) -> lLines.push(str)
 	lLines = []
 	log 'abc'
 	log 'name', undef
-	tester.equal 54, lLines, """
+	tester.equal 58, lLines, """
 			abc
 			name = undef
 			"""
@@ -64,7 +65,7 @@ setLogger (str) -> lLines.push(str)
 	lLines = []
 	log 'abc'
 	log 'name', 42
-	tester.equal 64, lLines, """
+	tester.equal 68, lLines, """
 			abc
 			name = 42
 			"""
@@ -74,7 +75,7 @@ setLogger (str) -> lLines.push(str)
 	lLines = []
 	log 'abc'
 	log 'name', 'John'
-	tester.equal 74, lLines, """
+	tester.equal 78, lLines, """
 			abc
 			name = 'John'
 			"""
@@ -84,7 +85,7 @@ setLogger (str) -> lLines.push(str)
 	lLines = []
 	log 'abc'
 	log 'name', {a: 1, b: 'xyz'}
-	tester.equal 84, lLines, """
+	tester.equal 88, lLines, """
 			abc
 			name = {"a":1,"b":"xyz"}
 			"""
@@ -94,7 +95,7 @@ setLogger (str) -> lLines.push(str)
 	lLines = []
 	log 'abc'
 	log 'name', ['a', 42, [1,2]]
-	tester.equal 94, lLines, """
+	tester.equal 98, lLines, """
 			abc
 			name = ["a",42,[1,2]]
 			"""
@@ -111,7 +112,7 @@ setLogger (str) -> lLines.push(str)
 			text which changes
 			how it's displayed
 			"""
-	tester.equal 111, lLines, """
+	tester.equal 115, lLines, """
 			abc
 			name:
 			   This is a rather long bit of
@@ -129,7 +130,7 @@ setLogger (str) -> lLines.push(str)
 		age: 68,
 		home: 'Blacksburg, VA',
 		}
-	tester.equal 129, lLines, """
+	tester.equal 133, lLines, """
 			abc
 			name:
 			   ---
@@ -148,7 +149,7 @@ setLogger (str) -> lLines.push(str)
 		'a rather long string of text',
 		{a:1, b:2}
 		]
-	tester.equal 148, lLines, """
+	tester.equal 152, lLines, """
 			abc
 			name:
 			   ---
@@ -165,40 +166,40 @@ setLogger (str) -> lLines.push(str)
 
 (() ->
 	lLines = []
-	log 'name', undef, '<-->'
-	tester.equal 166, lLines, """
+	log 'name', undef, {prefix: '<-->', logItem: true}
+	tester.equal 170, lLines, """
 			<-->name = undef
 			"""
 	)()
 
 (() ->
 	lLines = []
-	log 'name', 42, '<-->'
-	tester.equal 174, lLines, """
+	log 'name', 42, {prefix: '<-->', logItem: true}
+	tester.equal 178, lLines, """
 			<-->name = 42
 			"""
 	)()
 
 (() ->
 	lLines = []
-	log 'name', 'John', '<-->'
-	tester.equal 182, lLines, """
+	log 'name', 'John', {prefix: '<-->', logItem: true}
+	tester.equal 186, lLines, """
 			<-->name = 'John'
 			"""
 	)()
 
 (() ->
 	lLines = []
-	log 'name', {a: 1, b: 'xyz'}, '<-->'
-	tester.equal 190, lLines, """
+	log 'name', {a: 1, b: 'xyz'}, {prefix: '<-->', logItem: true}
+	tester.equal 194, lLines, """
 			<-->name = {"a":1,"b":"xyz"}
 			"""
 	)()
 
 (() ->
 	lLines = []
-	log 'name', ['a', 42, [1,2]], '<-->'
-	tester.equal 198, lLines, """
+	log 'name', ['a', 42, [1,2]], {prefix: '<-->', logItem: true}
+	tester.equal 202, lLines, """
 			<-->name = ["a",42,[1,2]]
 			"""
 	)()
@@ -209,8 +210,8 @@ setLogger (str) -> lLines.push(str)
 			This is a rather long bit of
 			text which changes
 			how it's displayed
-			""", '<-->'
-	tester.equal 210, lLines, """
+			""", {prefix: '<-->', logItem: true}
+	tester.equal 214, lLines, """
 			<-->name:
 			<-->   This is a rather long bit of
 			<-->   text which changes
@@ -225,8 +226,8 @@ setLogger (str) -> lLines.push(str)
 		lname: 'Deighan',
 		age: 68,
 		home: 'Blacksburg, VA',
-		}, '<-->'
-	tester.equal 226, lLines, """
+		}, {prefix: '<-->', logItem: true}
+	tester.equal 230, lLines, """
 			<-->name:
 			<-->   ---
 			<-->   fname: John
@@ -242,8 +243,8 @@ setLogger (str) -> lLines.push(str)
 		68,
 		'a rather long string of text',
 		{a:1, b:2}
-		], '<-->'
-	tester.equal 243, lLines, """
+		], {prefix: '<-->', logItem: true}
+	tester.equal 247, lLines, """
 			<-->name:
 			<-->   ---
 			<-->   - 68
@@ -256,12 +257,12 @@ setLogger (str) -> lLines.push(str)
 
 # ---------------------------------------------------------------------------
 
-simple.equal 159, tamlStringifier({a:"word", b:"blind"}), """
+simple.equal 260, tamlStringify({a:"word", b:"blind"}), """
 		---
 		a: word
 		b: blind
 		"""
-simple.equal 164, stringify({a:"word", b:"blind"}), """
+simple.equal 265, stringify({a:"word", b:"blind"}), """
 		---
 		a: word
 		b: blind
@@ -269,12 +270,12 @@ simple.equal 164, stringify({a:"word", b:"blind"}), """
 
 setStringifier(JSON.stringify)
 
-simple.equal 172, stringify({a:"word", b:"blind"}),
+simple.equal 273, stringify({a:"word", b:"blind"}),
 		'{"a":"word","b":"blind"}'
 
-setStringifier(tamlStringifier)
+setStringifier(tamlStringify)
 
-simple.equal 177, stringify({a:"word", b:"blind"}), """
+simple.equal 278, stringify({a:"word", b:"blind"}), """
 		---
 		a: word
 		b: blind
@@ -290,20 +291,20 @@ simple.equal 177, stringify({a:"word", b:"blind"}), """
 	log 'c'
 	setLogger()    # reset
 
-	simple.equal 193, lItems, ['a','b','c']
+	simple.equal 294, lItems, ['a','b','c']
 	)()
 
 (() ->
 	lItems = []
 	setLogger (item) -> lItems.push(item)
-	say 'a'
-	say 'b'
-	say 'c'
+	log 'a'
+	log 'b'
+	log 'c'
 	setLogger()    # reset
 
-	simple.equal 204, lItems, ['a','b','c']
+	simple.equal 305, lItems, ['a','b','c']
 	)()
 
-simple.fails 207, () -> error("an error message")
+simple.fails 308, () -> error("an error message")
 
 # ---------------------------------------------------------------------------

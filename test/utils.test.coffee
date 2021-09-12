@@ -252,7 +252,7 @@ simple.equal 239, CWS("""
 	obj = {a:1, b:2}
 	try
 		croak "bad stuff", "An Object", obj
-	simple.equal -254, arrayToString(lLines), """
+	simple.equal 255, arrayToString(lLines), """
 			ERROR: bad stuff
 			An Object = {"a":1,"b":2}
 			"""

@@ -6,8 +6,9 @@ import {
 import {createInterface} from 'readline'
 
 import {
-	log, isEmpty, nonEmpty, error, isComment,
+	isEmpty, nonEmpty, error, isComment,
 	} from '@jdeighan/coffee-utils'
+import {log} from '@jdeighan/coffee-utils/log'
 
 # ---------------------------------------------------------------------------
 

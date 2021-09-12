@@ -86,18 +86,19 @@ getPrefix = function(level) {
 // ---------------------------------------------------------------------------
 export var debug = function(...lArgs) {
   var curFunction, entering, exiting, item, lMatches, nArgs, prefix, str;
-  nArgs = lArgs.length;
-  assert((nArgs >= 1) && (nArgs <= 2), `debug(); Bad # args ${nArgs}`);
-  str = lArgs[0];
-  if (nArgs === 2) {
-    item = lArgs[1];
-  }
-  // --- str must always be a string
-  //     if 2 args, then str is meant to be a label for the item
+  // --- either 1 or 2 args
   if (!debugging && (lDebugFuncs == null)) {
     return;
   }
+  nArgs = lArgs.length;
+  assert((nArgs >= 1) && (nArgs <= 2), `debug(); Bad # args ${nArgs}`);
+  str = lArgs[0];
+  // --- str must always be a string
+  //     if 2 args, then str is meant to be a label for the item
   assert(isString(str), `debug(): 1st arg ${oneline(str)} should be a string`);
+  if (nArgs === 2) {
+    item = lArgs[1];
+  }
   // --- determine if we're entering or returning from a function
   entering = exiting = false;
   curFunction = undef;
@@ -113,7 +114,7 @@ export var debug = function(...lArgs) {
       setDebugging(true);
     }
     if (exiting) {
-      setDebugging(false);
+      setDebugging(false); // revert to previous setting - might still be on
     }
   }
   if (debugging && ((ifMatches == null) || str.match(ifMatches))) {
@@ -127,7 +128,14 @@ export var debug = function(...lArgs) {
     } else {
       prefix = indent.repeat(debugLevel);
     }
-    log(str, item, prefix);
+    if (nArgs === 1) {
+      log(str, item, {prefix});
+    } else {
+      log(str, item, {
+        prefix,
+        logItem: true
+      });
+    }
   }
   if (entering) {
     debugLevel += 1;
