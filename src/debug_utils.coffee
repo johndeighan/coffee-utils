@@ -17,8 +17,6 @@ arrow = corner + hbar + arrowhead + ' '
 
 debugLevel = 0   # controls amount of indentation - we ensure it's never < 0
 
-# --- items on lDebugStack are booleans
-lDebugStack = []
 export debugging = false
 
 ifMatches = undefined
@@ -36,15 +34,31 @@ export debugIfLineMatches = (regexp=undef) ->
 
 # ---------------------------------------------------------------------------
 
+lDebugStack = []
+
+saveDebugEnv = () ->
+
+	lDebugStack.push(debugging)
+	return
+
+restoreDebugEnv = () ->
+
+	if (lDebugStack.length == 0)
+		debugging = false
+	else
+		debugging = lDebugStack.pop()
+	return
+
+# ---------------------------------------------------------------------------
+
 export setDebugging = (x) ->
 
 	if (x==true)
 		# --- save current setting
-		lDebugStack.push(debugging)
+		saveDebugEnv()
 		debugging = true
 	else if (x==false)
-		assert (lDebugStack.length > 0), "mismatched setDebugging() calls"
-		debugging = lDebugStack.pop()
+		restoreDebugEnv()
 	else if isString(x)
 		lDebugFuncs = words(x)
 	else if isArray(x)
