@@ -8,7 +8,6 @@ import {
 
 import {
   undef,
-  log,
   error,
   croak,
   warn,
@@ -17,11 +16,14 @@ import {
   isFunction,
   stringToArray,
   oneline,
-  stringify,
   escapeStr,
   isNumber,
   isArray
 } from '@jdeighan/coffee-utils';
+
+import {
+  log
+} from '@jdeighan/coffee-utils/log';
 
 vbar = '│'; // unicode 2502
 
@@ -83,8 +85,7 @@ getPrefix = function(level) {
 
 // ---------------------------------------------------------------------------
 export var debug = function(...lArgs) {
-  var curFunction, entering, esc, exiting, i, item, j, lMatches, len, len1, line, maxOneLine, nArgs, prefix, ref, ref1, str;
-  maxOneLine = 32;
+  var curFunction, entering, exiting, item, lMatches, nArgs, prefix, str;
   nArgs = lArgs.length;
   assert((nArgs >= 1) && (nArgs <= 2), `debug(); Bad # args ${nArgs}`);
   str = lArgs[0];
@@ -126,34 +127,7 @@ export var debug = function(...lArgs) {
     } else {
       prefix = indent.repeat(debugLevel);
     }
-    // --- Output ---
-    if (nArgs === 1) {
-      log(`${prefix}${str}`);
-    } else if (item == null) {
-      log(`${prefix}${str} = undef`);
-    } else if (isNumber(item)) {
-      log(`${prefix}${str} = ${item}`);
-    } else if (isString(item)) {
-      esc = escapeStr(item);
-      if (esc.length <= maxOneLine) {
-        log(`${prefix}${str} = '${esc}'`);
-      } else {
-        log(`${prefix}${str}:`);
-        ref = stringToArray(item);
-        for (i = 0, len = ref.length; i < len; i++) {
-          line = ref[i];
-          log(prefix + '   ' + escapeStr(line));
-        }
-      }
-    } else {
-      // --- It's some type of object
-      log(`${prefix}${str}:`);
-      ref1 = stringToArray(stringify(item));
-      for (j = 0, len1 = ref1.length; j < len1; j++) {
-        str = ref1[j];
-        log(prefix + '   ' + str);
-      }
-    }
+    log(str, item, prefix);
   }
   if (entering) {
     debugLevel += 1;

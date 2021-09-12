@@ -2,9 +2,10 @@
 
 import {strict as assert} from 'assert'
 import {
-	undef, log, error,croak, warn, words, isString, isFunction,
-	stringToArray, oneline, stringify, escapeStr, isNumber, isArray,
+	undef, error, croak, warn, words, isString, isFunction,
+	stringToArray, oneline, escapeStr, isNumber, isArray,
 	} from '@jdeighan/coffee-utils'
+import {log} from '@jdeighan/coffee-utils/log'
 
 vbar = '│'       # unicode 2502
 hbar = '─'       # unicode 2500
@@ -65,8 +66,6 @@ getPrefix = (level) ->
 
 export debug = (lArgs...) ->
 
-	maxOneLine = 32
-
 	nArgs = lArgs.length
 	assert ((nArgs >= 1) && (nArgs <= 2)), "debug(); Bad # args #{nArgs}"
 	str = lArgs[0]
@@ -121,26 +120,7 @@ export debug = (lArgs...) ->
 		else
 			prefix = indent.repeat(debugLevel)
 
-		# --- Output ---
-		if (nArgs==1)
-			log "#{prefix}#{str}"
-		else if not item?
-			log "#{prefix}#{str} = undef"
-		else if isNumber(item)
-			log "#{prefix}#{str} = #{item}"
-		else if isString(item)
-			esc = escapeStr(item)
-			if (esc.length <= maxOneLine)
-				log "#{prefix}#{str} = '#{esc}'"
-			else
-				log "#{prefix}#{str}:"
-				for line in stringToArray(item)
-					log prefix + '   ' + escapeStr(line)
-		else
-			# --- It's some type of object
-			log "#{prefix}#{str}:"
-			for str in stringToArray(stringify(item))
-				log prefix + '   ' + str
+		log str, item, prefix
 
 	if entering
 		debugLevel += 1

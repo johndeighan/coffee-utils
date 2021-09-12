@@ -7,6 +7,7 @@
 	"exports": {
 		".": "./src/coffee_utils.js",
 		"./fs": "./src/fs_utils.js",
+		"./log": "./src/log_utils.js",
 		"./block": "./src/block_utils.js",
 		"./indent": "./src/indent_utils.js",
 		"./debug": "./src/debug_utils.js",

@@ -1,10 +1,8 @@
 # coffee_utils.coffee
 
 import {strict as assert} from 'assert'
-import yaml from 'js-yaml'
 
-import {debug} from '@jdeighan/coffee-utils/debug'
-import {tabify, untabify} from '@jdeighan/coffee-utils/indent'
+import {log} from '@jdeighan/coffee-utils/log'
 
 export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
@@ -13,94 +11,13 @@ export sep_eq = '='.repeat(42)
 export unitTesting = false
 export setUnitTesting = (flag) -> unitTesting = flag
 
-logger = console.log          # for strings
-
 # ---------------------------------------------------------------------------
-# the default stringifier
+#   say - print to the console (for now)
+#         later, on a web page, call alert(str)
 
-export tamlStringifier = (obj) ->
+export say = (str, obj=undef) ->
 
-	str = yaml.dump(obj, {
-			skipInvalid: true
-			indent: 1
-			sortKeys: false
-			lineWidth: -1
-			})
-	str = "---\n" + tabify(str)
-	str = str.replace(/\t/g, '   ')  # because fr***ing Windows Terminal
-	                                 # has no way of adjusting display
-	                                 # of TAB chars
-	return str
-
-# ---------------------------------------------------------------------------
-
-stringifier = tamlStringifier # for non-strings
-
-# ---------------------------------------------------------------------------
-
-export setLogger = (func) ->
-
-	if func?
-		assert isFunction(func), "setLogger() not a function"
-		logger = func
-	else
-		logger = console.log
-	return
-
-# ---------------------------------------------------------------------------
-
-export setStringifier = (func) ->
-
-	if func?
-		assert isFunction(func), "setStringifier() not a function"
-		stringifier = func
-	else
-		stringifier = tamlStringifier
-	return
-
-# ---------------------------------------------------------------------------
-
-export currentLogger = () ->
-
-	return logger
-
-# ---------------------------------------------------------------------------
-
-export currentStringifier = () ->
-
-	return stringifier
-
-# ---------------------------------------------------------------------------
-
-export stringify = (item) ->
-
-	assert isFunction(stringifier), "stringify(): stringifier not a function"
-	return stringifier(item)
-
-# ---------------------------------------------------------------------------
-#   log - print to the console
-
-export log = (obj, label='') ->
-
-	if label
-		logger titleLine(label)
-	if not isString(obj)
-		obj = stringifier(obj)
-	logger obj
-	if label
-		logger titleLine()
-	return
-
-# ---------------------------------------------------------------------------
-#   say - print to the console
-
-export say = (obj, label='') ->
-
-	if label
-		logger label
-	if not isString(obj)
-		obj = stringifier(obj)
-	logger obj
+	log str, obj
 	return
 
 # ---------------------------------------------------------------------------
@@ -118,12 +35,11 @@ export error = (message) ->
 # ---------------------------------------------------------------------------
 #   croak - throws an error after possibly printing useful info
 
-export croak = (err, obj, label) ->
+export croak = (err, label, obj) ->
 
 	message = if (typeof err == 'object') then err.message else err
 	log "ERROR: #{message}"
-	if obj?
-		log obj, label
+	log label, obj
 	if (typeof err == 'object')
 		throw err
 	else
@@ -258,6 +174,17 @@ export isArrayOfHashes = (lItems) ->
 
 # ---------------------------------------------------------------------------
 
+export isArrayOfStrings = (lItems) ->
+
+	if not isArray(lItems)
+		return false
+	for item in lItems
+		if not isString(item)
+			return false
+	return true
+
+# ---------------------------------------------------------------------------
+
 export isFunction = (x) ->
 
 	return typeof x == 'function'
@@ -282,6 +209,7 @@ export warn = (message) ->
 
 # ---------------------------------------------------------------------------
 #   ask - ask a question
+#         later, on a web page, prompt the user for answer to question
 
 export ask = (prompt) ->
 

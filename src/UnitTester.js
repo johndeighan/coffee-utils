@@ -8,16 +8,19 @@ import test from 'ava';
 
 import {
   undef,
-  log,
   error,
   stringToArray,
-  currentLogger,
-  setLogger,
   isString,
   isFunction,
   isInteger,
   isArray
 } from '@jdeighan/coffee-utils';
+
+import {
+  log,
+  currentLogger,
+  setLogger
+} from '@jdeighan/coffee-utils/log';
 
 import {
   debug,

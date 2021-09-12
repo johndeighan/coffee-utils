@@ -4,9 +4,10 @@ import {strict as assert} from 'assert'
 import test from 'ava'
 
 import {
-	undef, log, error, stringToArray, currentLogger, setLogger
+	undef, error, stringToArray,
 	isString, isFunction, isInteger, isArray,
 	} from '@jdeighan/coffee-utils'
+import {log, currentLogger, setLogger} from '@jdeighan/coffee-utils/log'
 import {
 	debug, debugging, setDebugging,
 	} from '@jdeighan/coffee-utils/debug'
