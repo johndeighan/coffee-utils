@@ -16,12 +16,6 @@ export var sep_eq = '='.repeat(42);
 
 export const undef = undefined;
 
-export var unitTesting = false;
-
-export var setUnitTesting = function(flag) {
-  return unitTesting = flag;
-};
-
 // ---------------------------------------------------------------------------
 //   say - print to the console (for now)
 //         later, on a web page, call alert(str)

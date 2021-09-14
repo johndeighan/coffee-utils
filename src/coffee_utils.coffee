@@ -8,9 +8,6 @@ export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
 `export const undef = undefined`
 
-export unitTesting = false
-export setUnitTesting = (flag) -> unitTesting = flag
-
 # ---------------------------------------------------------------------------
 #   say - print to the console (for now)
 #         later, on a web page, call alert(str)

@@ -123,9 +123,6 @@ export var debug = function(...lArgs) {
     if (entering) {
       setDebugging(true);
     }
-    if (exiting) {
-      setDebugging(false); // revert to previous setting - might still be on
-    }
   }
   if (debugging && ((ifMatches == null) || str.match(ifMatches))) {
     // --- set the prefix, i.e. indentation to use
@@ -145,6 +142,11 @@ export var debug = function(...lArgs) {
         prefix,
         logItem: true
       });
+    }
+  }
+  if (curFunction && lDebugFuncs && lDebugFuncs.includes(curFunction)) {
+    if (exiting) {
+      setDebugging(false); // revert to previous setting - might still be on
     }
   }
   if (entering) {

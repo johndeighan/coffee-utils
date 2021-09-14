@@ -4,7 +4,7 @@ import {strict as assert} from 'assert'
 import test from 'ava'
 
 import {
-	undef, say, isString, isHash, isEmpty, nonEmpty, setUnitTesting,
+	undef, say, isString, isHash, isEmpty, nonEmpty,
 	} from '@jdeighan/coffee-utils'
 import {mydir, mkpath} from '@jdeighan/coffee-utils/fs'
 import {UnitTester} from '@jdeighan/coffee-utils/test'

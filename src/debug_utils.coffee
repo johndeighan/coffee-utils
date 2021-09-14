@@ -122,8 +122,6 @@ export debug = (lArgs...) ->
 	if curFunction && lDebugFuncs && lDebugFuncs.includes(curFunction)
 		if entering
 			setDebugging true
-		if exiting
-			setDebugging false # revert to previous setting - might still be on
 
 	if debugging && (not ifMatches? || str.match(ifMatches))
 
@@ -140,6 +138,10 @@ export debug = (lArgs...) ->
 			log str, item, {prefix}
 		else
 			log str, item, {prefix, logItem: true}
+
+	if curFunction && lDebugFuncs && lDebugFuncs.includes(curFunction)
+		if exiting
+			setDebugging false # revert to previous setting - might still be on
 
 	if entering
 		debugLevel += 1

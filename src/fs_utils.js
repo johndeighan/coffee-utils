@@ -28,8 +28,7 @@ import {
   pass,
   firstLine,
   rtrim,
-  error,
-  unitTesting
+  error
 } from '@jdeighan/coffee-utils';
 
 import {
