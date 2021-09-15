@@ -42,6 +42,7 @@ simple.equal 53, undented("\t\tfirst\n\t\tsecond\n\t\t\tthird\n"),
 simple.equal 58, splitLine("abc"), [0, "abc"]
 simple.equal 59, splitLine("\tabc"), [1, "abc"]
 simple.equal 60, splitLine("\t\tabc"), [2, "abc"]
+simple.equal 45, splitLine("\t\t\t"), [0, ""]
 
 # ---------------------------------------------------------------------------
 

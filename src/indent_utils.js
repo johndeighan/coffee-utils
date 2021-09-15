@@ -14,7 +14,8 @@ import {
   isInteger,
   isString,
   isArray,
-  isEmpty
+  isEmpty,
+  rtrim
 } from '@jdeighan/coffee-utils';
 
 // ---------------------------------------------------------------------------
@@ -25,8 +26,9 @@ export var splitLine = function(line) {
   var lMatches;
   assert(line != null, "splitLine(): line is undef");
   assert(typeof line === 'string', "splitLine(): line is not a string");
+  line = rtrim(line);
   lMatches = line.match(/^(\s*)(.*)$/);
-  return [lMatches[1].length, lMatches[2].trim()];
+  return [lMatches[1].length, lMatches[2]];
 };
 
 // ---------------------------------------------------------------------------

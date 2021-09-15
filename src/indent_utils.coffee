@@ -3,7 +3,7 @@
 import {strict as assert} from 'assert'
 import {
 	undef, error, arrayToString, stringToArray, escapeStr,
-	oneline, isInteger, isString, isArray, isEmpty,
+	oneline, isInteger, isString, isArray, isEmpty, rtrim,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
@@ -15,8 +15,9 @@ export splitLine = (line) ->
 
 	assert line?, "splitLine(): line is undef"
 	assert (typeof line == 'string'), "splitLine(): line is not a string"
+	line = rtrim(line)
 	lMatches = line.match(/^(\s*)(.*)$/)
-	return [lMatches[1].length, lMatches[2].trim()]
+	return [lMatches[1].length, lMatches[2]]
 
 # ---------------------------------------------------------------------------
 #   indentation - return appropriate indentation string for given level
