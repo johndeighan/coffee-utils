@@ -17,12 +17,9 @@ arrow = corner + hbar + arrowhead + ' '
 
 debugLevel = 0   # controls amount of indentation - we ensure it's never < 0
 
+# --- These are saved/restored in lDebugStack
 export debugging = false
-
 ifMatches = undefined
-
-# --- turn debugging on when in one of these functions
-#     when returning from one of these functions, restore previous setting
 lDebugFuncs = undefined
 
 # ---------------------------------------------------------------------------
@@ -38,33 +35,41 @@ lDebugStack = []
 
 saveDebugEnv = () ->
 
-	lDebugStack.push(debugging)
+	lDebugStack.push({
+		debugging,
+		ifMatches,
+		lDebugFuncs,
+		})
 	return
 
 restoreDebugEnv = () ->
 
 	if (lDebugStack.length == 0)
 		debugging = false
+		ifMatches = undef
+		lDebugFuncs = undef
 	else
-		debugging = lDebugStack.pop()
+		h = lDebugStack.pop()
+		{debugging, ifMatches, lDebugFuncs} = h
+
 	return
 
 # ---------------------------------------------------------------------------
 
 export setDebugging = (x) ->
 
-	if (x==true)
+	if (x==false)
+		restoreDebugEnv()
+	else
 		# --- save current setting
 		saveDebugEnv()
-		debugging = true
-	else if (x==false)
-		restoreDebugEnv()
-	else if isString(x)
-		lDebugFuncs = words(x)
-	else if isArray(x)
-		lDebugFuncs = x
-	else
-		croak "setDebugging(): bad parameter #{oneline(x)}"
+		if (x==true)
+			debugging = true
+		else if isString(x)
+			debugging = false
+			lDebugFuncs = words(x)
+		else
+			croak "setDebugging(): bad parameter #{oneline(x)}"
 	return
 
 # ---------------------------------------------------------------------------
@@ -100,7 +105,7 @@ export debug = (lArgs...) ->
 	# --- determine if we're entering or returning from a function
 	entering = exiting = false
 	curFunction = undef
-	if (lMatches=str.match(///^
+	if (lMatches = str.match(///^
 			\s*
 			enter
 			\s+
@@ -108,7 +113,7 @@ export debug = (lArgs...) ->
 			///))
 		entering = true
 		curFunction = lMatches[1]
-	else if (lMatches=str.match(///^
+	else if (lMatches = str.match(///^
 			\s*
 			return
 			.*
@@ -119,11 +124,13 @@ export debug = (lArgs...) ->
 		exiting = true
 		curFunction = lMatches[1]
 
-	if curFunction && lDebugFuncs && lDebugFuncs.includes(curFunction)
-		if entering
-			setDebugging true
+	if entering && lDebugFuncs && lDebugFuncs.includes(curFunction)
+		setDebugging true
 
-	if debugging && (not ifMatches? || str.match(ifMatches))
+	if not debugging
+		return
+
+	if not ifMatches? || str.match(ifMatches)
 
 		# --- set the prefix, i.e. indentation to use
 		if exiting
@@ -139,9 +146,9 @@ export debug = (lArgs...) ->
 		else
 			log str, item, {prefix, logItem: true}
 
-	if curFunction && lDebugFuncs && lDebugFuncs.includes(curFunction)
-		if exiting
-			setDebugging false # revert to previous setting - might still be on
+	if exiting && lDebugFuncs && lDebugFuncs.includes(curFunction)
+		setDebugging false # revert to previous setting - might still be on
+		return
 
 	if entering
 		debugLevel += 1

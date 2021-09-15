@@ -91,7 +91,7 @@ setDebugging true
 	debug 'something'
 	debug 'obj', obj
 	debug 'return 42 from myfunc'
-	simple.equal 74, lLines, [
+	simple.equal 94, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   obj:"
@@ -99,5 +99,60 @@ setDebugging true
 		"│      first: this is the first item in the hash"
 		"│      second: this is the second item in the hash"
 		"└─> return 42 from myfunc"
+		]
+	)()
+
+# ---------------------------------------------------------------------------
+# --- Test ability to debug only a particular function
+
+(() ->
+	lLines = []
+	setDebugging false
+	setDebugging 'innerFunc'
+
+	debug "enter myfunc"
+	debug "something"
+	debug "enter innerFunc"
+	debug "something else"
+	debug "return nothing from innerFunc"
+	debug "this should not appear"
+	debug "return 42 from myfunc"
+	simple.equal 120, lLines, [
+		"enter innerFunc"
+		"│   something else"
+		"└─> return nothing from innerFunc"
+		]
+	)()
+
+# ---------------------------------------------------------------------------
+# --- Test ability to debug only a particular function
+#     using actual functions!
+
+(() ->
+	lLines = []
+	setDebugging false
+	setDebugging 'innerFunc'
+
+	innerFunc = () ->
+
+		debug "enter innerFunc()"
+		debug "answer is 42"
+		x = 42
+		debug "return from innerFunc()"
+		return
+
+	outerFunc = () ->
+
+		debug "enter outerFunc()"
+		innerFunc()
+		debug "return from outerFunc()"
+		return
+
+	outerFunc()
+
+	simple.equal 153, lLines, [
+		"enter innerFunc()"
+		"│   answer is 42"
+		"└─> return from innerFunc()"
 		]
 	)()

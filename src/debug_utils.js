@@ -39,12 +39,12 @@ arrow = corner + hbar + arrowhead + ' ';
 
 debugLevel = 0; // controls amount of indentation - we ensure it's never < 0
 
+
+// --- These are saved/restored in lDebugStack
 export var debugging = false;
 
 ifMatches = void 0;
 
-// --- turn debugging on when in one of these functions
-//     when returning from one of these functions, restore previous setting
 lDebugFuncs = void 0;
 
 // ---------------------------------------------------------------------------
@@ -56,31 +56,36 @@ export var debugIfLineMatches = function(regexp = undef) {
 lDebugStack = [];
 
 saveDebugEnv = function() {
-  lDebugStack.push(debugging);
+  lDebugStack.push({debugging, ifMatches, lDebugFuncs});
 };
 
 restoreDebugEnv = function() {
+  var h;
   if (lDebugStack.length === 0) {
     debugging = false;
+    ifMatches = undef;
+    lDebugFuncs = undef;
   } else {
-    debugging = lDebugStack.pop();
+    h = lDebugStack.pop();
+    ({debugging, ifMatches, lDebugFuncs} = h);
   }
 };
 
 // ---------------------------------------------------------------------------
 export var setDebugging = function(x) {
-  if (x === true) {
+  if (x === false) {
+    restoreDebugEnv();
+  } else {
     // --- save current setting
     saveDebugEnv();
-    debugging = true;
-  } else if (x === false) {
-    restoreDebugEnv();
-  } else if (isString(x)) {
-    lDebugFuncs = words(x);
-  } else if (isArray(x)) {
-    lDebugFuncs = x;
-  } else {
-    croak(`setDebugging(): bad parameter ${oneline(x)}`);
+    if (x === true) {
+      debugging = true;
+    } else if (isString(x)) {
+      debugging = false;
+      lDebugFuncs = words(x);
+    } else {
+      croak(`setDebugging(): bad parameter ${oneline(x)}`);
+    }
   }
 };
 
@@ -119,12 +124,13 @@ export var debug = function(...lArgs) {
     exiting = true;
     curFunction = lMatches[1];
   }
-  if (curFunction && lDebugFuncs && lDebugFuncs.includes(curFunction)) {
-    if (entering) {
-      setDebugging(true);
-    }
+  if (entering && lDebugFuncs && lDebugFuncs.includes(curFunction)) {
+    setDebugging(true);
   }
-  if (debugging && ((ifMatches == null) || str.match(ifMatches))) {
+  if (!debugging) {
+    return;
+  }
+  if ((ifMatches == null) || str.match(ifMatches)) {
     // --- set the prefix, i.e. indentation to use
     if (exiting) {
       if (debugLevel === 0) {
@@ -144,10 +150,9 @@ export var debug = function(...lArgs) {
       });
     }
   }
-  if (curFunction && lDebugFuncs && lDebugFuncs.includes(curFunction)) {
-    if (exiting) {
-      setDebugging(false); // revert to previous setting - might still be on
-    }
+  if (exiting && lDebugFuncs && lDebugFuncs.includes(curFunction)) {
+    setDebugging(false); // revert to previous setting - might still be on
+    return;
   }
   if (entering) {
     debugLevel += 1;
