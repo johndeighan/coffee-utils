@@ -17,10 +17,12 @@ arrow = corner + hbar + arrowhead + ' '
 
 debugLevel = 0   # controls amount of indentation - we ensure it's never < 0
 
+lDebugStack = []
+
 # --- These are saved/restored in lDebugStack
 export debugging = false
-ifMatches = undefined
-lDebugFuncs = undefined
+ifMatches = undef
+lDebugFuncs = undef
 
 # ---------------------------------------------------------------------------
 
@@ -30,8 +32,6 @@ export debugIfLineMatches = (regexp=undef) ->
 	return
 
 # ---------------------------------------------------------------------------
-
-lDebugStack = []
 
 saveDebugEnv = () ->
 
@@ -83,6 +83,17 @@ getPrefix = (level) ->
 
 # ---------------------------------------------------------------------------
 
+export resetDebugging = () ->
+
+	debugging = false
+	debugLevel = 0
+	ifMatches = undef
+	lDebugFuncs = undef
+	lDebugStack = []
+	return
+
+# ---------------------------------------------------------------------------
+
 export debug = (lArgs...) ->
 	# --- either 1 or 2 args
 
@@ -127,10 +138,7 @@ export debug = (lArgs...) ->
 	if entering && lDebugFuncs && lDebugFuncs.includes(curFunction)
 		setDebugging true
 
-	if not debugging
-		return
-
-	if not ifMatches? || str.match(ifMatches)
+	if debugging && (not ifMatches? || str.match(ifMatches))
 
 		# --- set the prefix, i.e. indentation to use
 		if exiting
@@ -147,11 +155,11 @@ export debug = (lArgs...) ->
 			log str, item, {prefix, logItem: true}
 
 	if exiting && lDebugFuncs && lDebugFuncs.includes(curFunction)
-		setDebugging false # revert to previous setting - might still be on
-		return
+		setDebugging false    # revert to previous setting - might still be on
 
-	if entering
-		debugLevel += 1
-	if exiting && (debugLevel > 0)
-		debugLevel -= 1
+	if debugging
+		if entering
+			debugLevel += 1
+		if exiting && (debugLevel > 0)
+			debugLevel -= 1
 	return

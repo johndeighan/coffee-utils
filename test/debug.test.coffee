@@ -2,7 +2,9 @@
 
 import {undef} from '@jdeighan/coffee-utils'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
-import {setDebugging, debug} from '@jdeighan/coffee-utils/debug'
+import {
+	setDebugging, debug, resetDebugging,
+	} from '@jdeighan/coffee-utils/debug'
 import {UnitTester} from '@jdeighan/coffee-utils/test'
 
 simple = new UnitTester()
@@ -18,7 +20,7 @@ setDebugging true
 (() ->
 	lLines = []
 	debug 'abc'
-	simple.equal 21, lLines, ['abc']
+	simple.equal 23, lLines, ['abc']
 	)()
 
 # ---------------------------------------------------------------------------
@@ -30,7 +32,7 @@ setDebugging true
 	debug 'more'
 	debug 'return 42 from myfunc'
 	debug "Answer is 42"
-	simple.equal 33, lLines, [
+	simple.equal 35, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   more"
@@ -49,7 +51,7 @@ setDebugging true
 	debug 'something else'
 	debug 'return abc from newfunc'
 	debug 'return 42 from myfunc'
-	simple.equal 52, lLines, [
+	simple.equal 54, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   enter newfunc"
@@ -71,7 +73,7 @@ setDebugging true
 	debug 'something'
 	debug 'obj', obj
 	debug 'return 42 from myfunc'
-	simple.equal 74, lLines, [
+	simple.equal 76, lLines, [
 		"enter myfunc"
 		"│   something"
 		'│   obj = {"first":1,"second":2}'
@@ -91,7 +93,7 @@ setDebugging true
 	debug 'something'
 	debug 'obj', obj
 	debug 'return 42 from myfunc'
-	simple.equal 94, lLines, [
+	simple.equal 96, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   obj:"
@@ -107,7 +109,7 @@ setDebugging true
 
 (() ->
 	lLines = []
-	setDebugging false
+	resetDebugging()
 	setDebugging 'innerFunc'
 
 	debug "enter myfunc"
@@ -117,7 +119,7 @@ setDebugging true
 	debug "return nothing from innerFunc"
 	debug "this should not appear"
 	debug "return 42 from myfunc"
-	simple.equal 120, lLines, [
+	simple.equal 122, lLines, [
 		"enter innerFunc"
 		"│   something else"
 		"└─> return nothing from innerFunc"
@@ -130,7 +132,7 @@ setDebugging true
 
 (() ->
 	lLines = []
-	setDebugging false
+	resetDebugging()
 	setDebugging 'innerFunc'
 
 	innerFunc = () ->
@@ -150,7 +152,7 @@ setDebugging true
 
 	outerFunc()
 
-	simple.equal 153, lLines, [
+	simple.equal 155, lLines, [
 		"enter innerFunc()"
 		"│   answer is 42"
 		"└─> return from innerFunc()"

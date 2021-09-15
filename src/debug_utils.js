@@ -39,13 +39,14 @@ arrow = corner + hbar + arrowhead + ' ';
 
 debugLevel = 0; // controls amount of indentation - we ensure it's never < 0
 
+lDebugStack = [];
 
 // --- These are saved/restored in lDebugStack
 export var debugging = false;
 
-ifMatches = void 0;
+ifMatches = undef;
 
-lDebugFuncs = void 0;
+lDebugFuncs = undef;
 
 // ---------------------------------------------------------------------------
 export var debugIfLineMatches = function(regexp = undef) {
@@ -53,8 +54,6 @@ export var debugIfLineMatches = function(regexp = undef) {
 };
 
 // ---------------------------------------------------------------------------
-lDebugStack = [];
-
 saveDebugEnv = function() {
   lDebugStack.push({debugging, ifMatches, lDebugFuncs});
 };
@@ -99,6 +98,15 @@ getPrefix = function(level) {
 };
 
 // ---------------------------------------------------------------------------
+export var resetDebugging = function() {
+  debugging = false;
+  debugLevel = 0;
+  ifMatches = undef;
+  lDebugFuncs = undef;
+  lDebugStack = [];
+};
+
+// ---------------------------------------------------------------------------
 export var debug = function(...lArgs) {
   var curFunction, entering, exiting, item, lMatches, nArgs, prefix, str;
   // --- either 1 or 2 args
@@ -127,10 +135,7 @@ export var debug = function(...lArgs) {
   if (entering && lDebugFuncs && lDebugFuncs.includes(curFunction)) {
     setDebugging(true);
   }
-  if (!debugging) {
-    return;
-  }
-  if ((ifMatches == null) || str.match(ifMatches)) {
+  if (debugging && ((ifMatches == null) || str.match(ifMatches))) {
     // --- set the prefix, i.e. indentation to use
     if (exiting) {
       if (debugLevel === 0) {
@@ -152,12 +157,13 @@ export var debug = function(...lArgs) {
   }
   if (exiting && lDebugFuncs && lDebugFuncs.includes(curFunction)) {
     setDebugging(false); // revert to previous setting - might still be on
-    return;
   }
-  if (entering) {
-    debugLevel += 1;
-  }
-  if (exiting && (debugLevel > 0)) {
-    debugLevel -= 1;
+  if (debugging) {
+    if (entering) {
+      debugLevel += 1;
+    }
+    if (exiting && (debugLevel > 0)) {
+      debugLevel -= 1;
+    }
   }
 };
