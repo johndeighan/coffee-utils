@@ -130,15 +130,13 @@ export tabify = (str, numSpaces=undef) ->
 
 export untabify = (str, numSpaces=3) ->
 
+	oneIndent = ' '.repeat(numSpaces)
 	lLines = []
 	for str in stringToArray(str)
-		lMatches = str.match(/^(\s*)(.*)$/)
+		lMatches = str.match(/^(\t*)(.*)$/)
 		[_, prefix, theRest] = lMatches
 		if prefix == ''
 			lLines.push theRest
 		else
-			n = prefix.length
-			if (prefix != '\t'.repeat(n))
-				error "untabify(): not all TABs: prefix='#{escapeStr(prefix)}'"
-			lLines.push ' '.repeat(n * numSpaces) + theRest
+			lLines.push oneIndent.repeat(prefix.length) + theRest
 	return arrayToString(lLines)

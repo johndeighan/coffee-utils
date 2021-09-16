@@ -165,21 +165,18 @@ export var tabify = function(str, numSpaces = undef) {
 // ---------------------------------------------------------------------------
 //    untabify - convert leading TABs to spaces
 export var untabify = function(str, numSpaces = 3) {
-  var _, i, lLines, lMatches, len, n, prefix, ref, theRest;
+  var _, i, lLines, lMatches, len, oneIndent, prefix, ref, theRest;
+  oneIndent = ' '.repeat(numSpaces);
   lLines = [];
   ref = stringToArray(str);
   for (i = 0, len = ref.length; i < len; i++) {
     str = ref[i];
-    lMatches = str.match(/^(\s*)(.*)$/);
+    lMatches = str.match(/^(\t*)(.*)$/);
     [_, prefix, theRest] = lMatches;
     if (prefix === '') {
       lLines.push(theRest);
     } else {
-      n = prefix.length;
-      if (prefix !== '\t'.repeat(n)) {
-        error(`untabify(): not all TABs: prefix='${escapeStr(prefix)}'`);
-      }
-      lLines.push(' '.repeat(n * numSpaces) + theRest);
+      lLines.push(oneIndent.repeat(prefix.length) + theRest);
     }
   }
   return arrayToString(lLines);
