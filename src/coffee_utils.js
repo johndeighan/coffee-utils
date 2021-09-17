@@ -196,6 +196,11 @@ export var isFunction = function(x) {
 };
 
 // ---------------------------------------------------------------------------
+export var isRegExp = function(x) {
+  return x instanceof RegExp;
+};
+
+// ---------------------------------------------------------------------------
 export var isInteger = function(x) {
   if (typeof x === 'number') {
     return Number.isInteger(x);

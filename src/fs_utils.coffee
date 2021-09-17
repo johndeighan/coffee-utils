@@ -11,7 +11,8 @@ import {
 	} from 'fs'
 
 import {
-	undef, pass, firstLine, rtrim, error,
+	undef, pass, firstLine, rtrim, error, nonEmpty,
+	isRegExp, isFunction, croak,
 	} from '@jdeighan/coffee-utils'
 import {log} from '@jdeighan/coffee-utils/log'
 import {debug} from '@jdeighan/coffee-utils/debug'
@@ -114,6 +115,33 @@ export getParentDir = (dir) ->
 	if (hParts.dir == hParts.root)
 		return undef
 	return mkpath(resolve(dir, '..'))
+
+# ---------------------------------------------------------------------------
+
+export forEachFile = (dir, cb, filt=undef, level=0) ->
+	# --- filt can be a regular expression or a function that gets:
+	#        (filename, dir, level)
+	#     callback will get parms (filename, dir, level)
+
+	lSubDirectories = []
+	for ent in readdirSync(dir, {withFileTypes: true})
+		if ent.isDirectory()
+			lSubDirectories.push ent
+		else if ent.isFile()
+			if not filt?
+				cb(ent.name, dir, level)
+			else if isRegExp(filt)
+				if ent.name.match(filt)
+					cb(ent.name, dir, level)
+				else if isFunction(filt)
+					if filt(ent.name, dir, level)
+						cb(ent.name, dir, level)
+			else
+				croak "forEachFile(): bad filter", 'filter', filt
+	if nonEmpty(lSubDirectories)
+		for subdir in lSubDirectories.sort()
+			forEachFile(mkpath(dir, subdir.name), cb, filt, level+1)
+	return
 
 # ---------------------------------------------------------------------------
 

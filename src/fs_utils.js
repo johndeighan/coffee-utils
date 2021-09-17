@@ -28,7 +28,11 @@ import {
   pass,
   firstLine,
   rtrim,
-  error
+  error,
+  nonEmpty,
+  isRegExp,
+  isFunction,
+  croak
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -143,6 +147,45 @@ export var getParentDir = function(dir) {
     return undef;
   }
   return mkpath(resolve(dir, '..'));
+};
+
+// ---------------------------------------------------------------------------
+export var forEachFile = function(dir, cb, filt = undef, level = 0) {
+  var ent, i, j, lSubDirectories, len, len1, ref, ref1, subdir;
+  // --- filt can be a regular expression or a function that gets:
+  //        (filename, dir, level)
+  //     callback will get parms (filename, dir, level)
+  lSubDirectories = [];
+  ref = readdirSync(dir, {
+    withFileTypes: true
+  });
+  for (i = 0, len = ref.length; i < len; i++) {
+    ent = ref[i];
+    if (ent.isDirectory()) {
+      lSubDirectories.push(ent);
+    } else if (ent.isFile()) {
+      if (filt == null) {
+        cb(ent.name, dir, level);
+      } else if (isRegExp(filt)) {
+        if (ent.name.match(filt)) {
+          cb(ent.name, dir, level);
+        } else if (isFunction(filt)) {
+          if (filt(ent.name, dir, level)) {
+            cb(ent.name, dir, level);
+          }
+        }
+      } else {
+        croak("forEachFile(): bad filter", 'filter', filt);
+      }
+    }
+  }
+  if (nonEmpty(lSubDirectories)) {
+    ref1 = lSubDirectories.sort();
+    for (j = 0, len1 = ref1.length; j < len1; j++) {
+      subdir = ref1[j];
+      forEachFile(mkpath(dir, subdir.name), cb, filt, level + 1);
+    }
+  }
 };
 
 // ---------------------------------------------------------------------------

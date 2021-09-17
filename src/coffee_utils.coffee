@@ -188,6 +188,12 @@ export isFunction = (x) ->
 
 # ---------------------------------------------------------------------------
 
+export isRegExp = (x) ->
+
+	return x instanceof RegExp
+
+# ---------------------------------------------------------------------------
+
 export isInteger = (x) ->
 
 	if (typeof x == 'number')

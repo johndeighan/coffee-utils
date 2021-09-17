@@ -8,7 +8,7 @@ import {
 	normalize, stringToArray, ltrunc, rtrunc,
 	words, escapeStr, truncateBlock, titleLine,
 	removeCR, splitBlock, CWS, isArrayOfHashes,
-	firstLine, oneline, croak,
+	firstLine, oneline, croak, isRegExp,
 	} from '@jdeighan/coffee-utils'
 import {setLogger} from '@jdeighan/coffee-utils/log'
 import {setDebugging} from '@jdeighan/coffee-utils/debug'
@@ -258,3 +258,21 @@ simple.equal 239, CWS("""
 			"""
 	setLogger()
 	)()
+
+# ---------------------------------------------------------------------------
+# test isRegExp()
+
+simple.truthy 265, isRegExp(/^abc$/)
+simple.truthy 266, isRegExp(///^
+		\s*
+		where
+		\s+
+		areyou
+		$///)
+simple.falsy  272, isRegExp(42)
+simple.falsy  272, isRegExp('abc')
+simple.falsy  272, isRegExp([1,'a'])
+simple.falsy  272, isRegExp({a:1, b:'ccc'})
+simple.falsy  272, isRegExp(undef)
+
+simple.truthy 278, isRegExp(/\.coffee/)
