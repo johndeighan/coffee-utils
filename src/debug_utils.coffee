@@ -97,12 +97,12 @@ export resetDebugging = () ->
 
 export patchDebugStr = (str) ->
 
-	# --- Match things like "$varname$" to "'#{escapeStr(varname)}'"
+	# --- Match things like "$varname$" to "#{oneline(varname)}"
 	re = /\$([A-Za-z_][A-Za-z0-9_]*)\$/g
 
 	replacer = (match, ident) ->
 
-		return "'\#\{escapeStr(#{ident})\}'"
+		return "\#\{oneline(#{ident})\}"
 
 	return str.replace(re, replacer)
 
@@ -124,7 +124,9 @@ export debug = (lArgs...) ->
 	assert isString(str),
 			"debug(): 1st arg #{oneline(str)} should be a string"
 
-	if (nArgs==2)
+	if (nArgs==1)
+		str = patchDebugStr(str)
+	else if (nArgs==2)
 		item = lArgs[1]
 
 	# --- determine if we're entering or returning from a function

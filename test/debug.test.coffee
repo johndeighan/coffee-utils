@@ -173,6 +173,5 @@ setDebugging true
 (() ->
 
 	simple.equal 175, patchDebugStr("return $line$ from get()"),
-			"return '\#\{escapeStr(line)\}' from get()"
+			"return \#\{oneline(line)\} from get()"
 	)()
-
