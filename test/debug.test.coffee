@@ -1,9 +1,9 @@
 # debug.test.coffee
 
-import {undef} from '@jdeighan/coffee-utils'
+import {undef, OL} from '@jdeighan/coffee-utils'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
 import {
-	setDebugging, debug, resetDebugging, funcMatch, patchDebugStr,
+	setDebugging, debug, resetDebugging, funcMatch,
 	} from '@jdeighan/coffee-utils/debug'
 import {UnitTester} from '@jdeighan/coffee-utils/test'
 
@@ -124,6 +124,7 @@ setDebugging true
 		"│   something else"
 		"└─> return nothing from innerFunc"
 		]
+	setDebugging false
 	)()
 
 # ---------------------------------------------------------------------------
@@ -157,6 +158,7 @@ setDebugging true
 		"│   answer is 42"
 		"└─> return from innerFunc()"
 		]
+	setDebugging false
 	)()
 
 # ---------------------------------------------------------------------------
@@ -166,12 +168,22 @@ setDebugging true
 
 	simple.truthy 167, funcMatch('get')
 	simple.truthy 168, funcMatch('StringInput.get')
+	setDebugging false
 	)()
 
 # ---------------------------------------------------------------------------
 
 (() ->
+	resetDebugging()
+	setDebugging true
+	lLines = []
 
-	simple.equal 175, patchDebugStr("return $line$ from get()"),
-			"return \#\{oneline(line)\} from get()"
+	line = 'first line'
+	debug "line is #{OL(line)}"
+
+	simple.equal 189, lLines.length, 1
+	simple.equal 190, lLines, [
+		"line is 'first line'"
+		]
+	setDebugging false
 	)()

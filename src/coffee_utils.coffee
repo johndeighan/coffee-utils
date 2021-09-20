@@ -351,6 +351,8 @@ export oneline = (obj) ->
 	else
 		return 'undef'
 
+export OL = oneline
+
 # ---------------------------------------------------------------------------
 # truncateBlock - limit block to a certain number of lines
 

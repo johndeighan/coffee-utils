@@ -383,6 +383,8 @@ export var oneline = function(obj) {
   }
 };
 
+export var OL = oneline;
+
 // ---------------------------------------------------------------------------
 // truncateBlock - limit block to a certain number of lines
 export var truncateBlock = function(str, numLines) {

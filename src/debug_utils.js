@@ -107,18 +107,6 @@ export var resetDebugging = function() {
 };
 
 // ---------------------------------------------------------------------------
-// --- export only to allow unit testing
-export var patchDebugStr = function(str) {
-  var re, replacer;
-  // --- Match things like "$varname$" to "#{oneline(varname)}"
-  re = /\$([A-Za-z_][A-Za-z0-9_]*)\$/g;
-  replacer = function(match, ident) {
-    return `\#\{oneline(${ident})\}`;
-  };
-  return str.replace(re, replacer);
-};
-
-// ---------------------------------------------------------------------------
 export var debug = function(...lArgs) {
   var curFunc, entering, exiting, item, lMatches, nArgs, prefix, str;
   // --- either 1 or 2 args
@@ -131,9 +119,7 @@ export var debug = function(...lArgs) {
   // --- str must always be a string
   //     if 2 args, then str is meant to be a label for the item
   assert(isString(str), `debug(): 1st arg ${oneline(str)} should be a string`);
-  if (nArgs === 1) {
-    str = patchDebugStr(str);
-  } else if (nArgs === 2) {
+  if (nArgs === 2) {
     item = lArgs[1];
   }
   // --- determine if we're entering or returning from a function
