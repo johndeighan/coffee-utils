@@ -26,6 +26,12 @@ lDebugFuncs = undef
 
 # ---------------------------------------------------------------------------
 
+stripArrow = (prefix) ->
+
+	return prefix.replace(arrow, '    ')
+
+# ---------------------------------------------------------------------------
+
 export debugIfLineMatches = (regexp=undef) ->
 
 	ifMatches = regexp
@@ -114,7 +120,7 @@ export debug = (lArgs...) ->
 		item = lArgs[1]
 
 	# --- determine if we're entering or returning from a function
-	entering = exiting = false
+	entering = returning = false
 	curFunc = undef
 	if (lMatches = str.match(///^
 			\s*
@@ -132,7 +138,7 @@ export debug = (lArgs...) ->
 			\s+
 			([A-Za-z_][A-Za-z0-9_]*)
 			///))
-		exiting = true
+		returning = true
 		curFunc = lMatches[1]
 
 	if entering && lDebugFuncs && funcMatch(curFunc)
@@ -141,7 +147,7 @@ export debug = (lArgs...) ->
 	if debugging && (not ifMatches? || str.match(ifMatches))
 
 		# --- set the prefix, i.e. indentation to use
-		if exiting
+		if returning
 			if (debugLevel==0)
 				prefix = arrow
 			else
@@ -152,15 +158,19 @@ export debug = (lArgs...) ->
 		if (nArgs==1)
 			log str, item, {prefix}
 		else
-			log str, item, {prefix, logItem: true}
+			log str, item, {
+				prefix,
+				logItem: true,
+				itemPrefix: stripArrow(prefix),
+				}
 
-	if exiting && lDebugFuncs && funcMatch(curFunc)
+	if returning && lDebugFuncs && funcMatch(curFunc)
 		setDebugging false    # revert to previous setting - might still be on
 
 	if debugging
 		if entering
 			debugLevel += 1
-		if exiting && (debugLevel > 0)
+		if returning && (debugLevel > 0)
 			debugLevel -= 1
 	return
 

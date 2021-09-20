@@ -81,15 +81,15 @@ maxOneLine = 32;
 
 // ---------------------------------------------------------------------------
 export var log = function(...lArgs) {
-  var esc, hOptions, i, item, j, json, len, len1, line, logItem, prefix, ref, ref1, str;
+  var esc, hOptions, i, item, itemPrefix, j, json, len, len1, line, logItem, prefix, ref, ref1, str;
   // --- (str, item, hOptions)
   //     valid options:
   //        prefix
   //        logItem
+  //        itemPrefix
   if (lArgs.length === 0) {
     return;
   }
-  prefix = '';
   str = lArgs[0];
   switch (lArgs.length) {
     case 1:
@@ -103,12 +103,23 @@ export var log = function(...lArgs) {
       item = lArgs[1];
       hOptions = lArgs[2];
       assert(isHash(hOptions), "log(): 3rd arg must be a hash");
-      if (hOptions.prefix != null) {
-        prefix = hOptions.prefix;
-      }
       if (hOptions.logItem != null) {
         logItem = hOptions.logItem;
       }
+  }
+  if (hOptions != null) {
+    if (hOptions.prefix != null) {
+      prefix = hOptions.prefix;
+    } else {
+      prefix = '';
+    }
+    if (hOptions.itemPrefix != null) {
+      itemPrefix = hOptions.itemPrefix;
+    } else {
+      itemPrefix = '';
+    }
+  } else {
+    prefix = itemPrefix = '';
   }
   if (!logItem) {
     logger(`${prefix}${str}`);
@@ -125,7 +136,7 @@ export var log = function(...lArgs) {
       ref = stringToArray(item);
       for (i = 0, len = ref.length; i < len; i++) {
         line = ref[i];
-        logger(`${prefix}   ${escapeStr(line)}`);
+        logger(`${itemPrefix}   ${escapeStr(line)}`);
       }
     }
   } else {
@@ -138,7 +149,7 @@ export var log = function(...lArgs) {
       ref1 = stringToArray(stringify(item));
       for (j = 0, len1 = ref1.length; j < len1; j++) {
         str = ref1[j];
-        logger(`${prefix}   ${str}`);
+        logger(`${itemPrefix}   ${str}`);
       }
     }
   }

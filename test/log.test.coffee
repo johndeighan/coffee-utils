@@ -213,9 +213,9 @@ setLogger (str) -> lLines.push(str)
 			""", {prefix: '<-->', logItem: true}
 	tester.equal 214, lLines, """
 			<-->name:
-			<-->   This is a rather long bit of
-			<-->   text which changes
-			<-->   how it's displayed
+			   This is a rather long bit of
+			   text which changes
+			   how it's displayed
 			"""
 	)()
 
@@ -229,11 +229,11 @@ setLogger (str) -> lLines.push(str)
 		}, {prefix: '<-->', logItem: true}
 	tester.equal 230, lLines, """
 			<-->name:
-			<-->   ---
-			<-->   fname: John
-			<-->   lname: Deighan
-			<-->   age: 68
-			<-->   home: Blacksburg, VA
+			   ---
+			   fname: John
+			   lname: Deighan
+			   age: 68
+			   home: Blacksburg, VA
 			"""
 	)()
 
@@ -246,12 +246,12 @@ setLogger (str) -> lLines.push(str)
 		], {prefix: '<-->', logItem: true}
 	tester.equal 247, lLines, """
 			<-->name:
-			<-->   ---
-			<-->   - 68
-			<-->   - a rather long string of text
-			<-->   -
-			<-->      a: 1
-			<-->      b: 2
+			   ---
+			   - 68
+			   - a rather long string of text
+			   -
+			      a: 1
+			      b: 2
 			"""
 	)()
 

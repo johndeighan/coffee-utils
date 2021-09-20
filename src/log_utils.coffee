@@ -77,10 +77,10 @@ export log = (lArgs...) ->
 	#     valid options:
 	#        prefix
 	#        logItem
+	#        itemPrefix
 
 	if (lArgs.length==0)
 		return
-	prefix = ''
 	str = lArgs[0]
 	switch lArgs.length
 		when 1
@@ -92,10 +92,21 @@ export log = (lArgs...) ->
 			item = lArgs[1]      # might not be logged, though
 			hOptions = lArgs[2]
 			assert isHash(hOptions), "log(): 3rd arg must be a hash"
-			if hOptions.prefix?
-				prefix = hOptions.prefix
 			if hOptions.logItem?
 				logItem = hOptions.logItem
+
+	if hOptions?
+		if hOptions.prefix?
+			prefix = hOptions.prefix
+		else
+			prefix = ''
+
+		if hOptions.itemPrefix?
+			itemPrefix = hOptions.itemPrefix
+		else
+			itemPrefix = ''
+	else
+		prefix = itemPrefix = ''
 
 	if (not logItem)
 		logger "#{prefix}#{str}"
@@ -110,7 +121,7 @@ export log = (lArgs...) ->
 		else
 			logger "#{prefix}#{str}:"
 			for line in stringToArray(item)
-				logger "#{prefix}   #{escapeStr(line)}"
+				logger "#{itemPrefix}   #{escapeStr(line)}"
 	else
 		# --- It's some type of object
 		json = JSON.stringify(item)
@@ -119,7 +130,7 @@ export log = (lArgs...) ->
 		else
 			logger "#{prefix}#{str}:"
 			for str in stringToArray(stringify(item))
-				logger "#{prefix}   #{str}"
+				logger "#{itemPrefix}   #{str}"
 	return
 
 # ---------------------------------------------------------------------------

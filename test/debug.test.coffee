@@ -187,3 +187,53 @@ setDebugging true
 		]
 	setDebugging false
 	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	resetDebugging()
+	setDebugging true
+	lLines = []
+
+	obj = {
+		first: "this is the first item in the hash"
+		second: "this is the second item in the hash"
+		}
+
+	debug 'enter myfunc'
+	debug 'return from myfunc', obj
+	debug "Answer is 42"
+	simple.equal 198, lLines, [
+		"enter myfunc"
+		"└─> return from myfunc:"
+		"       ---"
+		"       first: this is the first item in the hash"
+		"       second: this is the second item in the hash"
+		"Answer is 42"
+		]
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	resetDebugging()
+	setDebugging true
+	lLines = []
+
+	longBlock = """
+		this is one very long line
+		this is another very long line
+		"""
+
+	debug 'enter myfunc'
+	debug 'return from myfunc', longBlock
+	debug "Answer is 42"
+	simple.equal 198, lLines, [
+		"enter myfunc"
+		"└─> return from myfunc:"
+		"       this is one very long line"
+		"       this is another very long line"
+		"Answer is 42"
+		]
+	)()
+
