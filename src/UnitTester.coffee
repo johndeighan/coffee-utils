@@ -52,14 +52,14 @@ export class UnitTester
 
 	# ........................................................................
 
-	truthy: (lineNum, input, expected) ->
+	truthy: (lineNum, input, expected=undef) ->
 		@setWhichTest 'truthy'
 		@test lineNum, input, expected
 		return
 
 	# ........................................................................
 
-	falsy: (lineNum, input, expected) ->
+	falsy: (lineNum, input, expected=undef) ->
 		@setWhichTest 'falsy'
 		@test lineNum, input, expected
 		return

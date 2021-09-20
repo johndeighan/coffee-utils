@@ -60,13 +60,13 @@ export var UnitTester = class UnitTester {
   }
 
   // ........................................................................
-  truthy(lineNum, input, expected) {
+  truthy(lineNum, input, expected = undef) {
     this.setWhichTest('truthy');
     this.test(lineNum, input, expected);
   }
 
   // ........................................................................
-  falsy(lineNum, input, expected) {
+  falsy(lineNum, input, expected = undef) {
     this.setWhichTest('falsy');
     this.test(lineNum, input, expected);
   }

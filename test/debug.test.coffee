@@ -3,7 +3,7 @@
 import {undef} from '@jdeighan/coffee-utils'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
 import {
-	setDebugging, debug, resetDebugging,
+	setDebugging, debug, resetDebugging, funcMatch,
 	} from '@jdeighan/coffee-utils/debug'
 import {UnitTester} from '@jdeighan/coffee-utils/test'
 
@@ -157,4 +157,13 @@ setDebugging true
 		"│   answer is 42"
 		"└─> return from innerFunc()"
 		]
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	setDebugging 'get'
+
+	simple.truthy 167, funcMatch('get')
+	simple.truthy 168, funcMatch('StringInput.get')
 	)()

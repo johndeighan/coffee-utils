@@ -115,7 +115,7 @@ export debug = (lArgs...) ->
 
 	# --- determine if we're entering or returning from a function
 	entering = exiting = false
-	curFunction = undef
+	curFunc = undef
 	if (lMatches = str.match(///^
 			\s*
 			enter
@@ -123,7 +123,7 @@ export debug = (lArgs...) ->
 			([A-Za-z_][A-Za-z0-9_]*)
 			///))
 		entering = true
-		curFunction = lMatches[1]
+		curFunc = lMatches[1]
 	else if (lMatches = str.match(///^
 			\s*
 			return
@@ -133,9 +133,9 @@ export debug = (lArgs...) ->
 			([A-Za-z_][A-Za-z0-9_]*)
 			///))
 		exiting = true
-		curFunction = lMatches[1]
+		curFunc = lMatches[1]
 
-	if entering && lDebugFuncs && lDebugFuncs.includes(curFunction)
+	if entering && lDebugFuncs && funcMatch(curFunc)
 		setDebugging true
 
 	if debugging && (not ifMatches? || str.match(ifMatches))
@@ -154,7 +154,7 @@ export debug = (lArgs...) ->
 		else
 			log str, item, {prefix, logItem: true}
 
-	if exiting && lDebugFuncs && lDebugFuncs.includes(curFunction)
+	if exiting && lDebugFuncs && funcMatch(curFunc)
 		setDebugging false    # revert to previous setting - might still be on
 
 	if debugging
@@ -163,3 +163,25 @@ export debug = (lArgs...) ->
 		if exiting && (debugLevel > 0)
 			debugLevel -= 1
 	return
+
+# ---------------------------------------------------------------------------
+
+reMethod = ///^
+	([A-Za-z_][A-Za-z0-9_]*)
+	\.
+	([A-Za-z_][A-Za-z0-9_]*)
+	$///
+
+# ---------------------------------------------------------------------------
+# --- export only to allow unit tests
+
+export funcMatch = (curFunc) ->
+
+	if lDebugFuncs.includes(curFunc)
+		return true
+	else if (lMatches = curFunc.match(reMethod)) \
+			&& ([_, cls, meth] = lMatches) \
+			&& lDebugFuncs.includes(meth)
+		return true
+	else
+		return false
