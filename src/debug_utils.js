@@ -107,6 +107,18 @@ export var resetDebugging = function() {
 };
 
 // ---------------------------------------------------------------------------
+// --- export only to allow unit testing
+export var patchDebugStr = function(str) {
+  var re, replacer;
+  // --- Match things like "$varname$" to "'#{escapeStr(varname)}'"
+  re = /\$([A-Za-z_][A-Za-z0-9_]*)\$/g;
+  replacer = function(match, ident) {
+    return `'\#\{escapeStr(${ident})\}'`;
+  };
+  return str.replace(re, replacer);
+};
+
+// ---------------------------------------------------------------------------
 export var debug = function(...lArgs) {
   var curFunc, entering, exiting, item, lMatches, nArgs, prefix, str;
   // --- either 1 or 2 args

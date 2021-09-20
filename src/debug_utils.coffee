@@ -93,6 +93,20 @@ export resetDebugging = () ->
 	return
 
 # ---------------------------------------------------------------------------
+# --- export only to allow unit testing
+
+export patchDebugStr = (str) ->
+
+	# --- Match things like "$varname$" to "'#{escapeStr(varname)}'"
+	re = /\$([A-Za-z_][A-Za-z0-9_]*)\$/g
+
+	replacer = (match, ident) ->
+
+		return "'\#\{escapeStr(#{ident})\}'"
+
+	return str.replace(re, replacer)
+
+# ---------------------------------------------------------------------------
 
 export debug = (lArgs...) ->
 	# --- either 1 or 2 args
