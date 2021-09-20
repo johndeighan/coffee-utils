@@ -126,7 +126,7 @@ export debug = (lArgs...) ->
 			\s*
 			enter
 			\s+
-			([A-Za-z_][A-Za-z0-9_]*)
+			([A-Za-z_][A-Za-z0-9_\.]*)
 			///))
 		entering = true
 		curFunc = lMatches[1]
@@ -136,7 +136,7 @@ export debug = (lArgs...) ->
 			.*
 			from
 			\s+
-			([A-Za-z_][A-Za-z0-9_]*)
+			([A-Za-z_][A-Za-z0-9_\.]*)
 			///))
 		returning = true
 		curFunc = lMatches[1]

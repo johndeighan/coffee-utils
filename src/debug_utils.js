@@ -130,10 +130,10 @@ export var debug = function(...lArgs) {
   // --- determine if we're entering or returning from a function
   entering = returning = false;
   curFunc = undef;
-  if ((lMatches = str.match(/^\s*enter\s+([A-Za-z_][A-Za-z0-9_]*)/))) {
+  if ((lMatches = str.match(/^\s*enter\s+([A-Za-z_][A-Za-z0-9_\.]*)/))) {
     entering = true;
     curFunc = lMatches[1];
-  } else if ((lMatches = str.match(/^\s*return.*from\s+([A-Za-z_][A-Za-z0-9_]*)/))) {
+  } else if ((lMatches = str.match(/^\s*return.*from\s+([A-Za-z_][A-Za-z0-9_\.]*)/))) {
     returning = true;
     curFunc = lMatches[1];
   }
