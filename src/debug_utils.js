@@ -25,6 +25,10 @@ import {
   log
 } from '@jdeighan/coffee-utils/log';
 
+import {
+  slurp
+} from '@jdeighan/coffee-utils/fs';
+
 vbar = '│'; // unicode 2502
 
 hbar = '─'; // unicode 2500
@@ -188,4 +192,37 @@ export var funcMatch = function(curFunc) {
   } else {
     return false;
   }
+};
+
+// ---------------------------------------------------------------------------
+export var checkTrace = function(block) {
+  var funcName, i, lMatches, lStack, len, len1, line, ref;
+  lStack = [];
+  ref = stringToArray(block);
+  for (i = 0, len1 = ref.length; i < len1; i++) {
+    line = ref[i];
+    if (lMatches = line.match(/enter\s+([A-Za-z_][A-Za-z0-9_]*)/)) {
+      funcName = lMatches[1];
+      lStack.push(funcName);
+    } else if (lMatches = line.match(/return.*from\s+([A-Za-z_][A-Za-z0-9_]*)/)) {
+      funcName = lMatches[1];
+      len = lStack.length;
+      if (len === 0) {
+        log(`return from ${funcName} with empty stack`);
+      } else if (lStack[len - 1] === funcName) {
+        lStack.pop();
+      } else if (lStack[len - 2] === funcName) {
+        log(`missing return from ${lStack[len - 2]}`);
+        lStack.pop();
+        lStack.pop();
+      } else {
+        log(`return from ${funcName} - not found on stack`);
+      }
+    }
+  }
+};
+
+// ---------------------------------------------------------------------------
+export var checkTraceFile = function(filepath) {
+  checkTrace(slurp(filepath));
 };

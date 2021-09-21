@@ -6,6 +6,7 @@ import {
 	stringToArray, oneline, escapeStr, isNumber, isArray,
 	} from '@jdeighan/coffee-utils'
 import {log} from '@jdeighan/coffee-utils/log'
+import {slurp} from '@jdeighan/coffee-utils/fs'
 
 vbar = '│'       # unicode 2502
 hbar = '─'       # unicode 2500
@@ -195,3 +196,45 @@ export funcMatch = (curFunc) ->
 		return true
 	else
 		return false
+
+# ---------------------------------------------------------------------------
+
+export checkTrace = (block) ->
+
+	lStack = []
+
+	for line in stringToArray(block)
+		if lMatches = line.match(///
+				enter
+				\s+
+				([A-Za-z_][A-Za-z0-9_]*)
+				///)
+			funcName = lMatches[1]
+			lStack.push funcName
+		else if lMatches = line.match(///
+				return
+				.*
+				from
+				\s+
+				([A-Za-z_][A-Za-z0-9_]*)
+				///)
+			funcName = lMatches[1]
+			len = lStack.length
+			if (len == 0)
+				log "return from #{funcName} with empty stack"
+			else if (lStack[len-1] == funcName)
+				lStack.pop()
+			else if (lStack[len-2] == funcName)
+				log "missing return from #{lStack[len-2]}"
+				lStack.pop()
+				lStack.pop()
+			else
+				log "return from #{funcName} - not found on stack"
+	return
+
+# ---------------------------------------------------------------------------
+
+export checkTraceFile = (filepath) ->
+
+	checkTrace(slurp(filepath))
+	return

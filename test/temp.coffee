@@ -2,17 +2,17 @@
 
 import {log} from '@jdeighan/coffee-utils/log'
 import {mydir, forEachFile} from '@jdeighan/coffee-utils/fs'
-import {debug, setDebugging} from '@jdeighan/coffee-utils/debug'
+import {
+	debug, setDebugging, checkTraceFile,
+	} from '@jdeighan/coffee-utils/debug'
 
 testDir = mydir(`import.meta.url`)
 
 # ---------------------------------------------------------------------------
 
 main = () ->
-	callback = (fname, dir, level) ->
-		log "#{'   '.repeat(level)}  #{fname} in #{dir}"
 
-	forEachFile(testDir, callback, /\.txt$/)
+	checkTraceFile "c:/Users/johnd/coffee-utils/test/temp.txt"
 
 # ---------------------------------------------------------------------------
 

@@ -13,18 +13,15 @@ import {
 
 import {
   debug,
-  setDebugging
+  setDebugging,
+  checkTraceFile
 } from '@jdeighan/coffee-utils/debug';
 
 testDir = mydir(import.meta.url);
 
 // ---------------------------------------------------------------------------
 main = function() {
-  var callback;
-  callback = function(fname, dir, level) {
-    return log(`${'   '.repeat(level)}  ${fname} in ${dir}`);
-  };
-  return forEachFile(testDir, callback, /\.txt$/);
+  return checkTraceFile("c:/Users/johnd/coffee-utils/test/temp.txt");
 };
 
 // ---------------------------------------------------------------------------
