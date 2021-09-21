@@ -4,7 +4,7 @@ import {strict as assert} from 'assert'
 import test from 'ava'
 
 import {
-	undef, error, stringToArray,
+	undef, pass, error, stringToArray,
 	isString, isFunction, isInteger, isArray,
 	} from '@jdeighan/coffee-utils'
 import {log, currentLogger, setLogger} from '@jdeighan/coffee-utils/log'
@@ -22,6 +22,12 @@ export class UnitTester
 		@justshow = false
 		@testing = true
 		@maxLineNum = undef
+
+	# ........................................................................
+
+	initialize: () ->     # override to do any initialization
+
+		pass
 
 	# ........................................................................
 
@@ -67,10 +73,7 @@ export class UnitTester
 	# ........................................................................
 
 	equal: (lineNum, input, expected) ->
-		if isString(input) && isString(expected)
-			@setWhichTest 'is'
-		else
-			@setWhichTest 'deepEqual'
+		@setWhichTest 'deepEqual'
 		@test lineNum, input, expected
 		return
 
@@ -172,6 +175,7 @@ export class UnitTester
 
 	test: (lineNum, input, expected) ->
 
+		@initialize()
 		@lineNum = lineNum    # set an object property
 
 		if (lineNum < 0) && process.env.FINALTEST

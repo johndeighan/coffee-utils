@@ -8,6 +8,7 @@ import test from 'ava';
 
 import {
   undef,
+  pass,
   error,
   stringToArray,
   isString,
@@ -37,6 +38,11 @@ export var UnitTester = class UnitTester {
     this.justshow = false;
     this.testing = true;
     this.maxLineNum = undef;
+  }
+
+  // ........................................................................
+  initialize() { // override to do any initialization
+    return pass;
   }
 
   // ........................................................................
@@ -73,11 +79,7 @@ export var UnitTester = class UnitTester {
 
   // ........................................................................
   equal(lineNum, input, expected) {
-    if (isString(input) && isString(expected)) {
-      this.setWhichTest('is');
-    } else {
-      this.setWhichTest('deepEqual');
-    }
+    this.setWhichTest('deepEqual');
     this.test(lineNum, input, expected);
   }
 
@@ -182,6 +184,7 @@ export var UnitTester = class UnitTester {
   // ........................................................................
   test(lineNum, input, expected) {
     var err, errMsg, got, whichTest;
+    this.initialize();
     this.lineNum = lineNum; // set an object property
     if ((lineNum < 0) && process.env.FINALTEST) {
       error("Negative line numbers not allowed in FINALTEST");

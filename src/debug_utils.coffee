@@ -104,8 +104,9 @@ export resetDebugging = () ->
 export debug = (lArgs...) ->
 	# --- either 1 or 2 args
 
-	if not debugging && not lDebugFuncs?
-		return
+	# --- We always need to manipulate the stack when we encounter
+	#     either "enter X" or "return from X", so we can't short-circuit
+	#     when debugging is off
 
 	nArgs = lArgs.length
 	assert ((nArgs >= 1) && (nArgs <= 2)), "debug(); Bad # args #{nArgs}"
@@ -164,15 +165,14 @@ export debug = (lArgs...) ->
 				logItem: true,
 				itemPrefix: stripArrow(prefix),
 				}
+		if returning && (debugLevel > 0)
+			debugLevel -= 1
 
 	if returning && lDebugFuncs && funcMatch(curFunc)
 		setDebugging false    # revert to previous setting - might still be on
 
-	if debugging
-		if entering
-			debugLevel += 1
-		if returning && (debugLevel > 0)
-			debugLevel -= 1
+	if debugging && entering
+		debugLevel += 1
 	return
 
 # ---------------------------------------------------------------------------
@@ -207,7 +207,7 @@ export checkTrace = (block) ->
 		if lMatches = line.match(///
 				enter
 				\s+
-				([A-Za-z_][A-Za-z0-9_]*)
+				([A-Za-z_][A-Za-z0-9_\.]*)
 				///)
 			funcName = lMatches[1]
 			lStack.push funcName
@@ -216,7 +216,7 @@ export checkTrace = (block) ->
 				.*
 				from
 				\s+
-				([A-Za-z_][A-Za-z0-9_]*)
+				([A-Za-z_][A-Za-z0-9_\.]*)
 				///)
 			funcName = lMatches[1]
 			len = lStack.length

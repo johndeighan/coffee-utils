@@ -1,6 +1,8 @@
 # debug.test.coffee
 
-import {undef, OL} from '@jdeighan/coffee-utils'
+import {
+	undef, OL, stringToArray, arrayToString,
+	} from '@jdeighan/coffee-utils'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
 import {
 	setDebugging, debug, resetDebugging, funcMatch,
@@ -22,6 +24,24 @@ setDebugging true
 	debug 'abc'
 	simple.equal 23, lLines, ['abc']
 	)()
+
+# ---------------------------------------------------------------------------
+
+class TraceTester extends UnitTester
+
+	initialize: () ->
+		lLines = []
+
+	transformValue: (block) ->
+
+		for line in stringToArray(block)
+			debug line
+		return arrayToString(lLines)
+
+	normalize: (text) ->
+		return text
+
+tester = new TraceTester()
 
 # ---------------------------------------------------------------------------
 
@@ -237,3 +257,33 @@ setDebugging true
 		]
 	)()
 
+# ---------------------------------------------------------------------------
+
+(() ->
+	resetDebugging()
+	setDebugging 'get'
+
+	block = """
+		enter myfunc
+		enter get
+		enter fetch
+		return from fetch
+		return from get
+		enter nofunc
+		return from nofunc
+		enter get
+		something
+		return from get
+		return from myfunc
+		"""
+
+	tester.equal 277, block, """
+		enter get
+		│   enter fetch
+		│   └─> return from fetch
+		└─> return from get
+		enter get
+		│   something
+		└─> return from get
+		"""
+	)()

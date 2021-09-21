@@ -119,9 +119,10 @@ export var resetDebugging = function() {
 export var debug = function(...lArgs) {
   var curFunc, entering, item, lMatches, nArgs, prefix, returning, str;
   // --- either 1 or 2 args
-  if (!debugging && (lDebugFuncs == null)) {
-    return;
-  }
+
+  // --- We always need to manipulate the stack when we encounter
+  //     either "enter X" or "return from X", so we can't short-circuit
+  //     when debugging is off
   nArgs = lArgs.length;
   assert((nArgs >= 1) && (nArgs <= 2), `debug(); Bad # args ${nArgs}`);
   str = lArgs[0];
@@ -164,17 +165,15 @@ export var debug = function(...lArgs) {
         itemPrefix: stripArrow(prefix)
       });
     }
+    if (returning && (debugLevel > 0)) {
+      debugLevel -= 1;
+    }
   }
   if (returning && lDebugFuncs && funcMatch(curFunc)) {
     setDebugging(false); // revert to previous setting - might still be on
   }
-  if (debugging) {
-    if (entering) {
-      debugLevel += 1;
-    }
-    if (returning && (debugLevel > 0)) {
-      debugLevel -= 1;
-    }
+  if (debugging && entering) {
+    debugLevel += 1;
   }
 };
 
@@ -201,10 +200,10 @@ export var checkTrace = function(block) {
   ref = stringToArray(block);
   for (i = 0, len1 = ref.length; i < len1; i++) {
     line = ref[i];
-    if (lMatches = line.match(/enter\s+([A-Za-z_][A-Za-z0-9_]*)/)) {
+    if (lMatches = line.match(/enter\s+([A-Za-z_][A-Za-z0-9_\.]*)/)) {
       funcName = lMatches[1];
       lStack.push(funcName);
-    } else if (lMatches = line.match(/return.*from\s+([A-Za-z_][A-Za-z0-9_]*)/)) {
+    } else if (lMatches = line.match(/return.*from\s+([A-Za-z_][A-Za-z0-9_\.]*)/)) {
       funcName = lMatches[1];
       len = lStack.length;
       if (len === 0) {
