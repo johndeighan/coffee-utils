@@ -3,8 +3,9 @@
 import {strict as assert} from 'assert'
 import {
 	undef, error, croak, warn, words, isString, isFunction,
-	stringToArray, oneline, escapeStr, isNumber, isArray,
+	oneline, escapeStr, isNumber, isArray,
 	} from '@jdeighan/coffee-utils'
+import {blockToArray} from '@jdeighan/coffee-utils/block'
 import {log} from '@jdeighan/coffee-utils/log'
 import {slurp} from '@jdeighan/coffee-utils/fs'
 
@@ -203,7 +204,7 @@ export checkTrace = (block) ->
 
 	lStack = []
 
-	for line in stringToArray(block)
+	for line in blockToArray(block)
 		if lMatches = line.match(///
 				enter
 				\s+

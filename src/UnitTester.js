@@ -10,12 +10,15 @@ import {
   undef,
   pass,
   error,
-  stringToArray,
   isString,
   isFunction,
   isInteger,
   isArray
 } from '@jdeighan/coffee-utils';
+
+import {
+  blockToArray
+} from '@jdeighan/coffee-utils/block';
 
 import {
   log,
@@ -163,7 +166,7 @@ export var UnitTester = class UnitTester {
     if (isString(input)) {
       lLines = (function() {
         var i, len, ref, results;
-        ref = stringToArray(input);
+        ref = blockToArray(input);
         results = [];
         for (i = 0, len = ref.length; i < len; i++) {
           line = ref[i];

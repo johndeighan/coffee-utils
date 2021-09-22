@@ -1,8 +1,7 @@
 # debug.test.coffee
 
-import {
-	undef, OL, stringToArray, arrayToString,
-	} from '@jdeighan/coffee-utils'
+import {undef, OL} from '@jdeighan/coffee-utils'
+import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
 import {
 	setDebugging, debug, resetDebugging, funcMatch,
@@ -34,9 +33,9 @@ class TraceTester extends UnitTester
 
 	transformValue: (block) ->
 
-		for line in stringToArray(block)
+		for line in blockToArray(block)
 			debug line
-		return arrayToString(lLines)
+		return arrayToBlock(lLines)
 
 	normalize: (text) ->
 		return text

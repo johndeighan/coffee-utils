@@ -14,7 +14,8 @@ import {
   isEmpty,
   nonEmpty,
   error,
-  isComment
+  isComment,
+  rtrim
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -22,10 +23,72 @@ import {
 } from '@jdeighan/coffee-utils/log';
 
 // ---------------------------------------------------------------------------
+//   blockToArray - split a block into lines
+export var blockToArray = function(block) {
+  var lLines, len;
+  if (isEmpty(block)) {
+    return [];
+  } else {
+    lLines = block.split(/\r?\n/);
+    // --- remove trailing empty lines
+    len = lLines.length;
+    while ((len > 0) && isEmpty(lLines[len - 1])) {
+      lLines.pop();
+      len -= 1;
+    }
+    return lLines;
+  }
+};
+
+// ---------------------------------------------------------------------------
+//   arrayToBlock - block will have no trailing whitespace
+export var arrayToBlock = function(lLines) {
+  if (lLines.length === 0) {
+    return '';
+  } else {
+    return rtrim(lLines.join('\n'));
+  }
+};
+
+// ---------------------------------------------------------------------------
+//   normalizeBlock - remove blank lines, trim each line
+//                  - collapse internal whitespace to ' '
+export var normalizeBlock = function(content) {
+  var lLines, line;
+  if (typeof content !== 'string') {
+    throw new Error("normalizeBlock(): not a string");
+  }
+  lLines = (function() {
+    var i, len1, ref, results;
+    ref = blockToArray(content);
+    results = [];
+    for (i = 0, len1 = ref.length; i < len1; i++) {
+      line = ref[i];
+      line = line.trim();
+      results.push(line.replace(/\s+/g, ' '));
+    }
+    return results;
+  })();
+  lLines = lLines.filter(function(line) {
+    return line !== '';
+  });
+  return lLines.join('\n');
+};
+
+// ---------------------------------------------------------------------------
+// truncateBlock - limit block to a certain number of lines
+export var truncateBlock = function(str, numLines) {
+  var lLines;
+  lLines = blockToArray(str);
+  lLines.length = numLines;
+  return arrayToBlock(lLines);
+};
+
+// ---------------------------------------------------------------------------
 export var joinBlocks = function(...lBlocks) {
-  var blk, i, len, str;
+  var blk, i, len1, str;
   str = '';
-  for (i = 0, len = lBlocks.length; i < len; i++) {
+  for (i = 0, len1 = lBlocks.length; i < len1; i++) {
     blk = lBlocks[i];
     if (nonEmpty(blk)) {
       str += "\n" + blk;

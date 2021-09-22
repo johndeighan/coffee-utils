@@ -162,11 +162,11 @@ export var words = function(str) {
 
 // ---------------------------------------------------------------------------
 export var isArrayOfHashes = function(lItems) {
-  var i, item, len1;
+  var i, item, len;
   if (!isArray(lItems)) {
     return false;
   }
-  for (i = 0, len1 = lItems.length; i < len1; i++) {
+  for (i = 0, len = lItems.length; i < len; i++) {
     item = lItems[i];
     if (!isHash(item)) {
       return false;
@@ -177,11 +177,11 @@ export var isArrayOfHashes = function(lItems) {
 
 // ---------------------------------------------------------------------------
 export var isArrayOfStrings = function(lItems) {
-  var i, item, len1;
+  var i, item, len;
   if (!isArray(lItems)) {
     return false;
   }
-  for (i = 0, len1 = lItems.length; i < len1; i++) {
+  for (i = 0, len = lItems.length; i < len; i++) {
     item = lItems[i];
     if (!isString(item)) {
       return false;
@@ -243,58 +243,6 @@ export var firstLine = function(input) {
 };
 
 // ---------------------------------------------------------------------------
-//   stringToArray - split a string into lines
-export var stringToArray = function(str) {
-  var lLines, len;
-  if (isEmpty(str)) {
-    return [];
-  } else {
-    lLines = str.split(/\r?\n/);
-    len = lLines.length;
-    while ((len > 0) && isEmpty(lLines[len - 1])) {
-      lLines.pop();
-      len -= 1;
-    }
-    return lLines;
-  }
-};
-
-// ---------------------------------------------------------------------------
-//   arrayToString - every line has trailing newline
-export var arrayToString = function(lLines) {
-  if (lLines.length === 0) {
-    return '';
-  } else {
-    return rtrim(lLines.join('\n'));
-  }
-};
-
-// ---------------------------------------------------------------------------
-//   normalize - remove blank lines, trim each line
-//             - collapse internal whitespace to ' '
-export var normalize = function(content) {
-  var lLines, line;
-  if (typeof content !== 'string') {
-    throw new Error("normalize(): not a string");
-  }
-  lLines = (function() {
-    var i, len1, ref, results;
-    ref = stringToArray(content);
-    results = [];
-    for (i = 0, len1 = ref.length; i < len1; i++) {
-      line = ref[i];
-      line = line.trim();
-      results.push(line.replace(/\s+/g, ' '));
-    }
-    return results;
-  })();
-  lLines = lLines.filter(function(line) {
-    return line !== '';
-  });
-  return lLines.join('\n');
-};
-
-// ---------------------------------------------------------------------------
 export var titleLine = function(title, char = '=', padding = 2, linelen = 42) {
   var nLeft, nRight, strLeft, strMiddle, strRight, titleLen;
   // --- used in logger
@@ -352,10 +300,10 @@ export var escapeStr = function(str) {
     croak("escapeStr(): not a string", str, 'STRING');
   }
   lParts = (function() {
-    var i, len1, ref, results;
+    var i, len, ref, results;
     ref = str.split('');
     results = [];
-    for (i = 0, len1 = ref.length; i < len1; i++) {
+    for (i = 0, len = ref.length; i < len; i++) {
       ch = ref[i];
       if (ch === '\n') {
         results.push('\\n');
@@ -384,15 +332,6 @@ export var oneline = function(obj) {
 };
 
 export var OL = oneline;
-
-// ---------------------------------------------------------------------------
-// truncateBlock - limit block to a certain number of lines
-export var truncateBlock = function(str, numLines) {
-  var lLines;
-  lLines = stringToArray(str);
-  lLines.length = numLines;
-  return arrayToString(lLines);
-};
 
 // ---------------------------------------------------------------------------
 export var removeCR = function(block) {

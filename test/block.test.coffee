@@ -4,11 +4,34 @@ import {strict as assert} from 'assert'
 
 import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {
+	blockToArray, arrayToBlock, normalizeBlock, truncateBlock,
 	joinBlocks, forEachLine, forEachBlock, forEachSetOfBlocks,
 	} from '@jdeighan/coffee-utils/block'
 
 simple = new UnitTester()
 simple.equal 11, 2+2, 4
+
+# ---------------------------------------------------------------------------
+
+simple.equal 108, blockToArray("abc\nxyz\n"), [
+	'abc'
+	'xyz'
+	]
+
+simple.equal 113, blockToArray("abc\nxyz\n\n\n\n"), [
+	'abc'
+	'xyz'
+	]
+
+simple.equal 118, blockToArray("abc\n\nxyz\n"), [
+	'abc'
+	''
+	'xyz'
+	]
+
+# ---------------------------------------------------------------------------
+
+simple.equal 126, arrayToBlock(['a','b','c']), "a\nb\nc\n"
 
 # ---------------------------------------------------------------------------
 
@@ -20,6 +43,49 @@ simple.equal 11, 2+2, 4
 			do that
 			"""
 	)()
+
+# ---------------------------------------------------------------------------
+
+simple.equal 49, normalizeBlock("""
+			line 1
+			line 2
+			"""), """
+			line 1
+			line 2
+			""" + '\n'
+
+simple.equal 57, normalizeBlock("""
+			line 1
+
+			line 2
+			"""), """
+			line 1
+			line 2
+			""" + '\n'
+
+simple.equal 66, normalizeBlock("""
+
+			line 1
+
+			line 2
+
+
+			"""), """
+			line 1
+			line 2
+			""" + '\n'
+
+# ---------------------------------------------------------------------------
+
+simple.equal 96, truncateBlock("""
+			line 1
+			line 2
+			line 3
+			line 4
+			""", 2), """
+			line 1
+			line 2
+			""" + '\n'
 
 # ---------------------------------------------------------------------------
 

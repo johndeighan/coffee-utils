@@ -4,14 +4,15 @@ import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {
 	say, undef, error, warn, isString, isObject, isArray, isHash,
 	isEmpty, nonEmpty, isComment, getClassName, isNumber,
-	isFunction, isInteger, arrayToString, rtrim,
-	normalize, stringToArray, ltrunc, rtrunc,
-	words, escapeStr, truncateBlock, titleLine,
+	isFunction, isInteger, rtrim,
+	ltrunc, rtrunc,
+	words, escapeStr, titleLine,
 	removeCR, splitBlock, CWS, isArrayOfHashes,
 	firstLine, oneline, croak, isRegExp,
 	} from '@jdeighan/coffee-utils'
 import {setLogger} from '@jdeighan/coffee-utils/log'
 import {setDebugging} from '@jdeighan/coffee-utils/debug'
+import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 
 simple = new UnitTester()
 
@@ -47,37 +48,6 @@ simple.equal  45, titleLine('a thing','-',5,90).length, 90
 
 # ---------------------------------------------------------------------------
 
-simple.equal 49, normalize("""
-			line 1
-			line 2
-			"""), """
-			line 1
-			line 2
-			""" + '\n'
-
-simple.equal 57, normalize("""
-			line 1
-
-			line 2
-			"""), """
-			line 1
-			line 2
-			""" + '\n'
-
-simple.equal 66, normalize("""
-
-			line 1
-
-			line 2
-
-
-			"""), """
-			line 1
-			line 2
-			""" + '\n'
-
-# ---------------------------------------------------------------------------
-
 simple.equal 80, rtrim("abc"), "abc"
 simple.equal 81, rtrim("  abc"), "  abc"
 simple.equal 82, rtrim("abc  "), "abc"
@@ -91,40 +61,6 @@ simple.equal 88, words('  a   b   c  '), ['a', 'b', 'c']
 # ---------------------------------------------------------------------------
 
 simple.equal 92, escapeStr("\t\tXXX\n"), "\\t\\tXXX\\n"
-
-# ---------------------------------------------------------------------------
-
-simple.equal 96, truncateBlock("""
-			line 1
-			line 2
-			line 3
-			line 4
-			""", 2), """
-			line 1
-			line 2
-			""" + '\n'
-
-# ---------------------------------------------------------------------------
-
-simple.equal 108, stringToArray("abc\nxyz\n"), [
-	'abc'
-	'xyz'
-	]
-
-simple.equal 113, stringToArray("abc\nxyz\n\n\n\n"), [
-	'abc'
-	'xyz'
-	]
-
-simple.equal 118, stringToArray("abc\n\nxyz\n"), [
-	'abc'
-	''
-	'xyz'
-	]
-
-# ---------------------------------------------------------------------------
-
-simple.equal 126, arrayToString(['a','b','c']), "a\nb\nc\n"
 
 # ---------------------------------------------------------------------------
 
@@ -252,7 +188,7 @@ simple.equal 239, CWS("""
 	obj = {a:1, b:2}
 	try
 		croak "bad stuff", "An Object", obj
-	simple.equal 255, arrayToString(lLines), """
+	simple.equal 255, arrayToBlock(lLines), """
 			ERROR: bad stuff
 			An Object = {"a":1,"b":2}
 			"""

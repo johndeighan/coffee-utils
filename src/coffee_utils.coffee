@@ -234,45 +234,6 @@ export firstLine = (input) ->
 		return input.substring(0, pos)
 
 # ---------------------------------------------------------------------------
-#   stringToArray - split a string into lines
-
-export stringToArray = (str) ->
-
-	if isEmpty(str)
-		return []
-	else
-		lLines = str.split(/\r?\n/)
-		len = lLines.length
-		while (len > 0) && isEmpty(lLines[len-1])
-			lLines.pop()
-			len -= 1
-		return lLines
-
-# ---------------------------------------------------------------------------
-#   arrayToString - every line has trailing newline
-
-export arrayToString = (lLines) ->
-
-	if lLines.length == 0
-		return ''
-	else
-		return rtrim(lLines.join('\n'))
-
-# ---------------------------------------------------------------------------
-#   normalize - remove blank lines, trim each line
-#             - collapse internal whitespace to ' '
-
-export normalize = (content) ->
-
-	if typeof content != 'string'
-		throw new Error("normalize(): not a string")
-	lLines = for line in stringToArray(content)
-		line = line.trim()
-		line.replace(/\s+/g, ' ')
-	lLines = lLines.filter (line) -> line != ''
-	return lLines.join('\n')
-
-# ---------------------------------------------------------------------------
 
 export titleLine = (title, char='=', padding=2, linelen=42) ->
 	# --- used in logger
@@ -352,15 +313,6 @@ export oneline = (obj) ->
 		return 'undef'
 
 export OL = oneline
-
-# ---------------------------------------------------------------------------
-# truncateBlock - limit block to a certain number of lines
-
-export truncateBlock = (str, numLines) ->
-
-	lLines = stringToArray str
-	lLines.length = numLines
-	return arrayToString lLines
 
 # ---------------------------------------------------------------------------
 

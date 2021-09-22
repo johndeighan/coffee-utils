@@ -6,9 +6,59 @@ import {
 import {createInterface} from 'readline'
 
 import {
-	isEmpty, nonEmpty, error, isComment,
+	isEmpty, nonEmpty, error, isComment, rtrim,
 	} from '@jdeighan/coffee-utils'
 import {log} from '@jdeighan/coffee-utils/log'
+
+# ---------------------------------------------------------------------------
+#   blockToArray - split a block into lines
+
+export blockToArray = (block) ->
+
+	if isEmpty(block)
+		return []
+	else
+		lLines = block.split(/\r?\n/)
+
+		# --- remove trailing empty lines
+		len = lLines.length
+		while (len > 0) && isEmpty(lLines[len-1])
+			lLines.pop()
+			len -= 1
+		return lLines
+
+# ---------------------------------------------------------------------------
+#   arrayToBlock - block will have no trailing whitespace
+
+export arrayToBlock = (lLines) ->
+
+	if lLines.length == 0
+		return ''
+	else
+		return rtrim(lLines.join('\n'))
+
+# ---------------------------------------------------------------------------
+#   normalizeBlock - remove blank lines, trim each line
+#                  - collapse internal whitespace to ' '
+
+export normalizeBlock = (content) ->
+
+	if typeof content != 'string'
+		throw new Error("normalizeBlock(): not a string")
+	lLines = for line in blockToArray(content)
+		line = line.trim()
+		line.replace(/\s+/g, ' ')
+	lLines = lLines.filter (line) -> line != ''
+	return lLines.join('\n')
+
+# ---------------------------------------------------------------------------
+# truncateBlock - limit block to a certain number of lines
+
+export truncateBlock = (str, numLines) ->
+
+	lLines = blockToArray str
+	lLines.length = numLines
+	return arrayToBlock lLines
 
 # ---------------------------------------------------------------------------
 

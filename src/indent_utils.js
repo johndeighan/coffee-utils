@@ -7,8 +7,6 @@ import {
 import {
   undef,
   error,
-  arrayToString,
-  stringToArray,
   escapeStr,
   oneline,
   isInteger,
@@ -17,6 +15,11 @@ import {
   isEmpty,
   rtrim
 } from '@jdeighan/coffee-utils';
+
+import {
+  arrayToBlock,
+  blockToArray
+} from '@jdeighan/coffee-utils/block';
 
 // ---------------------------------------------------------------------------
 //        NOTE: Currently, only TAB indentation is supported
@@ -41,6 +44,7 @@ export var indentation = function(level) {
 
 // ---------------------------------------------------------------------------
 //   indentLevel - determine indent level of a string
+//                 it's OK if the string is ONLY indentation
 export var indentLevel = function(str) {
   var lMatches;
   lMatches = str.match(/^\t*/);
@@ -70,7 +74,7 @@ export var indented = function(input, level = 0) {
   } else {
     lLines = (function() {
       var i, len, ref, results;
-      ref = stringToArray(input);
+      ref = blockToArray(input);
       results = [];
       for (i = 0, len = ref.length; i < len; i++) {
         line = ref[i];
@@ -78,7 +82,7 @@ export var indented = function(input, level = 0) {
       }
       return results;
     })();
-    return arrayToString(lLines);
+    return arrayToBlock(lLines);
   }
 };
 
@@ -93,7 +97,7 @@ export var undented = function(text, level = undef) {
     return text;
   }
   if (isString(text)) {
-    lLines = stringToArray(text);
+    lLines = blockToArray(text);
     if (lLines.length === 0) {
       return '';
     }
@@ -125,7 +129,7 @@ export var undented = function(text, level = undef) {
     }
   }
   if (isString(text)) {
-    return arrayToString(lNewLines);
+    return arrayToBlock(lNewLines);
   } else {
     return lNewLines;
   }
@@ -138,7 +142,7 @@ export var undented = function(text, level = undef) {
 export var tabify = function(str, numSpaces = undef) {
   var _, i, lLines, lMatches, len, n, prefix, ref, theRest;
   lLines = [];
-  ref = stringToArray(str);
+  ref = blockToArray(str);
   for (i = 0, len = ref.length; i < len; i++) {
     str = ref[i];
     lMatches = str.match(/^(\s*)(.*)$/);
@@ -159,7 +163,7 @@ export var tabify = function(str, numSpaces = undef) {
       lLines.push('\t'.repeat(n / numSpaces) + theRest);
     }
   }
-  return arrayToString(lLines);
+  return arrayToBlock(lLines);
 };
 
 // ---------------------------------------------------------------------------
@@ -168,7 +172,7 @@ export var untabify = function(str, numSpaces = 3) {
   var _, i, lLines, lMatches, len, oneIndent, prefix, ref, theRest;
   oneIndent = ' '.repeat(numSpaces);
   lLines = [];
-  ref = stringToArray(str);
+  ref = blockToArray(str);
   for (i = 0, len = ref.length; i < len; i++) {
     str = ref[i];
     lMatches = str.match(/^(\t*)(.*)$/);
@@ -179,5 +183,5 @@ export var untabify = function(str, numSpaces = 3) {
       lLines.push(oneIndent.repeat(prefix.length) + theRest);
     }
   }
-  return arrayToString(lLines);
+  return arrayToBlock(lLines);
 };

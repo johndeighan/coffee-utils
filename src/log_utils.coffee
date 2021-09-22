@@ -4,9 +4,9 @@ import {strict as assert} from 'assert'
 import yaml from 'js-yaml'
 
 import {
-	undef, isNumber, isString, isHash, isFunction,
-	escapeStr, stringToArray,
+	undef, isNumber, isString, isHash, isFunction, escapeStr,
 	} from '@jdeighan/coffee-utils'
+import {blockToArray} from '@jdeighan/coffee-utils/block'
 import {tabify} from '@jdeighan/coffee-utils/indent'
 
 logger = console.log          # for strings
@@ -120,7 +120,7 @@ export log = (lArgs...) ->
 			logger "#{prefix}#{str} = '#{esc}'"
 		else
 			logger "#{prefix}#{str}:"
-			for line in stringToArray(item)
+			for line in blockToArray(item)
 				logger "#{itemPrefix}   #{escapeStr(line)}"
 	else
 		# --- It's some type of object
@@ -129,7 +129,7 @@ export log = (lArgs...) ->
 			logger "#{prefix}#{str} = #{json}"
 		else
 			logger "#{prefix}#{str}:"
-			for str in stringToArray(stringify(item))
+			for str in blockToArray(stringify(item))
 				logger "#{itemPrefix}   #{str}"
 	return
 

@@ -1,6 +1,7 @@
 # log.test.coffee
 
-import {undef, arrayToString} from '@jdeighan/coffee-utils'
+import {undef} from '@jdeighan/coffee-utils'
+import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {
 	stringify, setStringifier, log, setLogger, tamlStringify,
@@ -13,7 +14,7 @@ simple = new UnitTester()
 class LogTester extends UnitTester
 
 	transformValue: (lLines) ->
-		return arrayToString(lLines)
+		return arrayToBlock(lLines)
 	normalize: (text) ->
 		return text
 

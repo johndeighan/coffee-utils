@@ -4,9 +4,10 @@ import {strict as assert} from 'assert'
 import test from 'ava'
 
 import {
-	undef, pass, error, stringToArray,
+	undef, pass, error,
 	isString, isFunction, isInteger, isArray,
 	} from '@jdeighan/coffee-utils'
+import {blockToArray} from '@jdeighan/coffee-utils/block'
 import {log, currentLogger, setLogger} from '@jdeighan/coffee-utils/log'
 import {
 	debug, debugging, setDebugging,
@@ -163,7 +164,7 @@ export class UnitTester
 		#     Remove empty lines
 
 		if isString(input)
-			lLines = for line in stringToArray(input)
+			lLines = for line in blockToArray(input)
 				line = line.trim()
 				line.replace(/\s+/g, ' ')
 			lLines = lLines.filter (line) -> line != ''

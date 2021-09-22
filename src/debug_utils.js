@@ -14,12 +14,15 @@ import {
   words,
   isString,
   isFunction,
-  stringToArray,
   oneline,
   escapeStr,
   isNumber,
   isArray
 } from '@jdeighan/coffee-utils';
+
+import {
+  blockToArray
+} from '@jdeighan/coffee-utils/block';
 
 import {
   log
@@ -197,7 +200,7 @@ export var funcMatch = function(curFunc) {
 export var checkTrace = function(block) {
   var funcName, i, lMatches, lStack, len, len1, line, ref;
   lStack = [];
-  ref = stringToArray(block);
+  ref = blockToArray(block);
   for (i = 0, len1 = ref.length; i < len1; i++) {
     line = ref[i];
     if (lMatches = line.match(/enter\s+([A-Za-z_][A-Za-z0-9_\.]*)/)) {

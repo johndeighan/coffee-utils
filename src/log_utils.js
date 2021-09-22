@@ -14,9 +14,12 @@ import {
   isString,
   isHash,
   isFunction,
-  escapeStr,
-  stringToArray
+  escapeStr
 } from '@jdeighan/coffee-utils';
+
+import {
+  blockToArray
+} from '@jdeighan/coffee-utils/block';
 
 import {
   tabify
@@ -133,7 +136,7 @@ export var log = function(...lArgs) {
       logger(`${prefix}${str} = '${esc}'`);
     } else {
       logger(`${prefix}${str}:`);
-      ref = stringToArray(item);
+      ref = blockToArray(item);
       for (i = 0, len = ref.length; i < len; i++) {
         line = ref[i];
         logger(`${itemPrefix}   ${escapeStr(line)}`);
@@ -146,7 +149,7 @@ export var log = function(...lArgs) {
       logger(`${prefix}${str} = ${json}`);
     } else {
       logger(`${prefix}${str}:`);
-      ref1 = stringToArray(stringify(item));
+      ref1 = blockToArray(stringify(item));
       for (j = 0, len1 = ref1.length; j < len1; j++) {
         str = ref1[j];
         logger(`${itemPrefix}   ${str}`);

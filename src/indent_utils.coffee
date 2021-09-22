@@ -2,9 +2,10 @@
 
 import {strict as assert} from 'assert'
 import {
-	undef, error, arrayToString, stringToArray, escapeStr,
+	undef, error, escapeStr,
 	oneline, isInteger, isString, isArray, isEmpty, rtrim,
 	} from '@jdeighan/coffee-utils'
+import {arrayToBlock, blockToArray} from '@jdeighan/coffee-utils/block'
 
 # ---------------------------------------------------------------------------
 #        NOTE: Currently, only TAB indentation is supported
@@ -30,6 +31,7 @@ export indentation = (level) ->
 
 # ---------------------------------------------------------------------------
 #   indentLevel - determine indent level of a string
+#                 it's OK if the string is ONLY indentation
 
 export indentLevel = (str) ->
 
@@ -51,9 +53,9 @@ export indented = (input, level=0) ->
 			"#{toAdd}#{line}"
 		return lLines
 	else
-		lLines = for line in stringToArray(input)
+		lLines = for line in blockToArray(input)
 			"#{toAdd}#{line}"
-		return arrayToString(lLines)
+		return arrayToBlock(lLines)
 
 # ---------------------------------------------------------------------------
 #   undented - string with 1st line indentation removed for each line
@@ -67,7 +69,7 @@ export undented = (text, level=undef) ->
 		return text
 
 	if isString(text)
-		lLines = stringToArray(text)
+		lLines = blockToArray(text)
 		if (lLines.length == 0)
 			return ''
 	else if isArray(text)
@@ -97,7 +99,7 @@ export undented = (text, level=undef) ->
 			lNewLines.push(line.substr(nToRemove))
 
 	if isString(text)
-		return arrayToString(lNewLines)
+		return arrayToBlock(lNewLines)
 	else
 		return lNewLines
 
@@ -109,7 +111,7 @@ export undented = (text, level=undef) ->
 export tabify = (str, numSpaces=undef) ->
 
 	lLines = []
-	for str in stringToArray(str)
+	for str in blockToArray(str)
 		lMatches = str.match(/^(\s*)(.*)$/)
 		[_, prefix, theRest] = lMatches
 		if prefix == ''
@@ -123,7 +125,7 @@ export tabify = (str, numSpaces=undef) ->
 			if (n % numSpaces != 0)
 				error "tabify(): Invalid # of leading space chars"
 			lLines.push '\t'.repeat(n / numSpaces) + theRest
-	return arrayToString(lLines)
+	return arrayToBlock(lLines)
 
 # ---------------------------------------------------------------------------
 #    untabify - convert leading TABs to spaces
@@ -132,11 +134,11 @@ export untabify = (str, numSpaces=3) ->
 
 	oneIndent = ' '.repeat(numSpaces)
 	lLines = []
-	for str in stringToArray(str)
+	for str in blockToArray(str)
 		lMatches = str.match(/^(\t*)(.*)$/)
 		[_, prefix, theRest] = lMatches
 		if prefix == ''
 			lLines.push theRest
 		else
 			lLines.push oneIndent.repeat(prefix.length) + theRest
-	return arrayToString(lLines)
+	return arrayToBlock(lLines)
