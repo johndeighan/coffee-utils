@@ -220,21 +220,6 @@ export ask = (prompt) ->
 
 # ---------------------------------------------------------------------------
 
-export firstLine = (input) ->
-
-	if isArray(input)
-		if (input.length==0)
-			return undef
-		return input[0]
-	assert isString(input), "firstLine(): Not an array or string"
-	pos = input.indexOf('\n')
-	if (pos == -1)
-		return input
-	else
-		return input.substring(0, pos)
-
-# ---------------------------------------------------------------------------
-
 export titleLine = (title, char='=', padding=2, linelen=42) ->
 	# --- used in logger
 

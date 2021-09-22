@@ -1,12 +1,13 @@
 # block_utils.coffee
 
+import {strict as assert} from 'assert'
 import {
 	existsSync, readFileSync, createReadStream,
 	} from 'fs'
 import {createInterface} from 'readline'
 
 import {
-	isEmpty, nonEmpty, error, isComment, rtrim,
+	isEmpty, isString, nonEmpty, error, isComment, rtrim,
 	} from '@jdeighan/coffee-utils'
 import {log} from '@jdeighan/coffee-utils/log'
 
@@ -36,6 +37,28 @@ export arrayToBlock = (lLines) ->
 		return ''
 	else
 		return rtrim(lLines.join('\n'))
+
+# ---------------------------------------------------------------------------
+
+export firstLine = (block) ->
+
+	assert isString(block), "firstLine(): string expected"
+	pos = block.indexOf('\n')
+	if (pos == -1)
+		return block
+	else
+		return block.substring(0, pos)
+
+# ---------------------------------------------------------------------------
+
+export remainingLines = (block) ->
+
+	assert isString(block), "remainingLines(): string expected"
+	pos = block.indexOf('\n')
+	if (pos == -1)
+		return ''
+	else
+		return block.substring(pos+1)
 
 # ---------------------------------------------------------------------------
 #   normalizeBlock - remove blank lines, trim each line

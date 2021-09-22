@@ -8,7 +8,7 @@ import {
 	ltrunc, rtrunc,
 	words, escapeStr, titleLine,
 	removeCR, splitBlock, CWS, isArrayOfHashes,
-	firstLine, oneline, croak, isRegExp,
+	oneline, croak, isRegExp,
 	} from '@jdeighan/coffee-utils'
 import {setLogger} from '@jdeighan/coffee-utils/log'
 import {setDebugging} from '@jdeighan/coffee-utils/debug'
@@ -156,14 +156,6 @@ simple.truthy 218, isInteger(new Number(42))
 simple.falsy  219, isInteger('abc')
 simple.falsy  220, isInteger({})
 simple.falsy  221, isInteger([])
-
-# ---------------------------------------------------------------------------
-
-simple.equal 225, firstLine("""
-		#starbucks
-		do this
-		do that
-		"""), '#starbucks'
 
 # ---------------------------------------------------------------------------
 

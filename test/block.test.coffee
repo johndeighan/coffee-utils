@@ -4,7 +4,8 @@ import {strict as assert} from 'assert'
 
 import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {
-	blockToArray, arrayToBlock, normalizeBlock, truncateBlock,
+	blockToArray, arrayToBlock, firstLine, remainingLines,
+	normalizeBlock, truncateBlock,
 	joinBlocks, forEachLine, forEachBlock, forEachSetOfBlocks,
 	} from '@jdeighan/coffee-utils/block'
 
@@ -31,6 +32,25 @@ simple.equal 118, blockToArray("abc\n\nxyz\n"), [
 # ---------------------------------------------------------------------------
 
 simple.equal 126, arrayToBlock(['a','b','c']), "a\nb\nc\n"
+
+# ---------------------------------------------------------------------------
+
+simple.equal 225, firstLine("""
+		#starbucks
+		do this
+		do that
+		"""), '#starbucks'
+
+# ---------------------------------------------------------------------------
+
+simple.equal 225, remainingLines("""
+		#starbucks
+		do this
+		do that
+		"""), """
+		do this
+		do that
+		"""
 
 # ---------------------------------------------------------------------------
 

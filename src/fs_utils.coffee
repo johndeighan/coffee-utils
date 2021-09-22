@@ -11,7 +11,7 @@ import {
 	} from 'fs'
 
 import {
-	undef, pass, firstLine, rtrim, error, nonEmpty,
+	undef, pass, rtrim, error, nonEmpty,
 	isRegExp, isFunction, croak,
 	} from '@jdeighan/coffee-utils'
 import {log} from '@jdeighan/coffee-utils/log'

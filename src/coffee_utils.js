@@ -225,24 +225,6 @@ export var ask = function(prompt) {
 };
 
 // ---------------------------------------------------------------------------
-export var firstLine = function(input) {
-  var pos;
-  if (isArray(input)) {
-    if (input.length === 0) {
-      return undef;
-    }
-    return input[0];
-  }
-  assert(isString(input), "firstLine(): Not an array or string");
-  pos = input.indexOf('\n');
-  if (pos === -1) {
-    return input;
-  } else {
-    return input.substring(0, pos);
-  }
-};
-
-// ---------------------------------------------------------------------------
 export var titleLine = function(title, char = '=', padding = 2, linelen = 42) {
   var nLeft, nRight, strLeft, strMiddle, strRight, titleLen;
   // --- used in logger

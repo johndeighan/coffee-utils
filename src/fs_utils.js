@@ -26,7 +26,6 @@ import {
 import {
   undef,
   pass,
-  firstLine,
   rtrim,
   error,
   nonEmpty,
