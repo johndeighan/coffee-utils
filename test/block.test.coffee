@@ -9,7 +9,6 @@ import {
 	} from '@jdeighan/coffee-utils/block'
 
 simple = new UnitTester()
-simple.equal 11, 2+2, 4
 
 # ---------------------------------------------------------------------------
 
@@ -102,6 +101,25 @@ simple.equal 96, truncateBlock("""
 			<script>
 				x = 42
 			</script>
+			"""
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	lImports = [
+		"import {say} from '@jdeighan/coffee-utils'",
+		]
+	code = """
+		if (x==42)
+			log "line 2 in unit test"
+		"""
+	str = joinBlocks(lImports..., code)
+	simple.equal 34, str, """
+
+			import {say} from '@jdeighan/coffee-utils'
+			if (x==42)
+				log "line 2 in unit test"
 			"""
 	)()
 

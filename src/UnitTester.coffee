@@ -4,7 +4,7 @@ import {strict as assert} from 'assert'
 import test from 'ava'
 
 import {
-	undef, pass, error,
+	undef, pass, error, croak,
 	isString, isFunction, isInteger, isArray,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
@@ -12,6 +12,20 @@ import {log, currentLogger, setLogger} from '@jdeighan/coffee-utils/log'
 import {
 	debug, debugging, setDebugging,
 	} from '@jdeighan/coffee-utils/debug'
+
+doNormalize = true
+
+# ---------------------------------------------------------------------------
+
+export setDoNormalize = (flag) ->
+
+	if (flag==true)
+		doNormalize = true
+	else if (flag==false)
+		doNormalize = false
+	else
+		croak "setDoNormalize(): bad parameter"
+	return
 
 # ---------------------------------------------------------------------------
 

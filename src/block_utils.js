@@ -86,15 +86,15 @@ export var truncateBlock = function(str, numLines) {
 
 // ---------------------------------------------------------------------------
 export var joinBlocks = function(...lBlocks) {
-  var blk, i, len1, str;
-  str = '';
+  var block, i, lNonEmptyBlocks, len1;
+  lNonEmptyBlocks = [];
   for (i = 0, len1 = lBlocks.length; i < len1; i++) {
-    blk = lBlocks[i];
-    if (nonEmpty(blk)) {
-      str += "\n" + blk;
+    block = lBlocks[i];
+    if (nonEmpty(block)) {
+      lNonEmptyBlocks.push(block);
     }
   }
-  return str;
+  return lNonEmptyBlocks.join('\n');
 };
 
 

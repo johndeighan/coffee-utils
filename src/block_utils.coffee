@@ -64,11 +64,11 @@ export truncateBlock = (str, numLines) ->
 
 export joinBlocks = (lBlocks...) ->
 
-	str = ''
-	for blk in lBlocks
-		if nonEmpty(blk)
-			str += "\n" + blk
-	return str
+	lNonEmptyBlocks = []
+	for block in lBlocks
+		if nonEmpty(block)
+			lNonEmptyBlocks.push block
+	return lNonEmptyBlocks.join('\n')
 
 # ---------------------------------------------------------------------------
 
