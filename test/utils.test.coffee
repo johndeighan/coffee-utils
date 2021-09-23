@@ -7,7 +7,7 @@ import {
 	isFunction, isInteger, rtrim,
 	ltrunc, rtrunc,
 	words, escapeStr, titleLine,
-	removeCR, splitBlock, CWS, isArrayOfHashes,
+	removeCR, CWS, isArrayOfHashes,
 	oneline, croak, isRegExp,
 	} from '@jdeighan/coffee-utils'
 import {setLogger} from '@jdeighan/coffee-utils/log'
@@ -68,11 +68,6 @@ simple.equal 130, rtrunc('/user/lib/.env', 5), '/user/lib'
 simple.equal 131, ltrunc('abcdefg', 3), 'defg'
 
 simple.equal 133, removeCR("abc\r\ndef\r\n"), "abc\ndef\n"
-simple.equal 134, splitBlock("""
-		abc
-		def
-		ghi
-		"""), ['abc', "def\nghi"]
 simple.equal 139, CWS("""
 		abc
 		def

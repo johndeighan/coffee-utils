@@ -301,27 +301,15 @@ export OL = oneline
 
 # ---------------------------------------------------------------------------
 
-export removeCR = (block) ->
+export removeCR = (str) ->
 
-	return block.replace(/\r/g, '')
-
-# ---------------------------------------------------------------------------
-
-export splitBlock = (block) ->
-
-	block = removeCR(block)
-	if pos = block.indexOf("\n")
-		# --- pos is also the length of the 1st line
-		#     2nd arg to substr() is number of characters to return
-		return [block.substr(0, pos), block.substr(pos+1)]
-	else
-		return [block, '']
+	return str.replace(/\r/g, '')
 
 # ---------------------------------------------------------------------------
 
-export CWS = (block) ->
+export CWS = (str) ->
 
-	assert isString(block), "CWS(): parameter is not a string"
-	return block.trim().replace(/\s+/sg, ' ')
+	assert isString(str), "CWS(): parameter not a string"
+	return str.trim().replace(/\s+/sg, ' ')
 
 # ---------------------------------------------------------------------------

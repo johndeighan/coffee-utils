@@ -316,27 +316,14 @@ export var oneline = function(obj) {
 export var OL = oneline;
 
 // ---------------------------------------------------------------------------
-export var removeCR = function(block) {
-  return block.replace(/\r/g, '');
+export var removeCR = function(str) {
+  return str.replace(/\r/g, '');
 };
 
 // ---------------------------------------------------------------------------
-export var splitBlock = function(block) {
-  var pos;
-  block = removeCR(block);
-  if (pos = block.indexOf("\n")) {
-    // --- pos is also the length of the 1st line
-    //     2nd arg to substr() is number of characters to return
-    return [block.substr(0, pos), block.substr(pos + 1)];
-  } else {
-    return [block, ''];
-  }
-};
-
-// ---------------------------------------------------------------------------
-export var CWS = function(block) {
-  assert(isString(block), "CWS(): parameter is not a string");
-  return block.trim().replace(/\s+/sg, ' ');
+export var CWS = function(str) {
+  assert(isString(str), "CWS(): parameter not a string");
+  return str.trim().replace(/\s+/sg, ' ');
 };
 
 // ---------------------------------------------------------------------------
