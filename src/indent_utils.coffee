@@ -3,7 +3,7 @@
 import {strict as assert} from 'assert'
 import {
 	undef, error, escapeStr,
-	oneline, isInteger, isString, isArray, isEmpty, rtrim,
+	OL, isInteger, isString, isArray, isEmpty, rtrim,
 	} from '@jdeighan/coffee-utils'
 import {arrayToBlock, blockToArray} from '@jdeighan/coffee-utils/block'
 
@@ -77,7 +77,7 @@ export undented = (text, level=undef) ->
 		if (lLines.length == 0)
 			return []
 	else
-		error "undented(): Not an array or string: #{oneline(text)}"
+		error "undented(): Not an array or string: #{OL(text)}"
 
 	# --- determine what to remove from beginning of each line
 	if level?
@@ -95,7 +95,7 @@ export undented = (text, level=undef) ->
 		else
 			assert (line.indexOf(toRemove)==0),
 				"undented(): Error removing '#{escapeStr(toRemove)}' \
-					from '#{oneline(text)}'"
+					from #{OL(text)}"
 			lNewLines.push(line.substr(nToRemove))
 
 	if isString(text)

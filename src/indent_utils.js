@@ -8,7 +8,7 @@ import {
   undef,
   error,
   escapeStr,
-  oneline,
+  OL,
   isInteger,
   isString,
   isArray,
@@ -107,7 +107,7 @@ export var undented = function(text, level = undef) {
       return [];
     }
   } else {
-    error(`undented(): Not an array or string: ${oneline(text)}`);
+    error(`undented(): Not an array or string: ${OL(text)}`);
   }
   // --- determine what to remove from beginning of each line
   if (level != null) {
@@ -124,7 +124,7 @@ export var undented = function(text, level = undef) {
     if (isEmpty(line)) {
       lNewLines.push('');
     } else {
-      assert(line.indexOf(toRemove) === 0, `undented(): Error removing '${escapeStr(toRemove)}' from '${oneline(text)}'`);
+      assert(line.indexOf(toRemove) === 0, `undented(): Error removing '${escapeStr(toRemove)}' from ${OL(text)}`);
       lNewLines.push(line.substr(nToRemove));
     }
   }

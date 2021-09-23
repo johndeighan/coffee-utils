@@ -321,6 +321,7 @@ export splitBlock = (block) ->
 
 export CWS = (block) ->
 
-	return block.trim().replace(/\s+/g, ' ')
+	assert isString(block), "CWS(): parameter is not a string"
+	return block.trim().replace(/\s+/sg, ' ')
 
 # ---------------------------------------------------------------------------
