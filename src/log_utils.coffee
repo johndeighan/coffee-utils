@@ -121,7 +121,7 @@ export log = (lArgs...) ->
 		else
 			logger "#{prefix}#{str}:"
 			for line in blockToArray(item)
-				logger "#{itemPrefix}   #{escapeStr(line)}"
+				logger "#{itemPrefix}   '#{escapeStr(line)}'"
 	else
 		# --- It's some type of object
 		json = JSON.stringify(item)

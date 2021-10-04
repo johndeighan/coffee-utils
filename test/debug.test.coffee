@@ -21,7 +21,7 @@ setDebugging true
 (() ->
 	lLines = []
 	debug 'abc'
-	simple.equal 23, lLines, ['abc']
+	simple.equal 24, lLines, ['abc']
 	)()
 
 # ---------------------------------------------------------------------------
@@ -51,7 +51,7 @@ tester = new TraceTester()
 	debug 'more'
 	debug 'return 42 from myfunc'
 	debug "Answer is 42"
-	simple.equal 35, lLines, [
+	simple.equal 54, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   more"
@@ -70,7 +70,7 @@ tester = new TraceTester()
 	debug 'something else'
 	debug 'return abc from newfunc'
 	debug 'return 42 from myfunc'
-	simple.equal 54, lLines, [
+	simple.equal 73, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   enter newfunc"
@@ -92,7 +92,7 @@ tester = new TraceTester()
 	debug 'something'
 	debug 'obj', obj
 	debug 'return 42 from myfunc'
-	simple.equal 76, lLines, [
+	simple.equal 95, lLines, [
 		"enter myfunc"
 		"│   something"
 		'│   obj = {"first":1,"second":2}'
@@ -112,7 +112,7 @@ tester = new TraceTester()
 	debug 'something'
 	debug 'obj', obj
 	debug 'return 42 from myfunc'
-	simple.equal 96, lLines, [
+	simple.equal 115, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   obj:"
@@ -138,7 +138,7 @@ tester = new TraceTester()
 	debug "return nothing from innerFunc"
 	debug "this should not appear"
 	debug "return 42 from myfunc"
-	simple.equal 122, lLines, [
+	simple.equal 141, lLines, [
 		"enter innerFunc"
 		"│   something else"
 		"└─> return nothing from innerFunc"
@@ -172,7 +172,7 @@ tester = new TraceTester()
 
 	outerFunc()
 
-	simple.equal 155, lLines, [
+	simple.equal 175, lLines, [
 		"enter innerFunc()"
 		"│   answer is 42"
 		"└─> return from innerFunc()"
@@ -185,8 +185,8 @@ tester = new TraceTester()
 (() ->
 	setDebugging 'get'
 
-	simple.truthy 167, funcMatch('get')
-	simple.truthy 168, funcMatch('StringInput.get')
+	simple.truthy 188, funcMatch('get')
+	simple.truthy 189, funcMatch('StringInput.get')
 	setDebugging false
 	)()
 
@@ -200,8 +200,8 @@ tester = new TraceTester()
 	line = 'first line'
 	debug "line is #{OL(line)}"
 
-	simple.equal 189, lLines.length, 1
-	simple.equal 190, lLines, [
+	simple.equal 203, lLines.length, 1
+	simple.equal 204, lLines, [
 		"line is 'first line'"
 		]
 	setDebugging false
@@ -222,7 +222,7 @@ tester = new TraceTester()
 	debug 'enter myfunc'
 	debug 'return from myfunc', obj
 	debug "Answer is 42"
-	simple.equal 198, lLines, [
+	simple.equal 225, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc:"
 		"       ---"
@@ -247,11 +247,11 @@ tester = new TraceTester()
 	debug 'enter myfunc'
 	debug 'return from myfunc', longBlock
 	debug "Answer is 42"
-	simple.equal 198, lLines, [
+	simple.equal 250, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc:"
-		"       this is one very long line"
-		"       this is another very long line"
+		"       'this is one very long line'"
+		"       'this is another very long line'"
 		"Answer is 42"
 		]
 	)()
@@ -276,7 +276,7 @@ tester = new TraceTester()
 		return from myfunc
 		"""
 
-	tester.equal 277, block, """
+	tester.equal 279, block, """
 		enter get
 		│   enter fetch
 		│   └─> return from fetch

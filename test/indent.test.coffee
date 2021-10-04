@@ -50,6 +50,9 @@ simple.equal 64, indented("abc", 0), "abc"
 simple.equal 65, indented("abc", 1), "\tabc"
 simple.equal 66, indented("abc", 2), "\t\tabc"
 
+# --- empty lines, indented, should just be empty lines
+simple.equal 54, indented("abc\n\ndef", 2), "\t\tabc\n\n\t\tdef"
+
 # ---------------------------------------------------------------------------
 
 (() ->

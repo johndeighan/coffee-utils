@@ -30,7 +30,7 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'enter myfunc'
-	tester.equal 32, lLines, """
+	tester.equal 33, lLines, """
 			enter myfunc
 			"""
 	)()
@@ -42,7 +42,7 @@ setLogger (str) -> lLines.push(str)
 	log 'abc'
 	log 'def'
 	log 'ghi'
-	tester.equal 44, lLines, """
+	tester.equal 45, lLines, """
 			abc
 			def
 			ghi
@@ -56,7 +56,7 @@ setLogger (str) -> lLines.push(str)
 	lLines = []
 	log 'abc'
 	log 'name', undef
-	tester.equal 58, lLines, """
+	tester.equal 59, lLines, """
 			abc
 			name = undef
 			"""
@@ -76,7 +76,7 @@ setLogger (str) -> lLines.push(str)
 	lLines = []
 	log 'abc'
 	log 'name', 'John'
-	tester.equal 78, lLines, """
+	tester.equal 79, lLines, """
 			abc
 			name = 'John'
 			"""
@@ -86,7 +86,7 @@ setLogger (str) -> lLines.push(str)
 	lLines = []
 	log 'abc'
 	log 'name', {a: 1, b: 'xyz'}
-	tester.equal 88, lLines, """
+	tester.equal 89, lLines, """
 			abc
 			name = {"a":1,"b":"xyz"}
 			"""
@@ -96,7 +96,7 @@ setLogger (str) -> lLines.push(str)
 	lLines = []
 	log 'abc'
 	log 'name', ['a', 42, [1,2]]
-	tester.equal 98, lLines, """
+	tester.equal 99, lLines, """
 			abc
 			name = ["a",42,[1,2]]
 			"""
@@ -113,12 +113,12 @@ setLogger (str) -> lLines.push(str)
 			text which changes
 			how it's displayed
 			"""
-	tester.equal 115, lLines, """
+	tester.equal 116, lLines, """
 			abc
 			name:
-			   This is a rather long bit of
-			   text which changes
-			   how it's displayed
+			   'This is a rather long bit of'
+			   'text which changes'
+			   'how it's displayed'
 			"""
 	)()
 
@@ -131,7 +131,7 @@ setLogger (str) -> lLines.push(str)
 		age: 68,
 		home: 'Blacksburg, VA',
 		}
-	tester.equal 133, lLines, """
+	tester.equal 134, lLines, """
 			abc
 			name:
 			   ---
@@ -150,7 +150,7 @@ setLogger (str) -> lLines.push(str)
 		'a rather long string of text',
 		{a:1, b:2}
 		]
-	tester.equal 152, lLines, """
+	tester.equal 153, lLines, """
 			abc
 			name:
 			   ---
@@ -168,7 +168,7 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'name', undef, {prefix: '<-->', logItem: true}
-	tester.equal 170, lLines, """
+	tester.equal 171, lLines, """
 			<-->name = undef
 			"""
 	)()
@@ -176,7 +176,7 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'name', 42, {prefix: '<-->', logItem: true}
-	tester.equal 178, lLines, """
+	tester.equal 179, lLines, """
 			<-->name = 42
 			"""
 	)()
@@ -184,7 +184,7 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'name', 'John', {prefix: '<-->', logItem: true}
-	tester.equal 186, lLines, """
+	tester.equal 187, lLines, """
 			<-->name = 'John'
 			"""
 	)()
@@ -192,7 +192,7 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'name', {a: 1, b: 'xyz'}, {prefix: '<-->', logItem: true}
-	tester.equal 194, lLines, """
+	tester.equal 195, lLines, """
 			<-->name = {"a":1,"b":"xyz"}
 			"""
 	)()
@@ -200,7 +200,7 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'name', ['a', 42, [1,2]], {prefix: '<-->', logItem: true}
-	tester.equal 202, lLines, """
+	tester.equal 203, lLines, """
 			<-->name = ["a",42,[1,2]]
 			"""
 	)()
@@ -212,11 +212,11 @@ setLogger (str) -> lLines.push(str)
 			text which changes
 			how it's displayed
 			""", {prefix: '<-->', logItem: true}
-	tester.equal 214, lLines, """
+	tester.equal 215, lLines, """
 			<-->name:
-			   This is a rather long bit of
-			   text which changes
-			   how it's displayed
+			   'This is a rather long bit of'
+			   'text which changes'
+			   'how it's displayed'
 			"""
 	)()
 
@@ -228,7 +228,7 @@ setLogger (str) -> lLines.push(str)
 		age: 68,
 		home: 'Blacksburg, VA',
 		}, {prefix: '<-->', logItem: true}
-	tester.equal 230, lLines, """
+	tester.equal 231, lLines, """
 			<-->name:
 			   ---
 			   fname: John
@@ -245,7 +245,7 @@ setLogger (str) -> lLines.push(str)
 		'a rather long string of text',
 		{a:1, b:2}
 		], {prefix: '<-->', logItem: true}
-	tester.equal 247, lLines, """
+	tester.equal 248, lLines, """
 			<-->name:
 			   ---
 			   - 68
@@ -258,12 +258,12 @@ setLogger (str) -> lLines.push(str)
 
 # ---------------------------------------------------------------------------
 
-simple.equal 260, tamlStringify({a:"word", b:"blind"}), """
+simple.equal 261, tamlStringify({a:"word", b:"blind"}), """
 		---
 		a: word
 		b: blind
 		"""
-simple.equal 265, stringify({a:"word", b:"blind"}), """
+simple.equal 266, stringify({a:"word", b:"blind"}), """
 		---
 		a: word
 		b: blind
@@ -271,12 +271,12 @@ simple.equal 265, stringify({a:"word", b:"blind"}), """
 
 setStringifier(JSON.stringify)
 
-simple.equal 273, stringify({a:"word", b:"blind"}),
+simple.equal 274, stringify({a:"word", b:"blind"}),
 		'{"a":"word","b":"blind"}'
 
 setStringifier(tamlStringify)
 
-simple.equal 278, stringify({a:"word", b:"blind"}), """
+simple.equal 279, stringify({a:"word", b:"blind"}), """
 		---
 		a: word
 		b: blind
@@ -292,7 +292,7 @@ simple.equal 278, stringify({a:"word", b:"blind"}), """
 	log 'c'
 	setLogger()    # reset
 
-	simple.equal 294, lItems, ['a','b','c']
+	simple.equal 295, lItems, ['a','b','c']
 	)()
 
 (() ->
@@ -303,9 +303,9 @@ simple.equal 278, stringify({a:"word", b:"blind"}), """
 	log 'c'
 	setLogger()    # reset
 
-	simple.equal 305, lItems, ['a','b','c']
+	simple.equal 306, lItems, ['a','b','c']
 	)()
 
-simple.fails 308, () -> error("an error message")
+simple.fails 309, () -> error("an error message")
 
 # ---------------------------------------------------------------------------

@@ -139,7 +139,7 @@ export var log = function(...lArgs) {
       ref = blockToArray(item);
       for (i = 0, len = ref.length; i < len; i++) {
         line = ref[i];
-        logger(`${itemPrefix}   ${escapeStr(line)}`);
+        logger(`${itemPrefix}   '${escapeStr(line)}'`);
       }
     }
   } else {
