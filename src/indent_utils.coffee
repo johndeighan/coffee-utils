@@ -49,13 +49,16 @@ export indented = (input, level=0) ->
 
 	toAdd = indentation(level)
 	if isArray(input)
-		lLines = for line in input
-			"#{toAdd}#{line}"
-		return lLines
+		lInputLines = input
 	else
-		lLines = for line in blockToArray(input)
+		lInputLines = blockToArray(input)
+
+	lLines = for line in lInputLines
+		if isEmpty(line)
+			""
+		else
 			"#{toAdd}#{line}"
-		return arrayToBlock(lLines)
+	return arrayToBlock(lLines)
 
 # ---------------------------------------------------------------------------
 #   undented - string with 1st line indentation removed for each line

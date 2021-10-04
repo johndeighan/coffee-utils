@@ -54,36 +54,31 @@ export var indentLevel = function(str) {
 // ---------------------------------------------------------------------------
 //   indented - add indentation to each string in a block
 export var indented = function(input, level = 0) {
-  var lLines, line, toAdd;
+  var lInputLines, lLines, line, toAdd;
   assert(level >= 0, "indented(): negative level");
   if (level === 0) {
     return input;
   }
   toAdd = indentation(level);
   if (isArray(input)) {
-    lLines = (function() {
-      var i, len, results;
-      results = [];
-      for (i = 0, len = input.length; i < len; i++) {
-        line = input[i];
-        results.push(`${toAdd}${line}`);
-      }
-      return results;
-    })();
-    return lLines;
+    lInputLines = input;
   } else {
-    lLines = (function() {
-      var i, len, ref, results;
-      ref = blockToArray(input);
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        line = ref[i];
+    lInputLines = blockToArray(input);
+  }
+  lLines = (function() {
+    var i, len, results;
+    results = [];
+    for (i = 0, len = lInputLines.length; i < len; i++) {
+      line = lInputLines[i];
+      if (isEmpty(line)) {
+        results.push("");
+      } else {
         results.push(`${toAdd}${line}`);
       }
-      return results;
-    })();
-    return arrayToBlock(lLines);
-  }
+    }
+    return results;
+  })();
+  return arrayToBlock(lLines);
 };
 
 // ---------------------------------------------------------------------------
