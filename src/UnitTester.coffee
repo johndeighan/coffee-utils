@@ -13,20 +13,6 @@ import {
 	debug, debugging, setDebugging,
 	} from '@jdeighan/coffee-utils/debug'
 
-doNormalize = true
-
-# ---------------------------------------------------------------------------
-
-export setDoNormalize = (flag) ->
-
-	if (flag==true)
-		doNormalize = true
-	else if (flag==false)
-		doNormalize = false
-	else
-		croak "setDoNormalize(): bad parameter"
-	return
-
 # ---------------------------------------------------------------------------
 
 export class UnitTester

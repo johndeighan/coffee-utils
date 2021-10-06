@@ -1,6 +1,7 @@
 # debug_utils.coffee
 
 import {strict as assert} from 'assert'
+
 import {
 	undef, error, croak, warn, words, isString, isFunction,
 	oneline, escapeStr, isNumber, isArray,
@@ -201,6 +202,7 @@ export funcMatch = (curFunc) ->
 # ---------------------------------------------------------------------------
 
 export checkTrace = (block) ->
+# --- export only to allow unit tests
 
 	lStack = []
 
@@ -234,6 +236,7 @@ export checkTrace = (block) ->
 	return
 
 # ---------------------------------------------------------------------------
+# --- export only to allow unit tests
 
 export checkTraceFile = (filepath) ->
 

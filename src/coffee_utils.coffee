@@ -9,15 +9,6 @@ export sep_eq = '='.repeat(42)
 `export const undef = undefined`
 
 # ---------------------------------------------------------------------------
-#   say - print to the console (for now)
-#         later, on a web page, call alert(str)
-
-export say = (str, obj=undef) ->
-
-	log str, obj
-	return
-
-# ---------------------------------------------------------------------------
 #   pass - do nothing
 
 export pass = () ->
@@ -137,20 +128,20 @@ export nonEmpty = (x) ->
 
 # ---------------------------------------------------------------------------
 
-commentRegexp = /^\s*\#+(?:\s|$)/
+commentRegExp = /^\s*\#+(?:\s|$)/
 
 # ---------------------------------------------------------------------------
 
 export setCommentRegexp = (regexp) ->
 
-	commentRegexp = regexp
+	commentRegExp = regexp
 	return
 
 # ---------------------------------------------------------------------------
 
 export isComment = (str) ->
 
-	return if str.match(commentRegexp) then true else false
+	return if str.match(commentRegExp) then true else false
 
 # ---------------------------------------------------------------------------
 
@@ -209,6 +200,15 @@ export isInteger = (x) ->
 export warn = (message) ->
 
 	log "WARNING: #{message}"
+
+# ---------------------------------------------------------------------------
+#   say - print to the console (for now)
+#         later, on a web page, call alert(str)
+
+export say = (str, obj=undef) ->
+
+	log str, obj
+	return
 
 # ---------------------------------------------------------------------------
 #   ask - ask a question

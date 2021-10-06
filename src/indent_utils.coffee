@@ -1,6 +1,7 @@
 # indent_utils.coffee
 
 import {strict as assert} from 'assert'
+
 import {
 	undef, error, escapeStr,
 	OL, isInteger, isString, isArray, isEmpty, rtrim,

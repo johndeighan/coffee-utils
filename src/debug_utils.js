@@ -199,6 +199,7 @@ export var funcMatch = function(curFunc) {
 // ---------------------------------------------------------------------------
 export var checkTrace = function(block) {
   var funcName, i, lMatches, lStack, len, len1, line, ref;
+  // --- export only to allow unit tests
   lStack = [];
   ref = blockToArray(block);
   for (i = 0, len1 = ref.length; i < len1; i++) {
@@ -225,6 +226,7 @@ export var checkTrace = function(block) {
 };
 
 // ---------------------------------------------------------------------------
+// --- export only to allow unit tests
 export var checkTraceFile = function(filepath) {
   checkTrace(slurp(filepath));
 };
