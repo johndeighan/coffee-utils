@@ -20,10 +20,10 @@ export var hEnvLibCallbacks = {
     delete hEnvLib[name];
   },
   clearAll: function() {
-    var i, key, len, ref;
+    var i, len, name, ref;
     ref = Object.keys(hEnvLib);
     for (i = 0, len = ref.length; i < len; i++) {
-      key = ref[i];
+      name = ref[i];
       delete hEnvLib[name];
     }
   },

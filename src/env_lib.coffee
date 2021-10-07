@@ -18,7 +18,7 @@ export hEnvLibCallbacks = {
 		delete hEnvLib[name]
 		return
 	clearAll: () ->
-		for key in Object.keys(hEnvLib)
+		for name in Object.keys(hEnvLib)
 			delete hEnvLib[name]
 		return
 	names: () ->
