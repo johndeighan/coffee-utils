@@ -11,23 +11,23 @@ export var hEnvLib = {};
 // --- None of these callbacks should replace variable hEnv
 export var hEnvLibCallbacks = {
   getVar: function(name) {
-    return hEnv[name];
+    return hEnvLib[name];
   },
   setVar: function(name, value) {
-    hEnv[name] = value;
+    hEnvLib[name] = value;
   },
   clearVar: function(name) {
-    delete hEnv[name];
+    delete hEnvLib[name];
   },
   clearAll: function() {
     var i, key, len, ref;
     ref = Object.keys(hEnv);
     for (i = 0, len = ref.length; i < len; i++) {
       key = ref[i];
-      delete hEnv[name];
+      delete hEnvLib[name];
     }
   },
   names: function() {
-    return Object.keys(hEnv);
+    return Object.keys(hEnvLib);
   }
 };

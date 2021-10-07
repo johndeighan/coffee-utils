@@ -10,17 +10,17 @@ export hEnvLib = {}
 
 export hEnvLibCallbacks = {
 	getVar: (name) ->
-		return hEnv[name]
+		return hEnvLib[name]
 	setVar: (name, value) ->
-		hEnv[name] = value
+		hEnvLib[name] = value
 		return
 	clearVar: (name) ->
-		delete hEnv[name]
+		delete hEnvLib[name]
 		return
 	clearAll: () ->
 		for key in Object.keys(hEnv)
-			delete hEnv[name]
+			delete hEnvLib[name]
 		return
 	names: () ->
-		return Object.keys(hEnv)
+		return Object.keys(hEnvLib)
 	}
