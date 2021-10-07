@@ -4,11 +4,11 @@ import {strict as assert} from 'assert'
 
 # --- Use by simply importing and using hEnv
 #     This module does no loading - it merely holds hEnv
-export hEnv = {}
+export hEnvLib = {}
 
 # --- None of these callbacks should replace variable hEnv
 
-export hCallbacks = {
+export hEnvLibCallbacks = {
 	getVar: (name) ->
 		return hEnv[name]
 	setVar: (name, value) ->

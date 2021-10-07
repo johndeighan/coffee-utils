@@ -6,10 +6,10 @@ import {
 
 // --- Use by simply importing and using hEnv
 //     This module does no loading - it merely holds hEnv
-export var hEnv = {};
+export var hEnvLib = {};
 
 // --- None of these callbacks should replace variable hEnv
-export var hCallbacks = {
+export var hEnvLibCallbacks = {
   getVar: function(name) {
     return hEnv[name];
   },
