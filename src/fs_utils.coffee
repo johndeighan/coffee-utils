@@ -2,12 +2,12 @@
 
 import {strict as assert} from 'assert'
 import {
-	dirname, resolve, parse as parse_fname,
+	dirname, resolve, parse as parsePath,
 	} from 'path';
 import {fileURLToPath} from 'url';
 import {
 	existsSync, copyFileSync, readFileSync, writeFileSync, readdirSync,
-	createReadStream,
+	createReadStream, mkdirSync, renameSync,
 	} from 'fs'
 
 import {
@@ -45,8 +45,8 @@ export getFullPath = (filepath) ->
 #     are reported via console.log
 
 export backup = (file, from, to, report=false) ->
-	src = "#{from}/#{file}"
-	dest = "#{to}/#{file}"
+	src = mkpath(from, file)
+	dest = mkpath(to, file)
 
 	if report
 		if existsSync(src)
@@ -111,7 +111,7 @@ export getSubDirs = (dir) ->
 
 export getParentDir = (dir) ->
 
-	hParts = parse_fname(dir)
+	hParts = parsePath(dir)
 	if (hParts.dir == hParts.root)
 		return undef
 	return mkpath(resolve(dir, '..'))
@@ -168,3 +168,74 @@ export pathTo = (fname, dir, direction="down") ->
 		error "pathTo(): Invalid direction '#{direction}'"
 	debug "return undef from pathTo - file not found"
 	return undef
+
+# ---------------------------------------------------------------------------
+
+export allPathsTo = (fname, searchDir) ->
+	# --- Only searches upward
+
+	path = pathTo(fname, searchDir, "up")
+	if path?
+		lPaths = [path]    # --- build an array of paths
+		# --- search upward for files, but return ordered top down
+		while (h = parsePath(path)) \
+				&& (path = pathTo(fname, resolve(h.dir, '..'), "up"))
+			lPaths.unshift path
+		return lPaths
+	else
+		return []
+
+# ---------------------------------------------------------------------------
+
+hideFilesInDir = (srcDir, destDir, regExp) ->
+
+	for ent in readdirSync(srcDir, {withFileTypes: true})
+		if ent.isFile()
+			if ent.name.match(regExp)
+				srcPath = mkpath(srcDir, ent.name)
+				destPath = mkpath(destDir, ent.name)
+				renameSync(srcPath, destPath)
+		else if ent.isDirectory()
+			srcSubDir = mkpath(srcDir, ent.name)
+			destSubDir = mkpath(destDir, ent.name)
+			if not existsSync(destSubDir)
+				mkdirSync(destSubDir);
+			hideFilesInDir(srcSubDir, destSubDir, regExp)
+	return
+
+# ---------------------------------------------------------------------------
+
+export hideFiles = (rootDir, regExp) ->
+
+	# --- Make sure there's a hiddenFiles directory
+	hideDir = mkpath(rootDir, 'hiddenFiles')
+	if not existsSync(hideDir)
+		mkdirSync(hideDir);
+
+	hideFilesInDir(rootDir, hideDir, regExp)
+	return
+
+# ---------------------------------------------------------------------------
+
+unhideFilesInDir = (destDir, srcDir) ->
+
+	for ent in readdirSync(destDir, {withFileTypes: true})
+		if ent.isFile()
+			srcPath = mkpath(srcDir, ent.name)
+			destPath = mkpath(destDir, ent.name)
+			renameSync(destPath, srcPath)
+		else if ent.isDirectory()
+			srcSubDir = mkpath(srcDir, ent.name)
+			destSubDir = mkpath(destDir, ent.name)
+			unhideFilesInDir(destSubDir, srcSubDir)
+	return
+
+# ---------------------------------------------------------------------------
+
+export unhideFiles = (rootDir) ->
+
+	hideDir = mkpath(rootDir, 'hiddenFiles')
+	if not existsSync(hideDir)
+		return
+	unhideFilesInDir(hideDir, rootDir)
+

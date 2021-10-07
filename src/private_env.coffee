@@ -1,26 +1,26 @@
-# env_lib.coffee
+# private_env.coffee
 
 import {strict as assert} from 'assert'
 
 # --- Use by simply importing and using hEnvLib
 #     This module does no loading - it merely holds hEnvLib
-export hEnvLib = {}
+export hPrivEnv = {}
 
 # --- None of these callbacks should replace variable hEnvLib
 
-export hEnvLibCallbacks = {
+export hPrivEnvCallbacks = {
 	getVar: (name) ->
-		return hEnvLib[name]
+		return hPrivEnv[name]
 	setVar: (name, value) ->
-		hEnvLib[name] = value
+		hPrivEnv[name] = value
 		return
 	clearVar: (name) ->
-		delete hEnvLib[name]
+		delete hPrivEnv[name]
 		return
 	clearAll: () ->
-		for name in Object.keys(hEnvLib)
-			delete hEnvLib[name]
+		for name in Object.keys(hPrivEnv)
+			delete hPrivEnv[name]
 		return
 	names: () ->
-		return Object.keys(hEnvLib)
+		return Object.keys(hPrivEnv)
 	}
