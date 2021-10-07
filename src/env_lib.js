@@ -4,11 +4,11 @@ import {
   strict as assert
 } from 'assert';
 
-// --- Use by simply importing and using hEnv
-//     This module does no loading - it merely holds hEnv
+// --- Use by simply importing and using hEnvLib
+//     This module does no loading - it merely holds hEnvLib
 export var hEnvLib = {};
 
-// --- None of these callbacks should replace variable hEnv
+// --- None of these callbacks should replace variable hEnvLib
 export var hEnvLibCallbacks = {
   getVar: function(name) {
     return hEnvLib[name];
@@ -21,7 +21,7 @@ export var hEnvLibCallbacks = {
   },
   clearAll: function() {
     var i, key, len, ref;
-    ref = Object.keys(hEnv);
+    ref = Object.keys(hEnvLib);
     for (i = 0, len = ref.length; i < len; i++) {
       key = ref[i];
       delete hEnvLib[name];
