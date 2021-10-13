@@ -23,8 +23,7 @@ import {debug} from '@jdeighan/coffee-utils/debug'
 
 export mydir = (url) ->
 
-	url.replace(/\@/g, '%40')
-	return mkpath(dirname(fileURLToPath(url)))
+	return mkpath(dirname(fileURLToPath(url.replace(/\@/g, '%40'))))
 
 # ---------------------------------------------------------------------------
 

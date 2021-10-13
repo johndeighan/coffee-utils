@@ -48,8 +48,7 @@ import {
 //    mydir() - pass argument `import.meta.url` and it will return
 //              the directory your file is in
 export var mydir = function(url) {
-  url.replace(/\@/g, '%40');
-  return mkpath(dirname(fileURLToPath(url)));
+  return mkpath(dirname(fileURLToPath(url.replace(/\@/g, '%40'))));
 };
 
 // ---------------------------------------------------------------------------
