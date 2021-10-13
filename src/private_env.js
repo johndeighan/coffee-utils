@@ -59,4 +59,5 @@ export var logPrivEnv = function() {
     value = hPrivEnv[key];
     log(`   ${key} = '${value}'`);
   }
+  log('-'.repeat(40));
 };

@@ -31,6 +31,7 @@ simple = new UnitTester()
 			PRIVATE ENVIRONMENT:
 				DIR_ROOT = '/usr/johnd'
 				DIR_COMPONENTS = '/usr/johnd/components'
+				----------------------------------------
 			"""
 	)()
 
