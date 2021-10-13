@@ -54,8 +54,9 @@ export var resetPrivEnv = function() {
 // ---------------------------------------------------------------------------
 export var logPrivEnv = function() {
   var key, value;
+  log("PRIVATE ENVIRONMENT:");
   for (key in hPrivEnv) {
     value = hPrivEnv[key];
-    log(`${key} = '${value}'`);
+    log(`   ${key} = '${value}'`);
   }
 };

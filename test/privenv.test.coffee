@@ -28,8 +28,9 @@ simple = new UnitTester()
 	logPrivEnv()
 
 	simple.equal 30, strLogs, """
-			DIR_ROOT = '/usr/johnd'
-			DIR_COMPONENTS = '/usr/johnd/components'
+			PRIVATE ENVIRONMENT:
+				DIR_ROOT = '/usr/johnd'
+				DIR_COMPONENTS = '/usr/johnd/components'
 			"""
 	)()
 

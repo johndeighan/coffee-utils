@@ -45,6 +45,7 @@ export resetPrivEnv = () ->
 
 export logPrivEnv = () ->
 
+	log "PRIVATE ENVIRONMENT:"
 	for key,value of hPrivEnv
-		log "#{key} = '#{value}'"
+		log "   #{key} = '#{value}'"
 	return
