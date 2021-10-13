@@ -3,8 +3,8 @@
 import {strict as assert} from 'assert'
 import {
 	dirname, resolve, parse as parsePath,
-	} from 'path';
-import {fileURLToPath} from 'url';
+	} from 'path'
+import {fileURLToPath} from 'url'
 import {
 	existsSync, copyFileSync, readFileSync, writeFileSync, readdirSync,
 	createReadStream, mkdirSync, renameSync,
@@ -23,7 +23,8 @@ import {debug} from '@jdeighan/coffee-utils/debug'
 
 export mydir = (url) ->
 
-	return mkpath(dirname(fileURLToPath(url)));
+	url.replace(/\@/g, '%40')
+	return mkpath(dirname(fileURLToPath(url)))
 
 # ---------------------------------------------------------------------------
 
@@ -102,8 +103,8 @@ export withExt = (filename, newExt) ->
 export getSubDirs = (dir) ->
 
 	return readdirSync(dir, {withFileTypes: true}) \
-		.filter((d) => d.isDirectory()) \
-		.map((d) => mkpath(d.name)) \
+		.filter((d) -> d.isDirectory()) \
+		.map((d) -> mkpath(d.name)) \
 		.sort()
 
 # ---------------------------------------------------------------------------
@@ -128,7 +129,7 @@ export forEachFile = (dir, cb, filt=undef, level=0) ->
 		if ent.isDirectory()
 			lSubDirectories.push ent
 		else if ent.isFile()
-			if not filt?
+			if ! filt?
 				cb(ent.name, dir, level)
 			else if isRegExp(filt)
 				if ent.name.match(filt)

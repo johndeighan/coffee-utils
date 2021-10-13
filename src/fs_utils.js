@@ -48,6 +48,7 @@ import {
 //    mydir() - pass argument `import.meta.url` and it will return
 //              the directory your file is in
 export var mydir = function(url) {
+  url.replace(/\@/g, '%40');
   return mkpath(dirname(fileURLToPath(url)));
 };
 
@@ -132,9 +133,9 @@ export var withExt = function(filename, newExt) {
 export var getSubDirs = function(dir) {
   return readdirSync(dir, {
     withFileTypes: true
-  }).filter((d) => {
+  }).filter(function(d) {
     return d.isDirectory();
-  }).map((d) => {
+  }).map(function(d) {
     return mkpath(d.name);
   }).sort();
 };
