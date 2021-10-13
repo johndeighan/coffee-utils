@@ -1,6 +1,7 @@
 # private_env.coffee
 
 import {strict as assert} from 'assert'
+import {log} from '@jdeighan/coffee-utils/log'
 
 # --- Use by simply importing and using hEnvLib
 #     This module does no loading - it merely holds hEnvLib
@@ -24,3 +25,26 @@ export hPrivEnvCallbacks = {
 	names: () ->
 		return Object.keys(hPrivEnv)
 	}
+
+# ---------------------------------------------------------------------------
+
+export setPrivEnvVar = (name, value) ->
+
+	hPrivEnv[name] = value
+	return
+
+# ---------------------------------------------------------------------------
+
+export resetPrivEnv = () ->
+
+	for name in Object.keys(hPrivEnv)
+		delete hPrivEnv[name]
+	return
+
+# ---------------------------------------------------------------------------
+
+export logPrivEnv = () ->
+
+	for key,value of hPrivEnv
+		log "#{key} = '#{value}'"
+	return
