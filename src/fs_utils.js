@@ -22,7 +22,8 @@ import {
   readdirSync,
   createReadStream,
   mkdirSync,
-  renameSync
+  renameSync,
+  statSync
 } from 'fs';
 
 import {
@@ -236,5 +237,28 @@ export var allPathsTo = function(fname, searchDir) {
     return lPaths;
   } else {
     return [];
+  }
+};
+
+// ---------------------------------------------------------------------------
+export var newerDestFileExists = function(srcPath, destPath) {
+  var destModTime, srcModTime;
+  debug("enter newerDestFileExists()");
+  if (!existsSync(destPath)) {
+    debug("return false from newerDestFileExists() - no file");
+    return false;
+  }
+  srcModTime = statSync(srcPath).mtimeMs;
+  destModTime = statSync(destPath).mtimeMs;
+  debug(`srcModTime = ${srcModTime}`);
+  debug(`destModTime = ${destModTime}`);
+  if (destModTime >= srcModTime) {
+    debug(`${destPath} is up to date`);
+    debug("return true from newerDestFileExists()");
+    return true;
+  } else {
+    debug(`${destPath} is old`);
+    debug("return false from newerDestFileExists()");
+    return false;
   }
 };
