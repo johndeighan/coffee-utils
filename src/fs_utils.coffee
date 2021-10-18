@@ -29,7 +29,12 @@ export mydir = (url) ->
 
 export mkpath = (lParts...) ->
 
-	return lParts.join('/').replace(/\\/g, '/')
+	newPath = lParts.join('/').replace(/\\/g, '/')
+	if lMatches = newPath.match(/^([A-Z])\:(.*)$/)
+		[_, drive, rest] = lMatches
+		return "#{drive.toLowerCase()}:#{rest}"
+	else
+		return newPath
 
 # ---------------------------------------------------------------------------
 

@@ -54,7 +54,14 @@ export var mydir = function(url) {
 
 // ---------------------------------------------------------------------------
 export var mkpath = function(...lParts) {
-  return lParts.join('/').replace(/\\/g, '/');
+  var _, drive, lMatches, newPath, rest;
+  newPath = lParts.join('/').replace(/\\/g, '/');
+  if (lMatches = newPath.match(/^([A-Z])\:(.*)$/)) {
+    [_, drive, rest] = lMatches;
+    return `${drive.toLowerCase()}:${rest}`;
+  } else {
+    return newPath;
+  }
 };
 
 // ---------------------------------------------------------------------------

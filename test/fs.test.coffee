@@ -52,6 +52,8 @@ simple.equal 48, mkpath('\\usr\\lib', 'johnd'), '/usr/lib/johnd'
 simple.equal 49, mkpath("c:", 'local\\user'), 'c:/local/user'
 simple.equal 50, mkpath('\\usr', 'lib', 'local', 'johnd'), '/usr/lib/local/johnd'
 
+simple.equal 55, mkpath('C:\\Users\\johnd', 'cielo'), 'c:/Users/johnd/cielo'
+
 # ---------------------------------------------------------------------------
 # test getFullPath()
 
