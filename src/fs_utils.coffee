@@ -146,6 +146,14 @@ export withExt = (filename, newExt) ->
 		error "withExt(): Invalid file name: '#{filename}'"
 
 # ---------------------------------------------------------------------------
+#   withUnderScore - add '_' to file name
+
+withUnderScore = (path) ->
+
+	h = parsePath(path)
+	return mkpath(h.dir, "_#{h.base}")
+
+# ---------------------------------------------------------------------------
 #    Get all subdirectories of a directory
 
 export getSubDirs = (dir) ->
@@ -254,3 +262,18 @@ export newerDestFileExists = (srcPath, destPath) ->
 		debug "#{destPath} is old"
 		debug "return false from newerDestFileExists()"
 		return false
+
+# ---------------------------------------------------------------------------
+
+export shortenPath = (path) ->
+	# --- Replace user's home dir with '~'
+
+	str = mkpath(path)
+	if lMatches = str.match(///^
+			[A-Za-z]:/Users/[a-z_][a-z0-9_]*/(.*)
+			$///i)
+		[_, tail] = lMatches
+		return "~/#{tail}"
+	else
+		return str
+
