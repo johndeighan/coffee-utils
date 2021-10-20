@@ -90,6 +90,7 @@ simple.equal 86, parseSource('unit test'), {
 
 simple.equal 91, parseSource("c:/Users/johnd/oz/src/test.js"), {
 	dir: 'c:/Users/johnd/oz/src'
+	fullpath: 'c:/Users/johnd/oz/src/test.js'
 	filename: 'test.js'
 	stub: 'test'
 	ext: '.js'
@@ -97,6 +98,7 @@ simple.equal 91, parseSource("c:/Users/johnd/oz/src/test.js"), {
 
 simple.equal 91, parseSource("c:\\Users\\johnd\\oz\\src\\test.js"), {
 	dir: 'c:/Users/johnd/oz/src'
+	fullpath: 'c:/Users/johnd/oz/src/test.js'
 	filename: 'test.js'
 	stub: 'test'
 	ext: '.js'

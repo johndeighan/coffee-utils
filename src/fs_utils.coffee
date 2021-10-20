@@ -37,12 +37,22 @@ export parseSource = (source) ->
 	try
 		hInfo = parsePath(source)
 		debug "return from parseSource()", hInfo
-		return {
-			dir: mkpath(hInfo.dir)   # change \ to /
-			filename: hInfo.base
-			stub: hInfo.name
-			ext: hInfo.ext
-			}
+		if hInfo.root
+			dir = mkpath(hInfo.dir)   # change \ to /
+			return {
+				dir: dir
+				fullpath: mkpath(dir, hInfo.base)
+				filename: hInfo.base
+				stub: hInfo.name
+				ext: hInfo.ext
+				}
+		else
+			return {
+				dir: mkpath(hInfo.dir)   # change \ to /
+				filename: hInfo.base
+				stub: hInfo.name
+				ext: hInfo.ext
+				}
 	catch err
 		debug "return '#{err.message} from parseSource()"
 		return {
