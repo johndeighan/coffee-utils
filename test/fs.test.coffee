@@ -12,7 +12,7 @@ import {say, undef} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {
 	mydir, mkpath, withExt,
-	getSubDirs, pathTo, getFullPath,
+	getSubDirs, pathTo, getFullPath, parseSource,
 	} from '@jdeighan/coffee-utils/fs'
 
 simple = new UnitTester()
@@ -82,3 +82,22 @@ simple.equal 78, getFullPath("./#{myfname}"), mkpath(rootdir, myfname)
 
 # --- leading .. should be resolved
 simple.equal 81, getFullPath("./test/../#{myfname}"), mkpath(rootdir, myfname)
+
+simple.equal 86, parseSource('unit test'), {
+	filename: 'unit test'
+	stub: 'unit test'
+	}
+
+simple.equal 91, parseSource("c:/Users/johnd/oz/src/test.js"), {
+	dir: 'c:/Users/johnd/oz/src'
+	filename: 'test.js'
+	stub: 'test'
+	ext: '.js'
+	}
+
+simple.equal 91, parseSource("c:\\Users\\johnd\\oz\\src\\test.js"), {
+	dir: 'c:/Users/johnd/oz/src'
+	filename: 'test.js'
+	stub: 'test'
+	ext: '.js'
+	}
