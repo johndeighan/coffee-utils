@@ -1,6 +1,6 @@
 # coffee_utils.coffee
 
-import {strict as assert} from 'assert'
+import assert from 'assert'
 
 import {log} from '@jdeighan/coffee-utils/log'
 

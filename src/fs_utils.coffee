@@ -1,14 +1,9 @@
 # fs_utils.coffee
 
-import {strict as assert} from 'assert'
-import {
-	dirname, resolve, parse as parsePath,
-	} from 'path'
-import {fileURLToPath} from 'url'
-import {
-	existsSync, copyFileSync, readFileSync, writeFileSync, readdirSync,
-	createReadStream, mkdirSync, renameSync, statSync,
-	} from 'fs'
+import assert from 'assert'
+import pathlib from 'path'
+import urllib from 'url'
+import fs from 'fs'
 
 import {
 	undef, pass, rtrim, error, nonEmpty,
@@ -35,7 +30,7 @@ export parseSource = (source) ->
 			stub: 'unit test'
 			}
 	try
-		hInfo = parsePath(source)
+		hInfo = pathlib.parse(source)
 		debug "return from parseSource()", hInfo
 		if hInfo.root
 			dir = mkpath(hInfo.dir)   # change \ to /
@@ -67,7 +62,9 @@ export parseSource = (source) ->
 
 export mydir = (url) ->
 
-	return mkpath(dirname(fileURLToPath(url.replace(/\@/g, '%40'))))
+#	dir = pathlib.dirname(urllib.fileURLToPath(url.replace(/\@/g, '%40')))
+	dir = pathlib.dirname(urllib.fileURLToPath(url))
+	return mkpath(dir)
 
 # ---------------------------------------------------------------------------
 
@@ -84,7 +81,7 @@ export mkpath = (lParts...) ->
 
 export getFullPath = (filepath) ->
 
-	return mkpath(resolve(filepath))
+	return mkpath(pathlib.resolve(filepath))
 
 # ---------------------------------------------------------------------------
 #   backup - back up a file
@@ -98,13 +95,13 @@ export backup = (file, from, to, report=false) ->
 	dest = mkpath(to, file)
 
 	if report
-		if existsSync(src)
+		if fs.existsSync(src)
 			console.log "OK #{file}"
-			copyFileSync(src, dest)
+			fs.copyFileSync(src, dest)
 		else
 			console.log "MISSING #{src}"
 	else
-		copyFileSync(src, dest)
+		fs.copyFileSync(src, dest)
 
 # ---------------------------------------------------------------------------
 #   slurp - read an entire file into a string
@@ -113,7 +110,7 @@ export slurp = (filepath) ->
 
 	debug "enter slurp('#{filepath}')"
 	filepath = filepath.replace(/\//g, "\\")
-	contents = readFileSync(filepath, 'utf8').toString()
+	contents = fs.readFileSync(filepath, 'utf8').toString()
 	debug "return from slurp()", contents
 	return contents
 
@@ -125,7 +122,7 @@ export barf = (filepath, contents) ->
 	debug "enter barf('#{filepath}')", contents
 	contents = rtrim(contents) + "\n"
 	try
-		writeFileSync(filepath, contents, {encoding: 'utf8'})
+		fs.writeFileSync(filepath, contents, {encoding: 'utf8'})
 	catch err
 		log "barf(): write failed: #{err.message}"
 	debug "return from barf()"
@@ -150,7 +147,7 @@ export withExt = (filename, newExt) ->
 
 withUnderScore = (path) ->
 
-	h = parsePath(path)
+	h = pathlib.parse(path)
 	return mkpath(h.dir, "_#{h.base}")
 
 # ---------------------------------------------------------------------------
@@ -158,7 +155,7 @@ withUnderScore = (path) ->
 
 export getSubDirs = (dir) ->
 
-	return readdirSync(dir, {withFileTypes: true}) \
+	return fs.readdirSync(dir, {withFileTypes: true}) \
 		.filter((d) -> d.isDirectory()) \
 		.map((d) -> mkpath(d.name)) \
 		.sort()
@@ -168,10 +165,10 @@ export getSubDirs = (dir) ->
 
 export getParentDir = (dir) ->
 
-	hParts = parsePath(dir)
+	hParts = pathlib.parse(dir)
 	if (hParts.dir == hParts.root)
 		return undef
-	return mkpath(resolve(dir, '..'))
+	return mkpath(pathlib.resolve(dir, '..'))
 
 # ---------------------------------------------------------------------------
 
@@ -181,7 +178,7 @@ export forEachFile = (dir, cb, filt=undef, level=0) ->
 	#     callback will get parms (filename, dir, level)
 
 	lSubDirectories = []
-	for ent in readdirSync(dir, {withFileTypes: true})
+	for ent in fs.readdirSync(dir, {withFileTypes: true})
 		if ent.isDirectory()
 			lSubDirectories.push ent
 		else if ent.isFile()
@@ -205,8 +202,8 @@ export forEachFile = (dir, cb, filt=undef, level=0) ->
 export pathTo = (fname, dir, direction="down") ->
 
 	debug "enter pathTo('#{fname}','#{dir}','#{direction}')"
-	assert existsSync(dir), "Directory #{dir} does not exist"
-	if existsSync("#{dir}/#{fname}")
+	assert fs.existsSync(dir), "Directory #{dir} does not exist"
+	if fs.existsSync("#{dir}/#{fname}")
 		debug "return from pathTo: #{dir}/#{fname} - file exists"
 		return mkpath("#{dir}/#{fname}")
 	else if (direction == 'down')
@@ -218,7 +215,7 @@ export pathTo = (fname, dir, direction="down") ->
 	else if (direction == 'up')
 		while dir = getParentDir(dir)
 			debug "check #{dir}"
-			if existsSync("#{dir}/#{fname}")
+			if fs.existsSync("#{dir}/#{fname}")
 				debug "return from pathTo(): #{dir}/#{fname}"
 				return "#{dir}/#{fname}"
 	else
@@ -235,8 +232,8 @@ export allPathsTo = (fname, searchDir) ->
 	if path?
 		lPaths = [path]    # --- build an array of paths
 		# --- search upward for files, but return ordered top down
-		while (h = parsePath(path)) \
-				&& (path = pathTo(fname, resolve(h.dir, '..'), "up"))
+		while (h = pathlib.parse(path)) \
+				&& (path = pathTo(fname, pathlib.resolve(h.dir, '..'), "up"))
 			lPaths.unshift path
 		return lPaths
 	else
@@ -247,11 +244,11 @@ export allPathsTo = (fname, searchDir) ->
 export newerDestFileExists = (srcPath, destPath) ->
 
 	debug "enter newerDestFileExists()"
-	if ! existsSync(destPath)
+	if ! fs.existsSync(destPath)
 		debug "return false from newerDestFileExists() - no file"
 		return false
-	srcModTime = statSync(srcPath).mtimeMs
-	destModTime = statSync(destPath).mtimeMs
+	srcModTime = fs.statSync(srcPath).mtimeMs
+	destModTime = fs.statSync(destPath).mtimeMs
 	debug "srcModTime = #{srcModTime}"
 	debug "destModTime = #{destModTime}"
 	if destModTime >= srcModTime

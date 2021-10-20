@@ -1,6 +1,6 @@
 # indent.test.coffee
 
-import {strict as assert} from 'assert'
+import assert from 'assert'
 
 import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {isInteger} from '@jdeighan/coffee-utils'

@@ -1,6 +1,6 @@
 # debug_utils.coffee
 
-import {strict as assert} from 'assert'
+import assert from 'assert'
 
 import {
 	undef, error, croak, warn, words, isString, isFunction,

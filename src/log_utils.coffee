@@ -1,6 +1,6 @@
 # log_utils.coffee
 
-import {strict as assert} from 'assert'
+import assert from 'assert'
 import yaml from 'js-yaml'
 
 import {

@@ -2,9 +2,7 @@
 // log_utils.coffee
 var logger, maxOneLine;
 
-import {
-  strict as assert
-} from 'assert';
+import assert from 'assert';
 
 import yaml from 'js-yaml';
 

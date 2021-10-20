@@ -1,9 +1,7 @@
 # block_utils.coffee
 
-import {strict as assert} from 'assert'
-import {
-	existsSync, readFileSync, createReadStream,
-	} from 'fs'
+import assert from 'assert'
+import fs from 'fs'
 import {createInterface} from 'readline'
 
 import {
@@ -98,7 +96,7 @@ export joinBlocks = (lBlocks...) ->
 ```
 export async function forEachLine(filepath, func) {
 
-const fileStream = createReadStream(filepath);
+const fileStream = fs.createReadStream(filepath);
 const rl = createInterface({
 	input: fileStream,
 	crlfDelay: Infinity

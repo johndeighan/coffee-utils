@@ -2,31 +2,13 @@
 // fs_utils.coffee
 var withUnderScore;
 
-import {
-  strict as assert
-} from 'assert';
+import assert from 'assert';
 
-import {
-  dirname,
-  resolve,
-  parse as parsePath
-} from 'path';
+import pathlib from 'path';
 
-import {
-  fileURLToPath
-} from 'url';
+import urllib from 'url';
 
-import {
-  existsSync,
-  copyFileSync,
-  readFileSync,
-  writeFileSync,
-  readdirSync,
-  createReadStream,
-  mkdirSync,
-  renameSync,
-  statSync
-} from 'fs';
+import fs from 'fs';
 
 import {
   undef,
@@ -65,7 +47,7 @@ export var parseSource = function(source) {
     };
   }
   try {
-    hInfo = parsePath(source);
+    hInfo = pathlib.parse(source);
     debug("return from parseSource()", hInfo);
     if (hInfo.root) {
       dir = mkpath(hInfo.dir); // change \ to /
@@ -99,7 +81,10 @@ export var parseSource = function(source) {
 //    mydir() - pass argument `import.meta.url` and it will return
 //              the directory your file is in
 export var mydir = function(url) {
-  return mkpath(dirname(fileURLToPath(url.replace(/\@/g, '%40'))));
+  var dir;
+  //	dir = pathlib.dirname(urllib.fileURLToPath(url.replace(/\@/g, '%40')))
+  dir = pathlib.dirname(urllib.fileURLToPath(url));
+  return mkpath(dir);
 };
 
 // ---------------------------------------------------------------------------
@@ -116,7 +101,7 @@ export var mkpath = function(...lParts) {
 
 // ---------------------------------------------------------------------------
 export var getFullPath = function(filepath) {
-  return mkpath(resolve(filepath));
+  return mkpath(pathlib.resolve(filepath));
 };
 
 // ---------------------------------------------------------------------------
@@ -130,14 +115,14 @@ export var backup = function(file, from, to, report = false) {
   src = mkpath(from, file);
   dest = mkpath(to, file);
   if (report) {
-    if (existsSync(src)) {
+    if (fs.existsSync(src)) {
       console.log(`OK ${file}`);
-      return copyFileSync(src, dest);
+      return fs.copyFileSync(src, dest);
     } else {
       return console.log(`MISSING ${src}`);
     }
   } else {
-    return copyFileSync(src, dest);
+    return fs.copyFileSync(src, dest);
   }
 };
 
@@ -147,7 +132,7 @@ export var slurp = function(filepath) {
   var contents;
   debug(`enter slurp('${filepath}')`);
   filepath = filepath.replace(/\//g, "\\");
-  contents = readFileSync(filepath, 'utf8').toString();
+  contents = fs.readFileSync(filepath, 'utf8').toString();
   debug("return from slurp()", contents);
   return contents;
 };
@@ -159,7 +144,7 @@ export var barf = function(filepath, contents) {
   debug(`enter barf('${filepath}')`, contents);
   contents = rtrim(contents) + "\n";
   try {
-    writeFileSync(filepath, contents, {
+    fs.writeFileSync(filepath, contents, {
       encoding: 'utf8'
     });
   } catch (error1) {
@@ -189,14 +174,14 @@ export var withExt = function(filename, newExt) {
 //   withUnderScore - add '_' to file name
 withUnderScore = function(path) {
   var h;
-  h = parsePath(path);
+  h = pathlib.parse(path);
   return mkpath(h.dir, `_${h.base}`);
 };
 
 // ---------------------------------------------------------------------------
 //    Get all subdirectories of a directory
 export var getSubDirs = function(dir) {
-  return readdirSync(dir, {
+  return fs.readdirSync(dir, {
     withFileTypes: true
   }).filter(function(d) {
     return d.isDirectory();
@@ -209,11 +194,11 @@ export var getSubDirs = function(dir) {
 //    Get path to parent directory of a directory
 export var getParentDir = function(dir) {
   var hParts;
-  hParts = parsePath(dir);
+  hParts = pathlib.parse(dir);
   if (hParts.dir === hParts.root) {
     return undef;
   }
-  return mkpath(resolve(dir, '..'));
+  return mkpath(pathlib.resolve(dir, '..'));
 };
 
 // ---------------------------------------------------------------------------
@@ -223,7 +208,7 @@ export var forEachFile = function(dir, cb, filt = undef, level = 0) {
   //        (filename, dir, level)
   //     callback will get parms (filename, dir, level)
   lSubDirectories = [];
-  ref = readdirSync(dir, {
+  ref = fs.readdirSync(dir, {
     withFileTypes: true
   });
   for (i = 0, len = ref.length; i < len; i++) {
@@ -259,8 +244,8 @@ export var forEachFile = function(dir, cb, filt = undef, level = 0) {
 export var pathTo = function(fname, dir, direction = "down") {
   var fpath, i, len, ref, subdir;
   debug(`enter pathTo('${fname}','${dir}','${direction}')`);
-  assert(existsSync(dir), `Directory ${dir} does not exist`);
-  if (existsSync(`${dir}/${fname}`)) {
+  assert(fs.existsSync(dir), `Directory ${dir} does not exist`);
+  if (fs.existsSync(`${dir}/${fname}`)) {
     debug(`return from pathTo: ${dir}/${fname} - file exists`);
     return mkpath(`${dir}/${fname}`);
   } else if (direction === 'down') {
@@ -276,7 +261,7 @@ export var pathTo = function(fname, dir, direction = "down") {
   } else if (direction === 'up') {
     while (dir = getParentDir(dir)) {
       debug(`check ${dir}`);
-      if (existsSync(`${dir}/${fname}`)) {
+      if (fs.existsSync(`${dir}/${fname}`)) {
         debug(`return from pathTo(): ${dir}/${fname}`);
         return `${dir}/${fname}`;
       }
@@ -296,7 +281,7 @@ export var allPathsTo = function(fname, searchDir) {
   if (path != null) {
     lPaths = [path]; // --- build an array of paths
     // --- search upward for files, but return ordered top down
-    while ((h = parsePath(path)) && (path = pathTo(fname, resolve(h.dir, '..'), "up"))) {
+    while ((h = pathlib.parse(path)) && (path = pathTo(fname, pathlib.resolve(h.dir, '..'), "up"))) {
       lPaths.unshift(path);
     }
     return lPaths;
@@ -309,12 +294,12 @@ export var allPathsTo = function(fname, searchDir) {
 export var newerDestFileExists = function(srcPath, destPath) {
   var destModTime, srcModTime;
   debug("enter newerDestFileExists()");
-  if (!existsSync(destPath)) {
+  if (!fs.existsSync(destPath)) {
     debug("return false from newerDestFileExists() - no file");
     return false;
   }
-  srcModTime = statSync(srcPath).mtimeMs;
-  destModTime = statSync(destPath).mtimeMs;
+  srcModTime = fs.statSync(srcPath).mtimeMs;
+  destModTime = fs.statSync(destPath).mtimeMs;
   debug(`srcModTime = ${srcModTime}`);
   debug(`destModTime = ${destModTime}`);
   if (destModTime >= srcModTime) {

@@ -1,6 +1,6 @@
 # fs.test.coffee
 
-import {strict as assert} from 'assert'
+import assert from 'assert'
 import {dirname, resolve} from 'path';
 import {fileURLToPath} from 'url';
 import {

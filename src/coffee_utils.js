@@ -2,9 +2,7 @@
 // coffee_utils.coffee
 var commentRegExp;
 
-import {
-  strict as assert
-} from 'assert';
+import assert from 'assert';
 
 import {
   log
