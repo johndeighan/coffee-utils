@@ -4,9 +4,7 @@ import assert from 'assert';
 
 import fs from 'fs';
 
-import {
-  createInterface
-} from 'readline';
+import readline from 'readline';
 
 import {
   isEmpty,
@@ -124,7 +122,7 @@ export var joinBlocks = function(...lBlocks) {
 export async function forEachLine(filepath, func) {
 
 const fileStream = fs.createReadStream(filepath);
-const rl = createInterface({
+const rl = readline.createInterface({
 	input: fileStream,
 	crlfDelay: Infinity
 	});
