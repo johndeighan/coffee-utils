@@ -1,9 +1,7 @@
 # debug_utils.coffee
 
-import assert from 'assert'
-
 import {
-	undef, error, croak, warn, words, isString, isFunction,
+	assert, undef, error, croak, warn, words, isString, isFunction,
 	oneline, escapeStr, isNumber, isArray,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
@@ -148,7 +146,7 @@ export debug = (lArgs...) ->
 	if entering && lDebugFuncs && funcMatch(curFunc)
 		setDebugging true
 
-	if debugging && (not ifMatches? || str.match(ifMatches))
+	if debugging && (! ifMatches? || str.match(ifMatches))
 
 		# --- set the prefix, i.e. indentation to use
 		if returning
@@ -202,7 +200,7 @@ export funcMatch = (curFunc) ->
 # ---------------------------------------------------------------------------
 
 export checkTrace = (block) ->
-# --- export only to allow unit tests
+	# --- export only to allow unit tests
 
 	lStack = []
 

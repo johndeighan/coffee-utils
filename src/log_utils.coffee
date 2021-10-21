@@ -1,10 +1,9 @@
 # log_utils.coffee
 
-import assert from 'assert'
 import yaml from 'js-yaml'
 
 import {
-	undef, isNumber, isString, isHash, isFunction, escapeStr,
+	assert, undef, isNumber, isString, isHash, isFunction, escapeStr,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
 import {tabify} from '@jdeighan/coffee-utils/indent'
@@ -17,15 +16,13 @@ logger = console.log          # for strings
 export tamlStringify = (obj) ->
 
 	str = yaml.dump(obj, {
-			skipInvalid: true
-			indent: 1
-			sortKeys: false
-			lineWidth: -1
-			})
+		skipInvalid: true
+		indent: 1
+		sortKeys: false
+		lineWidth: -1
+		})
 	str = "---\n" + tabify(str)
-	str = str.replace(/\t/g, '   ')  # because fr***ing Windows Terminal
-	                                 # has no way of adjusting display
-	                                 # of TAB chars
+	str = str.replace(/\t/g, '   ')  # fr***ing Windows Terminal
 	return str
 
 # ---------------------------------------------------------------------------
@@ -108,9 +105,9 @@ export log = (lArgs...) ->
 	else
 		prefix = itemPrefix = ''
 
-	if (not logItem)
+	if (! logItem)
 		logger "#{prefix}#{str}"
-	else if not item?
+	else if ! item?
 		logger "#{prefix}#{str} = undef"
 	else if isNumber(item)
 		logger "#{prefix}#{str} = #{item}"

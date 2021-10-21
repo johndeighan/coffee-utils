@@ -1,11 +1,10 @@
 # block_utils.coffee
 
-import assert from 'assert'
 import fs from 'fs'
 import readline from 'readline'
 
 import {
-	isEmpty, isString, nonEmpty, error, isComment, rtrim,
+	assert, isEmpty, isString, nonEmpty, error, isComment, rtrim,
 	} from '@jdeighan/coffee-utils'
 import {log} from '@jdeighan/coffee-utils/log'
 
@@ -139,7 +138,7 @@ export forEachBlock = (filepath, func, regexp = /^-{16,}$/) ->
 		return
 
 	await forEachLine filepath, callback
-	if not earlyExit
+	if ! earlyExit
 		func(lLines.join('\n'), firstLineNum)
 	return
 
@@ -174,7 +173,7 @@ export forEachSetOfBlocks = (filepath, func,
 		return
 
 	await forEachLine filepath, callback
-	if not earlyExit
+	if ! earlyExit
 		lBlocks.push(lLines.join('\n'))
 		func(lBlocks, firstLineNum)
 	return

@@ -1,7 +1,5 @@
 # coffee_utils.coffee
 
-import assert from 'assert'
-
 import {log} from '@jdeighan/coffee-utils/log'
 
 export sep_dash = '-'.repeat(42)
@@ -19,6 +17,15 @@ export pass = () ->
 export error = (message) ->
 
 	throw new Error(message)
+
+# ---------------------------------------------------------------------------
+#   assert - mimic nodejs's assert
+
+export assert = (cond, msg) ->
+
+	if ! cond
+		error(msg)
+	return
 
 # ---------------------------------------------------------------------------
 #   croak - throws an error after possibly printing useful info
@@ -75,10 +82,10 @@ export isNumber = (x) ->
 export isObject = (x) ->
 
 	return (typeof x == 'object') \
-			&& not isString(x) \
-			&& not isArray(x) \
-			&& not isHash(x) \
-			&& not isNumber(x)
+			&& ! isString(x) \
+			&& ! isArray(x) \
+			&& ! isHash(x) \
+			&& ! isNumber(x)
 
 # ---------------------------------------------------------------------------
 
@@ -98,7 +105,7 @@ export isHash = (x) ->
 
 export isEmpty = (x) ->
 
-	if not x?
+	if ! x?
 		return true
 	if isString(x)
 		return x.match(/^\s*$/)
@@ -115,10 +122,10 @@ export isEmpty = (x) ->
 
 export nonEmpty = (x) ->
 
-	if not x?
+	if ! x?
 		return false
 	if isString(x)
-		return not x.match(/^\s*$/)
+		return ! x.match(/^\s*$/)
 	if isArray(x)
 		return x.length > 0
 	if isHash(x)
@@ -153,10 +160,10 @@ export words = (str) ->
 
 export isArrayOfHashes = (lItems) ->
 
-	if not isArray(lItems)
+	if ! isArray(lItems)
 		return false
 	for item in lItems
-		if not isHash(item)
+		if ! isHash(item)
 			return false
 	return true
 
@@ -164,10 +171,10 @@ export isArrayOfHashes = (lItems) ->
 
 export isArrayOfStrings = (lItems) ->
 
-	if not isArray(lItems)
+	if ! isArray(lItems)
 		return false
 	for item in lItems
-		if not isString(item)
+		if ! isString(item)
 			return false
 	return true
 
@@ -223,7 +230,7 @@ export ask = (prompt) ->
 export titleLine = (title, char='=', padding=2, linelen=42) ->
 	# --- used in logger
 
-	if not title
+	if ! title
 		return char.repeat(linelen)
 
 	titleLen = title.length + 2 * padding
@@ -272,7 +279,7 @@ export deepCopy = (obj) ->
 
 export escapeStr = (str) ->
 
-	if not str?
+	if ! str?
 		return 'undef'
 	if typeof str != 'string'
 		croak "escapeStr(): not a string", str, 'STRING'

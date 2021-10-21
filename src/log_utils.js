@@ -2,11 +2,10 @@
 // log_utils.coffee
 var logger, maxOneLine;
 
-import assert from 'assert';
-
 import yaml from 'js-yaml';
 
 import {
+  assert,
   undef,
   isNumber,
   isString,
@@ -37,9 +36,7 @@ export var tamlStringify = function(obj) {
     lineWidth: -1
   });
   str = "---\n" + tabify(str);
-  str = str.replace(/\t/g, '   '); // because fr***ing Windows Terminal
-  // has no way of adjusting display
-  // of TAB chars
+  str = str.replace(/\t/g, '   '); // fr***ing Windows Terminal
   return str;
 };
 

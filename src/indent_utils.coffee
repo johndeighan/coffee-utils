@@ -1,9 +1,7 @@
 # indent_utils.coffee
 
-import assert from 'assert'
-
 import {
-	undef, error, escapeStr,
+	assert, undef, error, escapeStr,
 	OL, isInteger, isString, isArray, isEmpty, rtrim,
 	} from '@jdeighan/coffee-utils'
 import {arrayToBlock, blockToArray} from '@jdeighan/coffee-utils/block'
@@ -124,7 +122,7 @@ export tabify = (str, numSpaces=undef) ->
 			n = prefix.length
 			if (prefix.indexOf('\t') != -1)
 				error "tabify(): leading TAB characters not allowed"
-			if not numSpaces?
+			if ! numSpaces?
 				numSpaces = n
 			if (n % numSpaces != 0)
 				error "tabify(): Invalid # of leading space chars"

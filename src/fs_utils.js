@@ -2,8 +2,6 @@
 // fs_utils.coffee
 var withUnderScore;
 
-import assert from 'assert';
-
 import pathlib from 'path';
 
 import urllib from 'url';
@@ -11,6 +9,7 @@ import urllib from 'url';
 import fs from 'fs';
 
 import {
+  assert,
   undef,
   pass,
   rtrim,
@@ -82,7 +81,6 @@ export var parseSource = function(source) {
 //              the directory your file is in
 export var mydir = function(url) {
   var dir;
-  //	dir = pathlib.dirname(urllib.fileURLToPath(url.replace(/\@/g, '%40')))
   dir = pathlib.dirname(urllib.fileURLToPath(url));
   return mkpath(dir);
 };

@@ -1,12 +1,11 @@
 # fs_utils.coffee
 
-import assert from 'assert'
 import pathlib from 'path'
 import urllib from 'url'
 import fs from 'fs'
 
 import {
-	undef, pass, rtrim, error, nonEmpty,
+	assert, undef, pass, rtrim, error, nonEmpty,
 	isRegExp, isFunction, croak,
 	} from '@jdeighan/coffee-utils'
 import {log} from '@jdeighan/coffee-utils/log'
@@ -62,7 +61,6 @@ export parseSource = (source) ->
 
 export mydir = (url) ->
 
-#	dir = pathlib.dirname(urllib.fileURLToPath(url.replace(/\@/g, '%40')))
 	dir = pathlib.dirname(urllib.fileURLToPath(url))
 	return mkpath(dir)
 

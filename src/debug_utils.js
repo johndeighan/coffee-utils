@@ -2,9 +2,8 @@
 // debug_utils.coffee
 var arrow, arrowhead, corner, debugLevel, getPrefix, hbar, ifMatches, indent, lDebugFuncs, lDebugStack, reMethod, restoreDebugEnv, saveDebugEnv, stripArrow, vbar;
 
-import assert from 'assert';
-
 import {
+  assert,
   undef,
   error,
   croak,

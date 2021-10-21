@@ -1,10 +1,9 @@
 # UnitTester.coffee
 
-import assert from 'assert'
 import test from 'ava'
 
 import {
-	undef, pass, error, croak,
+	assert, undef, pass, error, croak,
 	isString, isFunction, isInteger, isArray,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
@@ -103,7 +102,7 @@ export class UnitTester
 
 	fails: (lineNum, func, expected) ->
 
-		assert not expected?, "UnitTester: fails doesn't allow expected"
+		assert ! expected?, "UnitTester: fails doesn't allow expected"
 		assert isFunction(func), "UnitTester: fails requires a function"
 
 		# --- disable logging
@@ -123,7 +122,7 @@ export class UnitTester
 
 	succeeds: (lineNum, func, expected) ->
 
-		assert not expected?, "UnitTester: succeeds doesn't allow expected"
+		assert ! expected?, "UnitTester: succeeds doesn't allow expected"
 		assert isFunction(func), "UnitTester: succeeds requires a function"
 		try
 			func()
@@ -137,8 +136,8 @@ export class UnitTester
 	# ........................................................................
 
 	same_list: (lineNum, list, expected) ->
-		assert not list? || isArray(list), "UnitTester: not an array"
-		assert not expected? || isArray(expected),
+		assert ! list? || isArray(list), "UnitTester: not an array"
+		assert ! expected? || isArray(expected),
 			"UnitTester: expected is not an array"
 
 		@setWhichTest 'deepEqual'
@@ -148,8 +147,8 @@ export class UnitTester
 	# ........................................................................
 
 	not_same_list: (lineNum, list, expected) ->
-		assert not list? || isArray(list), "UnitTester: not an array"
-		assert not expected? || isArray(expected),
+		assert ! list? || isArray(list), "UnitTester: not an array"
+		assert ! expected? || isArray(expected),
 			"UnitTester: expected is not an array"
 
 		@setWhichTest 'notDeepEqual'
@@ -182,7 +181,7 @@ export class UnitTester
 		if (lineNum < 0) && process.env.FINALTEST
 			error "Negative line numbers not allowed in FINALTEST"
 
-		if not @testing || (@maxLineNum && (lineNum > @maxLineNum))
+		if ! @testing || (@maxLineNum && (lineNum > @maxLineNum))
 			return
 
 		if lineNum < -100000

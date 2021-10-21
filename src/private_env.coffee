@@ -1,6 +1,6 @@
 # private_env.coffee
 
-import assert from 'assert'
+import {assert} from '@jdeighan/coffee-utils'
 import {log} from '@jdeighan/coffee-utils/log'
 
 # --- Use by simply importing and using hEnvLib

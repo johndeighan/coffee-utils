@@ -2,8 +2,6 @@
 // coffee_utils.coffee
 var commentRegExp;
 
-import assert from 'assert';
-
 import {
   log
 } from '@jdeighan/coffee-utils/log';
@@ -22,6 +20,14 @@ export var pass = function() {};
 //   error - throw an error
 export var error = function(message) {
   throw new Error(message);
+};
+
+// ---------------------------------------------------------------------------
+//   assert - mimic nodejs's assert
+export var assert = function(cond, msg) {
+  if (!cond) {
+    error(msg);
+  }
 };
 
 // ---------------------------------------------------------------------------
@@ -225,7 +231,6 @@ export var ask = function(prompt) {
 // ---------------------------------------------------------------------------
 export var titleLine = function(title, char = '=', padding = 2, linelen = 42) {
   var nLeft, nRight, strLeft, strMiddle, strRight, titleLen;
-  // --- used in logger
   if (!title) {
     return char.repeat(linelen);
   }
