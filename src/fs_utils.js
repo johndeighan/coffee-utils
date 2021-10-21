@@ -138,17 +138,11 @@ export var slurp = function(filepath) {
 // ---------------------------------------------------------------------------
 //   barf - write a string to a file
 export var barf = function(filepath, contents) {
-  var err;
   debug(`enter barf('${filepath}')`, contents);
   contents = rtrim(contents) + "\n";
-  try {
-    fs.writeFileSync(filepath, contents, {
-      encoding: 'utf8'
-    });
-  } catch (error1) {
-    err = error1;
-    log(`barf(): write failed: ${err.message}`);
-  }
+  fs.writeFileSync(filepath, contents, {
+    encoding: 'utf8'
+  });
   debug("return from barf()");
 };
 

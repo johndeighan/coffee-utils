@@ -119,10 +119,7 @@ export barf = (filepath, contents) ->
 
 	debug "enter barf('#{filepath}')", contents
 	contents = rtrim(contents) + "\n"
-	try
-		fs.writeFileSync(filepath, contents, {encoding: 'utf8'})
-	catch err
-		log "barf(): write failed: #{err.message}"
+	fs.writeFileSync(filepath, contents, {encoding: 'utf8'})
 	debug "return from barf()"
 	return
 
