@@ -46,6 +46,16 @@ export var isSimpleFileName = function(path) {
 };
 
 // ---------------------------------------------------------------------------
+export var fileExt = function(path) {
+  var lMatches;
+  if (lMatches = path.match(/\.[A-Za-z0-9_]+$/)) {
+    return lMatches[0];
+  } else {
+    return '';
+  }
+};
+
+// ---------------------------------------------------------------------------
 //    mydir() - pass argument `import.meta.url` and it will return
 //              the directory your file is in
 export var mydir = function(url) {

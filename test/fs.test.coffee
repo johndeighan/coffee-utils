@@ -1,8 +1,8 @@
 # fs.test.coffee
 
 import assert from 'assert'
-import {dirname, resolve} from 'path';
-import {fileURLToPath} from 'url';
+import {dirname, resolve} from 'path'
+import {fileURLToPath} from 'url'
 import {
 	existsSync, copyFileSync, readFileSync, writeFileSync,
 	} from 'fs'
@@ -12,7 +12,7 @@ import {say, undef} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {
 	mydir, mkpath, withExt, isFile, isDir, isSimpleFileName,
-	getSubDirs, pathTo, getFullPath, parseSource,
+	getSubDirs, pathTo, getFullPath, parseSource, fileExt,
 	} from '@jdeighan/coffee-utils/fs'
 
 simple = new UnitTester()
@@ -46,11 +46,13 @@ simple.equal 39, pathTo('test.txt', dir), \
 
 simple.equal 44, mkpath('/usr/lib', 'johnd'), '/usr/lib/johnd'
 simple.equal 45, mkpath("c:", 'local/user'), 'c:/local/user'
-simple.equal 46, mkpath('/usr', 'lib', 'local', 'johnd'), '/usr/lib/local/johnd'
+simple.equal 46, mkpath('/usr', 'lib', 'local', 'johnd'),
+		'/usr/lib/local/johnd'
 
 simple.equal 48, mkpath('\\usr\\lib', 'johnd'), '/usr/lib/johnd'
 simple.equal 49, mkpath("c:", 'local\\user'), 'c:/local/user'
-simple.equal 50, mkpath('\\usr', 'lib', 'local', 'johnd'), '/usr/lib/local/johnd'
+simple.equal 50, mkpath('\\usr', 'lib', 'local', 'johnd'),
+		'/usr/lib/local/johnd'
 
 simple.equal 55, mkpath('C:\\Users\\johnd', 'cielo'), 'c:/Users/johnd/cielo'
 
@@ -111,9 +113,20 @@ if process.platform == 'win32'
 	simple.falsy  111, isFile('c:/Program Files')
 
 	simple.falsy  113, isDir('c:/Windows/notepad.exe')
-	simple.falsy  114, isDir('c:/Program Files/Windows Media Player/wmplayer.exe')
+	simple.falsy  114, isDir(
+		'c:/Program Files/Windows Media Player/wmplayer.exe'
+		)
 	simple.truthy 115, isFile('c:/Windows/notepad.exe')
-	simple.truthy 116, isFile('c:/Program Files/Windows Media Player/wmplayer.exe')
+	simple.truthy 116, isFile(
+		'c:/Program Files/Windows Media Player/wmplayer.exe'
+		)
 
 	simple.truthy 118, isSimpleFileName('notepad.exe')
-	simple.falsy  119, isSimpleFileName('c:/Program Files/Windows Media Player/wmplayer.exe')
+	simple.falsy  119, isSimpleFileName(
+		'c:/Program Files/Windows Media Player/wmplayer.exe'
+		)
+
+simple.equal 121, fileExt('file.txt'), '.txt'
+simple.equal 122, fileExt('file.'), ''
+simple.equal 123, fileExt('file.99'), '.99'
+simple.equal 124, fileExt('file._txt'), '._txt'

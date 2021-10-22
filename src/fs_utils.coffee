@@ -31,6 +31,15 @@ export isSimpleFileName = (path) ->
 	return ! h.root && ! h.dir && h.base
 
 # ---------------------------------------------------------------------------
+
+export fileExt = (path) ->
+
+	if lMatches = path.match(/\.[A-Za-z0-9_]+$/)
+		return lMatches[0]
+	else
+		return ''
+
+# ---------------------------------------------------------------------------
 #    mydir() - pass argument `import.meta.url` and it will return
 #              the directory your file is in
 
