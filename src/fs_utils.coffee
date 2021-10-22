@@ -13,47 +13,15 @@ import {debug} from '@jdeighan/coffee-utils/debug'
 
 # ---------------------------------------------------------------------------
 
-export parseSource = (source) ->
-	# --- returns {
-	#        dir
-	#        filename   # only this is guaranteed to be set
-	#        stub
-	#        ext
-	#        }
+export isFile = (fullpath) ->
 
-	debug "enter parseSource()"
-	if source == 'unit test'
-		debug "return 'unit test' from parseSource()"
-		return {
-			filename: 'unit test'
-			stub: 'unit test'
-			}
-	try
-		hInfo = pathlib.parse(source)
-		debug "return from parseSource()", hInfo
-		if hInfo.root
-			dir = mkpath(hInfo.dir)   # change \ to /
-			return {
-				dir: dir
-				fullpath: mkpath(dir, hInfo.base)
-				filename: hInfo.base
-				stub: hInfo.name
-				ext: hInfo.ext
-				}
-		else
-			return {
-				dir: mkpath(hInfo.dir)   # change \ to /
-				filename: hInfo.base
-				stub: hInfo.name
-				ext: hInfo.ext
-				}
-	catch err
-		debug "return '#{err.message} from parseSource()"
-		return {
-			filename: source
-			stub: source
-			error: err.message
-			}
+	return fs.lstatSync(fullpath).isFile()
+
+# ---------------------------------------------------------------------------
+
+export isDir = (fullpath) ->
+
+	return fs.lstatSync(fullpath).isDirectory()
 
 # ---------------------------------------------------------------------------
 #    mydir() - pass argument `import.meta.url` and it will return
@@ -269,3 +237,46 @@ export shortenPath = (path) ->
 	else
 		return str
 
+# ---------------------------------------------------------------------------
+
+export parseSource = (source) ->
+	# --- returns {
+	#        dir
+	#        filename   # only this is guaranteed to be set
+	#        stub
+	#        ext
+	#        }
+
+	debug "enter parseSource()"
+	if source == 'unit test'
+		debug "return 'unit test' from parseSource()"
+		return {
+			filename: 'unit test'
+			stub: 'unit test'
+			}
+	try
+		hInfo = pathlib.parse(source)
+		debug "return from parseSource()", hInfo
+		if hInfo.root
+			dir = mkpath(hInfo.dir)   # change \ to /
+			return {
+				dir: dir
+				fullpath: mkpath(dir, hInfo.base)
+				filename: hInfo.base
+				stub: hInfo.name
+				ext: hInfo.ext
+				}
+		else
+			return {
+				dir: mkpath(hInfo.dir)   # change \ to /
+				filename: hInfo.base
+				stub: hInfo.name
+				ext: hInfo.ext
+				}
+	catch err
+		debug "return '#{err.message} from parseSource()"
+		return {
+			filename: source
+			stub: source
+			error: err.message
+			}

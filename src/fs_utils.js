@@ -29,51 +29,13 @@ import {
 } from '@jdeighan/coffee-utils/debug';
 
 // ---------------------------------------------------------------------------
-export var parseSource = function(source) {
-  var dir, err, hInfo;
-  // --- returns {
-  //        dir
-  //        filename   # only this is guaranteed to be set
-  //        stub
-  //        ext
-  //        }
-  debug("enter parseSource()");
-  if (source === 'unit test') {
-    debug("return 'unit test' from parseSource()");
-    return {
-      filename: 'unit test',
-      stub: 'unit test'
-    };
-  }
-  try {
-    hInfo = pathlib.parse(source);
-    debug("return from parseSource()", hInfo);
-    if (hInfo.root) {
-      dir = mkpath(hInfo.dir); // change \ to /
-      return {
-        dir: dir,
-        fullpath: mkpath(dir, hInfo.base),
-        filename: hInfo.base,
-        stub: hInfo.name,
-        ext: hInfo.ext
-      };
-    } else {
-      return {
-        dir: mkpath(hInfo.dir), // change \ to /
-        filename: hInfo.base,
-        stub: hInfo.name,
-        ext: hInfo.ext
-      };
-    }
-  } catch (error1) {
-    err = error1;
-    debug(`return '${err.message} from parseSource()`);
-    return {
-      filename: source,
-      stub: source,
-      error: err.message
-    };
-  }
+export var isFile = function(fullpath) {
+  return fs.lstatSync(fullpath).isFile();
+};
+
+// ---------------------------------------------------------------------------
+export var isDir = function(fullpath) {
+  return fs.lstatSync(fullpath).isDirectory();
 };
 
 // ---------------------------------------------------------------------------
@@ -315,5 +277,53 @@ export var shortenPath = function(path) {
     return `~/${tail}`;
   } else {
     return str;
+  }
+};
+
+// ---------------------------------------------------------------------------
+export var parseSource = function(source) {
+  var dir, err, hInfo;
+  // --- returns {
+  //        dir
+  //        filename   # only this is guaranteed to be set
+  //        stub
+  //        ext
+  //        }
+  debug("enter parseSource()");
+  if (source === 'unit test') {
+    debug("return 'unit test' from parseSource()");
+    return {
+      filename: 'unit test',
+      stub: 'unit test'
+    };
+  }
+  try {
+    hInfo = pathlib.parse(source);
+    debug("return from parseSource()", hInfo);
+    if (hInfo.root) {
+      dir = mkpath(hInfo.dir); // change \ to /
+      return {
+        dir: dir,
+        fullpath: mkpath(dir, hInfo.base),
+        filename: hInfo.base,
+        stub: hInfo.name,
+        ext: hInfo.ext
+      };
+    } else {
+      return {
+        dir: mkpath(hInfo.dir), // change \ to /
+        filename: hInfo.base,
+        stub: hInfo.name,
+        ext: hInfo.ext
+      };
+    }
+  } catch (error1) {
+    err = error1;
+    debug(`return '${err.message} from parseSource()`);
+    return {
+      filename: source,
+      stub: source,
+      error: err.message
+    };
   }
 };

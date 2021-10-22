@@ -11,7 +11,7 @@ import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {say, undef} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {
-	mydir, mkpath, withExt,
+	mydir, mkpath, withExt, isFile, isDir,
 	getSubDirs, pathTo, getFullPath, parseSource,
 	} from '@jdeighan/coffee-utils/fs'
 
@@ -103,3 +103,14 @@ simple.equal 91, parseSource("c:\\Users\\johnd\\oz\\src\\test.js"), {
 	stub: 'test'
 	ext: '.js'
 	}
+
+if process.platform == 'win32'
+	simple.truthy 108, isDir('c:/Users')
+	simple.truthy 109, isDir('c:/Program Files')
+	simple.falsy  110, isFile('c:/Users')
+	simple.falsy  111, isFile('c:/Program Files')
+
+	simple.falsy  113, isDir('c:/Windows/notepad.exe')
+	simple.falsy  114, isDir('c:/Program Files/Windows Media Player/wmplayer.exe')
+	simple.truthy 115, isFile('c:/Windows/notepad.exe')
+	simple.truthy 116, isFile('c:/Program Files/Windows Media Player/wmplayer.exe')
