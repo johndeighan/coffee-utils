@@ -24,6 +24,13 @@ export isDir = (fullpath) ->
 	return fs.lstatSync(fullpath).isDirectory()
 
 # ---------------------------------------------------------------------------
+
+export isSimpleFileName = (path) ->
+
+	h = pathlib.parse(path)
+	return ! h.root && ! h.dir && h.base
+
+# ---------------------------------------------------------------------------
 #    mydir() - pass argument `import.meta.url` and it will return
 #              the directory your file is in
 

@@ -11,7 +11,7 @@ import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {say, undef} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {
-	mydir, mkpath, withExt, isFile, isDir,
+	mydir, mkpath, withExt, isFile, isDir, isSimpleFileName,
 	getSubDirs, pathTo, getFullPath, parseSource,
 	} from '@jdeighan/coffee-utils/fs'
 
@@ -114,3 +114,6 @@ if process.platform == 'win32'
 	simple.falsy  114, isDir('c:/Program Files/Windows Media Player/wmplayer.exe')
 	simple.truthy 115, isFile('c:/Windows/notepad.exe')
 	simple.truthy 116, isFile('c:/Program Files/Windows Media Player/wmplayer.exe')
+
+	simple.truthy 118, isSimpleFileName('notepad.exe')
+	simple.falsy  119, isSimpleFileName('c:/Program Files/Windows Media Player/wmplayer.exe')

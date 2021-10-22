@@ -39,6 +39,13 @@ export var isDir = function(fullpath) {
 };
 
 // ---------------------------------------------------------------------------
+export var isSimpleFileName = function(path) {
+  var h;
+  h = pathlib.parse(path);
+  return !h.root && !h.dir && h.base;
+};
+
+// ---------------------------------------------------------------------------
 //    mydir() - pass argument `import.meta.url` and it will return
 //              the directory your file is in
 export var mydir = function(url) {
