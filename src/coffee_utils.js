@@ -276,30 +276,44 @@ export var deepCopy = function(obj) {
 
 // ---------------------------------------------------------------------------
 //   escapeStr - escape newlines, TAB chars, etc.
-export var escapeStr = function(str) {
+export var escapeStr = function(str, hEscape = undef) {
   var ch, lParts;
-  if (str == null) {
-    return 'undef';
-  }
-  if (typeof str !== 'string') {
+  if (!isString(str)) {
     croak("escapeStr(): not a string", str, 'STRING');
   }
-  lParts = (function() {
-    var i, len, ref, results;
-    ref = str.split('');
-    results = [];
-    for (i = 0, len = ref.length; i < len; i++) {
-      ch = ref[i];
-      if (ch === '\n') {
-        results.push('\\n');
-      } else if (ch === '\t') {
-        results.push('\\t');
-      } else {
-        results.push(ch);
+  if (hEscape != null) {
+    lParts = (function() {
+      var i, len, ref, results;
+      ref = str.split('');
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        ch = ref[i];
+        if (hEscape[ch] != null) {
+          results.push(hEscape[ch]);
+        } else {
+          results.push(ch);
+        }
       }
-    }
-    return results;
-  })();
+      return results;
+    })();
+  } else {
+    lParts = (function() {
+      var i, len, ref, results;
+      ref = str.split('');
+      results = [];
+      for (i = 0, len = ref.length; i < len; i++) {
+        ch = ref[i];
+        if (ch === '\n') {
+          results.push('\\n');
+        } else if (ch === '\t') {
+          results.push('\\t');
+        } else {
+          results.push(ch);
+        }
+      }
+      return results;
+    })();
+  }
   return lParts.join('');
 };
 

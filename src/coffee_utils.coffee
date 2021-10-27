@@ -277,19 +277,24 @@ export deepCopy = (obj) ->
 # ---------------------------------------------------------------------------
 #   escapeStr - escape newlines, TAB chars, etc.
 
-export escapeStr = (str) ->
+export escapeStr = (str, hEscape=undef) ->
 
-	if ! str?
-		return 'undef'
-	if typeof str != 'string'
+	if ! isString(str)
 		croak "escapeStr(): not a string", str, 'STRING'
-	lParts = for ch in str.split('')
-		if ch == '\n'
-			'\\n'
-		else if ch == '\t'
-			'\\t'
-		else
-			ch
+	if hEscape?
+		lParts = for ch in str.split('')
+			if hEscape[ch]?
+				hEscape[ch]
+			else
+				ch
+	else
+		lParts = for ch in str.split('')
+			if ch == '\n'
+				'\\n'
+			else if ch == '\t'
+				'\\t'
+			else
+				ch
 	return lParts.join('')
 
 # ---------------------------------------------------------------------------

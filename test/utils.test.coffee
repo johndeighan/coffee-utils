@@ -61,6 +61,13 @@ simple.equal 88, words('  a   b   c  '), ['a', 'b', 'c']
 # ---------------------------------------------------------------------------
 
 simple.equal 92, escapeStr("\t\tXXX\n"), "\\t\\tXXX\\n"
+hEsc = {
+	"\n": "\\n"
+	"\t": "\\t"
+	"\"": "\\\""
+	}
+simple.equal 64, escapeStr("\thas quote: \"\nnext line", hEsc), \
+	"\\thas quote: \\\"\\nnext line"
 
 # ---------------------------------------------------------------------------
 
