@@ -5,7 +5,7 @@ import {
 	say, undef, error, warn, isString, isObject, isArray, isHash,
 	isEmpty, nonEmpty, isComment, getClassName, isNumber,
 	isFunction, isInteger, rtrim,
-	ltrunc, rtrunc,
+	ltrunc, rtrunc, extractMatches,
 	words, escapeStr, titleLine,
 	removeCR, CWS, isArrayOfHashes,
 	oneline, croak, isRegExp,
@@ -206,3 +206,9 @@ simple.falsy  272, isRegExp({a:1, b:'ccc'})
 simple.falsy  272, isRegExp(undef)
 
 simple.truthy 278, isRegExp(/\.coffee/)
+
+# ---------------------------------------------------------------------------
+
+simple.equal 212, extractMatches("..3 and 4 plus 5", /\d+/g, parseInt),
+	[3, 4, 5]
+simple.equal 214, extractMatches("And This Is A String", /A/g), ['A','A']

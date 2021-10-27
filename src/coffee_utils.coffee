@@ -325,3 +325,17 @@ export CWS = (str) ->
 	return str.trim().replace(/\s+/sg, ' ')
 
 # ---------------------------------------------------------------------------
+
+export extractMatches = (line, regexp, convertFunc=undef) ->
+
+	lStrings = [...line.matchAll(regexp)]
+	lStrings = for str in lStrings
+		str[0]
+	if convertFunc?
+		lConverted = for str in lStrings
+			convertFunc(str)
+		return lConverted
+	else
+		return lStrings
+
+# ---------------------------------------------------------------------------

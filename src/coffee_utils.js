@@ -344,3 +344,32 @@ export var CWS = function(str) {
 };
 
 // ---------------------------------------------------------------------------
+export var extractMatches = function(line, regexp, convertFunc = undef) {
+  var lConverted, lStrings, str;
+  lStrings = [...line.matchAll(regexp)];
+  lStrings = (function() {
+    var i, len, results;
+    results = [];
+    for (i = 0, len = lStrings.length; i < len; i++) {
+      str = lStrings[i];
+      results.push(str[0]);
+    }
+    return results;
+  })();
+  if (convertFunc != null) {
+    lConverted = (function() {
+      var i, len, results;
+      results = [];
+      for (i = 0, len = lStrings.length; i < len; i++) {
+        str = lStrings[i];
+        results.push(convertFunc(str));
+      }
+      return results;
+    })();
+    return lConverted;
+  } else {
+    return lStrings;
+  }
+};
+
+// ---------------------------------------------------------------------------
