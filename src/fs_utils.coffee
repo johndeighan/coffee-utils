@@ -52,7 +52,13 @@ export mydir = (url) ->
 
 export mkpath = (lParts...) ->
 
-	newPath = lParts.join('/').replace(/\\/g, '/')
+	# --- Ignore empty parts
+	lNewParts = []
+	for part in lParts
+		if nonEmpty(part)
+			lNewParts.push part
+
+	newPath = lNewParts.join('/').replace(/\\/g, '/')
 	if lMatches = newPath.match(/^([A-Z])\:(.*)$/)
 		[_, drive, rest] = lMatches
 		return "#{drive.toLowerCase()}:#{rest}"
@@ -110,24 +116,26 @@ export barf = (filepath, contents) ->
 # ---------------------------------------------------------------------------
 #   withExt - change file extention in a file name
 
-export withExt = (filename, newExt) ->
+export withExt = (path, newExt, hOptions={}) ->
+	# --- Valid options:
+	#        removeLeadingUnderScore - boolean
 
 	assert newExt, "withExt(): No newExt provided"
 	if newExt.indexOf('.') != 0
 		newExt = '.' + newExt
-	if lMatches = filename.match(/^(.*)\.([^.]+)$/)
-		[_, pre, ext] = lMatches
-		return "#{pre}#{newExt}"
-	else
-		error "withExt(): Invalid file name: '#{filename}'"
+
+	{dir, name, ext} = pathlib.parse(path)
+	if hOptions.removeLeadingUnderScore && (name.indexOf('_')==0)
+		name = name.substr(1)
+	return mkpath(dir, "#{name}#{newExt}")
 
 # ---------------------------------------------------------------------------
 #   withUnderScore - add '_' to file name
 
-withUnderScore = (path) ->
+export withUnderScore = (path) ->
 
-	h = pathlib.parse(path)
-	return mkpath(h.dir, "_#{h.base}")
+	{dir, base} = pathlib.parse(path)
+	return mkpath(dir, "_#{base}")
 
 # ---------------------------------------------------------------------------
 #    Get all subdirectories of a directory

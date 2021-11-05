@@ -11,8 +11,9 @@ import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {say, undef} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {
-	mydir, mkpath, withExt, isFile, isDir, isSimpleFileName,
+	mydir, mkpath, isFile, isDir, isSimpleFileName,
 	getSubDirs, pathTo, getFullPath, parseSource, fileExt,
+	withExt, withUnderScore,
 	} from '@jdeighan/coffee-utils/fs'
 
 simple = new UnitTester()
@@ -22,7 +23,21 @@ assert existsSync(dir)
 
 # ---------------------------------------------------------------------------
 
-simple.equal 21, withExt('file.starbucks', 'svelte'), 'file.svelte'
+hOpt = {removeLeadingUnderScore: true}
+
+simple.equal 21, withExt('file.py', 'svelte'), 'file.svelte'
+simple.equal 21, withExt('file.py', 'svelte', hOpt), 'file.svelte'
+simple.equal 21, withExt('_file.py', 'svelte', hOpt), 'file.svelte'
+
+simple.equal 21, withExt('/bin/file.py', 'svelte'), '/bin/file.svelte'
+simple.equal 21, withExt('/bin/file.py', 'svelte', hOpt), '/bin/file.svelte'
+simple.equal 21, withExt('/bin/_file.py', 'svelte', hOpt), '/bin/file.svelte'
+
+simple.equal 21, withUnderScore('file.py', 'svelte'), '_file.py'
+simple.equal 21, withUnderScore('_file.py', 'svelte'), '__file.py'
+
+simple.equal 21, withUnderScore('/bin/file.py', 'svelte'), '/bin/_file.py'
+simple.equal 21, withUnderScore('/bin/_file.py', 'svelte'), '/bin/__file.py'
 
 # ---------------------------------------------------------------------------
 
@@ -45,6 +60,7 @@ simple.equal 39, pathTo('test.txt', dir), \
 # ---------------------------------------------------------------------------
 
 simple.equal 44, mkpath('/usr/lib', 'johnd'), '/usr/lib/johnd'
+simple.equal 48, mkpath('', '/usr/lib', undef, 'johnd'), '/usr/lib/johnd'
 simple.equal 45, mkpath("c:", 'local/user'), 'c:/local/user'
 simple.equal 46, mkpath('/usr', 'lib', 'local', 'johnd'),
 		'/usr/lib/local/johnd'
