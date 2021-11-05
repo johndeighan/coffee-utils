@@ -116,9 +116,11 @@ setLogger (str) -> lLines.push(str)
 	tester.equal 116, lLines, """
 			abc
 			name:
-			   'This is a rather long bit of'
-			   'text which changes'
-			   'how it's displayed'
+			==========================================
+			This is a rather long bit of
+			text which changes
+			how it's displayed
+			==========================================
 			"""
 	)()
 
@@ -214,9 +216,11 @@ setLogger (str) -> lLines.push(str)
 			""", {prefix: '<-->', logItem: true}
 	tester.equal 215, lLines, """
 			<-->name:
-			   'This is a rather long bit of'
-			   'text which changes'
-			   'how it's displayed'
+			==========================================
+			This is a rather long bit of
+			text which changes
+			how it's displayed
+			==========================================
 			"""
 	)()
 

@@ -11,7 +11,8 @@ import {
   isString,
   isHash,
   isFunction,
-  escapeStr
+  escapeStr,
+  sep_eq
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -131,11 +132,13 @@ export var log = function(...lArgs) {
       logger(`${prefix}${str} = '${esc}'`);
     } else {
       logger(`${prefix}${str}:`);
+      logger(`${itemPrefix}${sep_eq}`);
       ref = blockToArray(item);
       for (i = 0, len = ref.length; i < len; i++) {
         line = ref[i];
-        logger(`${itemPrefix}   '${escapeStr(line)}'`);
+        logger(`${itemPrefix}${escapeStr(line)}`);
       }
+      logger(`${itemPrefix}${sep_eq}`);
     }
   } else {
     // --- It's some type of object

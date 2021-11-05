@@ -250,8 +250,10 @@ tester = new TraceTester()
 	simple.equal 250, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc:"
-		"       'this is one very long line'"
-		"       'this is another very long line'"
+		"    =========================================="
+		"    this is one very long line"
+		"    this is another very long line"
+		"    =========================================="
 		"Answer is 42"
 		]
 	)()

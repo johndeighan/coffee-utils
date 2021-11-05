@@ -3,7 +3,8 @@
 import yaml from 'js-yaml'
 
 import {
-	assert, undef, isNumber, isString, isHash, isFunction, escapeStr,
+	assert, undef, isNumber, isString, isHash, isFunction,
+	escapeStr, sep_eq,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
 import {tabify} from '@jdeighan/coffee-utils/indent'
@@ -117,8 +118,10 @@ export log = (lArgs...) ->
 			logger "#{prefix}#{str} = '#{esc}'"
 		else
 			logger "#{prefix}#{str}:"
+			logger "#{itemPrefix}#{sep_eq}"
 			for line in blockToArray(item)
-				logger "#{itemPrefix}   '#{escapeStr(line)}'"
+				logger "#{itemPrefix}#{escapeStr(line)}"
+			logger "#{itemPrefix}#{sep_eq}"
 	else
 		# --- It's some type of object
 		json = JSON.stringify(item)
