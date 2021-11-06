@@ -1,5 +1,6 @@
 # utils.test.cielo
 
+import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {
 	say, undef, error, warn, isString, isObject, isArray, isHash,
 	isEmpty, nonEmpty, isComment, getClassName, isNumber,
