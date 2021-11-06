@@ -1,4 +1,4 @@
-# block2.test.coffee
+# block2.test.cielo
 
 import assert from 'assert'
 import test from 'ava'

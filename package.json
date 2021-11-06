@@ -21,9 +21,9 @@
 	},
 	"scripts": {
 		"build": "cls && coffee -c .",
-		"pretest": "cls && coffee -c .",
+		"pretest": "cls && cielo ./test",
 		"test": "ava ./test/*.test.js",
-		"prefinaltest": "cls && coffee -c .",
+		"prefinaltest": "cls && cielo ./test",
 		"finaltest": "cross-env FINALTEST=yes ava ./test/*.test.js"
 	},
 	"repository": {

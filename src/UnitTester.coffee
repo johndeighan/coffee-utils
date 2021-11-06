@@ -175,6 +175,9 @@ export class UnitTester
 
 	test: (lineNum, input, expected) ->
 
+		assert isInteger(lineNum),
+			"UnitTester.test(): arg 1 must be an integer"
+
 		@initialize()
 		@lineNum = lineNum    # set an object property
 
@@ -187,9 +190,6 @@ export class UnitTester
 		if lineNum < -100000
 			setDebugging true
 
-		assert isInteger(lineNum),
-			"UnitTester.test(): arg 1 must be an integer"
-
 		lineNum = @getLineNum(lineNum)   # corrects for duplicates
 		errMsg = undef
 		try
@@ -200,6 +200,7 @@ export class UnitTester
 			errMsg = err.message || 'UNKNOWN ERROR'
 			log "got ERROR: #{errMsg}"
 
+		expected = @transformExpected(expected)
 		if isString(expected)
 			expected = @normalize(expected)
 
@@ -232,6 +233,12 @@ export class UnitTester
 	# ........................................................................
 
 	transformValue: (input) ->
+		return input
+
+	# ........................................................................
+
+	transformExpected: (input) ->
+		log "CALL BASE CLASS transformExpected!!!"
 		return input
 
 	# ........................................................................

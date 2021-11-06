@@ -185,6 +185,7 @@ export var UnitTester = class UnitTester {
   // ........................................................................
   test(lineNum, input, expected) {
     var err, errMsg, got, whichTest;
+    assert(isInteger(lineNum), "UnitTester.test(): arg 1 must be an integer");
     this.initialize();
     this.lineNum = lineNum; // set an object property
     if ((lineNum < 0) && process.env.FINALTEST) {
@@ -196,7 +197,6 @@ export var UnitTester = class UnitTester {
     if (lineNum < -100000) {
       setDebugging(true);
     }
-    assert(isInteger(lineNum), "UnitTester.test(): arg 1 must be an integer");
     lineNum = this.getLineNum(lineNum); // corrects for duplicates
     errMsg = undef;
     try {
@@ -209,6 +209,7 @@ export var UnitTester = class UnitTester {
       errMsg = err.message || 'UNKNOWN ERROR';
       log(`got ERROR: ${errMsg}`);
     }
+    expected = this.transformExpected(expected);
     if (isString(expected)) {
       expected = this.normalize(expected);
     }
@@ -245,6 +246,12 @@ export var UnitTester = class UnitTester {
 
   // ........................................................................
   transformValue(input) {
+    return input;
+  }
+
+  // ........................................................................
+  transformExpected(input) {
+    log("CALL BASE CLASS transformExpected!!!");
     return input;
   }
 

@@ -1,4 +1,4 @@
-# indent.test.coffee
+# indent.test.cielo
 
 import assert from 'assert'
 
@@ -76,14 +76,14 @@ simple.equal 65, indented(['abc','','def'], 2), '\t\tabc\n\n\t\tdef'
 	prefix = '   '    # 3 spaces
 
 	simple.equal 78, tabify("""
-			first line
-			#{prefix}second line
-			#{prefix}#{prefix}third line
-			""", 3), """
-			first line
-			\tsecond line
-			\t\tthird line
-			"""
+		first line
+		#{prefix}second line
+		#{prefix}#{prefix}third line
+		""", 3), """
+		first line
+		\tsecond line
+		\t\tthird line
+		"""
 	)()
 
 # ---------------------------------------------------------------------------
@@ -93,14 +93,14 @@ simple.equal 65, indented(['abc','','def'], 2), '\t\tabc\n\n\t\tdef'
 	prefix = '   '    # 3 spaces
 
 	simple.equal 95, tabify("""
-			first line
-			#{prefix}second line
-			#{prefix}#{prefix}third line
-			"""), """
-			first line
-			\tsecond line
-			\t\tthird line
-			"""
+		first line
+		#{prefix}second line
+		#{prefix}#{prefix}third line
+		"""), """
+		first line
+		\tsecond line
+		\t\tthird line
+		"""
 	)()
 
 # ---------------------------------------------------------------------------
@@ -109,14 +109,14 @@ simple.equal 65, indented(['abc','','def'], 2), '\t\tabc\n\n\t\tdef'
 	prefix = '   '    # 3 spaces
 
 	simple.equal 111, untabify("""
-			first line
-			\tsecond line
-			\t\tthird line
-			""", 3), """
-			first line
-			#{prefix}second line
-			#{prefix}#{prefix}third line
-			"""
+		first line
+		\tsecond line
+		\t\tthird line
+		""", 3), """
+		first line
+		#{prefix}second line
+		#{prefix}#{prefix}third line
+		"""
 	)()
 
 # ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-# block.test.coffee
+# block.test.cielo
 
 import assert from 'assert'
 
@@ -13,17 +13,17 @@ simple = new UnitTester()
 
 # ---------------------------------------------------------------------------
 
-simple.equal 108, blockToArray("abc\nxyz\n"), [
+simple.equal 16, blockToArray("abc\nxyz\n"), [
 	'abc'
 	'xyz'
 	]
 
-simple.equal 113, blockToArray("abc\nxyz\n\n\n\n"), [
+simple.equal 21, blockToArray("abc\nxyz\n\n\n\n"), [
 	'abc'
 	'xyz'
 	]
 
-simple.equal 118, blockToArray("abc\n\nxyz\n"), [
+simple.equal 26, blockToArray("abc\n\nxyz\n"), [
 	'abc'
 	''
 	'xyz'
@@ -31,80 +31,80 @@ simple.equal 118, blockToArray("abc\n\nxyz\n"), [
 
 # ---------------------------------------------------------------------------
 
-simple.equal 126, arrayToBlock(['a','b','c']), "a\nb\nc\n"
+simple.equal 34, arrayToBlock(['a','b','c']), "a\nb\nc\n"
 
 # ---------------------------------------------------------------------------
 
-simple.equal 225, firstLine("""
-		#starbucks
-		do this
-		do that
-		"""), '#starbucks'
+simple.equal 38, firstLine("""
+	#starbucks
+	do this
+	do that
+	"""), '#starbucks'
 
 # ---------------------------------------------------------------------------
 
-simple.equal 225, remainingLines("""
-		#starbucks
-		do this
-		do that
-		"""), """
-		do this
-		do that
-		"""
+simple.equal 46, remainingLines("""
+	#starbucks
+	do this
+	do that
+	"""), """
+	do this
+	do that
+	"""
 
 # ---------------------------------------------------------------------------
 
 (() ->
 	str = joinBlocks('import me', '', 'do this\ndo that')
-	simple.equal 17, str, """
-			import me
-			do this
-			do that
-			"""
+	simple.equal 59, str, """
+		import me
+		do this
+		do that
+		"""
 	)()
 
 # ---------------------------------------------------------------------------
 
-simple.equal 49, normalizeBlock("""
-			line 1
-			line 2
-			"""), """
-			line 1
-			line 2
-			""" + '\n'
+simple.equal 68, normalizeBlock("""
+	line 1
+	line 2
+	"""), """
+	line 1
+	line 2
+	""" + '\n'
 
-simple.equal 57, normalizeBlock("""
-			line 1
+simple.equal 76, normalizeBlock("""
+	line 1
 
-			line 2
-			"""), """
-			line 1
-			line 2
-			""" + '\n'
+	line 2
+	"""), """
+	line 1
+	line 2
+	""" + '\n'
 
-simple.equal 66, normalizeBlock("""
+simple.equal 85, normalizeBlock("""
 
-			line 1
+	line 1
 
-			line 2
+	line 2
 
 
-			"""), """
-			line 1
-			line 2
-			""" + '\n'
+	"""), """
+	line 1
+	line 2
+	""" + '\n'
 
 # ---------------------------------------------------------------------------
 
-simple.equal 96, truncateBlock("""
-			line 1
-			line 2
-			line 3
-			line 4
-			""", 2), """
-			line 1
-			line 2
-			""" + '\n'
+simple.equal 99, truncateBlock("""
+	line 1
+	line 2
+	line 3
+	line 4
+	""", 2), """
+	line 1
+	line 2
+	""" + '\n'
 
 # ---------------------------------------------------------------------------
 
@@ -116,12 +116,12 @@ simple.equal 96, truncateBlock("""
 		"",
 		]
 	str = joinBlocks(lBlocks...)
-	simple.equal 34, str, """
-			import {say} from '@jdeighan/coffee-utils'
-			<script>
-				x = 42
-			</script>
-			"""
+	simple.equal 119, str, """
+		import {say} from '@jdeighan/coffee-utils'
+		<script>
+			x = 42
+		</script>
+		"""
 	)()
 
 # ---------------------------------------------------------------------------
@@ -135,12 +135,12 @@ simple.equal 96, truncateBlock("""
 			log "line 2 in unit test"
 		"""
 	str = joinBlocks(lImports..., code)
-	simple.equal 34, str, """
+	simple.equal 138, str, """
 
-			import {say} from '@jdeighan/coffee-utils'
-			if (x==42)
-				log "line 2 in unit test"
-			"""
+		import {say} from '@jdeighan/coffee-utils'
+		if (x==42)
+			log "line 2 in unit test"
+		"""
 	)()
 
 # ---------------------------------------------------------------------------
@@ -156,12 +156,12 @@ simple.equal 96, truncateBlock("""
 	filepath = "c:/Users/johnd/coffee-utils/test/data/file2.txt"
 	await forEachLine filepath, callback
 
-	simple.equal 55, lLines, [
-			"abc",
-			"def",
-			"ghi",
-			"jkl",
-			]
+	simple.equal 159, lLines, [
+		"abc",
+		"def",
+		"ghi",
+		"jkl",
+		]
 	)()
 
 # ---------------------------------------------------------------------------
@@ -177,9 +177,9 @@ simple.equal 96, truncateBlock("""
 	filepath = "c:/Users/johnd/coffee-utils/test/data/file3.txt"
 	await forEachBlock filepath, callback
 
-	simple.equal 76, lBlocks, [
-			"abc\ndef",
-			"abc\ndef\nghi",
-			"abc\ndef\nghi\njkl",
-			]
+	simple.equal 180, lBlocks, [
+		"abc\ndef",
+		"abc\ndef\nghi",
+		"abc\ndef\nghi\njkl",
+		]
 	)()

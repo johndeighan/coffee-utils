@@ -1,4 +1,4 @@
-# test.coffee
+# tester.test.cielo
 
 import {pass} from '@jdeighan/coffee-utils'
 import {UnitTester} from '@jdeighan/coffee-utils/test'

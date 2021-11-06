@@ -1,4 +1,3 @@
-import {error} from '@jdeighan/coffee-utils'
 # log.test.cielo
 
 import {undef, escapeStr} from '@jdeighan/coffee-utils'
@@ -288,7 +287,8 @@ simple.equal 270, stringify({a:"word", b:"blind"}), """
 
 setStringifier(JSON.stringify)
 
-simple.equal 278, stringify({a:"word", b:"blind"}), '{"a":"word","b":"blind"}'
+simple.equal 278, stringify({a:"word", b:"blind"}),
+		'{"a":"word","b":"blind"}'
 
 setStringifier(tamlStringify)
 
