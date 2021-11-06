@@ -23,8 +23,22 @@ import {
   tabify
 } from '@jdeighan/coffee-utils/indent';
 
+// --- This logger only ever gets passed a single string argument
 logger = console.log; // for strings
 
+
+// ---------------------------------------------------------------------------
+export var setLogger = function(func) {
+  var orgLogger;
+  orgLogger = logger;
+  if (func != null) {
+    assert(isFunction(func), "setLogger() not a function");
+    logger = func;
+  } else {
+    logger = console.log;
+  }
+  return orgLogger;
+};
 
 // ---------------------------------------------------------------------------
 // the default stringifier
@@ -44,16 +58,6 @@ export var tamlStringify = function(obj) {
 // ---------------------------------------------------------------------------
 export var stringify = tamlStringify; // for non-strings
 
-
-// ---------------------------------------------------------------------------
-export var setLogger = function(func) {
-  if (func != null) {
-    assert(isFunction(func), "setLogger() not a function");
-    logger = func;
-  } else {
-    logger = console.log;
-  }
-};
 
 // ---------------------------------------------------------------------------
 export var setStringifier = function(func) {

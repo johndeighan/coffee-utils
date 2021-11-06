@@ -20,10 +20,10 @@
 		"node": ">=12.0.0"
 	},
 	"scripts": {
-		"build": "cls && coffee -c .",
-		"pretest": "cls && cielo ./test",
+		"build": "cls && rm -f ./src/*.js && coffee -c ./src",
+		"pretest": "npm run build && rm -f ./test/*.js && rm -f ./test/*.coffee && cielo -fq ./test",
 		"test": "ava ./test/*.test.js",
-		"prefinaltest": "cls && cielo ./test",
+		"prefinaltest": "npm run pretest",
 		"finaltest": "cross-env FINALTEST=yes ava ./test/*.test.js"
 	},
 	"repository": {

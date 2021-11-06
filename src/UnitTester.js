@@ -251,7 +251,6 @@ export var UnitTester = class UnitTester {
 
   // ........................................................................
   transformExpected(input) {
-    log("CALL BASE CLASS transformExpected!!!");
     return input;
   }
 

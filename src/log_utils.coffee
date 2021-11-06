@@ -9,7 +9,20 @@ import {
 import {blockToArray} from '@jdeighan/coffee-utils/block'
 import {tabify} from '@jdeighan/coffee-utils/indent'
 
+# --- This logger only ever gets passed a single string argument
 logger = console.log          # for strings
+
+# ---------------------------------------------------------------------------
+
+export setLogger = (func) ->
+
+	orgLogger = logger
+	if func?
+		assert isFunction(func), "setLogger() not a function"
+		logger = func
+	else
+		logger = console.log
+	return orgLogger
 
 # ---------------------------------------------------------------------------
 # the default stringifier
@@ -29,17 +42,6 @@ export tamlStringify = (obj) ->
 # ---------------------------------------------------------------------------
 
 export stringify = tamlStringify # for non-strings
-
-# ---------------------------------------------------------------------------
-
-export setLogger = (func) ->
-
-	if func?
-		assert isFunction(func), "setLogger() not a function"
-		logger = func
-	else
-		logger = console.log
-	return
 
 # ---------------------------------------------------------------------------
 

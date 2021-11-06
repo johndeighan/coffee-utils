@@ -5,7 +5,7 @@ import {
 	oneline, escapeStr, isNumber, isArray,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
-import {log} from '@jdeighan/coffee-utils/log'
+import {log, setLogger} from '@jdeighan/coffee-utils/log'
 import {slurp} from '@jdeighan/coffee-utils/fs'
 
 vbar = '│'       # unicode 2502
@@ -24,6 +24,27 @@ lDebugStack = []
 export debugging = false
 ifMatches = undef
 lDebugFuncs = undef
+
+stdLogger = false
+
+# ---------------------------------------------------------------------------
+
+export useStdLogger = (flag=true) ->
+
+	stdLogger = flag
+	return
+
+# ---------------------------------------------------------------------------
+
+logger = (lArgs...) ->
+
+	if stdLogger
+		log lArgs...
+	else
+		orgLogger = setLogger(console.log)
+		log lArgs...
+		setLogger(orgLogger)
+	return
 
 # ---------------------------------------------------------------------------
 
@@ -158,9 +179,9 @@ export debug = (lArgs...) ->
 			prefix = indent.repeat(debugLevel)
 
 		if (nArgs==1)
-			log str, item, {prefix}
+			logger str, item, {prefix}
 		else
-			log str, item, {
+			logger str, item, {
 				prefix,
 				logItem: true,
 				itemPrefix: stripArrow(prefix),
@@ -222,15 +243,15 @@ export checkTrace = (block) ->
 			funcName = lMatches[1]
 			len = lStack.length
 			if (len == 0)
-				log "return from #{funcName} with empty stack"
+				logger "return from #{funcName} with empty stack"
 			else if (lStack[len-1] == funcName)
 				lStack.pop()
 			else if (lStack[len-2] == funcName)
-				log "missing return from #{lStack[len-2]}"
+				logger "missing return from #{lStack[len-2]}"
 				lStack.pop()
 				lStack.pop()
 			else
-				log "return from #{funcName} - not found on stack"
+				logger "return from #{funcName} - not found on stack"
 	return
 
 # ---------------------------------------------------------------------------

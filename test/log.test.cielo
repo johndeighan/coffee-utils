@@ -18,14 +18,7 @@ class LogTester extends UnitTester
 
 	# --- when logging, \t becomes 3 spaces
 	transformExpected: (expected) ->
-		if expected.indexOf("\t") != -1
-			log "TRANSFORM '#{escapeStr(expected)}'"
-			newStr = expected.replace("\t", '   ')
-			log "TRANSFORM '#{escapeStr(newStr)}'"
-			return newStr
-		else
-			log "OK"
-			return expected
+		return expected.replace(/\t/g, '   ')
 
 	normalize: (text) ->
 		return text

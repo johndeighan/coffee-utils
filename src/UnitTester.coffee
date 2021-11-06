@@ -8,9 +8,7 @@ import {
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
 import {log, currentLogger, setLogger} from '@jdeighan/coffee-utils/log'
-import {
-	debug, debugging, setDebugging,
-	} from '@jdeighan/coffee-utils/debug'
+import {debug, debugging, setDebugging} from '@jdeighan/coffee-utils/debug'
 
 # ---------------------------------------------------------------------------
 
@@ -238,7 +236,6 @@ export class UnitTester
 	# ........................................................................
 
 	transformExpected: (input) ->
-		log "CALL BASE CLASS transformExpected!!!"
 		return input
 
 	# ........................................................................
