@@ -75,8 +75,8 @@ maxOneLine = 32
 export log = (lArgs...) ->
 	# --- (str, item, hOptions)
 	#     valid options:
-	#        prefix
 	#        logItem
+	#        prefix
 	#        itemPrefix
 
 	if (lArgs.length==0)

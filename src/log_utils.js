@@ -87,8 +87,8 @@ export var log = function(...lArgs) {
   var esc, hOptions, i, item, itemPrefix, j, json, len, len1, line, logItem, prefix, ref, ref1, str;
   // --- (str, item, hOptions)
   //     valid options:
-  //        prefix
   //        logItem
+  //        prefix
   //        itemPrefix
   if (lArgs.length === 0) {
     return;
