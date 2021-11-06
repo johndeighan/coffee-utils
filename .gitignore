@@ -107,3 +107,5 @@ dist
 test/*.test.js
 test/*.coffee
 test/temp.*
+test/*.ast
+src/*.ast
