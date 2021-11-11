@@ -25,7 +25,6 @@ export setLogger = (func) ->
 	return orgLogger
 
 # ---------------------------------------------------------------------------
-# the default stringifier
 
 export tamlStringify = (obj) ->
 
@@ -40,8 +39,23 @@ export tamlStringify = (obj) ->
 	return str
 
 # ---------------------------------------------------------------------------
+# the default stringifier
 
-export stringify = tamlStringify # for non-strings
+export orderedStringify = (obj) ->
+
+	str = yaml.dump(obj, {
+		skipInvalid: true
+		indent: 1
+		sortKeys: true
+		lineWidth: -1
+		})
+	str = "---\n" + tabify(str)
+	str = str.replace(/\t/g, '   ')  # fr***ing Windows Terminal
+	return str
+
+# ---------------------------------------------------------------------------
+
+export stringify = orderedStringify # for non-strings
 
 # ---------------------------------------------------------------------------
 
@@ -51,7 +65,7 @@ export setStringifier = (func) ->
 		assert isFunction(func), "setStringifier() not a function"
 		stringify = func
 	else
-		stringify = tamlStringify
+		stringify = orderedStringify
 	return
 
 # ---------------------------------------------------------------------------

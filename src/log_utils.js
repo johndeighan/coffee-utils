@@ -41,7 +41,6 @@ export var setLogger = function(func) {
 };
 
 // ---------------------------------------------------------------------------
-// the default stringifier
 export var tamlStringify = function(obj) {
   var str;
   str = yaml.dump(obj, {
@@ -56,7 +55,22 @@ export var tamlStringify = function(obj) {
 };
 
 // ---------------------------------------------------------------------------
-export var stringify = tamlStringify; // for non-strings
+// the default stringifier
+export var orderedStringify = function(obj) {
+  var str;
+  str = yaml.dump(obj, {
+    skipInvalid: true,
+    indent: 1,
+    sortKeys: true,
+    lineWidth: -1
+  });
+  str = "---\n" + tabify(str);
+  str = str.replace(/\t/g, '   '); // fr***ing Windows Terminal
+  return str;
+};
+
+// ---------------------------------------------------------------------------
+export var stringify = orderedStringify; // for non-strings
 
 
 // ---------------------------------------------------------------------------
@@ -65,7 +79,7 @@ export var setStringifier = function(func) {
     assert(isFunction(func), "setStringifier() not a function");
     stringify = func;
   } else {
-    stringify = tamlStringify;
+    stringify = orderedStringify;
   }
 };
 

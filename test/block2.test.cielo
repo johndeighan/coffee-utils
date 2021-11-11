@@ -1,10 +1,9 @@
 # block2.test.cielo
 
-import assert from 'assert'
 import test from 'ava'
 
 import {
-	undef, say, isString, isHash, isEmpty, nonEmpty,
+	undef, say, isString, isHash, isEmpty, nonEmpty, assert,
 	} from '@jdeighan/coffee-utils'
 import {mydir, mkpath} from '@jdeighan/coffee-utils/fs'
 import {UnitTester} from '@jdeighan/coffee-utils/test'
@@ -25,7 +24,7 @@ filepath = mkpath(testDir, 'code2.test.txt')
 		lFirstBlocks = lBlocks
 		return true   # we're only interested in the first set
 
-	test "line 29", (t) ->
+	test "line {{LINE}}", (t) ->
 		await forEachSetOfBlocks filepath, callback
 		t.deepEqual lFirstBlocks, ["f()", "f"]
 	)()
@@ -38,7 +37,7 @@ filepath = mkpath(testDir, 'code2.test.txt')
 		lAllBlockSets.push(lBlocks)
 		return
 
-	test "line 44", (t) ->
+	test "line {{LINE}}", (t) ->
 		await forEachSetOfBlocks filepath, callback
 		t.deepEqual lAllBlockSets, [
 				["f()", "f"],

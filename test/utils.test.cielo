@@ -18,64 +18,64 @@ simple = new UnitTester()
 
 # ---------------------------------------------------------------------------
 
-simple.truthy 21, isEmpty('')
-simple.truthy 22, isEmpty('  \t\t')
-simple.truthy 23, isEmpty([])
-simple.truthy 24, isEmpty({})
+simple.truthy {{LINE}}, isEmpty('')
+simple.truthy {{LINE}}, isEmpty('  \t\t')
+simple.truthy {{LINE}}, isEmpty([])
+simple.truthy {{LINE}}, isEmpty({})
 
-simple.truthy 26, nonEmpty('a')
-simple.truthy 27, nonEmpty('.')
-simple.truthy 28, nonEmpty([2])
-simple.truthy 29, nonEmpty({width: 2})
+simple.truthy {{LINE}}, nonEmpty('a')
+simple.truthy {{LINE}}, nonEmpty('.')
+simple.truthy {{LINE}}, nonEmpty([2])
+simple.truthy {{LINE}}, nonEmpty({width: 2})
 
-simple.truthy 31, isComment("# a comment")
-simple.truthy 32, isComment("### a comment")
-simple.truthy 33, isComment("#\ta comment")
-simple.truthy 34, isComment("###\ta comment")
-simple.truthy 35, isComment("   # a comment")
-simple.truthy 36, isComment("   ### a comment")
-simple.falsy  37, isComment("not much")
-simple.falsy  38, isComment("#foreach x in lItems")
-simple.truthy 39, isComment('#')
-simple.truthy 40, isComment('   #')
-simple.truthy 41, isComment('   ###')
-simple.falsy  42, isComment('#for')
-simple.falsy  43, isComment('   #for')
-simple.falsy  44, isComment('#for line in lLines')
+simple.truthy {{LINE}}, isComment("# a comment")
+simple.truthy {{LINE}}, isComment("### a comment")
+simple.truthy {{LINE}}, isComment("#\ta comment")
+simple.truthy {{LINE}}, isComment("###\ta comment")
+simple.truthy {{LINE}}, isComment("   # a comment")
+simple.truthy {{LINE}}, isComment("   ### a comment")
+simple.falsy  {{LINE}}, isComment("not much")
+simple.falsy  {{LINE}}, isComment("#foreach x in lItems")
+simple.truthy {{LINE}}, isComment('#')
+simple.truthy {{LINE}}, isComment('   #')
+simple.truthy {{LINE}}, isComment('   ###')
+simple.falsy  {{LINE}}, isComment('#for')
+simple.falsy  {{LINE}}, isComment('   #for')
+simple.falsy  {{LINE}}, isComment('#for line in lLines')
 
-simple.equal  46, titleLine('a thing').length, 42
-simple.equal  47, titleLine('a thing','-',5,90).length, 90
-
-# ---------------------------------------------------------------------------
-
-simple.equal 51, rtrim("abc"), "abc"
-simple.equal 52, rtrim("  abc"), "  abc"
-simple.equal 53, rtrim("abc  "), "abc"
-simple.equal 54, rtrim("  abc  "), "  abc"
+simple.equal  {{LINE}}, titleLine('a thing').length, 42
+simple.equal  {{LINE}}, titleLine('a thing','-',5,90).length, 90
 
 # ---------------------------------------------------------------------------
 
-simple.equal 58, words('a b c'), ['a', 'b', 'c']
-simple.equal 59, words('  a   b   c  '), ['a', 'b', 'c']
+simple.equal {{LINE}}, rtrim("abc"), "abc"
+simple.equal {{LINE}}, rtrim("  abc"), "  abc"
+simple.equal {{LINE}}, rtrim("abc  "), "abc"
+simple.equal {{LINE}}, rtrim("  abc  "), "  abc"
 
 # ---------------------------------------------------------------------------
 
-simple.equal 63, escapeStr("\t\tXXX\n"), "\\t\\tXXX\\n"
+simple.equal {{LINE}}, words('a b c'), ['a', 'b', 'c']
+simple.equal {{LINE}}, words('  a   b   c  '), ['a', 'b', 'c']
+
+# ---------------------------------------------------------------------------
+
+simple.equal {{LINE}}, escapeStr("\t\tXXX\n"), "\\t\\tXXX\\n"
 hEsc = {
 	"\n": "\\n"
 	"\t": "\\t"
 	"\"": "\\\""
 	}
-simple.equal 69, escapeStr("\thas quote: \"\nnext line", hEsc), \
+simple.equal {{LINE}}, escapeStr("\thas quote: \"\nnext line", hEsc), \
 	"\\thas quote: \\\"\\nnext line"
 
 # ---------------------------------------------------------------------------
 
-simple.equal 74, rtrunc('/user/lib/.env', 5), '/user/lib'
-simple.equal 75, ltrunc('abcdefg', 3), 'defg'
+simple.equal {{LINE}}, rtrunc('/user/lib/.env', 5), '/user/lib'
+simple.equal {{LINE}}, ltrunc('abcdefg', 3), 'defg'
 
-simple.equal 77, removeCR("abc\r\ndef\r\n"), "abc\ndef\n"
-simple.equal 78, CWS("""
+simple.equal {{LINE}}, removeCR("abc\r\ndef\r\n"), "abc\ndef\n"
+simple.equal {{LINE}}, CWS("""
 		abc
 		def
 				ghi
@@ -83,15 +83,15 @@ simple.equal 78, CWS("""
 
 # ---------------------------------------------------------------------------
 
-simple.truthy 86, isArrayOfHashes([])
-simple.truthy 87, isArrayOfHashes([{}, {}])
-simple.truthy 88, isArrayOfHashes([{a: 1, b:2}, {}])
-simple.truthy 89, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}])
+simple.truthy {{LINE}}, isArrayOfHashes([])
+simple.truthy {{LINE}}, isArrayOfHashes([{}, {}])
+simple.truthy {{LINE}}, isArrayOfHashes([{a: 1, b:2}, {}])
+simple.truthy {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}])
 
-simple.falsy  91, isArrayOfHashes({})
-simple.falsy  92, isArrayOfHashes([1,2,3])
-simple.falsy  93, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, 4])
-simple.falsy  94, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}, [1,2]])
+simple.falsy  {{LINE}}, isArrayOfHashes({})
+simple.falsy  {{LINE}}, isArrayOfHashes([1,2,3])
+simple.falsy  {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, 4])
+simple.falsy  {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}, [1,2]])
 
 # ---------------------------------------------------------------------------
 
@@ -106,68 +106,68 @@ simple.falsy  94, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}, [1,2]])
 	s = 'simple'
 	s2 = new String('abc')
 
-	simple.truthy 109, isHash(h)
-	simple.falsy  110, isHash(l)
-	simple.falsy  111, isHash(o)
-	simple.falsy  112, isHash(n)
-	simple.falsy  113, isHash(n2)
-	simple.falsy  114, isHash(s)
-	simple.falsy  115, isHash(s2)
+	simple.truthy {{LINE}}, isHash(h)
+	simple.falsy  {{LINE}}, isHash(l)
+	simple.falsy  {{LINE}}, isHash(o)
+	simple.falsy  {{LINE}}, isHash(n)
+	simple.falsy  {{LINE}}, isHash(n2)
+	simple.falsy  {{LINE}}, isHash(s)
+	simple.falsy  {{LINE}}, isHash(s2)
 
-	simple.falsy  117, isArray(h)
-	simple.truthy 118, isArray(l)
-	simple.falsy  119, isArray(o)
-	simple.falsy  120, isArray(n)
-	simple.falsy  121, isArray(n2)
-	simple.falsy  122, isArray(s)
-	simple.falsy  123, isArray(s2)
+	simple.falsy  {{LINE}}, isArray(h)
+	simple.truthy {{LINE}}, isArray(l)
+	simple.falsy  {{LINE}}, isArray(o)
+	simple.falsy  {{LINE}}, isArray(n)
+	simple.falsy  {{LINE}}, isArray(n2)
+	simple.falsy  {{LINE}}, isArray(s)
+	simple.falsy  {{LINE}}, isArray(s2)
 
-	simple.falsy  125, isString(h)
-	simple.falsy  126, isString(l)
-	simple.falsy  127, isString(o)
-	simple.falsy  128, isString(n)
-	simple.falsy  129, isString(n2)
-	simple.truthy 130, isString(s)
-	simple.truthy 131, isString(s2)
+	simple.falsy  {{LINE}}, isString(h)
+	simple.falsy  {{LINE}}, isString(l)
+	simple.falsy  {{LINE}}, isString(o)
+	simple.falsy  {{LINE}}, isString(n)
+	simple.falsy  {{LINE}}, isString(n2)
+	simple.truthy {{LINE}}, isString(s)
+	simple.truthy {{LINE}}, isString(s2)
 
-	simple.falsy  133, isObject(h)
-	simple.falsy  134, isObject(l)
-	simple.truthy 135, isObject(o)
-	simple.falsy  136, isObject(n)
-	simple.falsy  137, isObject(n2)
-	simple.falsy  138, isObject(s)
-	simple.falsy  139, isObject(s2)
+	simple.falsy  {{LINE}}, isObject(h)
+	simple.falsy  {{LINE}}, isObject(l)
+	simple.truthy {{LINE}}, isObject(o)
+	simple.falsy  {{LINE}}, isObject(n)
+	simple.falsy  {{LINE}}, isObject(n2)
+	simple.falsy  {{LINE}}, isObject(s)
+	simple.falsy  {{LINE}}, isObject(s2)
 
-	simple.falsy  141, isNumber(h)
-	simple.falsy  142, isNumber(l)
-	simple.falsy  143, isNumber(o)
-	simple.truthy 144, isNumber(n)
-	simple.truthy 145, isNumber(n2)
-	simple.falsy  146, isNumber(s)
-	simple.falsy  147, isNumber(s2)
+	simple.falsy  {{LINE}}, isNumber(h)
+	simple.falsy  {{LINE}}, isNumber(l)
+	simple.falsy  {{LINE}}, isNumber(o)
+	simple.truthy {{LINE}}, isNumber(n)
+	simple.truthy {{LINE}}, isNumber(n2)
+	simple.falsy  {{LINE}}, isNumber(s)
+	simple.falsy  {{LINE}}, isNumber(s2)
 
 	)()
 
 # ---------------------------------------------------------------------------
 
-simple.truthy 153, isFunction(() -> pass)
-simple.falsy  154, isFunction(23)
+simple.truthy {{LINE}}, isFunction(() -> pass)
+simple.falsy  {{LINE}}, isFunction(23)
 
-simple.truthy 156, isInteger(42)
-simple.truthy 157, isInteger(new Number(42))
-simple.falsy  158, isInteger('abc')
-simple.falsy  159, isInteger({})
-simple.falsy  160, isInteger([])
-
-# ---------------------------------------------------------------------------
-
-simple.equal 164, oneline(undef), "undef"
-simple.equal 165, oneline("\t\tabc\nxyz"), "'\\t\\tabc\\nxyz'"
-simple.equal 166, oneline({a:1, b:'xyz'}), '{"a":1,"b":"xyz"}'
+simple.truthy {{LINE}}, isInteger(42)
+simple.truthy {{LINE}}, isInteger(new Number(42))
+simple.falsy  {{LINE}}, isInteger('abc')
+simple.falsy  {{LINE}}, isInteger({})
+simple.falsy  {{LINE}}, isInteger([])
 
 # ---------------------------------------------------------------------------
 
-simple.equal 170, CWS("""
+simple.equal {{LINE}}, oneline(undef), "undef"
+simple.equal {{LINE}}, oneline("\t\tabc\nxyz"), "'\\t\\tabc\\nxyz'"
+simple.equal {{LINE}}, oneline({a:1, b:'xyz'}), '{"a":1,"b":"xyz"}'
+
+# ---------------------------------------------------------------------------
+
+simple.equal {{LINE}}, CWS("""
 		a simple
 		error message
 		"""), "a simple error message"
@@ -182,7 +182,7 @@ simple.equal 170, CWS("""
 	obj = {a:1, b:2}
 	try
 		croak "bad stuff", "An Object", obj
-	simple.equal 185, arrayToBlock(lLines), """
+	simple.equal {{LINE}}, arrayToBlock(lLines), """
 		ERROR: bad stuff
 		An Object = {"a":1,"b":2}
 		"""
@@ -192,23 +192,23 @@ simple.equal 170, CWS("""
 # ---------------------------------------------------------------------------
 # test isRegExp()
 
-simple.truthy 195, isRegExp(/^abc$/)
-simple.truthy 196, isRegExp(///^
+simple.truthy {{LINE}}, isRegExp(/^abc$/)
+simple.truthy {{LINE}}, isRegExp(///^
 		\s*
 		where
 		\s+
 		areyou
 		$///)
-simple.falsy  202, isRegExp(42)
-simple.falsy  203, isRegExp('abc')
-simple.falsy  204, isRegExp([1,'a'])
-simple.falsy  205, isRegExp({a:1, b:'ccc'})
-simple.falsy  206, isRegExp(undef)
+simple.falsy  {{LINE}}, isRegExp(42)
+simple.falsy  {{LINE}}, isRegExp('abc')
+simple.falsy  {{LINE}}, isRegExp([1,'a'])
+simple.falsy  {{LINE}}, isRegExp({a:1, b:'ccc'})
+simple.falsy  {{LINE}}, isRegExp(undef)
 
-simple.truthy 208, isRegExp(/\.coffee/)
+simple.truthy {{LINE}}, isRegExp(/\.coffee/)
 
 # ---------------------------------------------------------------------------
 
-simple.equal 212, extractMatches("..3 and 4 plus 5", /\d+/g, parseInt),
+simple.equal {{LINE}}, extractMatches("..3 and 4 plus 5", /\d+/g, parseInt),
 	[3, 4, 5]
-simple.equal 214, extractMatches("And This Is A String", /A/g), ['A','A']
+simple.equal {{LINE}}, extractMatches("And This Is A String", /A/g), ['A','A']

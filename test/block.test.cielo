@@ -13,17 +13,17 @@ simple = new UnitTester()
 
 # ---------------------------------------------------------------------------
 
-simple.equal 16, blockToArray("abc\nxyz\n"), [
+simple.equal {{LINE}}, blockToArray("abc\nxyz\n"), [
 	'abc'
 	'xyz'
 	]
 
-simple.equal 21, blockToArray("abc\nxyz\n\n\n\n"), [
+simple.equal {{LINE}}, blockToArray("abc\nxyz\n\n\n\n"), [
 	'abc'
 	'xyz'
 	]
 
-simple.equal 26, blockToArray("abc\n\nxyz\n"), [
+simple.equal {{LINE}}, blockToArray("abc\n\nxyz\n"), [
 	'abc'
 	''
 	'xyz'
@@ -31,11 +31,11 @@ simple.equal 26, blockToArray("abc\n\nxyz\n"), [
 
 # ---------------------------------------------------------------------------
 
-simple.equal 34, arrayToBlock(['a','b','c']), "a\nb\nc\n"
+simple.equal {{LINE}}, arrayToBlock(['a','b','c']), "a\nb\nc\n"
 
 # ---------------------------------------------------------------------------
 
-simple.equal 38, firstLine("""
+simple.equal {{LINE}}, firstLine("""
 	#starbucks
 	do this
 	do that
@@ -43,7 +43,7 @@ simple.equal 38, firstLine("""
 
 # ---------------------------------------------------------------------------
 
-simple.equal 46, remainingLines("""
+simple.equal {{LINE}}, remainingLines("""
 	#starbucks
 	do this
 	do that
@@ -56,7 +56,7 @@ simple.equal 46, remainingLines("""
 
 (() ->
 	str = joinBlocks('import me', '', 'do this\ndo that')
-	simple.equal 59, str, """
+	simple.equal {{LINE}}, str, """
 		import me
 		do this
 		do that
@@ -65,7 +65,7 @@ simple.equal 46, remainingLines("""
 
 # ---------------------------------------------------------------------------
 
-simple.equal 68, normalizeBlock("""
+simple.equal {{LINE}}, normalizeBlock("""
 	line 1
 	line 2
 	"""), """
@@ -73,7 +73,7 @@ simple.equal 68, normalizeBlock("""
 	line 2
 	""" + '\n'
 
-simple.equal 76, normalizeBlock("""
+simple.equal {{LINE}}, normalizeBlock("""
 	line 1
 
 	line 2
@@ -82,7 +82,7 @@ simple.equal 76, normalizeBlock("""
 	line 2
 	""" + '\n'
 
-simple.equal 85, normalizeBlock("""
+simple.equal {{LINE}}, normalizeBlock("""
 
 	line 1
 
@@ -96,7 +96,7 @@ simple.equal 85, normalizeBlock("""
 
 # ---------------------------------------------------------------------------
 
-simple.equal 99, truncateBlock("""
+simple.equal {{LINE}}, truncateBlock("""
 	line 1
 	line 2
 	line 3
@@ -116,7 +116,7 @@ simple.equal 99, truncateBlock("""
 		"",
 		]
 	str = joinBlocks(lBlocks...)
-	simple.equal 119, str, """
+	simple.equal {{LINE}}, str, """
 		import {say} from '@jdeighan/coffee-utils'
 		<script>
 			x = 42
@@ -135,7 +135,7 @@ simple.equal 99, truncateBlock("""
 			log "line 2 in unit test"
 		"""
 	str = joinBlocks(lImports..., code)
-	simple.equal 138, str, """
+	simple.equal {{LINE}}, str, """
 
 		import {say} from '@jdeighan/coffee-utils'
 		if (x==42)
@@ -156,7 +156,7 @@ simple.equal 99, truncateBlock("""
 	filepath = "c:/Users/johnd/coffee-utils/test/data/file2.txt"
 	await forEachLine filepath, callback
 
-	simple.equal 159, lLines, [
+	simple.equal {{LINE}}, lLines, [
 		"abc",
 		"def",
 		"ghi",
@@ -177,7 +177,7 @@ simple.equal 99, truncateBlock("""
 	filepath = "c:/Users/johnd/coffee-utils/test/data/file3.txt"
 	await forEachBlock filepath, callback
 
-	simple.equal 180, lBlocks, [
+	simple.equal {{LINE}}, lBlocks, [
 		"abc\ndef",
 		"abc\ndef\nghi",
 		"abc\ndef\nghi\njkl",

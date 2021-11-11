@@ -21,13 +21,13 @@ simple = new UnitTester()
 	setPrivEnvVar('DIR_ROOT', '/usr/johnd')
 	setPrivEnvVar('DIR_COMPONENTS', '/usr/johnd/components')
 
-	simple.equal 24, hPrivEnv['DIR_ROOT'], '/usr/johnd'
+	simple.equal {{LINE}}, hPrivEnv['DIR_ROOT'], '/usr/johnd'
 
 	strLogs = ''
 	setLogger (line) -> strLogs += "#{line}\n"
 	logPrivEnv()
 
-	simple.equal 30, strLogs, """
+	simple.equal {{LINE}}, strLogs, """
 		PRIVATE ENVIRONMENT:
 			DIR_ROOT = '/usr/johnd'
 			DIR_COMPONENTS = '/usr/johnd/components'
