@@ -1,5 +1,6 @@
 # coffee_utils.coffee
 
+import getline from 'readline-sync'
 import {log} from '@jdeighan/coffee-utils/log'
 
 export sep_dash = '-'.repeat(42)
@@ -212,9 +213,9 @@ export warn = (message) ->
 #   say - print to the console (for now)
 #         later, on a web page, call alert(str)
 
-export say = (str, obj=undef) ->
+export say = (str) ->
 
-	log str, obj
+	console.log str
 	return
 
 # ---------------------------------------------------------------------------
@@ -223,7 +224,8 @@ export say = (str, obj=undef) ->
 
 export ask = (prompt) ->
 
-	return 'yes'
+	answer = getline.question("{prompt}? ")
+	return answer
 
 # ---------------------------------------------------------------------------
 

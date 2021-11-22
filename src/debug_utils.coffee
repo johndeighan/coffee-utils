@@ -23,7 +23,7 @@ lDebugStack = []
 # --- These are saved/restored in lDebugStack
 export debugging = false
 ifMatches = undef
-lDebugFuncs = undef
+lDebugFuncs = undef   # --- names of functions to debug
 
 stdLogger = false
 

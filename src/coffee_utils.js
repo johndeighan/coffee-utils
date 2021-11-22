@@ -2,6 +2,8 @@
 // coffee_utils.coffee
 var commentRegExp;
 
+import getline from 'readline-sync';
+
 import {
   log
 } from '@jdeighan/coffee-utils/log';
@@ -217,15 +219,17 @@ export var warn = function(message) {
 // ---------------------------------------------------------------------------
 //   say - print to the console (for now)
 //         later, on a web page, call alert(str)
-export var say = function(str, obj = undef) {
-  log(str, obj);
+export var say = function(str) {
+  console.log(str);
 };
 
 // ---------------------------------------------------------------------------
 //   ask - ask a question
 //         later, on a web page, prompt the user for answer to question
 export var ask = function(prompt) {
-  return 'yes';
+  var answer;
+  answer = getline.question("{prompt}? ");
+  return answer;
 };
 
 // ---------------------------------------------------------------------------

@@ -51,7 +51,7 @@ export var debugging = false;
 
 ifMatches = undef;
 
-lDebugFuncs = undef;
+lDebugFuncs = undef; // --- names of functions to debug
 
 stdLogger = false;
 
