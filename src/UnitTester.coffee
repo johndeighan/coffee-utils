@@ -14,9 +14,9 @@ import {debug, debugging, setDebugging} from '@jdeighan/coffee-utils/debug'
 
 export class UnitTester
 
-	constructor: (whichTest='deepEqual', @fulltest=false) ->
+	constructor: (@file='unknown file') ->
 		@hFound = {}
-		@setWhichTest whichTest
+		@whichTest = 'deepEqual'
 		@justshow = false
 		@testing = true
 		@maxLineNum = undef
@@ -180,7 +180,7 @@ export class UnitTester
 		@lineNum = lineNum    # set an object property
 
 		if (lineNum < 0) && process.env.FINALTEST
-			error "Negative line numbers not allowed in FINALTEST"
+			error "Negative line numbers not allowed in FINALTEST in #{@file}"
 
 		if ! @testing || (@maxLineNum && (lineNum > @maxLineNum))
 			return
@@ -241,9 +241,6 @@ export class UnitTester
 	# ........................................................................
 
 	getLineNum: (lineNum) ->
-
-		if @fulltest && (lineNum < 0)
-			error "UnitTester(): negative line number during full test!!!"
 
 		# --- patch lineNum to avoid duplicates
 		while @hFound[lineNum]

@@ -9,7 +9,7 @@ import {
 	indented, tabify, untabify,
 	} from '@jdeighan/coffee-utils/indent'
 
-simple = new UnitTester()
+simple = new UnitTester("indent.test")
 
 # ---------------------------------------------------------------------------
 

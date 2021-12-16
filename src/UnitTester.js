@@ -32,10 +32,10 @@ import {
 
 // ---------------------------------------------------------------------------
 export var UnitTester = class UnitTester {
-  constructor(whichTest = 'deepEqual', fulltest = false) {
-    this.fulltest = fulltest;
+  constructor(file = 'unknown file') {
+    this.file = file;
     this.hFound = {};
-    this.setWhichTest(whichTest);
+    this.whichTest = 'deepEqual';
     this.justshow = false;
     this.testing = true;
     this.maxLineNum = undef;
@@ -189,7 +189,7 @@ export var UnitTester = class UnitTester {
     this.initialize();
     this.lineNum = lineNum; // set an object property
     if ((lineNum < 0) && process.env.FINALTEST) {
-      error("Negative line numbers not allowed in FINALTEST");
+      error(`Negative line numbers not allowed in FINALTEST in ${this.file}`);
     }
     if (!this.testing || (this.maxLineNum && (lineNum > this.maxLineNum))) {
       return;
@@ -256,9 +256,6 @@ export var UnitTester = class UnitTester {
 
   // ........................................................................
   getLineNum(lineNum) {
-    if (this.fulltest && (lineNum < 0)) {
-      error("UnitTester(): negative line number during full test!!!");
-    }
     // --- patch lineNum to avoid duplicates
     while (this.hFound[lineNum]) {
       if (lineNum < 0) {
