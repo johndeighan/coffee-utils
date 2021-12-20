@@ -8,7 +8,7 @@ import {
 	ltrunc, rtrunc, extractMatches,
 	words, escapeStr, titleLine,
 	removeCR, CWS, isArrayOfHashes,
-	oneline, croak, isRegExp, uniq,
+	oneline, croak, isRegExp, uniq, hashToStr,
 	} from '@jdeighan/coffee-utils'
 import {setLogger} from '@jdeighan/coffee-utils/log'
 import {setDebugging} from '@jdeighan/coffee-utils/debug'
@@ -50,6 +50,17 @@ simple.equal  {{LINE}}, titleLine('a thing','-',5,90).length, 90
 
 simple.equal {{LINE}}, uniq([1,2,2,3,3]), [1,2,3]
 simple.equal {{LINE}}, uniq(['a','b','b','c','c']),['a','b','c']
+
+# ---------------------------------------------------------------------------
+# CURRENTLY DOES NOT PASS
+
+# simple.equal {{LINE}}, hashToStr({c:3, b:2, a:1}), """
+# 		{
+# 		   "a": 1,
+# 		   "b": 2,
+# 		   "c": 3
+# 		}
+# 		"""
 
 # ---------------------------------------------------------------------------
 

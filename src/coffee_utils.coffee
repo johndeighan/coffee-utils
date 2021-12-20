@@ -216,12 +216,22 @@ export warn = (message) ->
 	log "WARNING: #{message}"
 
 # ---------------------------------------------------------------------------
+#   hashToStr - stringify a hash
+
+export hashToStr = (h) ->
+
+	return JSON.stringify(h, Object.keys(h).sort(), 3)
+
+# ---------------------------------------------------------------------------
 #   say - print to the console (for now)
 #         later, on a web page, call alert(str)
 
-export say = (str) ->
+export say = (x) ->
 
-	console.log str
+	if isHash(x)
+		console.log hashToStr(x)
+	else
+		console.log x
 	return
 
 # ---------------------------------------------------------------------------

@@ -222,10 +222,20 @@ export var warn = function(message) {
 };
 
 // ---------------------------------------------------------------------------
+//   hashToStr - stringify a hash
+export var hashToStr = function(h) {
+  return JSON.stringify(h, Object.keys(h).sort(), 3);
+};
+
+// ---------------------------------------------------------------------------
 //   say - print to the console (for now)
 //         later, on a web page, call alert(str)
-export var say = function(str) {
-  console.log(str);
+export var say = function(x) {
+  if (isHash(x)) {
+    console.log(hashToStr(x));
+  } else {
+    console.log(x);
+  }
 };
 
 // ---------------------------------------------------------------------------
