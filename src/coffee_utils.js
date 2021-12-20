@@ -211,6 +211,11 @@ export var isInteger = function(x) {
 };
 
 // ---------------------------------------------------------------------------
+export var uniq = function(lItems) {
+  return [...new Set(lItems)];
+};
+
+// ---------------------------------------------------------------------------
 //   warn - issue a warning
 export var warn = function(message) {
   return log(`WARNING: ${message}`);

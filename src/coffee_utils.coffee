@@ -203,6 +203,12 @@ export isInteger = (x) ->
 		return false
 
 # ---------------------------------------------------------------------------
+
+export uniq = (lItems) ->
+
+	return [...new Set(lItems)]
+
+# ---------------------------------------------------------------------------
 #   warn - issue a warning
 
 export warn = (message) ->
