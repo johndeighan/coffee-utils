@@ -57,9 +57,15 @@ export var fileExt = function(path) {
 //    mydir() - pass argument `import.meta.url` and it will return
 //              the directory your file is in
 export var mydir = function(url) {
-  var dir;
-  dir = pathlib.dirname(urllib.fileURLToPath(url));
-  return mkpath(dir);
+  var dir, final, path;
+  debug(`url = ${url}`);
+  path = urllib.fileURLToPath(url);
+  debug(`path = ${path}`);
+  dir = pathlib.dirname(path);
+  debug(`dir = ${dir}`);
+  final = mkpath(dir);
+  debug(`final = ${final}`);
+  return final;
 };
 
 // ---------------------------------------------------------------------------

@@ -13,7 +13,6 @@
 		"./debug": "./src/debug_utils.js",
 		"./svelte": "./src/svelte_utils.js",
 		"./test": "./src/UnitTester.js",
-		"./privenv": "./src/private_env.js",
 		"./package.json": "./package.json"
 	},
 	"engines": {

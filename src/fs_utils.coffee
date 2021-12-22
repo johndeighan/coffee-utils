@@ -45,8 +45,14 @@ export fileExt = (path) ->
 
 export mydir = (url) ->
 
-	dir = pathlib.dirname(urllib.fileURLToPath(url))
-	return mkpath(dir)
+	debug "url = #{url}"
+	path = urllib.fileURLToPath(url)
+	debug "path = #{path}"
+	dir = pathlib.dirname(path)
+	debug "dir = #{dir}"
+	final = mkpath(dir)
+	debug "final = #{final}"
+	return final
 
 # ---------------------------------------------------------------------------
 
