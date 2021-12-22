@@ -392,3 +392,25 @@ export var extractMatches = function(line, regexp, convertFunc = undef) {
 };
 
 // ---------------------------------------------------------------------------
+export var envVarsWithPrefix = function(prefix, hOptions = {}) {
+  var h, i, key, len, plen, ref;
+  // --- valid options:
+  //        stripPrefix
+  assert(prefix, "envVarsWithPrefix: empty prefix!");
+  plen = prefix.length;
+  h = {};
+  ref = Object.keys(process.env);
+  for (i = 0, len = ref.length; i < len; i++) {
+    key = ref[i];
+    if (key.indexOf(prefix) === 0) {
+      if (hOptions.stripPrefix) {
+        h[key.substr(plen)] = process.env[key];
+      } else {
+        h[key] = process.env[key];
+      }
+    }
+  }
+  return h;
+};
+
+// ---------------------------------------------------------------------------

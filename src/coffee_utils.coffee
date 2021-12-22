@@ -357,3 +357,21 @@ export extractMatches = (line, regexp, convertFunc=undef) ->
 		return lStrings
 
 # ---------------------------------------------------------------------------
+
+export envVarsWithPrefix = (prefix, hOptions={}) ->
+	# --- valid options:
+	#        stripPrefix
+
+	assert prefix, "envVarsWithPrefix: empty prefix!"
+	plen = prefix.length
+	h = {}
+	for key in Object.keys(process.env)
+		if key.indexOf(prefix) == 0
+			if hOptions.stripPrefix
+				h[key.substr(plen)] = process.env[key]
+			else
+				h[key] = process.env[key]
+	return h
+
+# ---------------------------------------------------------------------------
+
