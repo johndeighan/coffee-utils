@@ -86,10 +86,7 @@ export joinBlocks = (lBlocks...) ->
 
 	lNonEmptyBlocks = []
 	for block in lBlocks
-		if ! isString(block)
-			log "NOT A BLOCK"
-			log 'bad block', block
-			process.exit()
+		assert isString(block), "joinBlocks(): #{block} is not a string"
 		if nonEmpty(block)
 			lNonEmptyBlocks.push block
 	return lNonEmptyBlocks.join('\n')
