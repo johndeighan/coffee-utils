@@ -110,6 +110,7 @@ export var joinBlocks = function(...lBlocks) {
   lNonEmptyBlocks = [];
   for (i = 0, len1 = lBlocks.length; i < len1; i++) {
     block = lBlocks[i];
+    assert(isString(block), "joinBlocks(): block is not a string");
     if (nonEmpty(block)) {
       lNonEmptyBlocks.push(block);
     }

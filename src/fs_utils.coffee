@@ -6,7 +6,7 @@ import fs from 'fs'
 
 import {
 	assert, undef, pass, rtrim, error, nonEmpty,
-	isRegExp, isFunction, croak,
+	isString, isRegExp, isFunction, croak,
 	} from '@jdeighan/coffee-utils'
 import {log} from '@jdeighan/coffee-utils/log'
 import {debug} from '@jdeighan/coffee-utils/debug'
@@ -34,6 +34,7 @@ export isSimpleFileName = (path) ->
 
 export fileExt = (path) ->
 
+	assert isString(path), "fileExt(): path not a string"
 	if lMatches = path.match(/\.[A-Za-z0-9_]+$/)
 		return lMatches[0]
 	else
@@ -134,6 +135,25 @@ export withExt = (path, newExt, hOptions={}) ->
 	if hOptions.removeLeadingUnderScore && (name.indexOf('_')==0)
 		name = name.substr(1)
 	return mkpath(dir, "#{name}#{newExt}")
+
+# ---------------------------------------------------------------------------
+#   removeFileWithExt - remove file with different ext
+
+export removeFileWithExt = (path, newExt, hOptions={}) ->
+	# --- Valid options:
+	#        doLog
+	#        removeLeadingUnderScore
+
+	fullpath = withExt(path, newExt, hOptions)
+	try
+		fs.unlinkSync fullpath
+		if hOptions.doLog
+			log "   unlink #{filename}"
+		success = true
+	catch err
+		log "   UNLINK FAILED: #{err.message}"
+		success = false
+	return success
 
 # ---------------------------------------------------------------------------
 #   withUnderScore - add '_' to file name

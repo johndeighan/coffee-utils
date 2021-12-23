@@ -209,6 +209,7 @@ reMethod = ///^
 
 export funcMatch = (curFunc) ->
 
+	assert isString(curFunc), "funcMatch(): not a string"
 	if lDebugFuncs.includes(curFunc)
 		return true
 	else if (lMatches = curFunc.match(reMethod)) \

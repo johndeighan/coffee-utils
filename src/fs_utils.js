@@ -13,6 +13,7 @@ import {
   rtrim,
   error,
   nonEmpty,
+  isString,
   isRegExp,
   isFunction,
   croak
@@ -46,6 +47,7 @@ export var isSimpleFileName = function(path) {
 // ---------------------------------------------------------------------------
 export var fileExt = function(path) {
   var lMatches;
+  assert(isString(path), "fileExt(): path not a string");
   if (lMatches = path.match(/\.[A-Za-z0-9_]+$/)) {
     return lMatches[0];
   } else {
@@ -152,6 +154,28 @@ export var withExt = function(path, newExt, hOptions = {}) {
     name = name.substr(1);
   }
   return mkpath(dir, `${name}${newExt}`);
+};
+
+// ---------------------------------------------------------------------------
+//   removeFileWithExt - remove file with different ext
+export var removeFileWithExt = function(path, newExt, hOptions = {}) {
+  var err, fullpath, success;
+  // --- Valid options:
+  //        doLog
+  //        removeLeadingUnderScore
+  fullpath = withExt(path, newExt, hOptions);
+  try {
+    fs.unlinkSync(fullpath);
+    if (hOptions.doLog) {
+      log(`   unlink ${filename}`);
+    }
+    success = true;
+  } catch (error1) {
+    err = error1;
+    log(`   UNLINK FAILED: ${err.message}`);
+    success = false;
+  }
+  return success;
 };
 
 // ---------------------------------------------------------------------------

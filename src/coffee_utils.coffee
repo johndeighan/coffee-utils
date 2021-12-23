@@ -101,6 +101,14 @@ export isHash = (x) ->
 	return (getClassName(x) == 'Object')
 
 # ---------------------------------------------------------------------------
+
+export hashHasKey = (x, key) ->
+
+	assert isHash(x), "hashHasKey(): not a hash"
+	assert isString(key), "hashHasKey(): key not a string"
+	return x.hasOwnProperty(key)
+
+# ---------------------------------------------------------------------------
 #   isEmpty
 #      - string is whitespace, array has no elements, hash has no keys
 
@@ -149,6 +157,7 @@ export setCommentRegexp = (regexp) ->
 
 export isComment = (str) ->
 
+	assert isString(str), "isComment(): not a string"
 	return if str.match(commentRegExp) then true else false
 
 # ---------------------------------------------------------------------------
@@ -264,6 +273,7 @@ export titleLine = (title, char='=', padding=2, linelen=42) ->
 
 export rtrim = (line) ->
 
+	assert isString(line), "rtrim(): line is not a string"
 	lMatches = line.match(/\s+$/)
 	if lMatches?
 		n = lMatches[0].length   # num chars to remove

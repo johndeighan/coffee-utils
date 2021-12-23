@@ -98,6 +98,13 @@ export var isHash = function(x) {
 };
 
 // ---------------------------------------------------------------------------
+export var hashHasKey = function(x, key) {
+  assert(isHash(x), "hashHasKey(): not a hash");
+  assert(isString(key), "hashHasKey(): key not a string");
+  return x.hasOwnProperty(key);
+};
+
+// ---------------------------------------------------------------------------
 //   isEmpty
 //      - string is whitespace, array has no elements, hash has no keys
 export var isEmpty = function(x) {
@@ -147,6 +154,7 @@ export var setCommentRegexp = function(regexp) {
 
 // ---------------------------------------------------------------------------
 export var isComment = function(str) {
+  assert(isString(str), "isComment(): not a string");
   if (str.match(commentRegExp)) {
     return true;
   } else {
@@ -266,6 +274,7 @@ export var titleLine = function(title, char = '=', padding = 2, linelen = 42) {
 //   rtrim - strip trailing whitespace
 export var rtrim = function(line) {
   var lMatches, n;
+  assert(isString(line), "rtrim(): line is not a string");
   lMatches = line.match(/\s+$/);
   if (lMatches != null) {
     n = lMatches[0].length; // num chars to remove

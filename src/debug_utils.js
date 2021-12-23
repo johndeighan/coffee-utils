@@ -204,6 +204,7 @@ reMethod = /^([A-Za-z_][A-Za-z0-9_]*)\.([A-Za-z_][A-Za-z0-9_]*)$/;
 // --- export only to allow unit tests
 export var funcMatch = function(curFunc) {
   var _, cls, lMatches, meth;
+  assert(isString(curFunc), "funcMatch(): not a string");
   if (lDebugFuncs.includes(curFunc)) {
     return true;
   } else if ((lMatches = curFunc.match(reMethod)) && ([_, cls, meth] = lMatches) && lDebugFuncs.includes(meth)) {

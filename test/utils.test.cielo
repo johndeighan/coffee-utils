@@ -138,6 +138,7 @@ simple.falsy  {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}, [1,2]])
 	simple.falsy  {{LINE}}, isArray(s)
 	simple.falsy  {{LINE}}, isArray(s2)
 
+	simple.falsy  {{LINE}}, isString(undef)
 	simple.falsy  {{LINE}}, isString(h)
 	simple.falsy  {{LINE}}, isString(l)
 	simple.falsy  {{LINE}}, isString(o)

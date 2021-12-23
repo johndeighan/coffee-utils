@@ -25,7 +25,7 @@ import {
 export var splitLine = function(line) {
   var lMatches;
   assert(line != null, "splitLine(): line is undef");
-  assert(typeof line === 'string', "splitLine(): line is not a string");
+  assert(isString(line), "splitLine(): line is not a string");
   line = rtrim(line);
   lMatches = line.match(/^(\s*)(.*)$/);
   return [lMatches[1].length, lMatches[2]];
@@ -44,6 +44,7 @@ export var indentation = function(level) {
 //                 it's OK if the string is ONLY indentation
 export var indentLevel = function(str) {
   var lMatches;
+  assert(isString(str), "indentLevel(): not a string");
   lMatches = str.match(/^\t*/);
   return lMatches[0].length;
 };
@@ -84,7 +85,7 @@ export var indented = function(input, level = 0) {
 //              indentation is removed
 //            - returns same type as text, i.e. either string or array
 export var undented = function(text, level = undef) {
-  var i, lLines, lMatches, lNewLines, len, line, nToRemove, toRemove;
+  var i, j, lLines, lMatches, lNewLines, len, len1, line, nToRemove, toRemove;
   if ((level != null) && (level === 0)) {
     return text;
   }
@@ -95,6 +96,10 @@ export var undented = function(text, level = undef) {
     }
   } else if (isArray(text)) {
     lLines = text;
+    for (i = 0, len = lLines.length; i < len; i++) {
+      line = lLines[i];
+      assert(isString(line), "undented(): input array is not all strings");
+    }
     if (lLines.length === 0) {
       return [];
     }
@@ -111,8 +116,8 @@ export var undented = function(text, level = undef) {
   }
   nToRemove = toRemove.length;
   lNewLines = [];
-  for (i = 0, len = lLines.length; i < len; i++) {
-    line = lLines[i];
+  for (j = 0, len1 = lLines.length; j < len1; j++) {
+    line = lLines[j];
     if (isEmpty(line)) {
       lNewLines.push('');
     } else {

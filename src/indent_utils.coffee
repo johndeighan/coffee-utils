@@ -14,7 +14,7 @@ import {arrayToBlock, blockToArray} from '@jdeighan/coffee-utils/block'
 export splitLine = (line) ->
 
 	assert line?, "splitLine(): line is undef"
-	assert (typeof line == 'string'), "splitLine(): line is not a string"
+	assert isString(line), "splitLine(): line is not a string"
 	line = rtrim(line)
 	lMatches = line.match(/^(\s*)(.*)$/)
 	return [lMatches[1].length, lMatches[2]]
@@ -34,6 +34,7 @@ export indentation = (level) ->
 
 export indentLevel = (str) ->
 
+	assert isString(str), "indentLevel(): not a string"
 	lMatches = str.match(/^\t*/)
 	return lMatches[0].length
 
@@ -76,6 +77,8 @@ export undented = (text, level=undef) ->
 			return ''
 	else if isArray(text)
 		lLines = text
+		for line in lLines
+			assert isString(line), "undented(): input array is not all strings"
 		if (lLines.length == 0)
 			return []
 	else
