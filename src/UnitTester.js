@@ -186,6 +186,11 @@ export var UnitTester = class UnitTester {
   test(lineNum, input, expected) {
     var err, errMsg, got, whichTest;
     assert(isInteger(lineNum), "UnitTester.test(): arg 1 must be an integer");
+    if (process.env.TEST_LINE_NUMBER) {
+      if (Math.abs(lineNum) !== parseInt(process.env.TEST_LINE_NUMBER)) {
+        return;
+      }
+    }
     this.initialize();
     this.lineNum = lineNum; // set an object property
     if ((lineNum < 0) && process.env.FINALTEST) {
@@ -207,7 +212,7 @@ export var UnitTester = class UnitTester {
     } catch (error1) {
       err = error1;
       errMsg = err.message || 'UNKNOWN ERROR';
-      log(`got ERROR: ${errMsg}`);
+      log(`got ERROR in unit test: ${errMsg}`);
     }
     expected = this.transformExpected(expected);
     if (isString(expected)) {

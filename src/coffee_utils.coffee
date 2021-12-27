@@ -34,7 +34,7 @@ export assert = (cond, msg) ->
 export croak = (err, label, obj) ->
 
 	message = if (typeof err == 'object') then err.message else err
-	log "ERROR: #{message}"
+	log "ERROR (croak): #{message}"
 	log label, obj
 	if (typeof err == 'object')
 		throw err

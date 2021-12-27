@@ -37,7 +37,7 @@ export var assert = function(cond, msg) {
 export var croak = function(err, label, obj) {
   var message;
   message = (typeof err === 'object') ? err.message : err;
-  log(`ERROR: ${message}`);
+  log(`ERROR (croak): ${message}`);
   log(label, obj);
   if (typeof err === 'object') {
     throw err;

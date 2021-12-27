@@ -200,7 +200,7 @@ simple.equal {{LINE}}, CWS("""
 	try
 		croak "bad stuff", "An Object", obj
 	simple.equal {{LINE}}, arrayToBlock(lLines), """
-		ERROR: bad stuff
+		ERROR (croak): bad stuff
 		An Object = {"a":1,"b":2}
 		"""
 	setLogger()

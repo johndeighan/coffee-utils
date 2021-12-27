@@ -176,6 +176,10 @@ export class UnitTester
 		assert isInteger(lineNum),
 			"UnitTester.test(): arg 1 must be an integer"
 
+		if process.env.TEST_LINE_NUMBER
+			if Math.abs(lineNum) != parseInt(process.env.TEST_LINE_NUMBER)
+				return
+
 		@initialize()
 		@lineNum = lineNum    # set an object property
 
@@ -196,7 +200,7 @@ export class UnitTester
 				got = @normalize(got)
 		catch err
 			errMsg = err.message || 'UNKNOWN ERROR'
-			log "got ERROR: #{errMsg}"
+			log "got ERROR in unit test: #{errMsg}"
 
 		expected = @transformExpected(expected)
 		if isString(expected)
