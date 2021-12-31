@@ -183,7 +183,7 @@ export var debug = function(...lArgs) {
     curFunc = lMatches[1];
     hInfo = stack.returnFrom(curFunc);
   }
-  if (shouldLog(str)) {
+  if (debugging && shouldLog(str)) {
     // --- set the prefix, i.e. indentation to use
     if (returning) {
       if (debugLevel === 0) {
