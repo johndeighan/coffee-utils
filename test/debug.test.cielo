@@ -15,11 +15,11 @@ useStdLogger()
 
 lLines = undef
 setLogger (str) -> lLines.push(str)
-setDebugging true
 
 # ---------------------------------------------------------------------------
 
 (() ->
+	resetDebugging true
 	lLines = []
 	debug 'abc'
 	simple.equal {{LINE}}, lLines, ['abc']
@@ -32,14 +32,14 @@ class TraceTester extends UnitTester
 	initialize: () ->
 		lLines = []
 
+	normalize: (text) ->
+		return text
+
 	transformValue: (block) ->
 
 		for line in blockToArray(block)
 			debug line
 		return arrayToBlock(lLines)
-
-	normalize: (text) ->
-		return text
 
 tester = new TraceTester()
 
@@ -129,8 +129,8 @@ tester = new TraceTester()
 
 (() ->
 	lLines = []
-	resetDebugging()
-	setDebugging 'innerFunc'
+	resetDebugging 'innerFunc'
+#	setDebugging 'innerFunc'
 
 	debug "enter myfunc"
 	debug "something"
@@ -153,8 +153,8 @@ tester = new TraceTester()
 
 (() ->
 	lLines = []
-	resetDebugging()
-	setDebugging 'innerFunc'
+	resetDebugging 'innerFunc'
+#	setDebugging 'innerFunc'
 
 	innerFunc = () ->
 
@@ -184,18 +184,15 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
-	setDebugging 'get'
-
-	simple.truthy {{LINE}}, funcMatch('get')
-	simple.truthy {{LINE}}, funcMatch('StringInput.get')
-	setDebugging false
+	simple.truthy {{LINE}}, funcMatch('get', ['get'])
+	simple.truthy {{LINE}}, funcMatch('StringInput.get', ['get'])
 	)()
 
 # ---------------------------------------------------------------------------
 
 (() ->
-	resetDebugging()
-	setDebugging true
+	resetDebugging true
+#	setDebugging true
 	lLines = []
 
 	line = 'first line'
@@ -211,8 +208,8 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
-	resetDebugging()
-	setDebugging true
+	resetDebugging true
+#	setDebugging true
 	lLines = []
 
 	obj = {
@@ -236,8 +233,8 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
-	resetDebugging()
-	setDebugging true
+	resetDebugging true
+#	setDebugging true
 	lLines = []
 
 	longBlock = """
@@ -262,8 +259,7 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
-	resetDebugging()
-	setDebugging 'get'
+	resetDebugging 'get'
 
 	block = """
 		enter myfunc
@@ -283,6 +279,66 @@ tester = new TraceTester()
 		enter get
 		│   enter fetch
 		│   └─> return from fetch
+		└─> return from get
+		enter get
+		│   something
+		└─> return from get
+		"""
+	)()
+
+# ---------------------------------------------------------------------------
+#     Use new functions: funcDoDebug and funcDoLog
+
+(() ->
+	resetDebugging (funcName, debugOn) -> debugOn || (funcName=='get')
+
+	block = """
+		enter myfunc
+		enter get
+		enter fetch
+		return from fetch
+		return from get
+		enter nofunc
+		return from nofunc
+		enter get
+		something
+		return from get
+		return from myfunc
+		"""
+
+	tester.equal {{LINE}}, block, """
+		enter get
+		│   enter fetch
+		│   └─> return from fetch
+		└─> return from get
+		enter get
+		│   something
+		└─> return from get
+		"""
+	)()
+
+# ---------------------------------------------------------------------------
+#     Use new functions: funcDoDebug and funcDoLog
+
+(() ->
+	resetDebugging (funcName) -> (funcName=='get')
+
+	block = """
+		enter myfunc
+		enter get
+		enter fetch
+		return from fetch
+		return from get
+		enter nofunc
+		return from nofunc
+		enter get
+		something
+		return from get
+		return from myfunc
+		"""
+
+	tester.equal {{LINE}}, block, """
+		enter get
 		└─> return from get
 		enter get
 		│   something

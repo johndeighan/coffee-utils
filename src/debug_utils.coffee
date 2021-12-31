@@ -1,12 +1,13 @@
 # debug_utils.coffee
 
 import {
-	assert, undef, error, croak, warn, words, isString, isFunction,
-	oneline, escapeStr, isNumber, isArray,
+	assert, undef, error, croak, warn, isString, isFunction, isBoolean,
+	oneline, escapeStr, isNumber, isArray, words,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
 import {slurp} from '@jdeighan/coffee-utils/fs'
+import {CallStack} from '@jdeighan/coffee-utils/stack'
 
 vbar = '│'       # unicode 2502
 hbar = '─'       # unicode 2500
@@ -17,15 +18,77 @@ indent = vbar + '   '
 arrow = corner + hbar + arrowhead + ' '
 
 debugLevel = 0   # controls amount of indentation - we ensure it's never < 0
-
-lDebugStack = []
-
-# --- These are saved/restored in lDebugStack
-export debugging = false
-ifMatches = undef
-lDebugFuncs = undef   # --- names of functions to debug
-
 stdLogger = false
+
+# --- These are saved/restored on the call stack
+export debugging = false
+shouldDebug = shouldLog = undef
+
+stack = new CallStack()
+
+# ---------------------------------------------------------------------------
+
+export resetDebugging = (funcDoDebug=undef, funcDoLog=undef) ->
+
+	debugging = false
+	debugLevel = 0
+	stack.reset()
+	shouldDebug = (funcName) -> debugging
+	shouldLog   = (str)      -> debugging
+	if funcDoDebug
+		setDebugging funcDoDebug, funcDoLog
+	return
+
+# ---------------------------------------------------------------------------
+
+export setDebugging = (funcDoDebug=undef, funcDoLog=undef) ->
+
+	if isBoolean(funcDoDebug)
+		debugging = funcDoDebug
+	else if isString(funcDoDebug)
+		debugging = false
+		lFuncNames = words(funcDoDebug)
+		assert isArray(lFuncNames), "words('#{funcDoDebug}') returned non-array"
+		shouldDebug = (funcName) ->
+			debugging || funcMatch(funcName, lFuncNames)
+	else if isFunction(funcDoDebug)
+		shouldDebug = funcDoDebug
+	else
+		croak "setDebugging(): bad parameter #{oneline(funcDoDebug)}"
+
+	if funcDoLog
+		assert isFunction(funcDoLog), "setDebugging: arg 2 not a function"
+		shouldLog = funcDoLog
+	return
+
+# ---------------------------------------------------------------------------
+# --- export only to allow unit tests
+
+export funcMatch = (curFunc, lFuncNames) ->
+
+	assert isString(curFunc), "funcMatch(): not a string"
+	assert isArray(lFuncNames), "funcMatch(): bad array #{lFuncNames}"
+	if lFuncNames.includes(curFunc)
+		return true
+	else if (lMatches = curFunc.match(reMethod)) \
+			&& ([_, cls, meth] = lMatches) \
+			&& lFuncNames.includes(meth)
+		return true
+	else
+		return false
+
+# ---------------------------------------------------------------------------
+
+curEnv = () ->
+
+	return {debugging, shouldDebug, shouldLog}
+
+# ---------------------------------------------------------------------------
+
+setEnv = (hEnv) ->
+
+	{debugging, shouldDebug, shouldLog} = hEnv
+	return
 
 # ---------------------------------------------------------------------------
 
@@ -54,71 +117,12 @@ stripArrow = (prefix) ->
 
 # ---------------------------------------------------------------------------
 
-export debugIfLineMatches = (regexp=undef) ->
-
-	ifMatches = regexp
-	return
-
-# ---------------------------------------------------------------------------
-
-saveDebugEnv = () ->
-
-	lDebugStack.push({
-		debugging,
-		ifMatches,
-		lDebugFuncs,
-		})
-	return
-
-restoreDebugEnv = () ->
-
-	if (lDebugStack.length == 0)
-		debugging = false
-		ifMatches = undef
-		lDebugFuncs = undef
-	else
-		h = lDebugStack.pop()
-		{debugging, ifMatches, lDebugFuncs} = h
-
-	return
-
-# ---------------------------------------------------------------------------
-
-export setDebugging = (x) ->
-
-	if (x==false)
-		restoreDebugEnv()
-	else
-		# --- save current setting
-		saveDebugEnv()
-		if (x==true)
-			debugging = true
-		else if isString(x)
-			debugging = false
-			lDebugFuncs = words(x)
-		else
-			croak "setDebugging(): bad parameter #{oneline(x)}"
-	return
-
-# ---------------------------------------------------------------------------
-
 getPrefix = (level) ->
 
 	if (level < 0)
 		warn "You have mismatched debug 'enter'/'return' somewhere!"
 		return ''
 	return '   '.repeat(level)
-
-# ---------------------------------------------------------------------------
-
-export resetDebugging = () ->
-
-	debugging = false
-	debugLevel = 0
-	ifMatches = undef
-	lDebugFuncs = undef
-	lDebugStack = []
-	return
 
 # ---------------------------------------------------------------------------
 
@@ -130,7 +134,7 @@ export debug = (lArgs...) ->
 	#     when debugging is off
 
 	nArgs = lArgs.length
-	assert ((nArgs >= 1) && (nArgs <= 2)), "debug(); Bad # args #{nArgs}"
+	assert ((nArgs == 1) || (nArgs == 2)), "debug(); Bad # args #{nArgs}"
 	str = lArgs[0]
 
 	# --- str must always be a string
@@ -153,6 +157,8 @@ export debug = (lArgs...) ->
 			///))
 		entering = true
 		curFunc = lMatches[1]
+		stack.call(curFunc, curEnv())
+		debugging = shouldDebug(curFunc, debugging)
 	else if (lMatches = str.match(///^
 			\s*
 			return
@@ -163,11 +169,9 @@ export debug = (lArgs...) ->
 			///))
 		returning = true
 		curFunc = lMatches[1]
+		hInfo = stack.returnFrom(curFunc)
 
-	if entering && lDebugFuncs && funcMatch(curFunc)
-		setDebugging true
-
-	if debugging && (! ifMatches? || str.match(ifMatches))
+	if shouldLog(str)
 
 		# --- set the prefix, i.e. indentation to use
 		if returning
@@ -186,14 +190,15 @@ export debug = (lArgs...) ->
 				logItem: true,
 				itemPrefix: stripArrow(prefix),
 				}
-		if returning && (debugLevel > 0)
+
+	# --- Adjust debug level
+	if returning
+		if debugLevel > 0
 			debugLevel -= 1
-
-	if returning && lDebugFuncs && funcMatch(curFunc)
-		setDebugging false    # revert to previous setting - might still be on
-
-	if debugging && entering
-		debugLevel += 1
+		setEnv(hInfo)
+	else if entering
+		if debugging
+			debugLevel += 1
 	return
 
 # ---------------------------------------------------------------------------
@@ -203,21 +208,6 @@ reMethod = ///^
 	\.
 	([A-Za-z_][A-Za-z0-9_]*)
 	$///
-
-# ---------------------------------------------------------------------------
-# --- export only to allow unit tests
-
-export funcMatch = (curFunc) ->
-
-	assert isString(curFunc), "funcMatch(): not a string"
-	if lDebugFuncs.includes(curFunc)
-		return true
-	else if (lMatches = curFunc.match(reMethod)) \
-			&& ([_, cls, meth] = lMatches) \
-			&& lDebugFuncs.includes(meth)
-		return true
-	else
-		return false
 
 # ---------------------------------------------------------------------------
 
@@ -256,9 +246,5 @@ export checkTrace = (block) ->
 	return
 
 # ---------------------------------------------------------------------------
-# --- export only to allow unit tests
 
-export checkTraceFile = (filepath) ->
-
-	checkTrace(slurp(filepath))
-	return
+resetDebugging()

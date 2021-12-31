@@ -1,0 +1,23 @@
+# call_stack.test.cielo
+
+import {
+	undef, say, isString, isHash, isEmpty, nonEmpty, assert,
+	} from '@jdeighan/coffee-utils'
+import {CallStack} from '@jdeighan/coffee-utils/stack'
+import {UnitTester} from '@jdeighan/coffee-utils/test'
+
+simple = new UnitTester()
+
+# ----------------------------------------------------------------------------
+
+(() ->
+	stack = new CallStack()
+	stack.call('func1', {abc: 13})
+	stack.call('func2', {xyz: 42})
+	hInfo = stack.returnFrom('func2')
+	simple.equal {{LINE}}, hInfo, {xyz: 42}
+	hInfo = stack.returnFrom('func1')
+	simple.equal {{LINE}}, hInfo, {abc: 13}
+	)()
+
+# ----------------------------------------------------------------------------

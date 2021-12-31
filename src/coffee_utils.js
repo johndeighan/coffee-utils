@@ -78,6 +78,11 @@ export var isString = function(x) {
 };
 
 // ---------------------------------------------------------------------------
+export var isBoolean = function(x) {
+  return typeof x === 'boolean';
+};
+
+// ---------------------------------------------------------------------------
 export var isNumber = function(x) {
   return typeof x === 'number' || x instanceof Number;
 };

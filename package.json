@@ -10,6 +10,7 @@
 		"./log": "./src/log_utils.js",
 		"./block": "./src/block_utils.js",
 		"./indent": "./src/indent_utils.js",
+		"./stack": "./src/call_stack.js",
 		"./debug": "./src/debug_utils.js",
 		"./svelte": "./src/svelte_utils.js",
 		"./test": "./src/UnitTester.js",

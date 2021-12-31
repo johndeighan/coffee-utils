@@ -74,6 +74,12 @@ export isString = (x) ->
 
 # ---------------------------------------------------------------------------
 
+export isBoolean = (x) ->
+
+	return typeof x == 'boolean'
+
+# ---------------------------------------------------------------------------
+
 export isNumber = (x) ->
 
 	return typeof x == 'number' || x instanceof Number
