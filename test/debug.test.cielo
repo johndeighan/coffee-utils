@@ -1,6 +1,6 @@
 # debug.test.cielo
 
-import {undef, OL} from '@jdeighan/coffee-utils'
+import {undef, OL, isString} from '@jdeighan/coffee-utils'
 import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
 import {
@@ -344,4 +344,38 @@ tester = new TraceTester()
 		│   something
 		└─> return from get
 		"""
+	)()
+
+# ---------------------------------------------------------------------------
+#     Test debugging object methods
+
+(() ->
+	class StrInput
+
+		mapArray: (lLines) ->
+			result = ''
+			for line in lLines
+				result += @mapLine(line)
+				result += "\n"
+			return result
+
+		mapLine: (line, level) ->
+
+			debug "enter StrInput.mapLine()"
+			assert line? && isString(line), "StrInput.mapLine(): not a string"
+			line = "> #{line}"
+			debug "return #{OL(line)} from StrInput.mapLine()"
+			return line
+
+	resetDebugging true
+	lLines = []
+	input = new StrInput()
+	result = input.mapArray(['abc','def'])
+	simple.equal 374, result, "> abc\n> def\n"
+	simple.equal 375, lLines, [
+		'enter StrInput.mapLine()',
+		"└─> return '> abc' from StrInput.mapLine()",
+		'enter StrInput.mapLine()',
+		"└─> return '> def' from StrInput.mapLine()"
+		]
 	)()

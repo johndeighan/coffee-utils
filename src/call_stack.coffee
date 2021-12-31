@@ -22,8 +22,11 @@ export class CallStack
 
 	returnFrom: (fName) ->
 
+		if @lStack.length == 0
+			croak "returnFrom('#{fName}') but stack is empty"
 		{funcName, hInfo} = @lStack.pop()
 		if funcName != fName
+			@dump()
 			croak "returnFrom('#{fName}') but TOS is '#{funcName}'"
 		return hInfo
 
@@ -37,7 +40,7 @@ export class CallStack
 
 	dump: (label='CALL STACK') ->
 
-		log "#{label}:"
+		console.log "#{label}:"
 		for item, i in @lStack
-			log "#{i}: #{JSON.stringify(item)}"
+			console.log "#{i}: #{JSON.stringify(item)}"
 		return
