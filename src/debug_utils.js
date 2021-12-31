@@ -178,7 +178,7 @@ export var debug = function(...lArgs) {
     curFunc = lMatches[1];
     stack.call(curFunc, curEnv());
     debugging = shouldDebug(curFunc, debugging);
-  } else if ((lMatches = str.match(/^\s*return.*from\s+([A-Za-z_][A-Za-z0-9_\.]*)/))) {
+  } else if ((lMatches = str.match(/^\s*return.+from\s+([A-Za-z_][A-Za-z0-9_\.]*)/))) {
     returning = true;
     curFunc = lMatches[1];
     hInfo = stack.returnFrom(curFunc);

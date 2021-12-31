@@ -162,7 +162,7 @@ export debug = (lArgs...) ->
 	else if (lMatches = str.match(///^
 			\s*
 			return
-			.*
+			.+
 			from
 			\s+
 			([A-Za-z_][A-Za-z0-9_\.]*)
