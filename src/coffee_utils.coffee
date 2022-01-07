@@ -1,11 +1,23 @@
 # coffee_utils.coffee
 
 import getline from 'readline-sync'
+import {execSync} from 'child_process'
+
 import {log} from '@jdeighan/coffee-utils/log'
 
 export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
 `export const undef = undefined`
+
+# ---------------------------------------------------------------------------
+#   exec - run external commands
+
+export exec = (cmd) ->
+
+	buffer = execSync cmd, {
+		windowsHide: true
+		}
+	return buffer.toString()
 
 # ---------------------------------------------------------------------------
 #   pass - do nothing

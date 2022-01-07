@@ -5,6 +5,10 @@ var commentRegExp;
 import getline from 'readline-sync';
 
 import {
+  execSync
+} from 'child_process';
+
+import {
   log
 } from '@jdeighan/coffee-utils/log';
 
@@ -13,6 +17,16 @@ export var sep_dash = '-'.repeat(42);
 export var sep_eq = '='.repeat(42);
 
 export const undef = undefined;
+
+// ---------------------------------------------------------------------------
+//   exec - run external commands
+export var exec = function(cmd) {
+  var buffer;
+  buffer = execSync(cmd, {
+    windowsHide: true
+  });
+  return buffer.toString();
+};
 
 // ---------------------------------------------------------------------------
 //   pass - do nothing
