@@ -33,7 +33,7 @@ export resetDebugging = (funcDoDebug=undef, funcDoLog=undef) ->
 	debugging = false
 	debugLevel = 0
 	stack.reset()
-	shouldDebug = (funcName) -> debugging
+	shouldDebug = (funcName, curDebugging) -> curDebugging
 	shouldLog   = (str)      -> debugging
 	if funcDoDebug
 		setDebugging funcDoDebug, funcDoLog
@@ -49,8 +49,8 @@ export setDebugging = (funcDoDebug=undef, funcDoLog=undef) ->
 		debugging = false
 		lFuncNames = words(funcDoDebug)
 		assert isArray(lFuncNames), "words('#{funcDoDebug}') returned non-array"
-		shouldDebug = (funcName) ->
-			debugging || funcMatch(funcName, lFuncNames)
+		shouldDebug = (funcName, curDebugging) ->
+			curDebugging || funcMatch(funcName, lFuncNames)
 	else if isFunction(funcDoDebug)
 		shouldDebug = funcDoDebug
 	else
@@ -126,6 +126,17 @@ getPrefix = (level) ->
 
 # ---------------------------------------------------------------------------
 
+envSaysDebug = (curFunc) ->
+
+	if process.env.DEBUG_FUNC?
+		return curFunc == process.env.DEBUG_FUNC
+	else if process.env.DEBUG_FUNCS?
+		return process.env.DEBUG_FUNCS.split(',').indexOf(curFunc) > -1
+	else
+		return false
+
+# ---------------------------------------------------------------------------
+
 export debug = (lArgs...) ->
 	# --- either 1 or 2 args
 
@@ -158,7 +169,7 @@ export debug = (lArgs...) ->
 		entering = true
 		curFunc = lMatches[1]
 		stack.call(curFunc, curEnv())
-		debugging = shouldDebug(curFunc, debugging)
+		debugging = envSaysDebug(curFunc) || shouldDebug(curFunc, debugging)
 	else if (lMatches = str.match(///^
 			\s*
 			return
