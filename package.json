@@ -1,7 +1,7 @@
 {
 	"name": "@jdeighan/coffee-utils",
 	"type": "module",
-	"version": "4.1.16",
+	"version": "4.1.17",
 	"description": "A set of utility functions for CoffeeScript",
 	"main": "coffee_utils.js",
 	"exports": {
@@ -21,7 +21,7 @@
 	},
 	"ava": {
 		"verbose": false
-		},
+	},
 	"scripts": {
 		"build": "cls && rm -f ./src/*.js && coffee -c ./src",
 		"old_pretest": "npm run build && rm -f ./test/*.js && rm -f ./test/*.coffee && cielo -fq ./test",
