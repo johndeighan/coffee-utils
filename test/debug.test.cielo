@@ -379,3 +379,76 @@ tester = new TraceTester()
 		"└─> return '> def' from StrInput.mapLine()"
 		]
 	)()
+
+# ---------------------------------------------------------------------------
+#     Test env var DEBUG_FUNC
+
+(() ->
+	resetDebugging()
+	process.env.DEBUG_FUNC = 'nofunc'
+
+	block = """
+		enter myfunc
+		enter get
+		enter fetch
+		return from fetch
+		return from get
+		enter nofunc
+		return from nofunc
+		enter get
+		something
+		return from get
+		return from myfunc
+		"""
+
+	tester.equal {{LINE}}, block, """
+		enter nofunc
+		└─> return from nofunc
+		"""
+
+	delete process.env.DEBUG_FUNC
+	)()
+
+# ---------------------------------------------------------------------------
+#     Test env var DEBUG_FUNCS
+
+(() ->
+	resetDebugging()
+	process.env.DEBUG_FUNCS = 'get,fetch'
+
+	block = """
+		enter myfunc
+		enter get
+		enter fetch
+		return from fetch
+		return from get
+		enter nofunc
+		return from nofunc
+		enter get
+		something
+		return from get
+		return from myfunc
+		"""
+
+	tester.equal {{LINE}}, block, """
+		enter get
+		│   enter fetch
+		│   └─> return from fetch
+		└─> return from get
+		enter get
+		│   something
+		└─> return from get
+		"""
+
+	delete process.env.DEBUG_FUNCS
+	)()
+
+__END__
+
+		enter get
+		│   enter fetch
+		│   └─> return from fetch
+		└─> return from get
+		enter get
+		│   something
+		└─> return from get
