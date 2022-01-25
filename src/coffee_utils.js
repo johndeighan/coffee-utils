@@ -2,12 +2,6 @@
 // coffee_utils.coffee
 var commentRegExp;
 
-import getline from 'readline-sync';
-
-import {
-  execSync
-} from 'child_process';
-
 import {
   log
 } from '@jdeighan/coffee-utils/log';
@@ -17,16 +11,6 @@ export var sep_dash = '-'.repeat(42);
 export var sep_eq = '='.repeat(42);
 
 export const undef = undefined;
-
-// ---------------------------------------------------------------------------
-//   exec - run external commands
-export var exec = function(cmd) {
-  var buffer;
-  buffer = execSync(cmd, {
-    windowsHide: true
-  });
-  return buffer.toString();
-};
 
 // ---------------------------------------------------------------------------
 //   pass - do nothing
@@ -263,15 +247,6 @@ export var say = function(x) {
   } else {
     console.log(x);
   }
-};
-
-// ---------------------------------------------------------------------------
-//   ask - ask a question
-//         later, on a web page, prompt the user for answer to question
-export var ask = function(prompt) {
-  var answer;
-  answer = getline.question("{prompt}? ");
-  return answer;
 };
 
 // ---------------------------------------------------------------------------

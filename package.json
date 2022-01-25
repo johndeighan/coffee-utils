@@ -26,7 +26,7 @@
 	"scripts": {
 		"build": "cls && rm -f ./src/*.js && coffee -c ./src",
 		"old_pretest": "npm run build && rm -f ./test/*.js && rm -f ./test/*.coffee && cielo -fq ./test",
-		"pretest": "cls && coffee -c .",
+		"pretest": "cls && cielo -ck .",
 		"test": "ava ./test/*.test.js",
 		"prefinaltest": "npm run pretest",
 		"finaltest": "cross-env FINALTEST=yes ava ./test/*.test.js"

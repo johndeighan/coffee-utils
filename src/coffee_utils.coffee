@@ -1,23 +1,10 @@
 # coffee_utils.coffee
 
-import getline from 'readline-sync'
-import {execSync} from 'child_process'
-
 import {log} from '@jdeighan/coffee-utils/log'
 
 export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
 `export const undef = undefined`
-
-# ---------------------------------------------------------------------------
-#   exec - run external commands
-
-export exec = (cmd) ->
-
-	buffer = execSync cmd, {
-		windowsHide: true
-		}
-	return buffer.toString()
 
 # ---------------------------------------------------------------------------
 #   pass - do nothing
@@ -260,15 +247,6 @@ export say = (x) ->
 	else
 		console.log x
 	return
-
-# ---------------------------------------------------------------------------
-#   ask - ask a question
-#         later, on a web page, prompt the user for answer to question
-
-export ask = (prompt) ->
-
-	answer = getline.question("{prompt}? ")
-	return answer
 
 # ---------------------------------------------------------------------------
 
