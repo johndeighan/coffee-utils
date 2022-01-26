@@ -1,4 +1,4 @@
-# external.coffee
+# server_utils.coffee
 
 import getline from 'readline-sync'
 import {execSync} from 'child_process'
@@ -21,4 +21,3 @@ export ask = (prompt) ->
 
 	answer = getline.question("{prompt}? ")
 	return answer
-

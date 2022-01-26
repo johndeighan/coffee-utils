@@ -1,9 +1,9 @@
-# external.test.cielo
+# server.test.cielo
 
 import {UnitTester} from '@jdeighan/coffee-utils/test'
 import {
 	exec,
-	} from '@jdeighan/coffee-utils/external'
+	} from '@jdeighan/coffee-utils/server'
 import {setLogger} from '@jdeighan/coffee-utils/log'
 import {setDebugging} from '@jdeighan/coffee-utils/debug'
 
