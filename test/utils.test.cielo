@@ -9,6 +9,7 @@ import {
 	words, escapeStr, titleLine,
 	removeCR, CWS, isArrayOfHashes,
 	oneline, croak, isRegExp, uniq, hashToStr, envVarsWithPrefix,
+	strcat,
 	} from '@jdeighan/coffee-utils'
 import {setLogger} from '@jdeighan/coffee-utils/log'
 import {setDebugging} from '@jdeighan/coffee-utils/debug'
@@ -242,3 +243,8 @@ simple.equal {{LINE}}, h, {"cielo.B": 'two', "cielo.D": 'four'}
 
 h = envVarsWithPrefix('cielo.', {stripPrefix: true})
 simple.equal {{LINE}}, h, {B: 'two', D: 'four'}
+
+# ---------------------------------------------------------------------------
+
+simple.equal {{LINE}}, strcat('a','b','c'), 'abc'
+simple.equal {{LINE}}, strcat('a',5,'c'), 'a5c'

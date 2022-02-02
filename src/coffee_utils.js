@@ -431,3 +431,14 @@ export var getDateStr = function(date = undef) {
   }
   return date.toLocaleDateString('en-US');
 };
+
+// ---------------------------------------------------------------------------
+export var strcat = function(...lItems) {
+  var i, item, len, str;
+  str = '';
+  for (i = 0, len = lItems.length; i < len; i++) {
+    item = lItems[i];
+    str += item.toString();
+  }
+  return str;
+};

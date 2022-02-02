@@ -394,3 +394,11 @@ export getDateStr = (date=undef) ->
 	if date == undef
 		date = new Date()
 	return date.toLocaleDateString('en-US')
+
+# ---------------------------------------------------------------------------
+
+export strcat = (lItems...) ->
+	str = ''
+	for item in lItems
+		str += item.toString()
+	return str
