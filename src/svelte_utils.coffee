@@ -1,5 +1,7 @@
 # svelte_utils.coffee
 
+import {onDestroy} from 'svelte'
+
 # ---------------------------------------------------------------------------
 #   svelteSourceCodeEsc - to display source code for a *.starbucks page
 
@@ -24,3 +26,9 @@ export svelteHtmlEsc = (str) ->
 
 # ---------------------------------------------------------------------------
 
+export onInterval = (func, secs) ->
+
+	interval = setInterval(func, Math.floor(1000 * secs))
+
+	onDestroy () ->
+		clearInterval interval
