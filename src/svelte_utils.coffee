@@ -1,6 +1,7 @@
 # svelte_utils.coffee
 
-import {onDestroy} from 'svelte'
+import {assert, isFunction} from '@jdeighan/coffee-utils'
+import {log} from '@jdeighan/coffee-utils/log'
 
 # ---------------------------------------------------------------------------
 #   svelteSourceCodeEsc - to display source code for a *.starbucks page
@@ -26,9 +27,15 @@ export svelteHtmlEsc = (str) ->
 
 # ---------------------------------------------------------------------------
 
-export onInterval = (func, secs) ->
+export onInterval = (func, secs, doLog=false) ->
 
-	interval = setInterval(func, Math.floor(1000 * secs))
+	assert isFunction(func), "onInterval(): 1st arg not a function"
+	ms = Math.floor(1000 * secs)
+	if doLog
+		log "calling func every #{ms} ms."
+	interval = setInterval(func, ms)
 
-	onDestroy () ->
+	return () ->
+		if doLog
+			log "destroying interval timer"
 		clearInterval interval
