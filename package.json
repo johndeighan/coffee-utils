@@ -16,6 +16,7 @@
 		"./debug": "./src/debug_utils.js",
 		"./svelte": "./src/svelte_utils.js",
 		"./test": "./src/UnitTester.js",
+		"./store": "./src/DataStores.js",
 		"./package.json": "./package.json"
 	},
 	"engines": {
