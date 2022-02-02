@@ -1,6 +1,7 @@
 # DataStores.coffee
 
 import pathlib from 'path'
+import yaml from 'js-yaml'
 import {writable, readable, get} from 'svelte/store'
 
 import {
@@ -10,7 +11,6 @@ import {log} from '@jdeighan/coffee-utils/log'
 import {
 	withExt, slurp, barf, newerDestFileExists,
 	} from '@jdeighan/coffee-utils/fs'
-import {isTAML, taml} from '@jdeighan/string-input/taml'
 
 # ---------------------------------------------------------------------------
 
@@ -126,6 +126,14 @@ export class TAMLDataStore extends WritableDataStore
 
 # ---------------------------------------------------------------------------
 #         UTILITIES
+# ---------------------------------------------------------------------------
+
+export taml = (text) ->
+
+	if ! text?
+		return undef
+	return yaml.load(untabify(text, 1), {skipInvalid: true})
+
 # ---------------------------------------------------------------------------
 
 export brewTamlStr = (code, stub) ->

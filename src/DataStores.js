@@ -2,6 +2,8 @@
 // DataStores.coffee
 import pathlib from 'path';
 
+import yaml from 'js-yaml';
+
 import {
   writable,
   readable,
@@ -27,11 +29,6 @@ import {
   barf,
   newerDestFileExists
 } from '@jdeighan/coffee-utils/fs';
-
-import {
-  isTAML,
-  taml
-} from '@jdeighan/string-input/taml';
 
 // ---------------------------------------------------------------------------
 export var WritableDataStore = class WritableDataStore {
@@ -170,6 +167,16 @@ export var TAMLDataStore = class TAMLDataStore extends WritableDataStore {
 
 // ---------------------------------------------------------------------------
 //         UTILITIES
+// ---------------------------------------------------------------------------
+export var taml = function(text) {
+  if (text == null) {
+    return undef;
+  }
+  return yaml.load(untabify(text, 1), {
+    skipInvalid: true
+  });
+};
+
 // ---------------------------------------------------------------------------
 export var brewTamlStr = function(code, stub) {
   return `import {TAMLDataStore} from '@jdeighan/starbucks/stores';
