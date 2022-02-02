@@ -381,3 +381,16 @@ export envVarsWithPrefix = (prefix, hOptions={}) ->
 
 # ---------------------------------------------------------------------------
 
+export getTimeStr = (date=undef) ->
+
+	if date == undef
+		date = new Date()
+	return date.toLocaleTimeString('en-US')
+
+# ---------------------------------------------------------------------------
+
+export getDateStr = (date=undef) ->
+
+	if date == undef
+		date = new Date()
+	return date.toLocaleDateString('en-US')

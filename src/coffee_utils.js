@@ -417,3 +417,17 @@ export var envVarsWithPrefix = function(prefix, hOptions = {}) {
 };
 
 // ---------------------------------------------------------------------------
+export var getTimeStr = function(date = undef) {
+  if (date === undef) {
+    date = new Date();
+  }
+  return date.toLocaleTimeString('en-US');
+};
+
+// ---------------------------------------------------------------------------
+export var getDateStr = function(date = undef) {
+  if (date === undef) {
+    date = new Date();
+  }
+  return date.toLocaleDateString('en-US');
+};
