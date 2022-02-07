@@ -17,6 +17,7 @@
 		"./svelte": "./src/svelte_utils.js",
 		"./test": "./src/UnitTester.js",
 		"./store": "./src/DataStores.js",
+		"./taml": "./src/taml.js",
 		"./package.json": "./package.json"
 	},
 	"engines": {
