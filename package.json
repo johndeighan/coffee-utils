@@ -51,6 +51,6 @@
 		"cross-env": "^7.0.3",
 		"js-yaml": "^4.1.0",
 		"readline-sync": "^1.4.10",
-		"svelte": "^3.46.3"
+		"svelte": "^3.46.4"
 	}
 }
