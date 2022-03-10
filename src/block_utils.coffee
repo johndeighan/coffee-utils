@@ -6,7 +6,6 @@ import readline from 'readline'
 import {
 	assert, isEmpty, isString, nonEmpty, error, isComment, rtrim,
 	} from '@jdeighan/coffee-utils'
-import {log} from '@jdeighan/coffee-utils/log'
 
 # ---------------------------------------------------------------------------
 #   blockToArray - split a block into lines

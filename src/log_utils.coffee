@@ -3,82 +3,81 @@
 import yaml from 'js-yaml'
 
 import {
-	assert, undef, isNumber, isString, isHash, isFunction,
+	assert, undef, isNumber, isInteger, isString, isHash, isFunction,
 	escapeStr, sep_eq,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
-import {tabify} from '@jdeighan/coffee-utils/indent'
+import {tabify, untabify} from '@jdeighan/coffee-utils/indent'
 
 # --- This logger only ever gets passed a single string argument
-logger = console.log          # for strings
+logger = undef
+export stringify = undef
+export id = 42
+
+# ---------------------------------------------------------------------------
+
+export setStringifier = (func) ->
+
+	orgStringifier = stringify
+	assert isFunction(func), "setStringifier() arg is not a function"
+	stringify = func
+	return orgStringifier
+
+# ---------------------------------------------------------------------------
+
+export resetStringifier = () ->
+
+	setStringifier orderedStringify
 
 # ---------------------------------------------------------------------------
 
 export setLogger = (func) ->
 
 	orgLogger = logger
-	if func?
-		assert isFunction(func), "setLogger() not a function"
-		logger = func
-	else
-		logger = console.log
+	assert isFunction(func), "setLogger() arg is not a function"
+	logger = func
 	return orgLogger
 
 # ---------------------------------------------------------------------------
 
-export tamlStringify = (obj) ->
+export resetLogger = () ->
+
+	setLogger console.log
+
+# ---------------------------------------------------------------------------
+
+escReplacer = (name, value) ->
+
+	if ! isString(value)
+		return value
+	return escapeStr(value)
+
+# ---------------------------------------------------------------------------
+
+export tamlStringify = (obj, escape=false) ->
 
 	str = yaml.dump(obj, {
 		skipInvalid: true
 		indent: 1
 		sortKeys: false
 		lineWidth: -1
+		replacer: if escape then escReplacer else (name,value) -> value
 		})
-	str = "---\n" + tabify(str)
-	str = str.replace(/\t/g, '   ')  # fr***ing Windows Terminal
-	return str
+	return "---\n" + tabify(str, 1)
 
 # ---------------------------------------------------------------------------
-# the default stringifier
 
-export orderedStringify = (obj) ->
+export orderedStringify = (obj, escape=false) ->
 
 	str = yaml.dump(obj, {
 		skipInvalid: true
 		indent: 1
 		sortKeys: true
 		lineWidth: -1
+		replacer: if escape then escReplacer else (name,value) -> value
 		})
-	str = "---\n" + tabify(str)
-	str = str.replace(/\t/g, '   ')  # fr***ing Windows Terminal
-	return str
 
-# ---------------------------------------------------------------------------
-
-export stringify = orderedStringify # for non-strings
-
-# ---------------------------------------------------------------------------
-
-export setStringifier = (func) ->
-
-	if func?
-		assert isFunction(func), "setStringifier() not a function"
-		stringify = func
-	else
-		stringify = orderedStringify
-	return
-
-# ---------------------------------------------------------------------------
-
-export currentLogger = () ->
-
-	return logger
-
-# ---------------------------------------------------------------------------
-
-export currentStringifier = () ->
-
-	return stringify
+	return "---\n" + tabify(str, 1)
 
 # ---------------------------------------------------------------------------
 
@@ -86,67 +85,60 @@ maxOneLine = 32
 
 # ---------------------------------------------------------------------------
 
-export log = (lArgs...) ->
-	# --- (str, item, hOptions)
-	#     valid options:
-	#        logItem
+export log = (item, hOptions=undef) ->
+	# --- valid options:
+	#        label
 	#        prefix
-	#        itemPrefix
+	#        escape
 
-	if (lArgs.length==0)
-		return
-	str = lArgs[0]
-	switch lArgs.length
-		when 1
-			logItem = false
-		when 2
-			item = lArgs[1]
-			logItem = true
-		else
-			item = lArgs[1]      # might not be logged, though
-			hOptions = lArgs[2]
-			assert isHash(hOptions), "log(): 3rd arg must be a hash"
-			if hOptions.logItem?
-				logItem = hOptions.logItem
-
+	assert isFunction(logger), "logger not properly set"
+	prefix = itemPrefix = label = ''
 	if hOptions?
-		if hOptions.prefix?
-			prefix = hOptions.prefix
+		if isString(hOptions)
+			label = hOptions
 		else
-			prefix = ''
+			assert isHash(hOptions), "log(): 2nd arg must be a string or hash"
+			if hOptions.prefix?
+				prefix = hOptions.prefix
+			if hOptions.itemPrefix?
+				itemPrefix = hOptions.itemPrefix
+			else
+				itemPrefix = prefix
+			if hOptions.label?
+				label = hOptions.label
 
-		if hOptions.itemPrefix?
-			itemPrefix = hOptions.itemPrefix
+	if isString(item) && (label == '')
+		if hOptions? && hOptions.escape
+			logger "#{prefix}#{escapeStr(item)}"
 		else
-			itemPrefix = ''
-	else
-		prefix = itemPrefix = ''
+			logger "#{prefix}#{item}"
+		return
 
-	if (! logItem)
-		logger "#{prefix}#{str}"
-	else if ! item?
-		logger "#{prefix}#{str} = undef"
-	else if isNumber(item)
-		logger "#{prefix}#{str} = #{item}"
+	if (label == '')
+		label = 'ITEM'
+
+	if (item == undef)
+		logger "#{prefix}#{label} = undef"
 	else if isString(item)
-		esc = escapeStr(item)
-		if (esc.length <= maxOneLine)
-			logger "#{prefix}#{str} = '#{esc}'"
+		if (item.length <= maxOneLine)
+			logger "#{prefix}#{label} = '#{escapeStr(item)}'"
 		else
-			logger "#{prefix}#{str}:"
+			logger "#{prefix}#{label}:"
 			logger "#{itemPrefix}#{sep_eq}"
 			for line in blockToArray(item)
 				logger "#{itemPrefix}#{escapeStr(line)}"
 			logger "#{itemPrefix}#{sep_eq}"
+	else if isNumber(item)
+		logger "#{prefix}#{label} = #{item}"
 	else
-		# --- It's some type of object
-		json = JSON.stringify(item)
-		if (json.length <= maxOneLine)
-			logger "#{prefix}#{str} = #{json}"
-		else
-			logger "#{prefix}#{str}:"
-			for str in blockToArray(stringify(item))
-				logger "#{itemPrefix}   #{str}"
+		logger "#{prefix}#{label}:"
+		for str in blockToArray(stringify(item, true))
+			logger "#{itemPrefix}\t#{str}"
 	return
 
 # ---------------------------------------------------------------------------
+
+if ! loaded
+	setStringifier orderedStringify
+	resetLogger()
+loaded = true

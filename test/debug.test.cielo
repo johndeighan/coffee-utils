@@ -4,17 +4,16 @@ import {undef, OL, isString} from '@jdeighan/coffee-utils'
 import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
 import {
-	setDebugging, debug, resetDebugging, funcMatch, useStdLogger,
+	setDebugging, debug, resetDebugging, funcMatch,
 	} from '@jdeighan/coffee-utils/debug'
-import {UnitTester} from '@jdeighan/coffee-utils/test'
+import {UnitTester} from '@jdeighan/unit-tester'
 
 simple = new UnitTester()
-useStdLogger()
 
 # ---------------------------------------------------------------------------
 
 lLines = undef
-setLogger (str) -> lLines.push(str)
+setLogger (str) -> lLines.push(str.replace(/\t/g, '   '))
 
 # ---------------------------------------------------------------------------
 
@@ -96,7 +95,10 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"│   something"
-		'│   obj = {"first":1,"second":2}'
+		"│   obj:"
+		"│      ---"
+		"│      first: 1"
+		"│      second: 2"
 		"└─> return 42 from myfunc"
 		]
 	)()
@@ -118,8 +120,8 @@ tester = new TraceTester()
 		"│   something"
 		"│   obj:"
 		"│      ---"
-		"│      first: this is the first item in the hash"
-		"│      second: this is the second item in the hash"
+		"│      first: this˳is˳the˳first˳item˳in˳the˳hash"
+		"│      second: this˳is˳the˳second˳item˳in˳the˳hash"
 		"└─> return 42 from myfunc"
 		]
 	)()
@@ -154,7 +156,6 @@ tester = new TraceTester()
 (() ->
 	lLines = []
 	resetDebugging 'innerFunc'
-#	setDebugging 'innerFunc'
 
 	innerFunc = () ->
 
@@ -192,7 +193,6 @@ tester = new TraceTester()
 
 (() ->
 	resetDebugging true
-#	setDebugging true
 	lLines = []
 
 	line = 'first line'
@@ -200,7 +200,7 @@ tester = new TraceTester()
 
 	simple.equal {{LINE}}, lLines.length, 1
 	simple.equal {{LINE}}, lLines, [
-		"line is 'first line'"
+		"line is 'first˳line'"
 		]
 	setDebugging false
 	)()
@@ -209,7 +209,6 @@ tester = new TraceTester()
 
 (() ->
 	resetDebugging true
-#	setDebugging true
 	lLines = []
 
 	obj = {
@@ -224,8 +223,8 @@ tester = new TraceTester()
 		"enter myfunc"
 		"└─> return from myfunc:"
 		"       ---"
-		"       first: this is the first item in the hash"
-		"       second: this is the second item in the hash"
+		"       first: this˳is˳the˳first˳item˳in˳the˳hash"
+		"       second: this˳is˳the˳second˳item˳in˳the˳hash"
 		"Answer is 42"
 		]
 	)()
@@ -234,7 +233,6 @@ tester = new TraceTester()
 
 (() ->
 	resetDebugging true
-#	setDebugging true
 	lLines = []
 
 	longBlock = """
@@ -249,8 +247,8 @@ tester = new TraceTester()
 		"enter myfunc"
 		"└─> return from myfunc:"
 		"    =========================================="
-		"    this is one very long line"
-		"    this is another very long line"
+		"    this˳is˳one˳very˳long˳line"
+		"    this˳is˳another˳very˳long˳line"
 		"    =========================================="
 		"Answer is 42"
 		]
@@ -374,9 +372,9 @@ tester = new TraceTester()
 	simple.equal 374, result, "> abc\n> def\n"
 	simple.equal 375, lLines, [
 		'enter StrInput.mapLine()',
-		"└─> return '> abc' from StrInput.mapLine()",
+		"└─> return '>˳abc' from StrInput.mapLine()",
 		'enter StrInput.mapLine()',
-		"└─> return '> def' from StrInput.mapLine()"
+		"└─> return '>˳def' from StrInput.mapLine()"
 		]
 	)()
 

@@ -14,10 +14,6 @@ import {
   rtrim
 } from '@jdeighan/coffee-utils';
 
-import {
-  log
-} from '@jdeighan/coffee-utils/log';
-
 // ---------------------------------------------------------------------------
 //   blockToArray - split a block into lines
 export var blockToArray = function(block) {

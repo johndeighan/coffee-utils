@@ -1,0 +1,19 @@
+# stringify.test.cielo
+
+import {undef, escapeStr} from '@jdeighan/coffee-utils'
+import {UnitTester, UnitTesterNoNorm} from '@jdeighan/unit-tester'
+import {
+	stringify, tamlStringify, orderedStringify,
+	} from '@jdeighan/coffee-utils/log'
+
+simple = new UnitTesterNoNorm()
+# simple.same {{LINE}}, stringify, orderedStringify
+
+simple.equal {{LINE}}, orderedStringify(['a', 42, [1,2]]), """
+	---
+	- a
+	- 42
+	-
+		- 1
+		- 2
+	"""

@@ -1,6 +1,6 @@
 # server.test.cielo
 
-import {UnitTester} from '@jdeighan/coffee-utils/test'
+import {UnitTester} from '@jdeighan/unit-tester'
 import {
 	exec,
 	} from '@jdeighan/coffee-utils/server'

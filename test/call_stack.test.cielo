@@ -4,7 +4,7 @@ import {
 	undef, say, isString, isHash, isEmpty, nonEmpty, assert,
 	} from '@jdeighan/coffee-utils'
 import {CallStack} from '@jdeighan/coffee-utils/stack'
-import {UnitTester} from '@jdeighan/coffee-utils/test'
+import {UnitTester} from '@jdeighan/unit-tester'
 
 simple = new UnitTester()
 

@@ -2,10 +2,6 @@
 // coffee_utils.coffee
 var commentRegExp;
 
-import {
-  log
-} from '@jdeighan/coffee-utils/log';
-
 export var sep_dash = '-'.repeat(42);
 
 export var sep_eq = '='.repeat(42);
@@ -35,8 +31,9 @@ export var assert = function(cond, msg) {
 export var croak = function(err, label, obj) {
   var message;
   message = (typeof err === 'object') ? err.message : err;
-  log(`ERROR (croak): ${message}`);
-  log(label, obj);
+  console.log(`ERROR (croak): ${message}`);
+  console.log(obj, label);
+  // --- re-throw the error
   if (typeof err === 'object') {
     throw err;
   } else {
@@ -229,7 +226,7 @@ export var uniq = function(lItems) {
 // ---------------------------------------------------------------------------
 //   warn - issue a warning
 export var warn = function(message) {
-  return log(`WARNING: ${message}`);
+  return say(`WARNING: ${message}`);
 };
 
 // ---------------------------------------------------------------------------
@@ -298,44 +295,29 @@ export var deepCopy = function(obj) {
 
 // ---------------------------------------------------------------------------
 //   escapeStr - escape newlines, TAB chars, etc.
-export var escapeStr = function(str, hEscape = undef) {
+export var hDefEsc = {
+  "\n": '®',
+  "\t": '→',
+  " ": '˳'
+};
+
+export var escapeStr = function(str, hEscape = hDefEsc) {
   var ch, lParts;
-  if (!isString(str)) {
-    croak("escapeStr(): not a string", str, 'STRING');
-  }
-  if (hEscape != null) {
-    lParts = (function() {
-      var i, len, ref, results;
-      ref = str.split('');
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        ch = ref[i];
-        if (hEscape[ch] != null) {
-          results.push(hEscape[ch]);
-        } else {
-          results.push(ch);
-        }
+  assert(isString(str), "escapeStr(): not a string");
+  lParts = (function() {
+    var i, len, ref, results;
+    ref = str.split('');
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      ch = ref[i];
+      if (hEscape[ch] != null) {
+        results.push(hEscape[ch]);
+      } else {
+        results.push(ch);
       }
-      return results;
-    })();
-  } else {
-    lParts = (function() {
-      var i, len, ref, results;
-      ref = str.split('');
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        ch = ref[i];
-        if (ch === '\n') {
-          results.push('\\n');
-        } else if (ch === '\t') {
-          results.push('\\t');
-        } else {
-          results.push(ch);
-        }
-      }
-      return results;
-    })();
-  }
+    }
+    return results;
+  })();
   return lParts.join('');
 };
 

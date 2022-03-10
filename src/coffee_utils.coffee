@@ -1,7 +1,5 @@
 # coffee_utils.coffee
 
-import {log} from '@jdeighan/coffee-utils/log'
-
 export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
 `export const undef = undefined`
@@ -33,8 +31,10 @@ export assert = (cond, msg) ->
 export croak = (err, label, obj) ->
 
 	message = if (typeof err == 'object') then err.message else err
-	log "ERROR (croak): #{message}"
-	log label, obj
+	console.log "ERROR (croak): #{message}"
+	console.log obj, label
+
+	# --- re-throw the error
 	if (typeof err == 'object')
 		throw err
 	else
@@ -227,7 +227,7 @@ export uniq = (lItems) ->
 
 export warn = (message) ->
 
-	log "WARNING: #{message}"
+	say "WARNING: #{message}"
 
 # ---------------------------------------------------------------------------
 #   hashToStr - stringify a hash
@@ -301,24 +301,17 @@ export deepCopy = (obj) ->
 # ---------------------------------------------------------------------------
 #   escapeStr - escape newlines, TAB chars, etc.
 
-export escapeStr = (str, hEscape=undef) ->
+export hDefEsc = {
+	"\n": '®'
+	"\t": '→'
+	" ": '˳'
+	}
 
-	if ! isString(str)
-		croak "escapeStr(): not a string", str, 'STRING'
-	if hEscape?
-		lParts = for ch in str.split('')
-			if hEscape[ch]?
-				hEscape[ch]
-			else
-				ch
-	else
-		lParts = for ch in str.split('')
-			if ch == '\n'
-				'\\n'
-			else if ch == '\t'
-				'\\t'
-			else
-				ch
+export escapeStr = (str, hEscape=hDefEsc) ->
+
+	assert isString(str), "escapeStr(): not a string"
+	lParts = for ch in str.split('')
+		if hEscape[ch]? then hEscape[ch] else ch
 	return lParts.join('')
 
 # ---------------------------------------------------------------------------

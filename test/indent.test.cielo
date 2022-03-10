@@ -2,7 +2,7 @@
 
 import assert from 'assert'
 
-import {UnitTester} from '@jdeighan/coffee-utils/test'
+import {UnitTester} from '@jdeighan/unit-tester'
 import {isInteger} from '@jdeighan/coffee-utils'
 import {
 	indentLevel, indentation, undented, splitLine,

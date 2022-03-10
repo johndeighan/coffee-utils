@@ -2,35 +2,27 @@
 
 import {undef, escapeStr} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
-import {UnitTester} from '@jdeighan/coffee-utils/test'
+import {UnitTester, UnitTesterNoNorm} from '@jdeighan/unit-tester'
 import {
 	stringify, setStringifier, log, setLogger,
 	tamlStringify, orderedStringify,
 	} from '@jdeighan/coffee-utils/log'
 
-setStringifier tamlStringify
 simple = new UnitTester()
-
-# ---------------------------------------------------------------------------
-
-class LogTester extends UnitTester
-
-	transformValue: (lLines) ->
-		return arrayToBlock(lLines)
-
-	# --- when logging, \t becomes 3 spaces
-	transformExpected: (expected) ->
-		return expected.replace(/\t/g, '   ')
-
-	normalize: (text) ->
-		return text
-
-tester = new LogTester()
 
 # ---------------------------------------------------------------------------
 
 lLines = undef
 setLogger (str) -> lLines.push(str)
+
+# ---------------------------------------------------------------------------
+
+class LogTester extends UnitTesterNoNorm
+
+	transformValue: (lLines) ->
+		return arrayToBlock(lLines)
+
+tester = new LogTester()
 
 # ---------------------------------------------------------------------------
 
@@ -62,7 +54,7 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'abc'
-	log 'name', undef
+	log undef, 'name'
 	tester.equal {{LINE}}, lLines, """
 		abc
 		name = undef
@@ -72,7 +64,7 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'abc'
-	log 'name', 42
+	log 42, 'name'
 	tester.equal {{LINE}}, lLines, """
 		abc
 		name = 42
@@ -82,7 +74,7 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'abc'
-	log 'name', 'John'
+	log 'John', 'name'
 	tester.equal {{LINE}}, lLines, """
 		abc
 		name = 'John'
@@ -92,20 +84,27 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'abc'
-	log 'name', {a: 1, b: 'xyz'}
+	log {a: 1, b: 'xyz'}, 'name'
 	tester.equal {{LINE}}, lLines, """
 		abc
-		name = {"a":1,"b":"xyz"}
+		name:
+			---
+			a: 1
+			b: xyz
 		"""
 	)()
 
 (() ->
 	lLines = []
-	log 'abc'
-	log 'name', ['a', 42, [1,2]]
+	log ['a', 42, [1,2]], 'name'
 	tester.equal {{LINE}}, lLines, """
-		abc
-		name = ["a",42,[1,2]]
+		name:
+			---
+			- a
+			- 42
+			-
+				- 1
+				- 2
 		"""
 	)()
 
@@ -115,18 +114,18 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'abc'
-	log 'name', """
+	log """
 		This is a rather long bit of
 		text which changes
 		how it's displayed
-		"""
+		""", 'name'
 	tester.equal {{LINE}}, lLines, """
 		abc
 		name:
 		==========================================
-		This is a rather long bit of
-		text which changes
-		how it's displayed
+		This˳is˳a˳rather˳long˳bit˳of
+		text˳which˳changes
+		how˳it's˳displayed
 		==========================================
 		"""
 	)()
@@ -134,37 +133,37 @@ setLogger (str) -> lLines.push(str)
 (() ->
 	lLines = []
 	log 'abc'
-	log 'name', {
+	log {
 		fname: 'John',
 		lname: 'Deighan',
 		age: 68,
 		home: 'Blacksburg, VA',
-		}
+		}, 'name'
 	tester.equal {{LINE}}, lLines, """
 		abc
 		name:
 			---
-			fname: John
-			lname: Deighan
 			age: 68
-			home: Blacksburg, VA
+			fname: John
+			home: Blacksburg,˳VA
+			lname: Deighan
 		"""
 	)()
 
 (() ->
 	lLines = []
 	log 'abc'
-	log 'name', [
+	log [
 		68,
 		'a rather long string of text',
 		{a:1, b:2}
-		]
+		], 'name'
 	tester.equal {{LINE}}, lLines, """
 		abc
 		name:
 			---
 			- 68
-			- a rather long string of text
+			- a˳rather˳long˳string˳of˳text
 			-
 				a: 1
 				b: 2
@@ -179,19 +178,19 @@ setLogger (str) -> lLines.push(str)
 
 	lLines = []
 	log 'abc'
-	log 'name', {
+	log {
 		fname: 'John',
 		lname: 'Deighan',
 		age: 68,
 		home: 'Blacksburg, VA',
-		}
+		}, 'name'
 	tester.equal {{LINE}}, lLines, """
 		abc
 		name:
 			---
 			age: 68
 			fname: John
-			home: Blacksburg, VA
+			home: Blacksburg,˳VA
 			lname: Deighan
 		"""
 
@@ -203,7 +202,7 @@ setLogger (str) -> lLines.push(str)
 
 (() ->
 	lLines = []
-	log 'name', undef, {prefix: '<-->', logItem: true}
+	log undef, {label: 'name', prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->name = undef
 		"""
@@ -211,7 +210,7 @@ setLogger (str) -> lLines.push(str)
 
 (() ->
 	lLines = []
-	log 'name', 42, {prefix: '<-->', logItem: true}
+	log 42, {label: 'name', prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->name = 42
 		"""
@@ -219,7 +218,7 @@ setLogger (str) -> lLines.push(str)
 
 (() ->
 	lLines = []
-	log 'name', 'John', {prefix: '<-->', logItem: true}
+	log 'John', {label: 'name', prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->name = 'John'
 		"""
@@ -227,70 +226,79 @@ setLogger (str) -> lLines.push(str)
 
 (() ->
 	lLines = []
-	log 'name', {a: 1, b: 'xyz'}, {prefix: '<-->', logItem: true}
-	tester.equal {{LINE}}, lLines, """
-		<-->name = {"a":1,"b":"xyz"}
-		"""
-	)()
-
-(() ->
-	lLines = []
-	log 'name', ['a', 42, [1,2]], {prefix: '<-->', logItem: true}
-	tester.equal {{LINE}}, lLines, """
-		<-->name = ["a",42,[1,2]]
-		"""
-	)()
-
-(() ->
-	lLines = []
-	log 'name', """
-		This is a rather long bit of
-		text which changes
-		how it's displayed
-		""", {prefix: '<-->', logItem: true}
+	log {a: 1, b: 'xyz'}, {label: 'name', prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->name:
-		==========================================
-		This is a rather long bit of
-		text which changes
-		how it's displayed
-		==========================================
+		<-->	---
+		<-->	a: 1
+		<-->	b: xyz
 		"""
 	)()
 
 (() ->
 	lLines = []
-	log 'name', {
+	log ['a', 42, [1,2]], {label: 'name', prefix: '<-->'}
+	tester.equal {{LINE}}, lLines, """
+		<-->name:
+		<-->	---
+		<-->	- a
+		<-->	- 42
+		<-->	-
+		<-->		- 1
+		<-->		- 2
+		"""
+	)()
+
+(() ->
+	lLines = []
+	log """
+		This is a rather long bit of
+		text which changes
+		how it's displayed
+		""", {label: 'name', prefix: '<-->'}
+	tester.equal {{LINE}}, lLines, """
+		<-->name:
+		<-->==========================================
+		<-->This˳is˳a˳rather˳long˳bit˳of
+		<-->text˳which˳changes
+		<-->how˳it's˳displayed
+		<-->==========================================
+		"""
+	)()
+
+(() ->
+	lLines = []
+	log {
 		fname: 'John',
 		lname: 'Deighan',
 		age: 68,
 		home: 'Blacksburg, VA',
-		}, {prefix: '<-->', logItem: true}
+		}, {label: 'name', prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->name:
-			---
-			fname: John
-			lname: Deighan
-			age: 68
-			home: Blacksburg, VA
+		<-->	---
+		<-->	fname: John
+		<-->	lname: Deighan
+		<-->	age: 68
+		<-->	home: Blacksburg,˳VA
 		"""
 	)()
 
 (() ->
 	lLines = []
-	log 'name', [
+	log [
 		68,
 		'a rather long string of text',
 		{a:1, b:2}
-		], {prefix: '<-->', logItem: true}
+		], {label: 'name', prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->name:
-			---
-			- 68
-			- a rather long string of text
-			-
-				a: 1
-				b: 2
+		<-->	---
+		<-->	- 68
+		<-->	- a˳rather˳long˳string˳of˳text
+		<-->	-
+		<-->		a: 1
+		<-->		b: 2
 		"""
 	)()
 
@@ -328,7 +336,7 @@ simple.equal {{LINE}}, stringify({a:"word", b:"blind"}), """
 	log 'a'
 	log 'b'
 	log 'c'
-	setLogger()    # reset
+	setLogger console.log
 
 	simple.equal {{LINE}}, lItems, ['a','b','c']
 	)()
@@ -339,7 +347,7 @@ simple.equal {{LINE}}, stringify({a:"word", b:"blind"}), """
 	log 'a'
 	log 'b'
 	log 'c'
-	setLogger()    # reset
+	setLogger console.log
 
 	simple.equal {{LINE}}, lItems, ['a','b','c']
 	)()

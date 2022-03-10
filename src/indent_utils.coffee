@@ -117,19 +117,17 @@ export tabify = (str, numSpaces=undef) ->
 
 	lLines = []
 	for str in blockToArray(str)
-		lMatches = str.match(/^(\s*)(.*)$/)
-		[_, prefix, theRest] = lMatches
-		if prefix == ''
+		[_, prefix, theRest] = str.match(/^(\s*)(.*)$/)
+		prefixLen = prefix.length
+		if prefixLen == 0
 			lLines.push theRest
 		else
-			n = prefix.length
 			if (prefix.indexOf('\t') != -1)
 				error "tabify(): leading TAB characters not allowed"
-			if ! numSpaces?
-				numSpaces = n
-			if (n % numSpaces != 0)
-				error "tabify(): Invalid # of leading space chars"
-			lLines.push '\t'.repeat(n / numSpaces) + theRest
+			if numSpaces == undef
+				numSpaces = prefixLen
+			assert (prefixLen % numSpaces == 0), "Bad prefix"
+			lLines.push '\t'.repeat(prefixLen) + theRest
 	return arrayToBlock(lLines)
 
 # ---------------------------------------------------------------------------

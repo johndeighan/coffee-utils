@@ -1,14 +1,18 @@
 # debug_utils.coffee
 
 import {
-	assert, undef, error, croak, warn, isString, isFunction, isBoolean,
+	assert, error, croak, warn, isString, isFunction, isBoolean,
 	oneline, escapeStr, isNumber, isArray, words,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
-import {log, setLogger} from '@jdeighan/coffee-utils/log'
+import {untabify} from '@jdeighan/coffee-utils/indent'
 import {slurp} from '@jdeighan/coffee-utils/fs'
 import {CallStack} from '@jdeighan/coffee-utils/stack'
+import {
+	log, setStringifier, orderedStringify,
+	} from '@jdeighan/coffee-utils/log'
 
+undef = undefined
 vbar = '│'       # unicode 2502
 hbar = '─'       # unicode 2500
 corner = '└'     # unicode 2514
@@ -18,7 +22,6 @@ indent = vbar + '   '
 arrow = corner + hbar + arrowhead + ' '
 
 debugLevel = 0   # controls amount of indentation - we ensure it's never < 0
-stdLogger = false
 
 # --- These are saved/restored on the call stack
 export debugging = false
@@ -34,7 +37,7 @@ export resetDebugging = (funcDoDebug=undef, funcDoLog=undef) ->
 	debugLevel = 0
 	stack.reset()
 	shouldDebug = (funcName, curDebugging) -> curDebugging
-	shouldLog   = (str)      -> debugging
+	shouldLog   = (str) -> debugging || process.env.DEBUG
 	if funcDoDebug
 		setDebugging funcDoDebug, funcDoLog
 	return
@@ -91,29 +94,14 @@ setEnv = (hEnv) ->
 	return
 
 # ---------------------------------------------------------------------------
+# --- 2 possible signatures:
+#        (item) - just log out the string
+#        (item, hOptions) - log out the object, with a label
 
-export useStdLogger = (flag=true) ->
+logger = (item, hOptions=undef) ->
 
-	stdLogger = flag
+	log item, hOptions
 	return
-
-# ---------------------------------------------------------------------------
-
-logger = (lArgs...) ->
-
-	if stdLogger
-		log lArgs...
-	else
-		orgLogger = setLogger(console.log)
-		log lArgs...
-		setLogger(orgLogger)
-	return
-
-# ---------------------------------------------------------------------------
-
-stripArrow = (prefix) ->
-
-	return prefix.replace(arrow, '    ')
 
 # ---------------------------------------------------------------------------
 
@@ -182,7 +170,7 @@ export debug = (lArgs...) ->
 		curFunc = lMatches[1]
 		hInfo = stack.returnFrom(curFunc)
 
-	if debugging && shouldLog(str)
+	if shouldLog(str)
 
 		# --- set the prefix, i.e. indentation to use
 		if returning
@@ -194,12 +182,15 @@ export debug = (lArgs...) ->
 			prefix = indent.repeat(debugLevel)
 
 		if (nArgs==1)
-			logger str, item, {prefix}
+			logger str, {
+				prefix: prefix
+				}
 		else
-			logger str, item, {
-				prefix,
-				logItem: true,
-				itemPrefix: stripArrow(prefix),
+			itemPrefix = prefix.replace(arrow, '    ')
+			logger item, {
+				label: str
+				prefix: prefix
+				itemPrefix
 				}
 
 	# --- Adjust debug level
