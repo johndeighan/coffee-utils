@@ -30,15 +30,15 @@ export assert = (cond, msg) ->
 
 export croak = (err, label, obj) ->
 
-	message = if (typeof err == 'object') then err.message else err
-	console.log "ERROR (croak): #{message}"
-	console.log obj, label
+	curmsg = if isString(err) then err else err.message
+	newmsg = """
+			ERROR (croak): #{curmsg}
+			#{label}:
+			#{JSON.stringify(obj)}
+			"""
 
 	# --- re-throw the error
-	if (typeof err == 'object')
-		throw err
-	else
-		throw new Error(message)
+	throw new Error(newmsg)
 
 # ---------------------------------------------------------------------------
 

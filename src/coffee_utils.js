@@ -29,16 +29,13 @@ export var assert = function(cond, msg) {
 // ---------------------------------------------------------------------------
 //   croak - throws an error after possibly printing useful info
 export var croak = function(err, label, obj) {
-  var message;
-  message = (typeof err === 'object') ? err.message : err;
-  console.log(`ERROR (croak): ${message}`);
-  console.log(obj, label);
+  var curmsg, newmsg;
+  curmsg = isString(err) ? err : err.message;
+  newmsg = `ERROR (croak): ${curmsg}
+${label}:
+${JSON.stringify(obj)}`;
   // --- re-throw the error
-  if (typeof err === 'object') {
-    throw err;
-  } else {
-    throw new Error(message);
-  }
+  throw new Error(newmsg);
 };
 
 // ---------------------------------------------------------------------------

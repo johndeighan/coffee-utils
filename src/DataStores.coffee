@@ -11,6 +11,7 @@ import {log} from '@jdeighan/coffee-utils/log'
 import {
 	withExt, slurp, barf, newerDestFileExists,
 	} from '@jdeighan/coffee-utils/fs'
+import {untabify} from '@jdeighan/coffee-utils/indent'
 
 # ---------------------------------------------------------------------------
 

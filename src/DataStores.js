@@ -30,6 +30,10 @@ import {
   newerDestFileExists
 } from '@jdeighan/coffee-utils/fs';
 
+import {
+  untabify
+} from '@jdeighan/coffee-utils/indent';
+
 // ---------------------------------------------------------------------------
 export var WritableDataStore = class WritableDataStore {
   constructor(value = undef) {
