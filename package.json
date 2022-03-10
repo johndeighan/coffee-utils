@@ -17,7 +17,6 @@
 		"./svelte": "./src/svelte_utils.js",
 		"./store": "./src/DataStores.js",
 		"./taml": "./src/taml.js",
-		"./templib": "./src/templib.js",
 		"./package.json": "./package.json"
 	},
 	"engines": {
@@ -29,9 +28,7 @@
 	"scripts": {
 		"build": "cls && rm -f ./src/*.js && coffee -c ./src",
 		"pretest": "cls && cielo -qfc ./test && coffee -c .",
-		"test": "npx ava ./test/*.test.js",
-		"prefinaltest": "npm run pretest",
-		"finaltest": "cross-env FINALTEST=yes ava ./test/*.test.js"
+		"test": "npx ava ./test/*.test.js"
 	},
 	"repository": {
 		"type": "git",
@@ -53,6 +50,6 @@
 		"svelte": "^3.46.4"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^1.0.4"
+		"@jdeighan/unit-tester": "^1.0.5"
 	}
 }
