@@ -39,24 +39,6 @@ ${JSON.stringify(obj)}`;
 };
 
 // ---------------------------------------------------------------------------
-export var localStore = function(key, value = undef) {
-  // --- if value is undef, returns the current value
-  if (typeof localStorage === 'undefined') {
-    return;
-  }
-  if (value != null) {
-    localStorage.setItem(key, JSON.stringify(value));
-  } else {
-    value = localStorage.getItem(key);
-    if (value != null) {
-      return JSON.parse(localStorage.getItem(key));
-    } else {
-      return undef;
-    }
-  }
-};
-
-// ---------------------------------------------------------------------------
 export var getClassName = function(obj) {
   if (typeof obj !== 'object') {
     return undef;

@@ -21,3 +21,21 @@ export beep = (volume=100, freq=520, duration=200) ->
 	v.start(audio.currentTime)
 	v.stop(audio.currentTime + duration * 0.001)
 	return
+
+# ---------------------------------------------------------------------------
+
+export localStore = (key, value=undef) ->
+	# --- if value is undef, returns the current value
+
+	if typeof localStorage == 'undefined'
+		return
+	if value?
+		localStorage.setItem key, JSON.stringify(value)
+		return
+	else
+		value = localStorage.getItem(key)
+		if value?
+			return JSON.parse(localStorage.getItem(key))
+		else
+			return undef
+

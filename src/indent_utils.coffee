@@ -25,7 +25,7 @@ export splitLine = (line) ->
 
 export indentation = (level) ->
 
-	assert (level >= 0), "indented(): negative level"
+	assert (level >= 0), "indentation(): negative level"
 	return '\t'.repeat(level)
 
 # ---------------------------------------------------------------------------

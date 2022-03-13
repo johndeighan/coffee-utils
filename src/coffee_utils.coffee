@@ -42,23 +42,6 @@ export croak = (err, label, obj) ->
 
 # ---------------------------------------------------------------------------
 
-export localStore = (key, value=undef) ->
-	# --- if value is undef, returns the current value
-
-	if typeof localStorage == 'undefined'
-		return
-	if value?
-		localStorage.setItem key, JSON.stringify(value)
-		return
-	else
-		value = localStorage.getItem(key)
-		if value?
-			return JSON.parse(localStorage.getItem(key))
-		else
-			return undef
-
-# ---------------------------------------------------------------------------
-
 export getClassName = (obj) ->
 
 	if (typeof obj != 'object')

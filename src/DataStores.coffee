@@ -5,8 +5,9 @@ import yaml from 'js-yaml'
 import {writable, readable, get} from 'svelte/store'
 
 import {
-	assert, undef, pass, error, localStore, isEmpty,
+	assert, undef, pass, error, isEmpty,
 	} from '@jdeighan/coffee-utils'
+import {localStore} from '@jdeighan/coffee-utils/browser'
 import {log} from '@jdeighan/coffee-utils/log'
 import {
 	withExt, slurp, barf, newerDestFileExists,

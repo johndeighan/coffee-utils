@@ -15,9 +15,12 @@ import {
   undef,
   pass,
   error,
-  localStore,
   isEmpty
 } from '@jdeighan/coffee-utils';
+
+import {
+  localStore
+} from '@jdeighan/coffee-utils/browser';
 
 import {
   log

@@ -35,7 +35,7 @@ export var splitLine = function(line) {
 //   indentation - return appropriate indentation string for given level
 //   export only to allow unit testing
 export var indentation = function(level) {
-  assert(level >= 0, "indented(): negative level");
+  assert(level >= 0, "indentation(): negative level");
   return '\t'.repeat(level);
 };
 

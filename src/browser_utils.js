@@ -26,3 +26,21 @@ export var beep = function(volume = 100, freq = 520, duration = 200) {
   v.start(audio.currentTime);
   v.stop(audio.currentTime + duration * 0.001);
 };
+
+// ---------------------------------------------------------------------------
+export var localStore = function(key, value = undef) {
+  // --- if value is undef, returns the current value
+  if (typeof localStorage === 'undefined') {
+    return;
+  }
+  if (value != null) {
+    localStorage.setItem(key, JSON.stringify(value));
+  } else {
+    value = localStorage.getItem(key);
+    if (value != null) {
+      return JSON.parse(localStorage.getItem(key));
+    } else {
+      return undef;
+    }
+  }
+};
