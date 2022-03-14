@@ -4,7 +4,7 @@ import yaml from 'js-yaml'
 
 import {
 	assert, undef, isNumber, isInteger, isString, isHash, isFunction,
-	escapeStr, sep_eq,
+	escapeStr, sep_eq, sep_dash
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
 import {tabify, untabify} from '@jdeighan/coffee-utils/indent'
@@ -17,9 +17,14 @@ export id = 42
 # ---------------------------------------------------------------------------
 # This is useful for debugging and easy to remove after debugging
 
-export LOG = (lArgs...) ->
+export LOG = (item, label, ch='=') ->
 
-	console.log lArgs...
+	if label
+		console.log ch.repeat(42)
+		console.log "[#{label}]:"
+		console.log untabify(orderedStringify(item))
+	else
+		console.log item
 	return
 
 # ---------------------------------------------------------------------------

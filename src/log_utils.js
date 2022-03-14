@@ -13,7 +13,8 @@ import {
   isHash,
   isFunction,
   escapeStr,
-  sep_eq
+  sep_eq,
+  sep_dash
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -34,8 +35,14 @@ export var id = 42;
 
 // ---------------------------------------------------------------------------
 // This is useful for debugging and easy to remove after debugging
-export var LOG = function(...lArgs) {
-  console.log(...lArgs);
+export var LOG = function(item, label, ch = '=') {
+  if (label) {
+    console.log(ch.repeat(42));
+    console.log(`[${label}]:`);
+    console.log(untabify(orderedStringify(item)));
+  } else {
+    console.log(item);
+  }
 };
 
 // ---------------------------------------------------------------------------
