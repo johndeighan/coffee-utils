@@ -15,6 +15,14 @@ export stringify = undef
 export id = 42
 
 # ---------------------------------------------------------------------------
+# This is useful for debugging and easy to remove after debugging
+
+export LOG = (lArgs...) ->
+
+	console.log lArgs...
+	return
+
+# ---------------------------------------------------------------------------
 
 export setStringifier = (func) ->
 

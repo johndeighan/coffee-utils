@@ -33,6 +33,12 @@ export var stringify = undef;
 export var id = 42;
 
 // ---------------------------------------------------------------------------
+// This is useful for debugging and easy to remove after debugging
+export var LOG = function(...lArgs) {
+  console.log(...lArgs);
+};
+
+// ---------------------------------------------------------------------------
 export var setStringifier = function(func) {
   var orgStringifier;
   orgStringifier = stringify;
