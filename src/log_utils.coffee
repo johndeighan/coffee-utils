@@ -17,14 +17,15 @@ export id = 42
 # ---------------------------------------------------------------------------
 # This is useful for debugging and easy to remove after debugging
 
-export LOG = (item, label, ch='=') ->
+export LOG = (label, item, ch='=') ->
 
-	if label
+	if item
 		console.log ch.repeat(42)
 		console.log "[#{label}]:"
 		console.log untabify(orderedStringify(item))
+		console.log ch.repeat(42)
 	else
-		console.log item
+		console.log label
 	return
 
 # ---------------------------------------------------------------------------

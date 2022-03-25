@@ -35,13 +35,14 @@ export var id = 42;
 
 // ---------------------------------------------------------------------------
 // This is useful for debugging and easy to remove after debugging
-export var LOG = function(item, label, ch = '=') {
-  if (label) {
+export var LOG = function(label, item, ch = '=') {
+  if (item) {
     console.log(ch.repeat(42));
     console.log(`[${label}]:`);
     console.log(untabify(orderedStringify(item)));
+    console.log(ch.repeat(42));
   } else {
-    console.log(item);
+    console.log(label);
   }
 };
 
