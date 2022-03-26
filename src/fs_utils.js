@@ -6,6 +6,8 @@ import urllib from 'url';
 
 import fs from 'fs';
 
+import NReadLines from 'n-readlines';
+
 import {
   assert,
   undef,
@@ -20,7 +22,8 @@ import {
 } from '@jdeighan/coffee-utils';
 
 import {
-  log
+  log,
+  LOG
 } from '@jdeighan/coffee-utils/log';
 
 import {
@@ -118,12 +121,40 @@ export var backup = function(file, from, to, report = false) {
 };
 
 // ---------------------------------------------------------------------------
+export var forEachLineInFile = function(filepath, func) {
+  var buffer, line, nLines, reader;
+  reader = new NReadLines(filepath);
+  nLines = 0;
+  while ((buffer = reader.next())) {
+    nLines += 1;
+    // --- text is split on \n chars, we also need to remove \r chars
+    line = buffer.toString().replace(/\r/g, '');
+    if (func(line, nLines) === 'EOF') {
+      reader.close(); // allow premature termination
+    }
+  }
+};
+
+// ---------------------------------------------------------------------------
 //   slurp - read an entire file into a string
-export var slurp = function(filepath) {
-  var contents;
+export var slurp = function(filepath, maxLines = undef) {
+  var contents, lLines;
   debug(`enter slurp('${filepath}')`);
-  filepath = filepath.replace(/\//g, "\\");
-  contents = fs.readFileSync(filepath, 'utf8').toString();
+  if (maxLines != null) {
+    lLines = [];
+    forEachLineInFile(filepath, function(line, nLines) {
+      lLines.push(line);
+      if (nLines >= maxLines) {
+        return 'EOF';
+      } else {
+        return undef;
+      }
+    });
+    contents = lLines.join("\n");
+  } else {
+    filepath = filepath.replace(/\//g, "\\");
+    contents = fs.readFileSync(filepath, 'utf8').toString();
+  }
   debug("return from slurp()", contents);
   return contents;
 };

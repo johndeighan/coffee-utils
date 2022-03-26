@@ -9,10 +9,11 @@ import {
 import {UnitTester} from '@jdeighan/unit-tester'
 import {say, undef, assert} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
+import {LOG} from '@jdeighan/coffee-utils/log'
 import {
 	mydir, mkpath, isFile, isDir, isSimpleFileName,
 	getSubDirs, pathTo, getFullPath, parseSource, fileExt,
-	withExt, withUnderScore,
+	withExt, withUnderScore, forEachLineInFile, slurp, barf
 	} from '@jdeighan/coffee-utils/fs'
 
 simple = new UnitTester()
@@ -145,3 +146,53 @@ simple.equal {{LINE}}, fileExt('file.txt'), '.txt'
 simple.equal {{LINE}}, fileExt('file.'), ''
 simple.equal {{LINE}}, fileExt('file.99'), '.99'
 simple.equal {{LINE}}, fileExt('file._txt'), '._txt'
+
+filepath = pathTo('readline.txt', dir)
+simple.equal {{LINE}}, filepath, "c:/Users/johnd/coffee-utils/test/readline.txt"
+
+(() ->
+	lLines = []
+	await forEachLineInFile filepath, (line, lineNum) ->
+		lLines.push line
+		return
+	simple.equal {{LINE}}, lLines, [
+		'abc'
+		'def'
+		'ghi'
+		'jkl'
+		'mno'
+		]
+	)()
+(() ->
+	lLines = []
+	await forEachLineInFile filepath, (line, lineNum) ->
+		lLines.push line
+		return if lineNum==3 then 'EOF' else undef
+	simple.equal {{LINE}}, lLines, [
+		'abc'
+		'def'
+		'ghi'
+		]
+	)()
+(() ->
+	simple.equal {{LINE}}, slurp(filepath, 2), """
+		abc
+		def
+		"""
+	)()
+(() ->
+	simple.equal {{LINE}}, slurp(filepath, 3), """
+		abc
+		def
+		ghi
+		"""
+	)()
+(() ->
+	simple.equal {{LINE}}, slurp(filepath, 1000), """
+		abc
+		def
+		ghi
+		jkl
+		mno
+		"""
+	)()

@@ -46,6 +46,7 @@
 	"dependencies": {
 		"cross-env": "^7.0.3",
 		"js-yaml": "^4.1.0",
+		"n-readlines": "^1.0.1",
 		"readline-sync": "^1.4.10",
 		"svelte": "^3.46.4"
 	},

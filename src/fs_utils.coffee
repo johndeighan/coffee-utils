@@ -3,12 +3,13 @@
 import pathlib from 'path'
 import urllib from 'url'
 import fs from 'fs'
+import NReadLines from 'n-readlines'
 
 import {
 	assert, undef, pass, rtrim, error, nonEmpty,
 	isString, isRegExp, isFunction, croak,
 	} from '@jdeighan/coffee-utils'
-import {log} from '@jdeighan/coffee-utils/log'
+import {log, LOG} from '@jdeighan/coffee-utils/log'
 import {debug} from '@jdeighan/coffee-utils/debug'
 
 # ---------------------------------------------------------------------------
@@ -99,13 +100,35 @@ export backup = (file, from, to, report=false) ->
 		fs.copyFileSync(src, dest)
 
 # ---------------------------------------------------------------------------
+
+export forEachLineInFile = (filepath, func) ->
+
+	reader = new NReadLines(filepath)
+	nLines = 0
+
+	while (buffer = reader.next())
+		nLines += 1
+		# --- text is split on \n chars, we also need to remove \r chars
+		line = buffer.toString().replace(/\r/g, '')
+		if func(line, nLines) == 'EOF'
+			reader.close()   # allow premature termination
+	return
+
+# ---------------------------------------------------------------------------
 #   slurp - read an entire file into a string
 
-export slurp = (filepath) ->
+export slurp = (filepath, maxLines=undef) ->
 
 	debug "enter slurp('#{filepath}')"
-	filepath = filepath.replace(/\//g, "\\")
-	contents = fs.readFileSync(filepath, 'utf8').toString()
+	if maxLines?
+		lLines = []
+		forEachLineInFile filepath, (line, nLines) ->
+			lLines.push line
+			return if nLines >= maxLines then 'EOF' else undef
+		contents = lLines.join("\n")
+	else
+		filepath = filepath.replace(/\//g, "\\")
+		contents = fs.readFileSync(filepath, 'utf8').toString()
 	debug "return from slurp()", contents
 	return contents
 
