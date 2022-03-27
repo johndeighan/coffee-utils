@@ -275,8 +275,6 @@ tester = new TraceTester()
 
 	tester.equal {{LINE}}, block, """
 		enter get
-		│   enter fetch
-		│   └─> return from fetch
 		└─> return from get
 		enter get
 		│   something
@@ -306,8 +304,6 @@ tester = new TraceTester()
 
 	tester.equal {{LINE}}, block, """
 		enter get
-		│   enter fetch
-		│   └─> return from fetch
 		└─> return from get
 		enter get
 		│   something
@@ -369,8 +365,8 @@ tester = new TraceTester()
 	lLines = []
 	input = new StrInput()
 	result = input.mapArray(['abc','def'])
-	simple.equal 374, result, "> abc\n> def\n"
-	simple.equal 375, lLines, [
+	simple.equal 368, result, "> abc\n> def\n"
+	simple.equal 369, lLines, [
 		'enter StrInput.mapLine()',
 		"└─> return '>˳abc' from StrInput.mapLine()",
 		'enter StrInput.mapLine()',
@@ -379,74 +375,33 @@ tester = new TraceTester()
 	)()
 
 # ---------------------------------------------------------------------------
-#     Test env var DEBUG_FUNC
+#     Test debugging particular functions
 
 (() ->
-	resetDebugging()
-	process.env.DEBUG_FUNC = 'nofunc'
 
-	block = """
-		enter myfunc
-		enter get
-		enter fetch
-		return from fetch
-		return from get
-		enter nofunc
-		return from nofunc
-		enter get
-		something
-		return from get
-		return from myfunc
-		"""
+	func = (x) ->
 
-	tester.equal {{LINE}}, block, """
-		enter nofunc
-		└─> return from nofunc
-		"""
+		debug "enter func()"
+		debug "got #{x}"
+		debug "return from func()"
+		return
 
-	delete process.env.DEBUG_FUNC
+	coffeeCodeToJS = (code) ->
+
+		debug "enter coffeeCodeToJS()"
+		func(5)
+		debug "return from coffeeCodeToJS()"
+		return
+
+	setDebugging 'coffeeCodeToJS'
+	lLines = []
+
+	coffeeCodeToJS("x = 42")
+
+	simple.equal 401, lLines, [
+		'enter coffeeCodeToJS()'
+		'└─> return from coffeeCodeToJS()'
+		]
 	)()
 
 # ---------------------------------------------------------------------------
-#     Test env var DEBUG_FUNCS
-
-(() ->
-	resetDebugging()
-	process.env.DEBUG_FUNCS = 'get,fetch'
-
-	block = """
-		enter myfunc
-		enter get
-		enter fetch
-		return from fetch
-		return from get
-		enter nofunc
-		return from nofunc
-		enter get
-		something
-		return from get
-		return from myfunc
-		"""
-
-	tester.equal {{LINE}}, block, """
-		enter get
-		│   enter fetch
-		│   └─> return from fetch
-		└─> return from get
-		enter get
-		│   something
-		└─> return from get
-		"""
-
-	delete process.env.DEBUG_FUNCS
-	)()
-
-__END__
-
-		enter get
-		│   enter fetch
-		│   └─> return from fetch
-		└─> return from get
-		enter get
-		│   something
-		└─> return from get

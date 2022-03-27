@@ -28,6 +28,15 @@ export debugging = false
 shouldDebug = shouldLog = undef
 
 stack = new CallStack()
+DEBUGDEBUG = false
+
+# ---------------------------------------------------------------------------
+
+export setDEBUGDEBUG = (flag=true) ->
+
+	DEBUGDEBUG = flag
+	console.log "DEBUGDEBUG = #{flag}"
+	return
 
 # ---------------------------------------------------------------------------
 
@@ -36,8 +45,8 @@ export resetDebugging = (funcDoDebug=undef, funcDoLog=undef) ->
 	debugging = false
 	debugLevel = 0
 	stack.reset()
-	shouldDebug = (funcName, curDebugging) -> curDebugging
-	shouldLog   = (str) -> debugging || process.env.DEBUG
+	shouldDebug = (funcName) -> debugging
+	shouldLog   = (str) -> debugging
 	if funcDoDebug
 		setDebugging funcDoDebug, funcDoLog
 	return
@@ -47,15 +56,21 @@ export resetDebugging = (funcDoDebug=undef, funcDoLog=undef) ->
 export setDebugging = (funcDoDebug=undef, funcDoLog=undef) ->
 
 	if isBoolean(funcDoDebug)
+		if DEBUGDEBUG
+			console.log "setDebugging #{funcDoDebug}"
 		debugging = funcDoDebug
 	else if isString(funcDoDebug)
 		debugging = false
 		lFuncNames = words(funcDoDebug)
 		assert isArray(lFuncNames), "words('#{funcDoDebug}') returned non-array"
-		shouldDebug = (funcName, curDebugging) ->
-			curDebugging || funcMatch(funcName, lFuncNames)
+		shouldDebug = (funcName) ->
+			funcMatch(funcName, lFuncNames)
+		if DEBUGDEBUG
+			console.log "setDebugging FUNCS: #{lFuncNames.join(',')}"
 	else if isFunction(funcDoDebug)
 		shouldDebug = funcDoDebug
+		if DEBUGDEBUG
+			console.log "setDebugging to custom func"
 	else
 		croak "setDebugging(): bad parameter #{oneline(funcDoDebug)}"
 
@@ -114,17 +129,6 @@ getPrefix = (level) ->
 
 # ---------------------------------------------------------------------------
 
-envSaysDebug = (curFunc) ->
-
-	if process.env.DEBUG_FUNC?
-		return curFunc == process.env.DEBUG_FUNC
-	else if process.env.DEBUG_FUNCS?
-		return process.env.DEBUG_FUNCS.split(',').indexOf(curFunc) > -1
-	else
-		return false
-
-# ---------------------------------------------------------------------------
-
 export debug = (lArgs...) ->
 	# --- either 1 or 2 args
 
@@ -157,7 +161,7 @@ export debug = (lArgs...) ->
 		entering = true
 		curFunc = lMatches[1]
 		stack.call(curFunc, curEnv())
-		debugging = envSaysDebug(curFunc) || shouldDebug(curFunc, debugging)
+		debugging = shouldDebug(curFunc)
 	else if (lMatches = str.match(///^
 			\s*
 			return
