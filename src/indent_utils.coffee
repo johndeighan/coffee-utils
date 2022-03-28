@@ -133,7 +133,7 @@ export tabify = (str, numSpaces=undef) ->
 # ---------------------------------------------------------------------------
 #    untabify - convert leading TABs to spaces
 
-export untabify = (str, numSpaces=3) ->
+untabify_old = (str, numSpaces=3) ->
 
 	oneIndent = ' '.repeat(numSpaces)
 	lLines = []
@@ -145,3 +145,10 @@ export untabify = (str, numSpaces=3) ->
 		else
 			lLines.push oneIndent.repeat(prefix.length) + theRest
 	return arrayToBlock(lLines)
+
+# ---------------------------------------------------------------------------
+#    untabify - convert ALL TABs to spaces
+
+export untabify = (str, numSpaces=3) ->
+
+	return str.replace(/\t/g, ' '.repeat(numSpaces))

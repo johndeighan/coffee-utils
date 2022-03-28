@@ -7,23 +7,29 @@ import {
 	escapeStr, sep_eq, sep_dash
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
-import {tabify, untabify} from '@jdeighan/coffee-utils/indent'
+import {tabify, untabify, indentation} from '@jdeighan/coffee-utils/indent'
+import {arrow, hasArrow, removeArrow} from '@jdeighan/coffee-utils/arrow'
 
 # --- This logger only ever gets passed a single string argument
-logger = undef
+putstr = undef
+
 export stringify = undef
-export id = 42
+objSep = '-'.repeat(42)
 
 # ---------------------------------------------------------------------------
 # This is useful for debugging and easy to remove after debugging
 
-export LOG = (label, item, ch='=') ->
+export LOG = (lArgs...) ->
 
-	if item
-		console.log ch.repeat(42)
-		console.log "[#{label}]:"
-		console.log untabify(orderedStringify(item))
-		console.log ch.repeat(42)
+	[label, item] = lArgs
+	if lArgs.length > 1
+		console.log objSep
+		if item?
+			console.log "#{label}:"
+			console.log untabify(orderedStringify(item))
+		else
+			console.log "[#{label}]: UNDEFINED"
+		console.log objSep
 	else
 		console.log label
 	return
@@ -47,9 +53,9 @@ export resetStringifier = () ->
 
 export setLogger = (func) ->
 
-	orgLogger = logger
 	assert isFunction(func), "setLogger() arg is not a function"
-	logger = func
+	orgLogger = putstr
+	putstr = func
 	return orgLogger
 
 # ---------------------------------------------------------------------------
@@ -99,55 +105,61 @@ maxOneLine = 32
 
 # ---------------------------------------------------------------------------
 
-export log = (item, hOptions=undef) ->
+export log = (item, hOptions={}) ->
 	# --- valid options:
-	#        label
-	#        prefix
-	#        escape
+	#   label
+	#   prefix
+	#   itemPrefix
+	#   escape
 
-	assert isFunction(logger), "logger not properly set"
-	prefix = itemPrefix = label = ''
-	if hOptions?
-		if isString(hOptions)
-			label = hOptions
-		else
-			assert isHash(hOptions), "log(): 2nd arg must be a string or hash"
-			if hOptions.prefix?
-				prefix = hOptions.prefix
-			if hOptions.itemPrefix?
-				itemPrefix = hOptions.itemPrefix
-			else
-				itemPrefix = prefix
-			if hOptions.label?
-				label = hOptions.label
+	assert isFunction(putstr), "putstr not properly set"
+	if isString(hOptions)
+		label = hOptions
+		prefix = itemPrefix = ''
+	else
+		assert isHash(hOptions), "log(): 2nd arg must be a string or hash"
+		label = hOptions.label || ''
+		prefix = hOptions.prefix ||  ''
+		itemPrefix = hOptions.itemPrefix || prefix || ''
+
+	# --- If putstr is console.log, we'll convert TAB char to 3 spaces
+	if putstr == console.log
+		label = untabify(label)
+		prefix = untabify(prefix)
+		itemPrefix = untabify(itemPrefix)
 
 	if isString(item) && (label == '')
-		if hOptions? && hOptions.escape
-			logger "#{prefix}#{escapeStr(item)}"
+		if hOptions.escape
+			putstr "#{prefix}#{escapeStr(item)}"
 		else
-			logger "#{prefix}#{item}"
+			putstr "#{prefix}#{item}"
 		return
 
 	if (label == '')
 		label = 'ITEM'
 
 	if (item == undef)
-		logger "#{prefix}#{label} = undef"
+		putstr "#{prefix}#{label} = undef"
 	else if isString(item)
 		if (item.length <= maxOneLine)
-			logger "#{prefix}#{label} = '#{escapeStr(item)}'"
+			putstr "#{prefix}#{label} = '#{escapeStr(item)}'"
 		else
-			logger "#{prefix}#{label}:"
-			logger "#{itemPrefix}#{sep_eq}"
+			putstr "#{prefix}#{label}:"
+			putstr "#{itemPrefix}#{sep_eq}"
 			for line in blockToArray(item)
-				logger "#{itemPrefix}#{escapeStr(line)}"
-			logger "#{itemPrefix}#{sep_eq}"
+				putstr "#{itemPrefix}#{escapeStr(line)}"
+			putstr "#{itemPrefix}#{sep_eq}"
 	else if isNumber(item)
-		logger "#{prefix}#{label} = #{item}"
+		putstr "#{prefix}#{label} = #{item}"
 	else
-		logger "#{prefix}#{label}:"
+		putstr "#{removeArrow(prefix, true)}#{objSep}"
+		putstr "#{prefix}#{label}:"
 		for str in blockToArray(stringify(item, true))
-			logger "#{itemPrefix}\t#{str}"
+			if putstr == console.log
+				putstr "#{itemPrefix}   #{untabify(str)}"
+			else
+				putstr "#{itemPrefix}#{indentation(1)}#{str}"
+		putstr "#{removeArrow(prefix, false)}#{objSep}"
 	return
 
 # ---------------------------------------------------------------------------

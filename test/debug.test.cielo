@@ -3,6 +3,7 @@
 import {undef, OL, isString} from '@jdeighan/coffee-utils'
 import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
+import {untabify} from '@jdeighan/coffee-utils/indent'
 import {
 	setDebugging, debug, resetDebugging, funcMatch,
 	} from '@jdeighan/coffee-utils/debug'
@@ -13,7 +14,7 @@ simple = new UnitTester()
 # ---------------------------------------------------------------------------
 
 lLines = undef
-setLogger (str) -> lLines.push(str.replace(/\t/g, '   '))
+setLogger (str) -> lLines.push(untabify(str))
 
 # ---------------------------------------------------------------------------
 
@@ -95,10 +96,12 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"│   something"
+		"│   ------------------------------------------"
 		"│   obj:"
 		"│      ---"
 		"│      first: 1"
 		"│      second: 2"
+		"│   ------------------------------------------"
 		"└─> return 42 from myfunc"
 		]
 	)()
@@ -118,10 +121,12 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"│   something"
+		"│   ------------------------------------------"
 		"│   obj:"
 		"│      ---"
 		"│      first: this˳is˳the˳first˳item˳in˳the˳hash"
 		"│      second: this˳is˳the˳second˳item˳in˳the˳hash"
+		"│   ------------------------------------------"
 		"└─> return 42 from myfunc"
 		]
 	)()
@@ -221,10 +226,12 @@ tester = new TraceTester()
 	debug "Answer is 42"
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
+		"│   ------------------------------------------"
 		"└─> return from myfunc:"
 		"       ---"
 		"       first: this˳is˳the˳first˳item˳in˳the˳hash"
 		"       second: this˳is˳the˳second˳item˳in˳the˳hash"
+		"    ------------------------------------------"
 		"Answer is 42"
 		]
 	)()

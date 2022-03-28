@@ -87,10 +87,12 @@ tester = new LogTester()
 	log {a: 1, b: 'xyz'}, 'name'
 	tester.equal {{LINE}}, lLines, """
 		abc
+		------------------------------------------
 		name:
 			---
 			a: 1
 			b: xyz
+		------------------------------------------
 		"""
 	)()
 
@@ -98,6 +100,7 @@ tester = new LogTester()
 	lLines = []
 	log ['a', 42, [1,2]], 'name'
 	tester.equal {{LINE}}, lLines, """
+		------------------------------------------
 		name:
 			---
 			- a
@@ -105,6 +108,7 @@ tester = new LogTester()
 			-
 				- 1
 				- 2
+		------------------------------------------
 		"""
 	)()
 
@@ -141,12 +145,14 @@ tester = new LogTester()
 		}, 'name'
 	tester.equal {{LINE}}, lLines, """
 		abc
+		------------------------------------------
 		name:
 			---
 			age: 68
 			fname: John
 			home: Blacksburg,˳VA
 			lname: Deighan
+		------------------------------------------
 		"""
 	)()
 
@@ -160,6 +166,7 @@ tester = new LogTester()
 		], 'name'
 	tester.equal {{LINE}}, lLines, """
 		abc
+		------------------------------------------
 		name:
 			---
 			- 68
@@ -167,6 +174,7 @@ tester = new LogTester()
 			-
 				a: 1
 				b: 2
+		------------------------------------------
 		"""
 	)()
 
@@ -186,12 +194,14 @@ tester = new LogTester()
 		}, 'name'
 	tester.equal {{LINE}}, lLines, """
 		abc
+		------------------------------------------
 		name:
 			---
 			age: 68
 			fname: John
 			home: Blacksburg,˳VA
 			lname: Deighan
+		------------------------------------------
 		"""
 
 	setStringifier tamlStringify    # reset
@@ -228,10 +238,12 @@ tester = new LogTester()
 	lLines = []
 	log {a: 1, b: 'xyz'}, {label: 'name', prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
+		<-->------------------------------------------
 		<-->name:
 		<-->	---
 		<-->	a: 1
 		<-->	b: xyz
+		<-->------------------------------------------
 		"""
 	)()
 
@@ -239,6 +251,7 @@ tester = new LogTester()
 	lLines = []
 	log ['a', 42, [1,2]], {label: 'name', prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
+		<-->------------------------------------------
 		<-->name:
 		<-->	---
 		<-->	- a
@@ -246,6 +259,7 @@ tester = new LogTester()
 		<-->	-
 		<-->		- 1
 		<-->		- 2
+		<-->------------------------------------------
 		"""
 	)()
 
@@ -275,12 +289,14 @@ tester = new LogTester()
 		home: 'Blacksburg, VA',
 		}, {label: 'name', prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
+		<-->------------------------------------------
 		<-->name:
 		<-->	---
 		<-->	fname: John
 		<-->	lname: Deighan
 		<-->	age: 68
 		<-->	home: Blacksburg,˳VA
+		<-->------------------------------------------
 		"""
 	)()
 
@@ -292,6 +308,7 @@ tester = new LogTester()
 		{a:1, b:2}
 		], {label: 'name', prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
+		<-->------------------------------------------
 		<-->name:
 		<-->	---
 		<-->	- 68
@@ -299,6 +316,7 @@ tester = new LogTester()
 		<-->	-
 		<-->		a: 1
 		<-->		b: 2
+		<-->------------------------------------------
 		"""
 	)()
 

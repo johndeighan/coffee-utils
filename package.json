@@ -14,6 +14,7 @@
 		"./indent": "./src/indent_utils.js",
 		"./stack": "./src/call_stack.js",
 		"./debug": "./src/debug_utils.js",
+		"./arrow": "./src/arrow.js",
 		"./svelte": "./src/svelte_utils.js",
 		"./store": "./src/DataStores.js",
 		"./taml": "./src/taml.js",
