@@ -28,30 +28,35 @@ export var CallStack = class CallStack {
 
   // ........................................................................
   call(funcName, hInfo) {
+    var prefix;
     if (doDebugStack) {
-      LOG(`[CALL ${funcName}]`);
+      prefix = '   '.repeat(this.lStack.length);
+      LOG(`${prefix}[CALL ${funcName}]`);
     }
     this.lStack.push({funcName, hInfo});
   }
 
   // ........................................................................
-  returnFrom(funcName) {
-    var TOSfName, hInfo;
-    if (doDebugStack) {
-      LOG(`[RETURN FROM ${funcName}]`);
-    }
+  returnFrom(fName) {
+    var funcName, hInfo, prefix;
     if (this.lStack.length === 0) {
-      LOG(`returnFrom('${funcName}') but stack is empty`);
+      LOG(`returnFrom('${fName}') but stack is empty`);
       return undef;
     }
-    TOSfName = this.lStack[this.lStack.length - 1].funcName;
-    if (funcName === TOSfName) {
+    if (doDebugStack) {
+      prefix = '   '.repeat(this.lStack.length - 1);
+      LOG(`${prefix}[RETURN FROM ${fName}]`);
+    }
+    ({funcName, hInfo} = this.lStack.pop());
+    while ((funcName !== fName) && (this.lStack.length > 0)) {
+      LOG(`[MISSING RETURN FROM ${funcName} (return from ${fName})]`);
       ({funcName, hInfo} = this.lStack.pop());
-      assert(funcName === TOSfName, "Bad func name on stack");
+    }
+    if (funcName === fName) {
       return hInfo;
     } else {
       this.dump();
-      LOG(`returnFrom('${funcName}') but TOS is '${TOSfName}'`);
+      LOG(`BAD returnFrom('${fName}')`);
       return undef;
     }
   }

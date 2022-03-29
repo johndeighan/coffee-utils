@@ -25,27 +25,31 @@ export class CallStack
 	call: (funcName, hInfo) ->
 
 		if doDebugStack
-			LOG "[CALL #{funcName}]"
+			prefix = '   '.repeat(@lStack.length)
+			LOG "#{prefix}[CALL #{funcName}]"
 		@lStack.push({funcName, hInfo})
 		return
 
 	# ........................................................................
 
-	returnFrom: (funcName) ->
+	returnFrom: (fName) ->
 
-		if doDebugStack
-			LOG "[RETURN FROM #{funcName}]"
 		if @lStack.length == 0
-			LOG "returnFrom('#{funcName}') but stack is empty"
+			LOG "returnFrom('#{fName}') but stack is empty"
 			return undef
-		TOSfName = @lStack[@lStack.length-1].funcName
-		if funcName == TOSfName
+		if doDebugStack
+			prefix = '   '.repeat(@lStack.length-1)
+			LOG "#{prefix}[RETURN FROM #{fName}]"
+		{funcName, hInfo} = @lStack.pop()
+		while (funcName != fName) && (@lStack.length > 0)
+			LOG "[MISSING RETURN FROM #{funcName} (return from #{fName})]"
 			{funcName, hInfo} = @lStack.pop()
-			assert funcName==TOSfName, "Bad func name on stack"
+
+		if (funcName == fName)
 			return hInfo
 		else
 			@dump()
-			LOG "returnFrom('#{funcName}') but TOS is '#{TOSfName}'"
+			LOG "BAD returnFrom('#{fName}')"
 			return undef
 
 	# ........................................................................
