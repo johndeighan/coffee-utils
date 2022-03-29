@@ -31,7 +31,7 @@ export var CallStack = class CallStack {
     var prefix;
     if (doDebugStack) {
       prefix = '   '.repeat(this.lStack.length);
-      LOG(`${prefix}[> CALL ${funcName}]`);
+      LOG(`${prefix}[--> CALL ${funcName}]`);
     }
     this.lStack.push({funcName, hInfo});
   }
@@ -50,7 +50,7 @@ export var CallStack = class CallStack {
     }
     if (doDebugStack) {
       prefix = '   '.repeat(this.lStack.length);
-      LOG(`${prefix}[< BACK ${fName}]`);
+      LOG(`${prefix}[<-- BACK ${fName}]`);
     }
     if (funcName === fName) {
       return hInfo;

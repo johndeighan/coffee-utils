@@ -20,6 +20,15 @@ __END__
 
 These should work, but currently don't:
 
+simple.equal  {{LINE}}, taml("""
+		---
+		title:
+			en: "Hello", she said.
+		"""), {
+		title:
+			en: '"Hello", she said.'
+		}
+
 simple.equal  {{LINE}}, tamlStringify({a:1, b:2}), """
 		---
 		a: 1

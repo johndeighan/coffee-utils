@@ -26,7 +26,7 @@ export class CallStack
 
 		if doDebugStack
 			prefix = '   '.repeat(@lStack.length)
-			LOG "#{prefix}[> CALL #{funcName}]"
+			LOG "#{prefix}[--> CALL #{funcName}]"
 		@lStack.push({funcName, hInfo})
 		return
 
@@ -44,7 +44,7 @@ export class CallStack
 
 		if doDebugStack
 			prefix = '   '.repeat(@lStack.length)
-			LOG "#{prefix}[< BACK #{fName}]"
+			LOG "#{prefix}[<-- BACK #{fName}]"
 		if (funcName == fName)
 			return hInfo
 		else
