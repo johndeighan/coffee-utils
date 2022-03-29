@@ -1,7 +1,7 @@
 # call_stack.coffee
 
 import {undef, croak} from '@jdeighan/coffee-utils'
-import {log} from '@jdeighan/coffee-utils/log'
+import {log, LOG} from '@jdeighan/coffee-utils/log'
 
 # ---------------------------------------------------------------------------
 
@@ -23,11 +23,12 @@ export class CallStack
 	returnFrom: (fName) ->
 
 		if @lStack.length == 0
-			croak "returnFrom('#{fName}') but stack is empty"
+			LOG "returnFrom('#{fName}') but stack is empty"
+			return undef
 		{funcName, hInfo} = @lStack.pop()
 		if funcName != fName
 			@dump()
-			croak "returnFrom('#{fName}') but TOS is '#{funcName}'"
+			LOG "returnFrom('#{fName}') but TOS is '#{funcName}'"
 		return hInfo
 
 	# ........................................................................
@@ -42,5 +43,5 @@ export class CallStack
 
 		console.log "#{label}:"
 		for item, i in @lStack
-			console.log "#{i}: #{JSON.stringify(item)}"
+			LOG "#{i}: #{JSON.stringify(item)}"
 		return

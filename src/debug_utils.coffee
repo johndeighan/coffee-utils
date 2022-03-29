@@ -150,7 +150,7 @@ export debug = (lArgs...) ->
 		returning = true
 		curFunc = lMatches[1]
 		hInfo = stack.returnFrom(curFunc)
-		if DEBUGDEBUG
+		if DEBUGDEBUG && hInfo
 			LOG "RETURN FROM #{curFunc}, debugging = #{hInfo.debugging}"
 
 	if shouldLogString(label)
@@ -179,7 +179,8 @@ export debug = (lArgs...) ->
 	if returning
 		if debugLevel > 0
 			debugLevel -= 1
-		setEnv(hInfo)
+		if hInfo
+			setEnv(hInfo)
 	else if entering
 		if debugging
 			debugLevel += 1
