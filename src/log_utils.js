@@ -59,6 +59,9 @@ export var LOG = function(...lArgs) {
   }
 };
 
+export var DEBUG = LOG; // synonym
+
+
 // ---------------------------------------------------------------------------
 export var setStringifier = function(func) {
   var orgStringifier;

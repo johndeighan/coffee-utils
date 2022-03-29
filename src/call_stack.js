@@ -31,7 +31,7 @@ export var CallStack = class CallStack {
     var prefix;
     if (doDebugStack) {
       prefix = '   '.repeat(this.lStack.length);
-      LOG(`${prefix}[CALL ${funcName}]`);
+      LOG(`${prefix}[> CALL ${funcName}]`);
     }
     this.lStack.push({funcName, hInfo});
   }
@@ -43,14 +43,14 @@ export var CallStack = class CallStack {
       LOG(`returnFrom('${fName}') but stack is empty`);
       return undef;
     }
-    if (doDebugStack) {
-      prefix = '   '.repeat(this.lStack.length - 1);
-      LOG(`${prefix}[RETURN FROM ${fName}]`);
-    }
     ({funcName, hInfo} = this.lStack.pop());
     while ((funcName !== fName) && (this.lStack.length > 0)) {
       LOG(`[MISSING RETURN FROM ${funcName} (return from ${fName})]`);
       ({funcName, hInfo} = this.lStack.pop());
+    }
+    if (doDebugStack) {
+      prefix = '   '.repeat(this.lStack.length);
+      LOG(`${prefix}[< BACK ${fName}]`);
     }
     if (funcName === fName) {
       return hInfo;

@@ -34,6 +34,8 @@ export LOG = (lArgs...) ->
 		console.log label
 	return
 
+export DEBUG = LOG   # synonym
+
 # ---------------------------------------------------------------------------
 
 export setStringifier = (func) ->

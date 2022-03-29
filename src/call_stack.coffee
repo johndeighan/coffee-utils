@@ -26,7 +26,7 @@ export class CallStack
 
 		if doDebugStack
 			prefix = '   '.repeat(@lStack.length)
-			LOG "#{prefix}[CALL #{funcName}]"
+			LOG "#{prefix}[> CALL #{funcName}]"
 		@lStack.push({funcName, hInfo})
 		return
 
@@ -37,14 +37,14 @@ export class CallStack
 		if @lStack.length == 0
 			LOG "returnFrom('#{fName}') but stack is empty"
 			return undef
-		if doDebugStack
-			prefix = '   '.repeat(@lStack.length-1)
-			LOG "#{prefix}[RETURN FROM #{fName}]"
 		{funcName, hInfo} = @lStack.pop()
 		while (funcName != fName) && (@lStack.length > 0)
 			LOG "[MISSING RETURN FROM #{funcName} (return from #{fName})]"
 			{funcName, hInfo} = @lStack.pop()
 
+		if doDebugStack
+			prefix = '   '.repeat(@lStack.length)
+			LOG "#{prefix}[< BACK #{fName}]"
 		if (funcName == fName)
 			return hInfo
 		else
