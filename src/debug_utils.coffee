@@ -38,21 +38,20 @@ export setDEBUGDEBUG = (flag=true) ->
 
 # ---------------------------------------------------------------------------
 
-export resetDebugging = (funcDoDebug=undef, funcDoLog=undef) ->
+resetDebugging = () ->
 
 	debugging = false
 	debugLevel = 0
 	stack.reset()
 	shouldDebugFunc = (func) -> debugging
 	shouldLogString = (str)  -> debugging
-	if funcDoDebug
-		setDebugging funcDoDebug, funcDoLog
 	return
 
 # ---------------------------------------------------------------------------
 
 export setDebugging = (funcDoDebug=undef, funcDoLog=undef) ->
 
+	resetDebugging()
 	if isBoolean(funcDoDebug)
 		if DEBUGDEBUG
 			console.log "setDebugging #{funcDoDebug}"

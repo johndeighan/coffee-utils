@@ -1,13 +1,13 @@
 # debug.test.cielo
 
+import {UnitTester, UnitTesterNoNorm} from '@jdeighan/unit-tester'
 import {undef, OL, isString} from '@jdeighan/coffee-utils'
 import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
 import {untabify} from '@jdeighan/coffee-utils/indent'
 import {
-	setDebugging, debug, resetDebugging, funcMatch,
+	setDebugging, debug, funcMatch,
 	} from '@jdeighan/coffee-utils/debug'
-import {UnitTester} from '@jdeighan/unit-tester'
 
 simple = new UnitTester()
 
@@ -19,7 +19,7 @@ setLogger (str) -> lLines.push(untabify(str))
 # ---------------------------------------------------------------------------
 
 (() ->
-	resetDebugging true
+	setDebugging true
 	lLines = []
 	debug 'abc'
 	simple.equal {{LINE}}, lLines, ['abc']
@@ -27,13 +27,10 @@ setLogger (str) -> lLines.push(untabify(str))
 
 # ---------------------------------------------------------------------------
 
-class TraceTester extends UnitTester
+class TraceTester extends UnitTesterNoNorm
 
 	initialize: () ->
 		lLines = []
-
-	normalize: (text) ->
-		return text
 
 	transformValue: (block) ->
 
@@ -46,6 +43,7 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
+	setDebugging true
 	lLines = []
 	debug 'enter myfunc'
 	debug 'something'
@@ -64,6 +62,25 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
+	setDebugging 'myfunc'
+	lLines = []
+	debug 'enter myfunc'
+	debug 'something'
+	debug 'more'
+	debug 'return 42 from myfunc'
+	debug "Answer is 42"
+	simple.equal {{LINE}}, lLines, [
+		"enter myfunc"
+		"│   something"
+		"│   more"
+		"└─> return 42 from myfunc"
+		]
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	setDebugging true
 	lLines = []
 	debug 'enter myfunc'
 	debug 'something'
@@ -77,6 +94,45 @@ tester = new TraceTester()
 		"│   enter newfunc"
 		"│   │   something else"
 		"│   └─> return abc from newfunc"
+		"└─> return 42 from myfunc"
+		]
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	setDebugging "myfunc newfunc"
+	lLines = []
+	debug 'enter myfunc'
+	debug 'something'
+	debug 'enter newfunc'
+	debug 'something else'
+	debug 'return abc from newfunc'
+	debug 'return 42 from myfunc'
+	simple.equal {{LINE}}, lLines, [
+		"enter myfunc"
+		"│   something"
+		"│   enter newfunc"
+		"│   │   something else"
+		"│   └─> return abc from newfunc"
+		"└─> return 42 from myfunc"
+		]
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	setDebugging "myfunc"
+	lLines = []
+	debug 'enter myfunc'
+	debug 'something'
+	debug 'enter newfunc'
+	debug 'something else'
+	debug 'return abc from newfunc'
+	debug 'return 42 from myfunc'
+	simple.equal {{LINE}}, lLines, [
+		"enter myfunc"
+		"│   something"
 		"└─> return 42 from myfunc"
 		]
 	)()
@@ -136,8 +192,7 @@ tester = new TraceTester()
 
 (() ->
 	lLines = []
-	resetDebugging 'innerFunc'
-#	setDebugging 'innerFunc'
+	setDebugging 'innerFunc'
 
 	debug "enter myfunc"
 	debug "something"
@@ -160,7 +215,7 @@ tester = new TraceTester()
 
 (() ->
 	lLines = []
-	resetDebugging 'innerFunc'
+	setDebugging 'innerFunc'
 
 	innerFunc = () ->
 
@@ -197,7 +252,7 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
-	resetDebugging true
+	setDebugging true
 	lLines = []
 
 	line = 'first line'
@@ -213,7 +268,7 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
-	resetDebugging true
+	setDebugging true
 	lLines = []
 
 	obj = {
@@ -239,7 +294,7 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
-	resetDebugging true
+	setDebugging true
 	lLines = []
 
 	longBlock = """
@@ -264,7 +319,7 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
-	resetDebugging 'get'
+	setDebugging 'get'
 
 	block = """
 		enter myfunc
@@ -293,7 +348,7 @@ tester = new TraceTester()
 #     Use new functions: funcDoDebug and funcDoLog
 
 (() ->
-	resetDebugging (funcName, debugOn) -> debugOn || (funcName=='get')
+	setDebugging (funcName, debugOn) -> debugOn || (funcName=='get')
 
 	block = """
 		enter myfunc
@@ -322,7 +377,7 @@ tester = new TraceTester()
 #     Use new functions: funcDoDebug and funcDoLog
 
 (() ->
-	resetDebugging (funcName) -> (funcName=='get')
+	setDebugging (funcName) -> (funcName=='get')
 
 	block = """
 		enter myfunc
@@ -368,7 +423,7 @@ tester = new TraceTester()
 			debug "return #{OL(line)} from StrInput.mapLine()"
 			return line
 
-	resetDebugging true
+	setDebugging true
 	lLines = []
 	input = new StrInput()
 	result = input.mapArray(['abc','def'])
