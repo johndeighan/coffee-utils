@@ -1,39 +1,29 @@
 # arrow.coffee
 
-vbar = '│'       # unicode 2502
-hbar = '─'       # unicode 2500
-corner = '└'     # unicode 2514
-arrowhead = '>'
+export vbar = '│'       # unicode 2502
+export hbar = '─'       # unicode 2500
+export corner = '└'     # unicode 2514
+export arrowhead = '>'
+export space = ' '
 
-oneIndent = vbar + '   '
-export arrow = corner + hbar + arrowhead + ' '
-
-# ---------------------------------------------------------------------------
-
-export getPrefix = (level, withArrow) ->
-
-	if withArrow
-		return oneIndent.repeat(level-1) + arrow
-	else
-		return oneIndent.repeat(level)
-	return
+export oneIndent = vbar + space + space + space
+export arrow = corner + hbar + arrowhead + space
+export fourSpaces = space + space + space + space
 
 # ---------------------------------------------------------------------------
 
-export hasArrow = (str) ->
+export getPrefix = (level, option='none') ->
 
-	return str.indexOf(arrow) > -1
-
-# ---------------------------------------------------------------------------
-
-export removeArrow = (str, useVbar) ->
-
-	if hasArrow(str)
-		if useVbar
-			return str.replace(arrow, oneIndent)
+	if level==0 then return ''
+	switch option
+		when 'withArrow'
+			result = oneIndent.repeat(level-1) + arrow
+		when 'returnVal'
+			result = oneIndent.repeat(level-1) + fourSpaces
+		when 'none'
+			result = oneIndent.repeat(level)
 		else
-			return str.replace(arrow, '    ')
-	else
-		return str
-
-# ---------------------------------------------------------------------------
+			throw new Error("getPrefix(): Bad option: '#{option}'")
+	if result.length % 4 != 0
+		throw new Error("getPrefix(): Bad prefix '#{result}'")
+	return result

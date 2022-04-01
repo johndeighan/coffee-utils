@@ -103,17 +103,17 @@ export var getFullPath = function(filepath) {
 
 // --- If report is true, missing source files are not an error
 //     but both missing source files and successful copies
-//     are reported via console.log
+//     are reported via LOG
 export var backup = function(file, from, to, report = false) {
   var dest, src;
   src = mkpath(from, file);
   dest = mkpath(to, file);
   if (report) {
     if (fs.existsSync(src)) {
-      console.log(`OK ${file}`);
+      LOG(`OK ${file}`);
       return fs.copyFileSync(src, dest);
     } else {
-      return console.log(`MISSING ${src}`);
+      return LOG(`MISSING ${src}`);
     }
   } else {
     return fs.copyFileSync(src, dest);

@@ -23,10 +23,6 @@ import {
 } from '@jdeighan/coffee-utils/browser';
 
 import {
-  log
-} from '@jdeighan/coffee-utils/log';
-
-import {
   withExt,
   slurp,
   barf,

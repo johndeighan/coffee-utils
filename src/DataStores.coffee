@@ -8,7 +8,6 @@ import {
 	assert, undef, pass, error, isEmpty,
 	} from '@jdeighan/coffee-utils'
 import {localStore} from '@jdeighan/coffee-utils/browser'
-import {log} from '@jdeighan/coffee-utils/log'
 import {
 	withExt, slurp, barf, newerDestFileExists,
 	} from '@jdeighan/coffee-utils/fs'

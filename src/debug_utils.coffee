@@ -2,38 +2,31 @@
 
 import {
 	assert, undef, error, croak, warn, isString, isFunction, isBoolean,
-	oneline, escapeStr, isNumber, isArray, words,
+	OL, escapeStr, isNumber, isArray, words, pass,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
 import {untabify} from '@jdeighan/coffee-utils/indent'
 import {slurp} from '@jdeighan/coffee-utils/fs'
 import {CallStack} from '@jdeighan/coffee-utils/stack'
 import {
-	log, LOG, setStringifier, orderedStringify,
+	log, logItem, LOG, setStringifier, orderedStringify,
 	} from '@jdeighan/coffee-utils/log'
-import {getPrefix, arrow, removeArrow} from '@jdeighan/coffee-utils/arrow'
-
-debugLevel = 0   # controls amount of indentation - we ensure it's never < 0
 
 # --- These are saved/restored on the call stack
 export debugging = false
-
-# --- By default, when entering a function, keep the debugging flag
-#     as it was
-shouldDebugFunc = (func) -> debugging
-
-# --- By default, log everything when debugging flag is on
+shouldLogFunc   = (func) -> debugging
 shouldLogString = (str) -> debugging
 
 stack = new CallStack()
-DEBUGDEBUG = false
+doDebugDebug = false
 
 # ---------------------------------------------------------------------------
 
-export setDEBUGDEBUG = (flag=true) ->
+export debugDebug = (flag=true) ->
 
-	DEBUGDEBUG = flag
-	console.log "DEBUGDEBUG = #{flag}"
+	doDebugDebug = flag
+	if doDebugDebug
+		LOG "doDebugDebug = #{flag}"
 	return
 
 # ---------------------------------------------------------------------------
@@ -41,9 +34,10 @@ export setDEBUGDEBUG = (flag=true) ->
 resetDebugging = () ->
 
 	debugging = false
-	debugLevel = 0
+	if doDebugDebug
+		LOG "resetDebugging() - debugging = false"
 	stack.reset()
-	shouldDebugFunc = (func) -> debugging
+	shouldLogFunc = (func) -> debugging
 	shouldLogString = (str)  -> debugging
 	return
 
@@ -53,23 +47,23 @@ export setDebugging = (funcDoDebug=undef, funcDoLog=undef) ->
 
 	resetDebugging()
 	if isBoolean(funcDoDebug)
-		if DEBUGDEBUG
-			console.log "setDebugging #{funcDoDebug}"
 		debugging = funcDoDebug
+		if doDebugDebug
+			LOG "setDebugging(): debugging = #{funcDoDebug}"
 	else if isString(funcDoDebug)
 		debugging = false
 		lFuncNames = words(funcDoDebug)
 		assert isArray(lFuncNames), "words('#{funcDoDebug}') returned non-array"
-		shouldDebugFunc = (funcName) ->
+		shouldLogFunc = (funcName) ->
 			funcMatch(funcName, lFuncNames)
-		if DEBUGDEBUG
-			console.log "setDebugging FUNCS: #{lFuncNames.join(',')}"
+		if doDebugDebug
+			LOG "setDebugging FUNCS: #{lFuncNames.join(',')}, debugging = false"
 	else if isFunction(funcDoDebug)
-		shouldDebugFunc = funcDoDebug
-		if DEBUGDEBUG
-			console.log "setDebugging to custom func"
+		shouldLogFunc = funcDoDebug
+		if doDebugDebug
+			LOG "setDebugging to custom func"
 	else
-		croak "setDebugging(): bad parameter #{oneline(funcDoDebug)}"
+		croak "setDebugging(): bad parameter #{OL(funcDoDebug)}"
 
 	if funcDoLog
 		assert isFunction(funcDoLog), "setDebugging: arg 2 not a function"
@@ -93,16 +87,62 @@ export funcMatch = (curFunc, lFuncNames) ->
 		return false
 
 # ---------------------------------------------------------------------------
+# 1. adjust call stack on 'enter' or 'return from'
+# 2. adjust debugging flag
+# 3. return [mainPrefix, auxPrefix, hEnv] - hEnv can be undef
+# 4. disable logging by setting mainPrefix to undef
 
-curEnv = () ->
+adjustStack = (str) ->
 
-	return {debugging, shouldDebugFunc, shouldLogString}
-
-# ---------------------------------------------------------------------------
-
-setEnv = (hEnv) ->
-
-	{debugging, shouldDebugFunc, shouldLogString} = hEnv
+	if (lMatches = str.match(///^
+			\s*
+			enter
+			\s+
+			([A-Za-z_][A-Za-z0-9_\.]*)
+			///))
+		curFunc = lMatches[1]
+		hEnv = {
+			debugging
+			shouldLogFunc
+			shouldLogString
+			}
+		debugging = shouldLogFunc(curFunc)
+		if doDebugDebug
+			trans = "#{hEnv.debugging} => #{debugging}"
+			LOG "   ENTER #{curFunc}, debugging: #{trans}"
+		[mainPre, auxPre, _] = stack.call(curFunc, hEnv, debugging)
+		return [
+			mainPre
+			auxPre
+			undef
+			if shouldLogFunc(curFunc) then 'enter' else undef
+			]
+	else if (lMatches = str.match(///^
+			\s*
+			return
+			.+
+			from
+			\s+
+			([A-Za-z_][A-Za-z0-9_\.]*)
+			///))
+		curFunc = lMatches[1]
+		[mainPre, auxPre, hEnv] = stack.returnFrom(curFunc)
+		if doDebugDebug
+			LOG "   RETURN FROM #{curFunc}"
+		return [
+			mainPre
+			auxPre
+			hEnv
+			if shouldLogFunc(curFunc) then 'return' else undef
+			]
+	else
+		[mainPre, auxPre, _] = stack.logStr()
+		return [
+			mainPre
+			auxPre
+			undef
+			if shouldLogString(str) then 'string' else undef
+			]
 	return
 
 # ---------------------------------------------------------------------------
@@ -112,77 +152,46 @@ export debug = (lArgs...) ->
 	# --- We want to allow item to be undef. Therefore, we need to
 	#     distinguish between 1 arg sent vs. 2+ args sent
 	nArgs = lArgs.length
-	if DEBUGDEBUG
-		LOG "debug() called with #{nArgs} args"
+	assert (nArgs==1) || (nArgs==2), "debug(): #{nArgs} args"
 	[label, item] = lArgs
+	assert isString(label),
+			"debug(): 1st arg #{OL(label)} should be a string"
+
+	if doDebugDebug
+		if nArgs==1
+			LOG "debug('#{escapeStr(label)}')"
+		else
+			LOG "debug('#{escapeStr(label)}', #{typeof item})"
 
 	# --- We always need to manipulate the stack when we encounter
 	#     either "enter X" or "return from X", so we can't short-circuit
 	#     when debugging is off
 
-	assert isString(label),
-			"debug(): 1st arg #{oneline(label)} should be a string"
-
-	# --- determine if we're entering or returning from a function
-	entering = returning = false
-	curFunc = undef
-	if (lMatches = label.match(///^
-			\s*
-			enter
-			\s+
-			([A-Za-z_][A-Za-z0-9_\.]*)
-			///))
-		entering = true
-		curFunc = lMatches[1]
-		stack.call(curFunc, curEnv())
-		debugging = shouldDebugFunc(curFunc)
-		if DEBUGDEBUG
-			LOG "ENTER #{curFunc}, debugging = #{debugging}"
-	else if (lMatches = label.match(///^
-			\s*
-			return
-			.+
-			from
-			\s+
-			([A-Za-z_][A-Za-z0-9_\.]*)
-			///))
-		returning = true
-		curFunc = lMatches[1]
-		hInfo = stack.returnFrom(curFunc)
-		if DEBUGDEBUG && hInfo
-			LOG "RETURN FROM #{curFunc}, debugging = #{hInfo.debugging}"
-
-	if shouldLogString(label)
-		# --- set the prefix, i.e. indentation to use
-		if returning
-			if (debugLevel==0)
-				prefix = arrow
+	[mainPre, auxPre, hEnv, type] = adjustStack(label)
+	hOptions = {prefix: mainPre, itemPrefix: auxPre}
+	switch type
+		when 'enter'
+			log label, hOptions
+			if item
+				# --- don't repeat the label
+				logItem undef, item, hOptions
+		when 'return'
+			log label, hOptions
+			if item
+				# --- don't repeat the label
+				logItem undef, item, hOptions
+		when 'string'
+			if item
+				logItem label, item, hOptions
 			else
-				prefix = getPrefix(debugLevel, true)   # with arrow
-		else
-			prefix = getPrefix(debugLevel, false)   # no arrow
+				log label, hOptions
 
-		if (nArgs==1)
-			log label, {prefix}
-		else
-			itemPrefix = removeArrow(prefix, false)
-			log item, {
-				label
-				prefix
-				itemPrefix
-				}
-	else if DEBUGDEBUG
-		LOG "shouldLogString('#{label}') returned FALSE"
-
-	# --- Adjust debug level & contents of hInfo
-	if returning
-		if debugLevel > 0
-			debugLevel -= 1
-		if hInfo
-			setEnv(hInfo)
-	else if entering
-		if debugging
-			debugLevel += 1
+	if hEnv
+		orgDebugging = debugging
+		{debugging, shouldLogFunc, shouldLogString} = hEnv
+		if doDebugDebug
+			trans = "#{orgDebugging} => #{debugging}"
+			LOG "   Restore hEnv: debugging: #{trans}"
 	return
 
 # ---------------------------------------------------------------------------

@@ -13,6 +13,10 @@ import {
   LOG
 } from '@jdeighan/coffee-utils/log';
 
+import {
+  getPrefix
+} from '@jdeighan/coffee-utils/arrow';
+
 doDebugStack = false;
 
 // ---------------------------------------------------------------------------
@@ -27,56 +31,98 @@ export var CallStack = class CallStack {
   }
 
   // ........................................................................
-  call(funcName, hInfo) {
-    var prefix;
+  reset() {
     if (doDebugStack) {
-      prefix = '   '.repeat(this.lStack.length);
-      LOG(`${prefix}[--> CALL ${funcName}]`);
+      LOG("RESET STACK");
     }
-    this.lStack.push({funcName, hInfo});
+    this.lStack = [];
+    this.level = 0;
   }
 
   // ........................................................................
-  returnFrom(fName) {
-    var funcName, hInfo, prefix;
-    if (this.lStack.length === 0) {
-      LOG(`returnFrom('${fName}') but stack is empty`);
-      return undef;
+  addCall(funcName, hInfo, isLogged) {
+    this.lStack.push({funcName, hInfo, isLogged});
+    if (isLogged) {
+      this.level += 1;
     }
-    ({funcName, hInfo} = this.lStack.pop());
+  }
+
+  // ........................................................................
+  removeCall(fName) {
+    var funcName, hInfo, isLogged;
+    ({funcName, hInfo, isLogged} = this.lStack.pop());
+    if (isLogged && (this.level > 0)) {
+      this.level -= 1;
+    }
     while ((funcName !== fName) && (this.lStack.length > 0)) {
       LOG(`[MISSING RETURN FROM ${funcName} (return from ${fName})]`);
-      ({funcName, hInfo} = this.lStack.pop());
-    }
-    if (doDebugStack) {
-      prefix = '   '.repeat(this.lStack.length);
-      LOG(`${prefix}[<-- BACK ${fName}]`);
+      ({funcName, hInfo, isLogged} = this.lStack.pop());
+      if (isLogged && (this.level > 0)) {
+        this.level -= 1;
+      }
     }
     if (funcName === fName) {
       return hInfo;
     } else {
       this.dump();
-      LOG(`BAD returnFrom('${fName}')`);
+      LOG(`BAD BAD BAD BAD returnFrom('${fName}')`);
       return undef;
     }
   }
 
   // ........................................................................
-  reset() {
+  // ........................................................................
+  call(funcName, hInfo, isLogged = undef) {
+    var auxPre, mainPre, prefix;
+    assert(isLogged !== undef, "CallStack.call(): 3 args required");
+    mainPre = getPrefix(this.level);
     if (doDebugStack) {
-      LOG("RESET STACK");
+      prefix = '   '.repeat(this.lStack.length);
+      LOG(`${prefix}[--> CALL ${funcName}]`);
     }
-    return this.lStack = [];
+    this.addCall(funcName, hInfo, isLogged);
+    auxPre = getPrefix(this.level);
+    return [mainPre, auxPre, undef];
   }
 
   // ........................................................................
+  logStr() {
+    var pre;
+    pre = getPrefix(this.level);
+    return [pre, pre, undef];
+  }
+
+  // ........................................................................
+  returnFrom(funcName) {
+    var auxPre, hInfo, mainPre, prefix;
+    // --- Prefixes are based on level before stack adjustment
+    mainPre = getPrefix(this.level, 'withArrow');
+    auxPre = getPrefix(this.level, 'returnVal');
+    if (this.lStack.length === 0) {
+      LOG(`returnFrom('${fName}') but stack is empty`);
+      return [mainPre, auxPre, undef];
+    }
+    hInfo = this.removeCall(funcName);
+    if (doDebugStack) {
+      prefix = '   '.repeat(this.lStack.length);
+      LOG(`${prefix}[<-- BACK ${fName}]`);
+    }
+    return [mainPre, auxPre, hInfo];
+  }
+
+  // ........................................................................
+  // ........................................................................
   dump(label = 'CALL STACK') {
     var i, item, j, len, ref;
-    console.log(`${label}:`);
-    ref = this.lStack;
-    for (i = j = 0, len = ref.length; j < len; i = ++j) {
-      item = ref[i];
-      LOG(`${i}: ${JSON.stringify(item)}`);
+    LOG(`${label}:`);
+    if (this.lStack.length === 0) {
+      LOG("   <EMPTY>");
+    } else {
+      ref = this.lStack;
+      for (i = j = 0, len = ref.length; j < len; i = ++j) {
+        item = ref[i];
+        LOG(`   ${i}: ${JSON.stringify(item)}`);
+      }
     }
   }
 

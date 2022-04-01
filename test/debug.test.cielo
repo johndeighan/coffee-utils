@@ -6,7 +6,7 @@ import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
 import {untabify} from '@jdeighan/coffee-utils/indent'
 import {
-	setDebugging, debug, funcMatch,
+	setDebugging, debug, funcMatch, debugDebug,
 	} from '@jdeighan/coffee-utils/debug'
 
 simple = new UnitTester()
@@ -135,6 +135,7 @@ tester = new TraceTester()
 		"│   something"
 		"└─> return 42 from myfunc"
 		]
+	debugDebug false
 	)()
 
 # ---------------------------------------------------------------------------
@@ -281,8 +282,8 @@ tester = new TraceTester()
 	debug "Answer is 42"
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
-		"│   ------------------------------------------"
-		"└─> return from myfunc:"
+		"└─> return from myfunc"
+		"    ------------------------------------------"
 		"       ---"
 		"       first: this˳is˳the˳first˳item˳in˳the˳hash"
 		"       second: this˳is˳the˳second˳item˳in˳the˳hash"
@@ -307,7 +308,7 @@ tester = new TraceTester()
 	debug "Answer is 42"
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
-		"└─> return from myfunc:"
+		"└─> return from myfunc"
 		"    =========================================="
 		"    this˳is˳one˳very˳long˳line"
 		"    this˳is˳another˳very˳long˳line"
@@ -427,8 +428,9 @@ tester = new TraceTester()
 	lLines = []
 	input = new StrInput()
 	result = input.mapArray(['abc','def'])
-	simple.equal 368, result, "> abc\n> def\n"
-	simple.equal 369, lLines, [
+
+	simple.equal {{LINE}}, result, "> abc\n> def\n"
+	simple.equal {{LINE}}, lLines, [
 		'enter StrInput.mapLine()',
 		"└─> return '>˳abc' from StrInput.mapLine()",
 		'enter StrInput.mapLine()',
@@ -460,7 +462,7 @@ tester = new TraceTester()
 
 	coffeeCodeToJS("x = 42")
 
-	simple.equal 401, lLines, [
+	simple.equal {{LINE}}, lLines, [
 		'enter coffeeCodeToJS()'
 		'└─> return from coffeeCodeToJS()'
 		]

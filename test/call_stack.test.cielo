@@ -1,10 +1,11 @@
 # call_stack.test.cielo
 
+import {UnitTester} from '@jdeighan/unit-tester'
 import {
 	undef, say, isString, isHash, isEmpty, nonEmpty, assert,
 	} from '@jdeighan/coffee-utils'
+import {oneIndent, arrow, fourSpaces} from '@jdeighan/coffee-utils/arrow'
 import {CallStack} from '@jdeighan/coffee-utils/stack'
-import {UnitTester} from '@jdeighan/unit-tester'
 
 simple = new UnitTester()
 
@@ -12,12 +13,44 @@ simple = new UnitTester()
 
 (() ->
 	stack = new CallStack()
-	stack.call('func1', {abc: 13})
-	stack.call('func2', {xyz: 42})
-	hInfo = stack.returnFrom('func2')
+
+	[pre1, pre2] = stack.logStr()
+	simple.equal {{LINE}}, pre1, ''
+	simple.equal {{LINE}}, pre2, ''
+
+	[pre1, pre2] = stack.call('func1', {abc: 13}, true)
+	simple.equal {{LINE}}, pre1, ''
+	simple.equal {{LINE}}, pre2, oneIndent
+
+	[pre1, pre2] = stack.logStr()
+	simple.equal {{LINE}}, pre1, oneIndent
+	simple.equal {{LINE}}, pre2, oneIndent
+
+	[pre1, pre2] = stack.call('func2', {xyz: 42}, true)
+	simple.equal {{LINE}}, pre1, oneIndent
+	simple.equal {{LINE}}, pre2, oneIndent + oneIndent
+
+	[pre1, pre2] = stack.logStr()
+	simple.equal {{LINE}}, pre1, oneIndent + oneIndent
+	simple.equal {{LINE}}, pre2, oneIndent + oneIndent
+
+	[pre1, pre2, hInfo] = stack.returnFrom('func2')
+	simple.equal {{LINE}}, pre1, oneIndent + arrow
+	simple.equal {{LINE}}, pre2, oneIndent + fourSpaces
 	simple.equal {{LINE}}, hInfo, {xyz: 42}
-	hInfo = stack.returnFrom('func1')
+
+	[pre1, pre2] = stack.logStr()
+	simple.equal {{LINE}}, pre1, oneIndent
+	simple.equal {{LINE}}, pre2, oneIndent
+
+	[pre1, pre2, hInfo] = stack.returnFrom('func1')
+	simple.equal {{LINE}}, pre1, arrow
+	simple.equal {{LINE}}, pre2, fourSpaces
 	simple.equal {{LINE}}, hInfo, {abc: 13}
+
+	[pre1, pre2] = stack.logStr()
+	simple.equal {{LINE}}, pre1, ''
+	simple.equal {{LINE}}, pre2, ''
 	)()
 
 # ----------------------------------------------------------------------------

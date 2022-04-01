@@ -6,7 +6,6 @@ import {
 	assert, undef, oneline, isString,
 	} from '@jdeighan/coffee-utils'
 import {untabify, tabify, splitLine} from '@jdeighan/coffee-utils/indent'
-import {log, tamlStringify} from '@jdeighan/coffee-utils/log'
 import {slurp} from '@jdeighan/coffee-utils/fs'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {

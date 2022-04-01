@@ -4,17 +4,15 @@ import yaml from 'js-yaml'
 
 import {
 	assert, undef, isNumber, isInteger, isString, isHash, isFunction,
-	escapeStr, sep_eq, sep_dash
+	escapeStr, sep_eq, sep_dash, pass
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
 import {tabify, untabify, indentation} from '@jdeighan/coffee-utils/indent'
-import {arrow, hasArrow, removeArrow} from '@jdeighan/coffee-utils/arrow'
 
 # --- This logger only ever gets passed a single string argument
 putstr = undef
 
 export stringify = undef
-objSep = '-'.repeat(42)
 
 # ---------------------------------------------------------------------------
 # This is useful for debugging and easy to remove after debugging
@@ -23,13 +21,13 @@ export LOG = (lArgs...) ->
 
 	[label, item] = lArgs
 	if lArgs.length > 1
-		console.log objSep
+		console.log sep_dash
 		if item?
 			console.log "#{label}:"
 			console.log untabify(orderedStringify(item))
 		else
 			console.log "[#{label}]: UNDEFINED"
-		console.log objSep
+		console.log sep_dash
 	else
 		console.log label
 	return
@@ -107,61 +105,77 @@ maxOneLine = 32
 
 # ---------------------------------------------------------------------------
 
-export log = (item, hOptions={}) ->
-	# --- valid options:
-	#   label
-	#   prefix
-	#   itemPrefix
-	#   escape
+fixStr = (str) ->
 
-	assert isFunction(putstr), "putstr not properly set"
-	if isString(hOptions)
-		label = hOptions
-		prefix = itemPrefix = ''
-	else
-		assert isHash(hOptions), "log(): 2nd arg must be a string or hash"
-		label = hOptions.label || ''
-		prefix = hOptions.prefix ||  ''
-		itemPrefix = hOptions.itemPrefix || prefix || ''
+	if !str
+		return ''
 
 	# --- If putstr is console.log, we'll convert TAB char to 3 spaces
 	if putstr == console.log
-		label = untabify(label)
-		prefix = untabify(prefix)
-		itemPrefix = untabify(itemPrefix)
+		return untabify(str)
+	else
+		return str
 
-	if isString(item) && (label == '')
-		if hOptions.escape
-			putstr "#{prefix}#{escapeStr(item)}"
-		else
-			putstr "#{prefix}#{item}"
-		return
+# ---------------------------------------------------------------------------
 
-	if (label == '')
-		label = 'ITEM'
+export log = (str, hOptions={}) ->
+	# --- valid options:
+	#   prefix
+
+	assert isFunction(putstr), "putstr not properly set"
+	assert isString(str),      "log(): not a string"
+	assert isHash(hOptions),   "log(): arg 2 not a hash"
+
+	prefix = fixStr(hOptions.prefix)
+	putstr "#{prefix}#{str}"
+	return
+
+# ---------------------------------------------------------------------------
+
+export logItem = (label, item, hOptions={}) ->
+	# --- valid options:
+	#   prefix
+	#   itemPrefix
+
+	assert isFunction(putstr), "putstr not properly set"
+	assert !label || isString(label), "label a non-string"
+	assert isHash(hOptions), "arg 3 not a hash"
+
+	label = fixStr(label)
+	prefix = fixStr(hOptions.prefix)
+	itemPrefix = fixStr(hOptions.itemPrefix || prefix)
+
+	labelStr = if label then "#{label} = " else ""
 
 	if (item == undef)
-		putstr "#{prefix}#{label} = undef"
+		putstr "#{prefix}#{labelStr}undef"
 	else if isString(item)
 		if (item.length <= maxOneLine)
-			putstr "#{prefix}#{label} = '#{escapeStr(item)}'"
+			putstr "#{prefix}#{labelStr}'#{escapeStr(item)}'"
 		else
-			putstr "#{prefix}#{label}:"
-			putstr "#{itemPrefix}#{sep_eq}"
-			for line in blockToArray(item)
-				putstr "#{itemPrefix}#{escapeStr(line)}"
-			putstr "#{itemPrefix}#{sep_eq}"
+			if label
+				putstr "#{prefix}#{label}:"
+			putBlock item, itemPrefix
 	else if isNumber(item)
-		putstr "#{prefix}#{label} = #{item}"
+		putstr "#{prefix}#{labelStr}#{item}"
 	else
-		putstr "#{removeArrow(prefix, true)}#{objSep}"
-		putstr "#{prefix}#{label}:"
-		for str in blockToArray(stringify(item, true))
-			if putstr == console.log
-				putstr "#{itemPrefix}   #{untabify(str)}"
-			else
-				putstr "#{itemPrefix}#{indentation(1)}#{str}"
-		putstr "#{removeArrow(prefix, false)}#{objSep}"
+		putstr "#{itemPrefix}#{sep_dash}"
+		if label
+			putstr "#{prefix}#{label}:"
+		for str in blockToArray(stringify(item, true))  # escape special chars
+			putstr "#{itemPrefix}#{indentation(1)}#{fixStr(str)}"
+		putstr "#{itemPrefix}#{sep_dash}"
+
+	return
+
+# ---------------------------------------------------------------------------
+
+putBlock = (item, prefix='') ->
+
+	putstr "#{prefix}#{sep_eq}"
+	for line in blockToArray(item)
+		putstr "#{prefix}#{escapeStr(line)}"
+	putstr "#{prefix}#{sep_eq}"
 	return
 
 # ---------------------------------------------------------------------------

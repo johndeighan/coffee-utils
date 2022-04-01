@@ -4,7 +4,7 @@ import {undef, escapeStr} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {UnitTester, UnitTesterNoNorm} from '@jdeighan/unit-tester'
 import {
-	stringify, setStringifier, log, setLogger,
+	stringify, setStringifier, log, logItem, setLogger,
 	tamlStringify, orderedStringify,
 	} from '@jdeighan/coffee-utils/log'
 
@@ -54,7 +54,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	log 'abc'
-	log undef, 'name'
+	logItem 'name', undef
 	tester.equal {{LINE}}, lLines, """
 		abc
 		name = undef
@@ -64,7 +64,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	log 'abc'
-	log 42, 'name'
+	logItem 'name', 42
 	tester.equal {{LINE}}, lLines, """
 		abc
 		name = 42
@@ -74,7 +74,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	log 'abc'
-	log 'John', 'name'
+	logItem 'name', 'John'
 	tester.equal {{LINE}}, lLines, """
 		abc
 		name = 'John'
@@ -84,7 +84,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	log 'abc'
-	log {a: 1, b: 'xyz'}, 'name'
+	logItem 'name', {a: 1, b: 'xyz'}
 	tester.equal {{LINE}}, lLines, """
 		abc
 		------------------------------------------
@@ -98,7 +98,7 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	log ['a', 42, [1,2]], 'name'
+	logItem 'name', ['a', 42, [1,2]]
 	tester.equal {{LINE}}, lLines, """
 		------------------------------------------
 		name:
@@ -118,11 +118,11 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	log 'abc'
-	log """
+	logItem 'name', """
 		This is a rather long bit of
 		text which changes
 		how it's displayed
-		""", 'name'
+		"""
 	tester.equal {{LINE}}, lLines, """
 		abc
 		name:
@@ -137,12 +137,12 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	log 'abc'
-	log {
+	logItem 'name', {
 		fname: 'John',
 		lname: 'Deighan',
 		age: 68,
 		home: 'Blacksburg, VA',
-		}, 'name'
+		}
 	tester.equal {{LINE}}, lLines, """
 		abc
 		------------------------------------------
@@ -159,11 +159,11 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	log 'abc'
-	log [
+	logItem 'name', [
 		68,
 		'a rather long string of text',
 		{a:1, b:2}
-		], 'name'
+		]
 	tester.equal {{LINE}}, lLines, """
 		abc
 		------------------------------------------
@@ -186,12 +186,12 @@ tester = new LogTester()
 
 	lLines = []
 	log 'abc'
-	log {
+	logItem 'name', {
 		fname: 'John',
 		lname: 'Deighan',
 		age: 68,
 		home: 'Blacksburg, VA',
-		}, 'name'
+		}
 	tester.equal {{LINE}}, lLines, """
 		abc
 		------------------------------------------
@@ -212,7 +212,7 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	log undef, {label: 'name', prefix: '<-->'}
+	logItem 'name', undef, {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->name = undef
 		"""
@@ -220,7 +220,7 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	log 42, {label: 'name', prefix: '<-->'}
+	logItem 'name', 42, {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->name = 42
 		"""
@@ -228,7 +228,7 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	log 'John', {label: 'name', prefix: '<-->'}
+	logItem 'name', 'John', {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->name = 'John'
 		"""
@@ -236,7 +236,7 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	log {a: 1, b: 'xyz'}, {label: 'name', prefix: '<-->'}
+	logItem 'name', {a: 1, b: 'xyz'}, {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->------------------------------------------
 		<-->name:
@@ -249,7 +249,7 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	log ['a', 42, [1,2]], {label: 'name', prefix: '<-->'}
+	logItem 'name', ['a', 42, [1,2]], {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->------------------------------------------
 		<-->name:
@@ -265,11 +265,11 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	log """
+	logItem 'name', """
 		This is a rather long bit of
 		text which changes
 		how it's displayed
-		""", {label: 'name', prefix: '<-->'}
+		""", {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->name:
 		<-->==========================================
@@ -282,12 +282,12 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	log {
+	logItem 'name', {
 		fname: 'John',
 		lname: 'Deighan',
 		age: 68,
 		home: 'Blacksburg, VA',
-		}, {label: 'name', prefix: '<-->'}
+		}, {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->------------------------------------------
 		<-->name:
@@ -302,11 +302,11 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	log [
+	logItem 'name', [
 		68,
 		'a rather long string of text',
 		{a:1, b:2}
-		], {label: 'name', prefix: '<-->'}
+		], {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->------------------------------------------
 		<-->name:

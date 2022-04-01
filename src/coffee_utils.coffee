@@ -3,6 +3,7 @@
 export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
 `export const undef = undefined`
+LOG = (lArgs...) -> console.log lArgs...   # synonym for console.log()
 
 # ---------------------------------------------------------------------------
 #   pass - do nothing
@@ -226,9 +227,9 @@ export hashToStr = (h) ->
 export say = (x) ->
 
 	if isHash(x)
-		console.log hashToStr(x)
+		LOG hashToStr(x)
 	else
-		console.log x
+		LOG x
 	return
 
 # ---------------------------------------------------------------------------

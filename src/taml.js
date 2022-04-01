@@ -18,11 +18,6 @@ import {
 } from '@jdeighan/coffee-utils/indent';
 
 import {
-  log,
-  tamlStringify
-} from '@jdeighan/coffee-utils/log';
-
-import {
   slurp
 } from '@jdeighan/coffee-utils/fs';
 

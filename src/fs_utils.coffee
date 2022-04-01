@@ -84,7 +84,7 @@ export getFullPath = (filepath) ->
 
 # --- If report is true, missing source files are not an error
 #     but both missing source files and successful copies
-#     are reported via console.log
+#     are reported via LOG
 
 export backup = (file, from, to, report=false) ->
 	src = mkpath(from, file)
@@ -92,10 +92,10 @@ export backup = (file, from, to, report=false) ->
 
 	if report
 		if fs.existsSync(src)
-			console.log "OK #{file}"
+			LOG "OK #{file}"
 			fs.copyFileSync(src, dest)
 		else
-			console.log "MISSING #{src}"
+			LOG "MISSING #{src}"
 	else
 		fs.copyFileSync(src, dest)
 
