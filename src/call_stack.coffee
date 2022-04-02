@@ -93,13 +93,13 @@ export class CallStack
 		auxPre = getPrefix(@level, 'returnVal')
 
 		if @lStack.length == 0
-			LOG "returnFrom('#{fName}') but stack is empty"
+			LOG "returnFrom('#{funcName}') but stack is empty"
 			return [mainPre, auxPre, undef]
 
 		hInfo = @removeCall(funcName)
 		if doDebugStack
 			prefix = '   '.repeat(@lStack.length)
-			LOG "#{prefix}[<-- BACK #{fName}]"
+			LOG "#{prefix}[<-- BACK #{funcName}]"
 
 		return [mainPre, auxPre, hInfo]
 

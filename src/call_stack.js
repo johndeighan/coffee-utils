@@ -99,13 +99,13 @@ export var CallStack = class CallStack {
     mainPre = getPrefix(this.level, 'withArrow');
     auxPre = getPrefix(this.level, 'returnVal');
     if (this.lStack.length === 0) {
-      LOG(`returnFrom('${fName}') but stack is empty`);
+      LOG(`returnFrom('${funcName}') but stack is empty`);
       return [mainPre, auxPre, undef];
     }
     hInfo = this.removeCall(funcName);
     if (doDebugStack) {
       prefix = '   '.repeat(this.lStack.length);
-      LOG(`${prefix}[<-- BACK ${fName}]`);
+      LOG(`${prefix}[<-- BACK ${funcName}]`);
     }
     return [mainPre, auxPre, hInfo];
   }
