@@ -41,7 +41,7 @@ export indentLevel = (str) ->
 # ---------------------------------------------------------------------------
 #   indented - add indentation to each string in a block
 
-export indented = (input, level=0) ->
+export indented = (input, level=1) ->
 
 	assert (level >= 0), "indented(): negative level"
 	if level == 0

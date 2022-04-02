@@ -53,7 +53,7 @@ export var indentLevel = function(str) {
 
 // ---------------------------------------------------------------------------
 //   indented - add indentation to each string in a block
-export var indented = function(input, level = 0) {
+export var indented = function(input, level = 1) {
   var lInputLines, lLines, line, toAdd;
   assert(level >= 0, "indented(): negative level");
   if (level === 0) {
