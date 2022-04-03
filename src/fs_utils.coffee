@@ -239,21 +239,26 @@ export pathTo = (fname, dir, direction="down") ->
 
 	debug "enter pathTo('#{fname}','#{dir}','#{direction}')"
 	assert fs.existsSync(dir), "Directory #{dir} does not exist"
-	if fs.existsSync("#{dir}/#{fname}")
-		debug "return from pathTo: #{dir}/#{fname} - file exists"
-		return mkpath("#{dir}/#{fname}")
+	filepath = mkpath(dir, fname)
+	if fs.existsSync(filepath)
+		debug "return from pathTo: #{filepath} - file exists"
+		return filepath
 	else if (direction == 'down')
 		# --- Search all directories in this directory
+		#     getSubDirs() returns dirs sorted alphabetically
 		for subdir in getSubDirs(dir)
-			if fpath = pathTo(fname, "#{dir}/#{subdir}")
+			dirpath = mkpath(dir, subdir)
+			debug "check #{dirpath}"
+			if fpath = pathTo(fname, dirpath)
 				debug "return from pathTo: #{fpath}"
 				return fpath
 	else if (direction == 'up')
-		while dir = getParentDir(dir)
-			debug "check #{dir}"
-			if fs.existsSync("#{dir}/#{fname}")
-				debug "return from pathTo(): #{dir}/#{fname}"
-				return "#{dir}/#{fname}"
+		while dirpath = getParentDir(dir)
+			debug "check #{dirpath}"
+			filepath = mkpath(dirpath, fname)
+			if fs.existsSync(filepath)
+				debug "return from pathTo(): #{filepath}"
+				return filepath
 	else
 		error "pathTo(): Invalid direction '#{direction}'"
 	debug "return undef from pathTo - file not found"
