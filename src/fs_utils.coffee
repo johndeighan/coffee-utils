@@ -187,12 +187,18 @@ export withUnderScore = (path) ->
 	return mkpath(dir, "_#{base}")
 
 # ---------------------------------------------------------------------------
+
+isSystemDir = (dir) ->
+
+	return dir in ['$Recycle.Bin', '$WinREAgent']
+
+# ---------------------------------------------------------------------------
 #    Get all subdirectories of a directory
 
 export getSubDirs = (dir) ->
 
 	return fs.readdirSync(dir, {withFileTypes: true}) \
-		.filter((d) -> d.isDirectory() && (d.name != '$Recycle.Bin')) \
+		.filter((d) -> d.isDirectory() && !isSystemDir(d.name)) \
 		.map((d) -> mkpath(d.name)) \
 		.sort()
 
