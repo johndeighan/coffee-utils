@@ -223,7 +223,7 @@ export var getSubDirs = function(dir) {
   return fs.readdirSync(dir, {
     withFileTypes: true
   }).filter(function(d) {
-    return d.isDirectory();
+    return d.isDirectory() && (d !== '$Recycle.Bin');
   }).map(function(d) {
     return mkpath(d.name);
   }).sort();

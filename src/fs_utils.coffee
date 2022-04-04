@@ -192,7 +192,7 @@ export withUnderScore = (path) ->
 export getSubDirs = (dir) ->
 
 	return fs.readdirSync(dir, {withFileTypes: true}) \
-		.filter((d) -> d.isDirectory()) \
+		.filter((d) -> d.isDirectory() && (d != '$Recycle.Bin')) \
 		.map((d) -> mkpath(d.name)) \
 		.sort()
 
