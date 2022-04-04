@@ -131,22 +131,6 @@ export tabify = (str, numSpaces=undef) ->
 	return arrayToBlock(lLines)
 
 # ---------------------------------------------------------------------------
-#    untabify - convert leading TABs to spaces
-
-untabify_old = (str, numSpaces=3) ->
-
-	oneIndent = ' '.repeat(numSpaces)
-	lLines = []
-	for str in blockToArray(str)
-		lMatches = str.match(/^(\t*)(.*)$/)
-		[_, prefix, theRest] = lMatches
-		if prefix == ''
-			lLines.push theRest
-		else
-			lLines.push oneIndent.repeat(prefix.length) + theRest
-	return arrayToBlock(lLines)
-
-# ---------------------------------------------------------------------------
 #    untabify - convert ALL TABs to spaces
 
 export untabify = (str, numSpaces=3) ->

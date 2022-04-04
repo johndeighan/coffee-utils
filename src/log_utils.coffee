@@ -134,17 +134,15 @@ export log = (str, hOptions={}) ->
 
 export logItem = (label, item, hOptions={}) ->
 	# --- valid options:
-	#   prefix
-	#   itemPrefix
+	#   prefix     - not used
+	#   itemPrefix - always used
 
 	assert isFunction(putstr), "putstr not properly set"
 	assert !label || isString(label), "label a non-string"
 	assert isHash(hOptions), "arg 3 not a hash"
 
 	label = fixStr(label)
-	prefix = fixStr(hOptions.prefix)
-	itemPrefix = fixStr(hOptions.itemPrefix || prefix)
-
+	prefix = fixStr(hOptions.itemPrefix || hOptions.prefix)
 	labelStr = if label then "#{label} = " else ""
 
 	if (item == undef)
@@ -155,16 +153,16 @@ export logItem = (label, item, hOptions={}) ->
 		else
 			if label
 				putstr "#{prefix}#{label}:"
-			putBlock item, itemPrefix
+			putBlock item, prefix
 	else if isNumber(item)
 		putstr "#{prefix}#{labelStr}#{item}"
 	else
-		putstr "#{itemPrefix}#{sep_dash}"
+		putstr "#{prefix}#{sep_dash}"
 		if label
 			putstr "#{prefix}#{label}:"
 		for str in blockToArray(stringify(item, true))  # escape special chars
-			putstr "#{itemPrefix}#{indentation(1)}#{fixStr(str)}"
-		putstr "#{itemPrefix}#{sep_dash}"
+			putstr "#{prefix}#{indentation(1)}#{fixStr(str)}"
+		putstr "#{prefix}#{sep_dash}"
 
 	return
 

@@ -168,7 +168,10 @@ export debug = (lArgs...) ->
 	#     when debugging is off
 
 	[mainPre, auxPre, hEnv, type] = adjustStack(label)
-	hOptions = {prefix: mainPre, itemPrefix: auxPre}
+	hOptions = {
+		prefix: mainPre
+		itemPrefix: auxPre
+		}
 	switch type
 		when 'enter'
 			log label, hOptions

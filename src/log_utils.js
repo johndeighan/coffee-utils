@@ -151,16 +151,15 @@ export var log = function(str, hOptions = {}) {
 
 // ---------------------------------------------------------------------------
 export var logItem = function(label, item, hOptions = {}) {
-  var i, itemPrefix, labelStr, len, prefix, ref, str;
+  var i, labelStr, len, prefix, ref, str;
   // --- valid options:
-  //   prefix
-  //   itemPrefix
+  //   prefix     - not used
+  //   itemPrefix - always used
   assert(isFunction(putstr), "putstr not properly set");
   assert(!label || isString(label), "label a non-string");
   assert(isHash(hOptions), "arg 3 not a hash");
   label = fixStr(label);
-  prefix = fixStr(hOptions.prefix);
-  itemPrefix = fixStr(hOptions.itemPrefix || prefix);
+  prefix = fixStr(hOptions.itemPrefix || hOptions.prefix);
   labelStr = label ? `${label} = ` : "";
   if (item === undef) {
     putstr(`${prefix}${labelStr}undef`);
@@ -171,12 +170,12 @@ export var logItem = function(label, item, hOptions = {}) {
       if (label) {
         putstr(`${prefix}${label}:`);
       }
-      putBlock(item, itemPrefix);
+      putBlock(item, prefix);
     }
   } else if (isNumber(item)) {
     putstr(`${prefix}${labelStr}${item}`);
   } else {
-    putstr(`${itemPrefix}${sep_dash}`);
+    putstr(`${prefix}${sep_dash}`);
     if (label) {
       putstr(`${prefix}${label}:`);
     }
@@ -184,9 +183,9 @@ export var logItem = function(label, item, hOptions = {}) {
     // escape special chars
     for (i = 0, len = ref.length; i < len; i++) {
       str = ref[i];
-      putstr(`${itemPrefix}${indentation(1)}${fixStr(str)}`);
+      putstr(`${prefix}${indentation(1)}${fixStr(str)}`);
     }
-    putstr(`${itemPrefix}${sep_dash}`);
+    putstr(`${prefix}${sep_dash}`);
   }
 };
 
