@@ -372,7 +372,7 @@ export var shortenPath = function(path) {
 
 // ---------------------------------------------------------------------------
 export var parseSource = function(source) {
-  var dir, err, hInfo;
+  var dir, err, hInfo, hSourceInfo;
   // --- returns {
   //        dir
   //        filename   # only this is guaranteed to be set
@@ -381,39 +381,41 @@ export var parseSource = function(source) {
   //        }
   debug("enter parseSource()");
   if (source === 'unit test') {
-    debug("return 'unit test' from parseSource()");
-    return {
+    hSourceInfo = {
       filename: 'unit test',
       stub: 'unit test'
     };
+    debug("return from parseSource()", hSourceInfo);
+    return hSourceInfo;
   }
   try {
     hInfo = pathlib.parse(source);
-    debug("return from parseSource()", hInfo);
-    if (hInfo.root) {
+    if (hInfo.dir) {
       dir = mkpath(hInfo.dir); // change \ to /
-      return {
-        dir: dir,
+      hSourceInfo = {
+        dir,
         fullpath: mkpath(dir, hInfo.base),
         filename: hInfo.base,
         stub: hInfo.name,
         ext: hInfo.ext
       };
     } else {
-      return {
-        dir: mkpath(hInfo.dir), // change \ to /
+      hSourceInfo = {
         filename: hInfo.base,
         stub: hInfo.name,
         ext: hInfo.ext
       };
     }
+    debug("return from parseSource()", hSourceInfo);
+    return hSourceInfo;
   } catch (error1) {
     err = error1;
-    debug(`return '${err.message} from parseSource()`);
-    return {
+    hSourceInfo = {
       filename: source,
       stub: source,
       error: err.message
     };
+    debug(`return '${err.message} from parseSource()`, hSourceInfo);
+    return hSourceInfo;
   }
 };

@@ -106,6 +106,12 @@ simple.equal {{LINE}}, parseSource('unit test'), {
 	stub: 'unit test'
 	}
 
+simple.equal {{LINE}}, parseSource("test.js"), {
+	filename: 'test.js'
+	stub: 'test'
+	ext: '.js'
+	}
+
 simple.equal {{LINE}}, parseSource("c:/Users/johnd/oz/src/test.js"), {
 	dir: 'c:/Users/johnd/oz/src'
 	fullpath: 'c:/Users/johnd/oz/src/test.js'
