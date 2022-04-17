@@ -6,7 +6,7 @@ import fs from 'fs'
 import NReadLines from 'n-readlines'
 
 import {
-	assert, undef, pass, rtrim, error, nonEmpty,
+	assert, undef, pass, rtrim, error, isEmpty, nonEmpty,
 	isString, isArray, isRegExp, isFunction, croak,
 	} from '@jdeighan/coffee-utils'
 import {log, LOG} from '@jdeighan/coffee-utils/log'
