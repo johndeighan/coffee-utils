@@ -18,6 +18,7 @@ import {
   error,
   nonEmpty,
   isString,
+  isArray,
   isRegExp,
   isFunction,
   croak
@@ -31,6 +32,21 @@ import {
 import {
   debug
 } from '@jdeighan/coffee-utils/debug';
+
+// ---------------------------------------------------------------------------
+//    mydir() - pass argument `import.meta.url` and it will return
+//              the directory your file is in
+export var mydir = function(url) {
+  var dir, final, path;
+  debug(`url = ${url}`);
+  path = urllib.fileURLToPath(url);
+  debug(`path = ${path}`);
+  dir = pathlib.dirname(path);
+  debug(`dir = ${dir}`);
+  final = mkpath(dir);
+  debug(`final = ${final}`);
+  return final;
+};
 
 // ---------------------------------------------------------------------------
 export var isFile = function(fullpath) {
@@ -58,21 +74,6 @@ export var fileExt = function(path) {
   } else {
     return '';
   }
-};
-
-// ---------------------------------------------------------------------------
-//    mydir() - pass argument `import.meta.url` and it will return
-//              the directory your file is in
-export var mydir = function(url) {
-  var dir, final, path;
-  debug(`url = ${url}`);
-  path = urllib.fileURLToPath(url);
-  debug(`path = ${path}`);
-  dir = pathlib.dirname(path);
-  debug(`dir = ${dir}`);
-  final = mkpath(dir);
-  debug(`final = ${final}`);
-  return final;
 };
 
 // ---------------------------------------------------------------------------
@@ -165,6 +166,15 @@ export var slurp = function(filepath, maxLines = undef) {
 //   barf - write a string to a file
 export var barf = function(filepath, contents) {
   debug(`enter barf('${filepath}')`, contents);
+  if (isEmpty(contents)) {
+    debug("return from barf(): empty contents");
+    return;
+  }
+  if (isArray(contents)) {
+    contents = arrayToBlock(contents);
+  } else if (!isString(contents)) {
+    croak("barf(): Invalid contents");
+  }
   contents = rtrim(contents) + "\n";
   fs.writeFileSync(filepath, contents, {
     encoding: 'utf8'

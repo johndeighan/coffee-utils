@@ -7,10 +7,25 @@ import NReadLines from 'n-readlines'
 
 import {
 	assert, undef, pass, rtrim, error, nonEmpty,
-	isString, isRegExp, isFunction, croak,
+	isString, isArray, isRegExp, isFunction, croak,
 	} from '@jdeighan/coffee-utils'
 import {log, LOG} from '@jdeighan/coffee-utils/log'
 import {debug} from '@jdeighan/coffee-utils/debug'
+
+# ---------------------------------------------------------------------------
+#    mydir() - pass argument `import.meta.url` and it will return
+#              the directory your file is in
+
+export mydir = (url) ->
+
+	debug "url = #{url}"
+	path = urllib.fileURLToPath(url)
+	debug "path = #{path}"
+	dir = pathlib.dirname(path)
+	debug "dir = #{dir}"
+	final = mkpath(dir)
+	debug "final = #{final}"
+	return final
 
 # ---------------------------------------------------------------------------
 
@@ -40,21 +55,6 @@ export fileExt = (path) ->
 		return lMatches[0]
 	else
 		return ''
-
-# ---------------------------------------------------------------------------
-#    mydir() - pass argument `import.meta.url` and it will return
-#              the directory your file is in
-
-export mydir = (url) ->
-
-	debug "url = #{url}"
-	path = urllib.fileURLToPath(url)
-	debug "path = #{path}"
-	dir = pathlib.dirname(path)
-	debug "dir = #{dir}"
-	final = mkpath(dir)
-	debug "final = #{final}"
-	return final
 
 # ---------------------------------------------------------------------------
 
@@ -138,6 +138,13 @@ export slurp = (filepath, maxLines=undef) ->
 export barf = (filepath, contents) ->
 
 	debug "enter barf('#{filepath}')", contents
+	if isEmpty(contents)
+		debug "return from barf(): empty contents"
+		return
+	if isArray(contents)
+		contents = arrayToBlock(contents)
+	else if ! isString(contents)
+		croak "barf(): Invalid contents"
 	contents = rtrim(contents) + "\n"
 	fs.writeFileSync(filepath, contents, {encoding: 'utf8'})
 	debug "return from barf()"
