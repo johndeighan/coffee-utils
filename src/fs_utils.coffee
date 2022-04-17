@@ -11,6 +11,7 @@ import {
 	} from '@jdeighan/coffee-utils'
 import {log, LOG} from '@jdeighan/coffee-utils/log'
 import {debug} from '@jdeighan/coffee-utils/debug'
+import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 
 # ---------------------------------------------------------------------------
 #    mydir() - pass argument `import.meta.url` and it will return
