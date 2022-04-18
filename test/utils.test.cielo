@@ -10,7 +10,7 @@ import {
 	words, escapeStr, titleLine,
 	removeCR, CWS, isArrayOfHashes,
 	oneline, croak, isRegExp, uniq, hashToStr, envVarsWithPrefix,
-	strcat,
+	strcat, replaceVars,
 	} from '@jdeighan/coffee-utils'
 import {log, setLogger, resetLogger} from '@jdeighan/coffee-utils/log'
 import {setDebugging} from '@jdeighan/coffee-utils/debug'
@@ -254,3 +254,10 @@ simple.equal {{LINE}}, h, {B: 'two', D: 'four'}
 
 simple.equal {{LINE}}, strcat('a','b','c'), 'abc'
 simple.equal {{LINE}}, strcat('a',5,'c'), 'a5c'
+
+# ---------------------------------------------------------------------------
+
+process.env.FILE = 'sample.txt'
+simple.equal {{LINE}}, replaceVars("My __world__", {world: 'X'}), "My X"
+simple.equal {{LINE}}, replaceVars("line __LINE__", {LINE: 3}), "line 3"
+simple.equal {{LINE}}, replaceVars("file __env.FILE__"), "file sample.txt"

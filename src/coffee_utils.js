@@ -408,3 +408,16 @@ export var strcat = function(...lItems) {
   }
   return str;
 };
+
+// ---------------------------------------------------------------------------
+export var replaceVars = function(line, hVars) {
+  var replacerFunc;
+  replacerFunc = (match, prefix, name) => {
+    if (prefix) {
+      return process.env[name];
+    } else {
+      return hVars[name].toString();
+    }
+  };
+  return line.replace(/__(env\.)?([A-Za-z_]\w*)__/g, replacerFunc);
+};

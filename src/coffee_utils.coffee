@@ -379,3 +379,17 @@ export strcat = (lItems...) ->
 	for item in lItems
 		str += item.toString()
 	return str
+
+# ---------------------------------------------------------------------------
+
+export replaceVars = (line, hVars) ->
+
+	replacerFunc = (match, prefix, name) =>
+		return if prefix then process.env[name] else hVars[name].toString()
+
+	return line.replace(///
+			__
+			(env\.)?
+			([A-Za-z_]\w*)
+			__
+			///g, replacerFunc)
