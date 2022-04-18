@@ -28,7 +28,7 @@ export LOG = (lArgs...) ->
 			console.log sep_dash
 			console.log "#{label}:"
 			if isString(item)
-				console.log item
+				console.log untabify(item)
 			else
 				console.log untabify(orderedStringify(item))
 			console.log sep_dash

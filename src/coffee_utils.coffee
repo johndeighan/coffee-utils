@@ -382,14 +382,8 @@ export strcat = (lItems...) ->
 
 # ---------------------------------------------------------------------------
 
-export replaceVars = (line, hVars) ->
+export replaceVars = (line, hVars={}, regexp=/__(env\.)?([A-Za-z_]\w*)__/) ->
 
 	replacerFunc = (match, prefix, name) =>
 		return if prefix then process.env[name] else hVars[name].toString()
-
-	return line.replace(///
-			__
-			(env\.)?
-			([A-Za-z_]\w*)
-			__
-			///g, replacerFunc)
+	return line.replace(regexp, replacerFunc)
