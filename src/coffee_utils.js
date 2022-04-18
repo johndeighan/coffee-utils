@@ -410,7 +410,7 @@ export var strcat = function(...lItems) {
 };
 
 // ---------------------------------------------------------------------------
-export var replaceVars = function(line, hVars = {}, regexp = /__(env\.)?([A-Za-z_]\w*)__/) {
+export var replaceVars = function(line, hVars = {}, rx = /__(env\.)?([A-Za-z_]\w*)__/g) {
   var replacerFunc;
   replacerFunc = (match, prefix, name) => {
     if (prefix) {
@@ -419,5 +419,5 @@ export var replaceVars = function(line, hVars = {}, regexp = /__(env\.)?([A-Za-z
       return hVars[name].toString();
     }
   };
-  return line.replace(regexp, replacerFunc);
+  return line.replace(rx, replacerFunc);
 };

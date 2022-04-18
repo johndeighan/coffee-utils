@@ -258,6 +258,13 @@ simple.equal {{LINE}}, strcat('a',5,'c'), 'a5c'
 # ---------------------------------------------------------------------------
 
 process.env.FILE = 'sample.txt'
-simple.equal {{LINE}}, replaceVars("My __world__", {world: 'X'}), "My X"
-simple.equal {{LINE}}, replaceVars("line __LINE__", {LINE: 3}), "line 3"
+hVars = {
+	world: 'X'
+	FILE: 'utils.test.coffee'
+	LINE: 3
+	}
+
+simple.equal {{LINE}}, replaceVars("My __world__", hVars), "My X"
+simple.equal {{LINE}}, replaceVars("line __LINE__", hVars), "line 3"
 simple.equal {{LINE}}, replaceVars("file __env.FILE__"), "file sample.txt"
+simple.equal {{LINE}}, replaceVars("file __FILE__, line __LINE__", hVars), "file utils.test.coffee, line 3"
