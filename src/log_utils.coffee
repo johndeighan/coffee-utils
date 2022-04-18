@@ -21,13 +21,17 @@ export LOG = (lArgs...) ->
 
 	[label, item] = lArgs
 	if lArgs.length > 1
-		console.log sep_dash
-		if item?
-			console.log "#{label}:"
-			console.log untabify(orderedStringify(item))
-		else
+		# --- There's both a label and an item
+		if ! item?
 			console.log "#{label}: UNDEFINED"
-		console.log sep_dash
+		else
+			console.log sep_dash
+			console.log "#{label}:"
+			if isString(item)
+				console.log item
+			else
+				console.log untabify(orderedStringify(item))
+			console.log sep_dash
 	else
 		console.log label
 	return

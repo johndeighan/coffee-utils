@@ -39,14 +39,18 @@ export var LOG = function(...lArgs) {
   var item, label;
   [label, item] = lArgs;
   if (lArgs.length > 1) {
-    console.log(sep_dash);
-    if (item != null) {
-      console.log(`${label}:`);
-      console.log(untabify(orderedStringify(item)));
-    } else {
+    if (item == null) {
       console.log(`${label}: UNDEFINED`);
+    } else {
+      console.log(sep_dash);
+      console.log(`${label}:`);
+      if (isString(item)) {
+        console.log(item);
+      } else {
+        console.log(untabify(orderedStringify(item)));
+      }
+      console.log(sep_dash);
     }
-    console.log(sep_dash);
   } else {
     console.log(label);
   }
