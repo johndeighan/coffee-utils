@@ -34,7 +34,7 @@ putstr = undef;
 export var stringify = undef;
 
 // ---------------------------------------------------------------------------
-// This is useful for debugging and easy to remove after debugging
+// This is useful for debugging
 export var LOG = function(...lArgs) {
   var item, label;
   [label, item] = lArgs;
@@ -44,7 +44,7 @@ export var LOG = function(...lArgs) {
       console.log(`${label}:`);
       console.log(untabify(orderedStringify(item)));
     } else {
-      console.log(`[${label}]: UNDEFINED`);
+      console.log(`${label}: UNDEFINED`);
     }
     console.log(sep_dash);
   } else {
@@ -52,6 +52,7 @@ export var LOG = function(...lArgs) {
   }
 };
 
+// --- Use this instead to make it easier to remove all instances
 export var DEBUG = LOG; // synonym
 
 
@@ -113,7 +114,7 @@ export var orderedStringify = function(obj, escape = false) {
     skipInvalid: true,
     indent: 1,
     sortKeys: true,
-    lineWidth: -1,
+    lineWidth: 40,
     replacer: escape ? escReplacer : function(name, value) {
       return value;
     }

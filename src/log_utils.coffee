@@ -15,7 +15,7 @@ putstr = undef
 export stringify = undef
 
 # ---------------------------------------------------------------------------
-# This is useful for debugging and easy to remove after debugging
+# This is useful for debugging
 
 export LOG = (lArgs...) ->
 
@@ -26,12 +26,13 @@ export LOG = (lArgs...) ->
 			console.log "#{label}:"
 			console.log untabify(orderedStringify(item))
 		else
-			console.log "[#{label}]: UNDEFINED"
+			console.log "#{label}: UNDEFINED"
 		console.log sep_dash
 	else
 		console.log label
 	return
 
+# --- Use this instead to make it easier to remove all instances
 export DEBUG = LOG   # synonym
 
 # ---------------------------------------------------------------------------
@@ -93,7 +94,7 @@ export orderedStringify = (obj, escape=false) ->
 		skipInvalid: true
 		indent: 1
 		sortKeys: true
-		lineWidth: -1
+		lineWidth: 40
 		replacer: if escape then escReplacer else (name,value) -> value
 		})
 
