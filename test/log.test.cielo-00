@@ -2,7 +2,7 @@
 
 import {undef, escapeStr} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
-import {UnitTesterNorm, UnitTester} from '@jdeighan/unit-tester'
+import {UnitTesterNorm, UnitTesterNoNorm} from '@jdeighan/unit-tester'
 import {
 	stringify, setStringifier, log, logItem, setLogger,
 	tamlStringify, orderedStringify,
@@ -17,7 +17,7 @@ setLogger (str) -> lLines.push(str)
 
 # ---------------------------------------------------------------------------
 
-class LogTester extends UnitTester
+class LogTester extends UnitTesterNoNorm
 
 	transformValue: (lLines) ->
 		return arrayToBlock(lLines)

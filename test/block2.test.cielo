@@ -6,13 +6,13 @@ import {
 	undef, say, isString, isHash, isEmpty, nonEmpty, assert,
 	} from '@jdeighan/coffee-utils'
 import {mydir, mkpath} from '@jdeighan/coffee-utils/fs'
-import {UnitTester} from '@jdeighan/unit-tester'
+import {UnitTesterNorm} from '@jdeighan/unit-tester'
 import {
 	forEachLine, forEachBlock, forEachSetOfBlocks,
 	} from '@jdeighan/coffee-utils/block'
 
 testDir = mydir(`import.meta.url`)
-simple = new UnitTester()
+simple = new UnitTesterNorm()
 
 filepath = mkpath(testDir, 'code2.test.txt')
 

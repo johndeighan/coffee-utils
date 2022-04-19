@@ -2,10 +2,10 @@
 
 import {undef} from '@jdeighan/coffee-utils'
 import {log, tamlStringify} from '@jdeighan/coffee-utils/log'
-import {UnitTester} from '@jdeighan/unit-tester'
+import {UnitTesterNoNorm} from '@jdeighan/unit-tester'
 import {isTAML, taml} from '@jdeighan/coffee-utils/taml'
 
-simple = new UnitTester()
+simple = new UnitTesterNoNorm()
 
 # ---------------------------------------------------------------------------
 

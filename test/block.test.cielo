@@ -2,14 +2,14 @@
 
 import assert from 'assert'
 
-import {UnitTester} from '@jdeighan/coffee-utils/test'
+import {UnitTesterNorm} from '@jdeighan/unit-tester'
 import {
 	blockToArray, arrayToBlock, firstLine, remainingLines,
 	normalizeBlock, truncateBlock,
 	joinBlocks, forEachLine, forEachBlock, forEachSetOfBlocks,
 	} from '@jdeighan/coffee-utils/block'
 
-simple = new UnitTester()
+simple = new UnitTesterNorm()
 
 # ---------------------------------------------------------------------------
 

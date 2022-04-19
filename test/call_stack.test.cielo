@@ -1,13 +1,13 @@
 # call_stack.test.cielo
 
-import {UnitTester} from '@jdeighan/unit-tester'
+import {UnitTesterNorm} from '@jdeighan/unit-tester'
 import {
 	undef, say, isString, isHash, isEmpty, nonEmpty, assert,
 	} from '@jdeighan/coffee-utils'
 import {oneIndent, arrow, fourSpaces} from '@jdeighan/coffee-utils/arrow'
 import {CallStack} from '@jdeighan/coffee-utils/stack'
 
-simple = new UnitTester()
+simple = new UnitTesterNorm()
 
 # ----------------------------------------------------------------------------
 

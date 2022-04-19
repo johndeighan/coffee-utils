@@ -1,0 +1,17 @@
+# taml.test.cielo
+
+import {undef} from '@jdeighan/coffee-utils'
+import {log, tamlStringify} from '@jdeighan/coffee-utils/log'
+import {UnitTesterNoNorm} from '@jdeighan/unit-tester'
+import {isTAML, taml} from '@jdeighan/coffee-utils/taml'
+
+simple = new UnitTesterNoNorm()
+
+# ---------------------------------------------------------------------------
+
+simple.truthy 12, isTAML("---\n- first\n- second")
+simple.falsy  13, isTAML("x---\n")
+simple.equal  14, taml("---\n- a\n- b"), ['a','b']
+simple.equal  15, tamlStringify({a:1}), "---\na: 1"
+simple.equal  16, tamlStringify({a:1, b:2}), "---\na: 1\nb: 2"
+simple.equal  17, tamlStringify([1,'abc',{a:1}]), "---\n- 1\n- abc\n-\n\ta: 1"

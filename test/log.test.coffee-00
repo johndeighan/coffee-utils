@@ -1,8 +1,9 @@
+import {error} from '@jdeighan/coffee-utils'
 # log.test.cielo
 
 import {undef, escapeStr} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
-import {UnitTesterNorm, UnitTester} from '@jdeighan/unit-tester'
+import {UnitTesterNorm, UnitTesterNoNorm} from '@jdeighan/unit-tester'
 import {
 	stringify, setStringifier, log, logItem, setLogger,
 	tamlStringify, orderedStringify,
@@ -17,7 +18,7 @@ setLogger (str) -> lLines.push(str)
 
 # ---------------------------------------------------------------------------
 
-class LogTester extends UnitTester
+class LogTester extends UnitTesterNoNorm
 
 	transformValue: (lLines) ->
 		return arrayToBlock(lLines)
@@ -29,7 +30,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	log 'enter myfunc'
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 32, lLines, """
 		enter myfunc
 		"""
 	)()
@@ -41,7 +42,7 @@ tester = new LogTester()
 	log 'abc'
 	log 'def'
 	log 'ghi'
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 44, lLines, """
 		abc
 		def
 		ghi
@@ -55,7 +56,7 @@ tester = new LogTester()
 	lLines = []
 	log 'abc'
 	logItem 'name', undef
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 58, lLines, """
 		abc
 		name = undef
 		"""
@@ -65,7 +66,7 @@ tester = new LogTester()
 	lLines = []
 	log 'abc'
 	logItem 'name', 42
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 68, lLines, """
 		abc
 		name = 42
 		"""
@@ -75,7 +76,7 @@ tester = new LogTester()
 	lLines = []
 	log 'abc'
 	logItem 'name', 'John'
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 78, lLines, """
 		abc
 		name = 'John'
 		"""
@@ -85,7 +86,7 @@ tester = new LogTester()
 	lLines = []
 	log 'abc'
 	logItem 'name', {a: 1, b: 'xyz'}
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 88, lLines, """
 		abc
 		------------------------------------------
 		name:
@@ -99,7 +100,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	logItem 'name', ['a', 42, [1,2]]
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 102, lLines, """
 		------------------------------------------
 		name:
 			---
@@ -123,7 +124,7 @@ tester = new LogTester()
 		text which changes
 		how it's displayed
 		"""
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 126, lLines, """
 		abc
 		name:
 		==========================================
@@ -143,7 +144,7 @@ tester = new LogTester()
 		age: 68,
 		home: 'Blacksburg, VA',
 		}
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 146, lLines, """
 		abc
 		------------------------------------------
 		name:
@@ -164,7 +165,7 @@ tester = new LogTester()
 		'a rather long string of text',
 		{a:1, b:2}
 		]
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 167, lLines, """
 		abc
 		------------------------------------------
 		name:
@@ -192,7 +193,7 @@ tester = new LogTester()
 		age: 68,
 		home: 'Blacksburg, VA',
 		}
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 195, lLines, """
 		abc
 		------------------------------------------
 		name:
@@ -213,7 +214,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	logItem 'name', undef, {prefix: '<-->'}
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 216, lLines, """
 		<-->name = undef
 		"""
 	)()
@@ -221,7 +222,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	logItem 'name', 42, {prefix: '<-->'}
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 224, lLines, """
 		<-->name = 42
 		"""
 	)()
@@ -229,7 +230,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	logItem 'name', 'John', {prefix: '<-->'}
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 232, lLines, """
 		<-->name = 'John'
 		"""
 	)()
@@ -237,7 +238,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	logItem 'name', {a: 1, b: 'xyz'}, {prefix: '<-->'}
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 240, lLines, """
 		<-->------------------------------------------
 		<-->name:
 		<-->	---
@@ -250,7 +251,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	logItem 'name', ['a', 42, [1,2]], {prefix: '<-->'}
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 253, lLines, """
 		<-->------------------------------------------
 		<-->name:
 		<-->	---
@@ -270,7 +271,7 @@ tester = new LogTester()
 		text which changes
 		how it's displayed
 		""", {prefix: '<-->'}
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 273, lLines, """
 		<-->name:
 		<-->==========================================
 		<-->This˳is˳a˳rather˳long˳bit˳of
@@ -288,7 +289,7 @@ tester = new LogTester()
 		age: 68,
 		home: 'Blacksburg, VA',
 		}, {prefix: '<-->'}
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 291, lLines, """
 		<-->------------------------------------------
 		<-->name:
 		<-->	---
@@ -307,7 +308,7 @@ tester = new LogTester()
 		'a rather long string of text',
 		{a:1, b:2}
 		], {prefix: '<-->'}
-	tester.equal {{LINE}}, lLines, """
+	tester.equal 310, lLines, """
 		<-->------------------------------------------
 		<-->name:
 		<-->	---
@@ -322,12 +323,12 @@ tester = new LogTester()
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, tamlStringify({a:"word", b:"blind"}), """
+simple.equal 325, tamlStringify({a:"word", b:"blind"}), """
 	---
 	a: word
 	b: blind
 	"""
-simple.equal {{LINE}}, stringify({a:"word", b:"blind"}), """
+simple.equal 330, stringify({a:"word", b:"blind"}), """
 	---
 	a: word
 	b: blind
@@ -335,12 +336,11 @@ simple.equal {{LINE}}, stringify({a:"word", b:"blind"}), """
 
 setStringifier JSON.stringify
 
-simple.equal {{LINE}}, stringify({a:"word", b:"blind"}),
-		'{"a":"word","b":"blind"}'
+simple.equal 338, stringify({a:"word", b:"blind"}), '{"a":"word","b":"blind"}'
 
 setStringifier tamlStringify
 
-simple.equal {{LINE}}, stringify({a:"word", b:"blind"}), """
+simple.equal 343, stringify({a:"word", b:"blind"}), """
 	---
 	a: word
 	b: blind
@@ -356,7 +356,7 @@ simple.equal {{LINE}}, stringify({a:"word", b:"blind"}), """
 	log 'c'
 	setLogger console.log
 
-	simple.equal {{LINE}}, lItems, ['a','b','c']
+	simple.equal 359, lItems, ['a','b','c']
 	)()
 
 (() ->
@@ -367,9 +367,9 @@ simple.equal {{LINE}}, stringify({a:"word", b:"blind"}), """
 	log 'c'
 	setLogger console.log
 
-	simple.equal {{LINE}}, lItems, ['a','b','c']
+	simple.equal 370, lItems, ['a','b','c']
 	)()
 
-simple.fails {{LINE}}, () -> error("an error message")
+simple.fails 373, () -> error("an error message")
 
 # ---------------------------------------------------------------------------

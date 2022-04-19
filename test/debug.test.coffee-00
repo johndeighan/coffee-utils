@@ -1,6 +1,7 @@
+import {assert} from '@jdeighan/coffee-utils'
 # debug.test.cielo
 
-import {UnitTesterNorm, UnitTester} from '@jdeighan/unit-tester'
+import {UnitTesterNorm, UnitTesterNoNorm} from '@jdeighan/unit-tester'
 import {undef, OL, isString} from '@jdeighan/coffee-utils'
 import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
@@ -22,12 +23,12 @@ setLogger (str) -> lLines.push(untabify(str))
 	setDebugging true
 	lLines = []
 	debug 'abc'
-	simple.equal {{LINE}}, lLines, ['abc']
+	simple.equal 25, lLines, ['abc']
 	)()
 
 # ---------------------------------------------------------------------------
 
-class TraceTester extends UnitTester
+class TraceTester extends UnitTesterNoNorm
 
 	initialize: () ->
 		lLines = []
@@ -50,7 +51,7 @@ tester = new TraceTester()
 	debug 'more'
 	debug 'return 42 from myfunc'
 	debug "Answer is 42"
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 53, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   more"
@@ -69,7 +70,7 @@ tester = new TraceTester()
 	debug 'more'
 	debug 'return 42 from myfunc'
 	debug "Answer is 42"
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 72, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   more"
@@ -88,7 +89,7 @@ tester = new TraceTester()
 	debug 'something else'
 	debug 'return abc from newfunc'
 	debug 'return 42 from myfunc'
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 91, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   enter newfunc"
@@ -109,7 +110,7 @@ tester = new TraceTester()
 	debug 'something else'
 	debug 'return abc from newfunc'
 	debug 'return 42 from myfunc'
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 112, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   enter newfunc"
@@ -130,7 +131,7 @@ tester = new TraceTester()
 	debug 'something else'
 	debug 'return abc from newfunc'
 	debug 'return 42 from myfunc'
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 133, lLines, [
 		"enter myfunc"
 		"│   something"
 		"└─> return 42 from myfunc"
@@ -150,7 +151,7 @@ tester = new TraceTester()
 	debug 'something'
 	debug 'obj', obj
 	debug 'return 42 from myfunc'
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 153, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   ------------------------------------------"
@@ -175,7 +176,7 @@ tester = new TraceTester()
 	debug 'something'
 	debug 'obj', obj
 	debug 'return 42 from myfunc'
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 178, lLines, [
 		"enter myfunc"
 		"│   something"
 		"│   ------------------------------------------"
@@ -202,7 +203,7 @@ tester = new TraceTester()
 	debug "return nothing from innerFunc"
 	debug "this should not appear"
 	debug "return 42 from myfunc"
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 205, lLines, [
 		"enter innerFunc"
 		"│   something else"
 		"└─> return nothing from innerFunc"
@@ -235,7 +236,7 @@ tester = new TraceTester()
 
 	outerFunc()
 
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 238, lLines, [
 		"enter innerFunc()"
 		"│   answer is 42"
 		"└─> return from innerFunc()"
@@ -246,8 +247,8 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
-	simple.truthy {{LINE}}, funcMatch('get', ['get'])
-	simple.truthy {{LINE}}, funcMatch('StringInput.get', ['get'])
+	simple.truthy 249, funcMatch('get', ['get'])
+	simple.truthy 250, funcMatch('StringInput.get', ['get'])
 	)()
 
 # ---------------------------------------------------------------------------
@@ -259,8 +260,8 @@ tester = new TraceTester()
 	line = 'first line'
 	debug "line is #{OL(line)}"
 
-	simple.equal {{LINE}}, lLines.length, 1
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 262, lLines.length, 1
+	simple.equal 263, lLines, [
 		"line is 'first˳line'"
 		]
 	setDebugging false
@@ -280,7 +281,7 @@ tester = new TraceTester()
 	debug 'enter myfunc'
 	debug 'return from myfunc', obj
 	debug "Answer is 42"
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 283, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc"
 		"    ------------------------------------------"
@@ -306,7 +307,7 @@ tester = new TraceTester()
 	debug 'enter myfunc'
 	debug 'return from myfunc', longBlock
 	debug "Answer is 42"
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 309, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc"
 		"    =========================================="
@@ -336,7 +337,7 @@ tester = new TraceTester()
 		return from myfunc
 		"""
 
-	tester.equal {{LINE}}, block, """
+	tester.equal 339, block, """
 		enter get
 		└─> return from get
 		enter get
@@ -365,7 +366,7 @@ tester = new TraceTester()
 		return from myfunc
 		"""
 
-	tester.equal {{LINE}}, block, """
+	tester.equal 368, block, """
 		enter get
 		└─> return from get
 		enter get
@@ -394,7 +395,7 @@ tester = new TraceTester()
 		return from myfunc
 		"""
 
-	tester.equal {{LINE}}, block, """
+	tester.equal 397, block, """
 		enter get
 		└─> return from get
 		enter get
@@ -429,8 +430,8 @@ tester = new TraceTester()
 	input = new StrInput()
 	result = input.mapArray(['abc','def'])
 
-	simple.equal {{LINE}}, result, "> abc\n> def\n"
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 432, result, "> abc\n> def\n"
+	simple.equal 433, lLines, [
 		'enter StrInput.mapLine()',
 		"└─> return '>˳abc' from StrInput.mapLine()",
 		'enter StrInput.mapLine()',
@@ -462,7 +463,7 @@ tester = new TraceTester()
 
 	coffeeCodeToJS("x = 42")
 
-	simple.equal {{LINE}}, lLines, [
+	simple.equal 465, lLines, [
 		'enter coffeeCodeToJS()'
 		'└─> return from coffeeCodeToJS()'
 		]

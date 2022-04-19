@@ -1,6 +1,6 @@
 # debug.test.cielo
 
-import {UnitTesterNorm, UnitTester} from '@jdeighan/unit-tester'
+import {UnitTesterNorm, UnitTesterNoNorm} from '@jdeighan/unit-tester'
 import {undef, OL, isString} from '@jdeighan/coffee-utils'
 import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {log, setLogger} from '@jdeighan/coffee-utils/log'
@@ -27,7 +27,7 @@ setLogger (str) -> lLines.push(untabify(str))
 
 # ---------------------------------------------------------------------------
 
-class TraceTester extends UnitTester
+class TraceTester extends UnitTesterNoNorm
 
 	initialize: () ->
 		lLines = []
