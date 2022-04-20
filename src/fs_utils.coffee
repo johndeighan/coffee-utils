@@ -342,46 +342,37 @@ export shortenPath = (path) ->
 export parseSource = (source) ->
 	# --- returns {
 	#        dir
-	#        filename   # only this is guaranteed to be set
+	#        filename
 	#        stub
 	#        ext
 	#        }
+	# --- NOTE: source may be a file URL, e.g. import.meta.url
 
 	debug "enter parseSource()"
+	assert isString(source), "parseSource(): source not a string"
 	if source == 'unit test'
+		croak "A source of 'unit test' is deprecated"
+	if source.match(/^file\:\/\//)
+		source = urllib.fileURLToPath(source)
+
+	hInfo = pathlib.parse(source)
+	if hInfo.dir
+		dir = mkpath(hInfo.dir)   # change \ to /
 		hSourceInfo = {
-			filename: 'unit test'
-			stub: 'unit test'
+			dir
+			fullpath: mkpath(dir, hInfo.base)
+			filename: hInfo.base
+			stub: hInfo.name
+			ext: hInfo.ext
 			}
-		debug "return from parseSource()", hSourceInfo
-		return hSourceInfo
-	try
-		hInfo = pathlib.parse(source)
-		if hInfo.dir
-			dir = mkpath(hInfo.dir)   # change \ to /
-			hSourceInfo = {
-				dir
-				fullpath: mkpath(dir, hInfo.base)
-				filename: hInfo.base
-				stub: hInfo.name
-				ext: hInfo.ext
-				}
-		else
-			hSourceInfo = {
-				filename: hInfo.base
-				stub: hInfo.name
-				ext: hInfo.ext
-				}
-		debug "return from parseSource()", hSourceInfo
-		return hSourceInfo
-	catch err
+	else
 		hSourceInfo = {
-			filename: source
-			stub: source
-			error: err.message
+			filename: hInfo.base
+			stub: hInfo.name
+			ext: hInfo.ext
 			}
-		debug "return '#{err.message} from parseSource()", hSourceInfo
-		return hSourceInfo
+	debug "return from parseSource()", hSourceInfo
+	return hSourceInfo
 
 # ---------------------------------------------------------------------------
 #   backup - back up a file

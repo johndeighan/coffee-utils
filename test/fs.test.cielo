@@ -105,10 +105,12 @@ simple.equal {{LINE}}, getFullPath("./#{myfname}"), mkpath(rootdir, myfname)
 # --- leading .. should be resolved
 simple.equal {{LINE}}, getFullPath("./test/../#{myfname}"), mkpath(rootdir, myfname)
 
-simple.equal {{LINE}}, parseSource('unit test'), {
-	filename: 'unit test'
-	stub: 'unit test'
-	}
+hSourceInfo = parseSource(import.meta.url)
+
+simple.equal {{LINE}}, hSourceInfo.filename, 'fs.test.js'
+simple.equal {{LINE}}, hSourceInfo.stub, 'fs.test'
+simple.equal {{LINE}}, hSourceInfo.ext, '.js'
+simple.truthy {{LINE}}, hSourceInfo.dir
 
 simple.equal {{LINE}}, parseSource("test.js"), {
 	filename: 'test.js'

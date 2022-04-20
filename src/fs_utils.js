@@ -401,52 +401,41 @@ export var shortenPath = function(path) {
 
 // ---------------------------------------------------------------------------
 export var parseSource = function(source) {
-  var dir, err, hInfo, hSourceInfo;
+  var dir, hInfo, hSourceInfo;
   // --- returns {
   //        dir
-  //        filename   # only this is guaranteed to be set
+  //        filename
   //        stub
   //        ext
   //        }
+  // --- NOTE: source may be a file URL, e.g. import.meta.url
   debug("enter parseSource()");
+  assert(isString(source), "parseSource(): source not a string");
   if (source === 'unit test') {
-    hSourceInfo = {
-      filename: 'unit test',
-      stub: 'unit test'
-    };
-    debug("return from parseSource()", hSourceInfo);
-    return hSourceInfo;
+    croak("A source of 'unit test' is deprecated");
   }
-  try {
-    hInfo = pathlib.parse(source);
-    if (hInfo.dir) {
-      dir = mkpath(hInfo.dir); // change \ to /
-      hSourceInfo = {
-        dir,
-        fullpath: mkpath(dir, hInfo.base),
-        filename: hInfo.base,
-        stub: hInfo.name,
-        ext: hInfo.ext
-      };
-    } else {
-      hSourceInfo = {
-        filename: hInfo.base,
-        stub: hInfo.name,
-        ext: hInfo.ext
-      };
-    }
-    debug("return from parseSource()", hSourceInfo);
-    return hSourceInfo;
-  } catch (error1) {
-    err = error1;
-    hSourceInfo = {
-      filename: source,
-      stub: source,
-      error: err.message
-    };
-    debug(`return '${err.message} from parseSource()`, hSourceInfo);
-    return hSourceInfo;
+  if (source.match(/^file\:\/\//)) {
+    source = urllib.fileURLToPath(source);
   }
+  hInfo = pathlib.parse(source);
+  if (hInfo.dir) {
+    dir = mkpath(hInfo.dir); // change \ to /
+    hSourceInfo = {
+      dir,
+      fullpath: mkpath(dir, hInfo.base),
+      filename: hInfo.base,
+      stub: hInfo.name,
+      ext: hInfo.ext
+    };
+  } else {
+    hSourceInfo = {
+      filename: hInfo.base,
+      stub: hInfo.name,
+      ext: hInfo.ext
+    };
+  }
+  debug("return from parseSource()", hSourceInfo);
+  return hSourceInfo;
 };
 
 // ---------------------------------------------------------------------------
