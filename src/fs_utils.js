@@ -39,7 +39,7 @@ import {
 } from '@jdeighan/coffee-utils/block';
 
 // ---------------------------------------------------------------------------
-//    mydir() - pass argument `import.meta.url` and it will return
+//    mydir() - pass argument import.meta.url and it will return
 //              the directory your file is in
 export var mydir = function(url) {
   var dir, final, path;
@@ -51,6 +51,30 @@ export var mydir = function(url) {
   final = mkpath(dir);
   debug(`final = ${final}`);
   return final;
+};
+
+// ---------------------------------------------------------------------------
+//    myfile() - pass argument import.meta.url and it will return
+//               the name of your file
+export var myfile = function(url) {
+  var filename, path;
+  debug(`url = ${url}`);
+  path = urllib.fileURLToPath(url);
+  debug(`path = ${path}`);
+  filename = pathlib.parse(path).base;
+  debug(`filename = ${filename}`);
+  return filename;
+};
+
+// ---------------------------------------------------------------------------
+//    myfullpath() - pass argument import.meta.url and it will return
+//                   the full path to your file
+export var myfullpath = function(url) {
+  var path;
+  debug(`url = ${url}`);
+  path = urllib.fileURLToPath(url);
+  debug(`path = ${path}`);
+  return mkpath(path);
 };
 
 // ---------------------------------------------------------------------------
@@ -305,6 +329,9 @@ export var forEachFile = function(dir, cb, filt = undef, level = 0) {
 export var pathTo = function(fname, dir, direction = "down") {
   var dirpath, filepath, fpath, i, len, ref, subdir;
   debug(`enter pathTo('${fname}','${dir}','${direction}')`);
+  if (!dir) {
+    dir = process.cwd();
+  }
   assert(fs.existsSync(dir), `Directory ${dir} does not exist`);
   filepath = mkpath(dir, fname);
   if (fs.existsSync(filepath)) {

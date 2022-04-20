@@ -14,7 +14,7 @@ import {debug} from '@jdeighan/coffee-utils/debug'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 
 # ---------------------------------------------------------------------------
-#    mydir() - pass argument `import.meta.url` and it will return
+#    mydir() - pass argument import.meta.url and it will return
 #              the directory your file is in
 
 export mydir = (url) ->
@@ -27,6 +27,30 @@ export mydir = (url) ->
 	final = mkpath(dir)
 	debug "final = #{final}"
 	return final
+
+# ---------------------------------------------------------------------------
+#    myfile() - pass argument import.meta.url and it will return
+#               the name of your file
+
+export myfile = (url) ->
+
+	debug "url = #{url}"
+	path = urllib.fileURLToPath(url)
+	debug "path = #{path}"
+	filename = pathlib.parse(path).base
+	debug "filename = #{filename}"
+	return filename
+
+# ---------------------------------------------------------------------------
+#    myfullpath() - pass argument import.meta.url and it will return
+#                   the full path to your file
+
+export myfullpath = (url) ->
+
+	debug "url = #{url}"
+	path = urllib.fileURLToPath(url)
+	debug "path = #{path}"
+	return mkpath(path)
 
 # ---------------------------------------------------------------------------
 
@@ -252,6 +276,8 @@ export forEachFile = (dir, cb, filt=undef, level=0) ->
 export pathTo = (fname, dir, direction="down") ->
 
 	debug "enter pathTo('#{fname}','#{dir}','#{direction}')"
+	if ! dir
+		dir = process.cwd()
 	assert fs.existsSync(dir), "Directory #{dir} does not exist"
 	filepath = mkpath(dir, fname)
 	if fs.existsSync(filepath)

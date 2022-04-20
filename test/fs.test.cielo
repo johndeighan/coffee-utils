@@ -11,19 +11,23 @@ import {say, undef, assert} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {LOG} from '@jdeighan/coffee-utils/log'
 import {
-	mydir, mkpath, isFile, isDir, isSimpleFileName,
+	mydir, myfile, myfullpath, mkpath, isFile, isDir, isSimpleFileName,
 	getSubDirs, pathTo, getFullPath, parseSource, fileExt,
 	withExt, withUnderScore, forEachLineInFile, slurp, barf
 	} from '@jdeighan/coffee-utils/fs'
 
 simple = new UnitTesterNorm()
 
-dir = mydir(`import.meta.url`)
+dir = mydir(import.meta.url)
 assert existsSync(dir)
 
 # ---------------------------------------------------------------------------
 
 hOpt = {removeLeadingUnderScore: true}
+
+simple.equal {{LINE}}, mydir(import.meta.url), "c:/Users/johnd/coffee-utils/test"
+simple.equal {{LINE}}, myfile(import.meta.url), "fs.test.js"
+simple.equal {{LINE}}, myfullpath(import.meta.url),  "c:/Users/johnd/coffee-utils/test/fs.test.js"
 
 simple.equal {{LINE}}, withExt('file.py', 'svelte'), 'file.svelte'
 simple.equal {{LINE}}, withExt('file.py', 'svelte', hOpt), 'file.svelte'
