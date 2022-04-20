@@ -105,26 +105,6 @@ export getFullPath = (filepath) ->
 	return mkpath(pathlib.resolve(filepath))
 
 # ---------------------------------------------------------------------------
-#   backup - back up a file
-
-# --- If report is true, missing source files are not an error
-#     but both missing source files and successful copies
-#     are reported via LOG
-
-export backup = (file, from, to, report=false) ->
-	src = mkpath(from, file)
-	dest = mkpath(to, file)
-
-	if report
-		if fs.existsSync(src)
-			LOG "OK #{file}"
-			fs.copyFileSync(src, dest)
-		else
-			LOG "MISSING #{src}"
-	else
-		fs.copyFileSync(src, dest)
-
-# ---------------------------------------------------------------------------
 
 export forEachLineInFile = (filepath, func) ->
 
@@ -273,27 +253,27 @@ export forEachFile = (dir, cb, filt=undef, level=0) ->
 
 # ---------------------------------------------------------------------------
 
-export pathTo = (fname, dir, direction="down") ->
+export pathTo = (fname, searchDir, direction="down") ->
 
-	debug "enter pathTo('#{fname}','#{dir}','#{direction}')"
-	if ! dir
-		dir = process.cwd()
-	assert fs.existsSync(dir), "Directory #{dir} does not exist"
-	filepath = mkpath(dir, fname)
+	debug "enter pathTo('#{fname}','#{searchDir}','#{direction}')"
+	if ! searchDir
+		searchDir = process.cwd()
+	assert fs.existsSync(searchDir), "Directory #{searchDir} does not exist"
+	filepath = mkpath(searchDir, fname)
 	if fs.existsSync(filepath)
 		debug "return from pathTo: #{filepath} - file exists"
 		return filepath
 	else if (direction == 'down')
 		# --- Search all directories in this directory
 		#     getSubDirs() returns dirs sorted alphabetically
-		for subdir in getSubDirs(dir)
-			dirpath = mkpath(dir, subdir)
+		for subdir in getSubDirs(searchDir)
+			dirpath = mkpath(searchDir, subdir)
 			debug "check #{dirpath}"
 			if fpath = pathTo(fname, dirpath)
 				debug "return from pathTo: #{fpath}"
 				return fpath
 	else if (direction == 'up')
-		while dirpath = getParentDir(dir)
+		while dirpath = getParentDir(searchDir)
 			debug "check #{dirpath}"
 			filepath = mkpath(dirpath, fname)
 			if fs.existsSync(filepath)
@@ -309,6 +289,8 @@ export pathTo = (fname, dir, direction="down") ->
 export allPathsTo = (fname, searchDir) ->
 	# --- Only searches upward
 
+	if ! searchDir
+		searchDir = process.cwd()
 	path = pathTo(fname, searchDir, "up")
 	if path?
 		lPaths = [path]    # --- build an array of paths
@@ -400,3 +382,23 @@ export parseSource = (source) ->
 			}
 		debug "return '#{err.message} from parseSource()", hSourceInfo
 		return hSourceInfo
+
+# ---------------------------------------------------------------------------
+#   backup - back up a file
+
+# --- If report is true, missing source files are not an error
+#     but both missing source files and successful copies
+#     are reported via LOG
+
+export backup = (file, from, to, report=false) ->
+	src = mkpath(from, file)
+	dest = mkpath(to, file)
+
+	if report
+		if fs.existsSync(src)
+			LOG "OK #{file}"
+			fs.copyFileSync(src, dest)
+		else
+			LOG "MISSING #{src}"
+	else
+		fs.copyFileSync(src, dest)

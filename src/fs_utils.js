@@ -131,28 +131,6 @@ export var getFullPath = function(filepath) {
 };
 
 // ---------------------------------------------------------------------------
-//   backup - back up a file
-
-// --- If report is true, missing source files are not an error
-//     but both missing source files and successful copies
-//     are reported via LOG
-export var backup = function(file, from, to, report = false) {
-  var dest, src;
-  src = mkpath(from, file);
-  dest = mkpath(to, file);
-  if (report) {
-    if (fs.existsSync(src)) {
-      LOG(`OK ${file}`);
-      return fs.copyFileSync(src, dest);
-    } else {
-      return LOG(`MISSING ${src}`);
-    }
-  } else {
-    return fs.copyFileSync(src, dest);
-  }
-};
-
-// ---------------------------------------------------------------------------
 export var forEachLineInFile = function(filepath, func) {
   var buffer, line, nLines, reader;
   reader = new NReadLines(filepath);
@@ -326,24 +304,24 @@ export var forEachFile = function(dir, cb, filt = undef, level = 0) {
 };
 
 // ---------------------------------------------------------------------------
-export var pathTo = function(fname, dir, direction = "down") {
+export var pathTo = function(fname, searchDir, direction = "down") {
   var dirpath, filepath, fpath, i, len, ref, subdir;
-  debug(`enter pathTo('${fname}','${dir}','${direction}')`);
-  if (!dir) {
-    dir = process.cwd();
+  debug(`enter pathTo('${fname}','${searchDir}','${direction}')`);
+  if (!searchDir) {
+    searchDir = process.cwd();
   }
-  assert(fs.existsSync(dir), `Directory ${dir} does not exist`);
-  filepath = mkpath(dir, fname);
+  assert(fs.existsSync(searchDir), `Directory ${searchDir} does not exist`);
+  filepath = mkpath(searchDir, fname);
   if (fs.existsSync(filepath)) {
     debug(`return from pathTo: ${filepath} - file exists`);
     return filepath;
   } else if (direction === 'down') {
-    ref = getSubDirs(dir);
+    ref = getSubDirs(searchDir);
     // --- Search all directories in this directory
     //     getSubDirs() returns dirs sorted alphabetically
     for (i = 0, len = ref.length; i < len; i++) {
       subdir = ref[i];
-      dirpath = mkpath(dir, subdir);
+      dirpath = mkpath(searchDir, subdir);
       debug(`check ${dirpath}`);
       if (fpath = pathTo(fname, dirpath)) {
         debug(`return from pathTo: ${fpath}`);
@@ -351,7 +329,7 @@ export var pathTo = function(fname, dir, direction = "down") {
       }
     }
   } else if (direction === 'up') {
-    while (dirpath = getParentDir(dir)) {
+    while (dirpath = getParentDir(searchDir)) {
       debug(`check ${dirpath}`);
       filepath = mkpath(dirpath, fname);
       if (fs.existsSync(filepath)) {
@@ -369,7 +347,9 @@ export var pathTo = function(fname, dir, direction = "down") {
 // ---------------------------------------------------------------------------
 export var allPathsTo = function(fname, searchDir) {
   var h, lPaths, path;
-  // --- Only searches upward
+  if (!searchDir) {
+    searchDir = process.cwd();
+  }
   path = pathTo(fname, searchDir, "up");
   if (path != null) {
     lPaths = [path]; // --- build an array of paths
@@ -466,5 +446,27 @@ export var parseSource = function(source) {
     };
     debug(`return '${err.message} from parseSource()`, hSourceInfo);
     return hSourceInfo;
+  }
+};
+
+// ---------------------------------------------------------------------------
+//   backup - back up a file
+
+// --- If report is true, missing source files are not an error
+//     but both missing source files and successful copies
+//     are reported via LOG
+export var backup = function(file, from, to, report = false) {
+  var dest, src;
+  src = mkpath(from, file);
+  dest = mkpath(to, file);
+  if (report) {
+    if (fs.existsSync(src)) {
+      LOG(`OK ${file}`);
+      return fs.copyFileSync(src, dest);
+    } else {
+      return LOG(`MISSING ${src}`);
+    }
+  } else {
+    return fs.copyFileSync(src, dest);
   }
 };
