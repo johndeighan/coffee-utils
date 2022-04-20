@@ -163,7 +163,7 @@ adjustStack = function(str) {
 export var debug = function(...lArgs) {
   var auxPre, hEnv, hOptions, item, label, mainPre, nArgs, orgDebugging, trans, type;
   // --- We want to allow item to be undef. Therefore, we need to
-  //     distinguish between 1 arg sent vs. 2+ args sent
+  //     distinguish between 1 arg sent vs. 2 args sent
   nArgs = lArgs.length;
   assert((nArgs === 1) || (nArgs === 2), `debug(): ${nArgs} args`);
   [label, item] = lArgs;
@@ -199,7 +199,7 @@ export var debug = function(...lArgs) {
       }
       break;
     case 'string':
-      if (item) {
+      if (nArgs === 2) {
         logItem(label, item, hOptions);
       } else {
         log(label, hOptions);

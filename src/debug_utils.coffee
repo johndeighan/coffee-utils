@@ -150,7 +150,7 @@ adjustStack = (str) ->
 export debug = (lArgs...) ->
 
 	# --- We want to allow item to be undef. Therefore, we need to
-	#     distinguish between 1 arg sent vs. 2+ args sent
+	#     distinguish between 1 arg sent vs. 2 args sent
 	nArgs = lArgs.length
 	assert (nArgs==1) || (nArgs==2), "debug(): #{nArgs} args"
 	[label, item] = lArgs
@@ -172,6 +172,7 @@ export debug = (lArgs...) ->
 		prefix: mainPre
 		itemPrefix: auxPre
 		}
+
 	switch type
 		when 'enter'
 			log label, hOptions
@@ -184,7 +185,7 @@ export debug = (lArgs...) ->
 				# --- don't repeat the label
 				logItem undef, item, hOptions
 		when 'string'
-			if item
+			if (nArgs==2)
 				logItem label, item, hOptions
 			else
 				log label, hOptions

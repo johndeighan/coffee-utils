@@ -27,6 +27,15 @@ setLogger (str) -> lLines.push(untabify(str))
 
 # ---------------------------------------------------------------------------
 
+(() ->
+	setDebugging true
+	lLines = []
+	debug 'value', undef
+	simple.equal {{LINE}}, lLines, ['value = undef']
+	)()
+
+# ---------------------------------------------------------------------------
+
 class TraceTester extends UnitTester
 
 	initialize: () ->
