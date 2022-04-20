@@ -7,7 +7,7 @@ import NReadLines from 'n-readlines'
 
 import {
 	assert, undef, pass, rtrim, error, isEmpty, nonEmpty,
-	isString, isArray, isRegExp, isFunction, croak,
+	isString, isArray, isRegExp, isFunction, croak, OL,
 	} from '@jdeighan/coffee-utils'
 import {log, LOG} from '@jdeighan/coffee-utils/log'
 import {debug} from '@jdeighan/coffee-utils/debug'
@@ -349,7 +349,8 @@ export parseSource = (source) ->
 	# --- NOTE: source may be a file URL, e.g. import.meta.url
 
 	debug "enter parseSource()"
-	assert isString(source), "parseSource(): source not a string"
+	assert isString(source),\
+			"parseSource(): source not a string: #{OL(source)}"
 	if source == 'unit test'
 		croak "A source of 'unit test' is deprecated"
 	if source.match(/^file\:\/\//)

@@ -22,7 +22,8 @@ import {
   isArray,
   isRegExp,
   isFunction,
-  croak
+  croak,
+  OL
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -410,7 +411,7 @@ export var parseSource = function(source) {
   //        }
   // --- NOTE: source may be a file URL, e.g. import.meta.url
   debug("enter parseSource()");
-  assert(isString(source), "parseSource(): source not a string");
+  assert(isString(source), `parseSource(): source not a string: ${OL(source)}`);
   if (source === 'unit test') {
     croak("A source of 'unit test' is deprecated");
   }
