@@ -4,7 +4,7 @@ import {UnitTester, UnitTesterNorm} from '@jdeighan/unit-tester'
 import {
 	say, undef, error, warn, isString, isObject, isArray, isHash,
 	isEmpty, nonEmpty, isComment, getClassName, isNumber,
-	isFunction, isInteger, rtrim,
+	isFunction, isInteger, rtrim, isUniqueList,
 	ltrunc, rtrunc, extractMatches,
 	words, escapeStr, titleLine,
 	removeCR, CWS, isArrayOfHashes,
@@ -267,3 +267,14 @@ simple.equal {{LINE}}, replaceVars("My __world__", hVars), "My X"
 simple.equal {{LINE}}, replaceVars("line __LINE__", hVars), "line 3"
 simple.equal {{LINE}}, replaceVars("file __env.FILE__"), "file sample.txt"
 simple.equal {{LINE}}, replaceVars("file __FILE__, line __LINE__", hVars), "file utils.test.coffee, line 3"
+
+# ---------------------------------------------------------------------------
+
+simple.truthy {{LINE}}, isUniqueList(undef)
+simple.truthy {{LINE}}, isUniqueList([])
+simple.truthy {{LINE}}, isUniqueList([1])
+simple.truthy {{LINE}}, isUniqueList(['a'])
+simple.truthy {{LINE}}, isUniqueList(['a','b','c'])
+simple.truthy {{LINE}}, isUniqueList([1,2,3])
+simple.falsy  {{LINE}}, isUniqueList(['a','b','a'])
+simple.falsy  {{LINE}}, isUniqueList([1,2,1])

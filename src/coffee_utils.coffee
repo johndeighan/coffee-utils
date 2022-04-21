@@ -202,6 +202,19 @@ export isInteger = (x) ->
 
 # ---------------------------------------------------------------------------
 
+export isUniqueList = (lItems) ->
+
+	if ! lItems?
+		return true     # empty list is unique
+	h = {}
+	for item in lItems
+		if h[item]
+			return false
+		h[item] = 1
+	return true
+
+# ---------------------------------------------------------------------------
+
 export uniq = (lItems) ->
 
 	return [...new Set(lItems)]

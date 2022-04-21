@@ -203,6 +203,23 @@ export var isInteger = function(x) {
 };
 
 // ---------------------------------------------------------------------------
+export var isUniqueList = function(lItems) {
+  var h, i, item, len;
+  if (lItems == null) {
+    return true; // empty list is unique
+  }
+  h = {};
+  for (i = 0, len = lItems.length; i < len; i++) {
+    item = lItems[i];
+    if (h[item]) {
+      return false;
+    }
+    h[item] = 1;
+  }
+  return true;
+};
+
+// ---------------------------------------------------------------------------
 export var uniq = function(lItems) {
   return [...new Set(lItems)];
 };
