@@ -12,14 +12,19 @@ import {debug} from '@jdeighan/coffee-utils/debug'
 import {LOG} from '@jdeighan/coffee-utils/log'
 import {
 	mydir, myfile, myfullpath, mkpath, isFile, isDir, isSimpleFileName,
-	getSubDirs, pathTo, getFullPath, parseSource, fileExt,
+	getSubDirs, pathTo, getFullPath, parseSource, fileStub, fileExt,
 	withExt, withUnderScore, forEachLineInFile, slurp, barf
 	} from '@jdeighan/coffee-utils/fs'
 
 simple = new UnitTesterNorm()
 
-dir = mydir(import.meta.url)
-assert existsSync(dir)
+my_dir = mydir(import.meta.url)
+# LOG 'my_dir', my_dir
+assert existsSync(my_dir)
+my_fname = 'fs.test.js'
+# LOG 'my_fname', my_fname
+my_path = mkpath(my_dir, my_fname)
+# LOG 'my_path', my_path
 
 # ---------------------------------------------------------------------------
 
@@ -48,18 +53,18 @@ simple.equal {{LINE}}, withUnderScore('/bin/_file.py', 'svelte'), '/bin/__file.p
 (() ->
 	fname = 'debug.test.coffee'
 
-	simple.truthy {{LINE}}, existsSync("#{dir}/#{fname}")
-	simple.falsy  {{LINE}}, existsSync("#{dir}/nosuchfile.test.coffee")
-	simple.equal  {{LINE}}, pathTo("#{fname}", dir), "#{dir}/#{fname}"
+	simple.truthy {{LINE}}, existsSync("#{my_dir}/#{fname}")
+	simple.falsy  {{LINE}}, existsSync("#{my_dir}/nosuchfile.test.coffee")
+	simple.equal  {{LINE}}, pathTo("#{fname}", my_dir), mkpath(my_dir, fname)
 	)()
 
 # ---------------------------------------------------------------------------
 
 # --- dirs are returned in alphabetical order
-simple.equal {{LINE}}, getSubDirs(dir), ['data','markdown','subdirectory']
+simple.equal {{LINE}}, getSubDirs(my_dir), ['data','markdown','subdirectory']
 
-simple.equal {{LINE}}, pathTo('test.txt', dir), \
-		"#{dir}/subdirectory/test.txt"
+simple.equal {{LINE}}, pathTo('test.txt', my_dir), \
+		"#{my_dir}/subdirectory/test.txt"
 
 # ---------------------------------------------------------------------------
 
@@ -82,35 +87,50 @@ simple.equal {{LINE}}, mkpath('C:\\Users\\johnd', 'cielo'), 'c:/Users/johnd/ciel
 # --- current working directory is the root dir, i.e. parent of this directory
 wd = mkpath(process.cwd())
 
-myfname = 'fs.test.coffee'
-mypath = mkpath(dir, myfname)
-rootdir = mkpath(resolve(dir, '..'))
+rootdir = mkpath(resolve(my_dir, '..'))
 assert rootdir == wd, "#{rootdir} should equal #{wd}"
 
 debug "Current Working Directory = '#{wd}'"
-debug "dir = '#{dir}'"
-debug "myfname = '#{myfname}'"
-debug "mypath = '#{mypath}'"
+debug "my_dir = '#{my_dir}'"
+debug "my_fname = '#{my_fname}'"
+debug "my_path = '#{my_path}'"
 debug "rootdir = '#{rootdir}'"
 
 # --- given a full path, only change \ to /
-simple.equal {{LINE}}, getFullPath(mypath), mypath
+simple.equal {{LINE}}, getFullPath(my_path), my_path
 
 # --- given a simple file name, prepend the current working directory
-simple.equal {{LINE}}, getFullPath(myfname), mkpath(rootdir, myfname)
+simple.equal {{LINE}}, getFullPath(my_fname), mkpath(rootdir, my_fname)
 
 # --- leading . should be resolved
-simple.equal {{LINE}}, getFullPath("./#{myfname}"), mkpath(rootdir, myfname)
+simple.equal {{LINE}}, getFullPath("./#{my_fname}"), mkpath(rootdir, my_fname)
 
 # --- leading .. should be resolved
-simple.equal {{LINE}}, getFullPath("./test/../#{myfname}"), mkpath(rootdir, myfname)
+simple.equal {{LINE}}, getFullPath("./test/../#{my_fname}"), mkpath(rootdir, my_fname)
 
 hSourceInfo = parseSource(import.meta.url)
 
-simple.equal {{LINE}}, hSourceInfo.filename, 'fs.test.js'
-simple.equal {{LINE}}, hSourceInfo.stub, 'fs.test'
-simple.equal {{LINE}}, hSourceInfo.ext, '.js'
-simple.truthy {{LINE}}, hSourceInfo.dir
+simple.equal {{LINE}}, hSourceInfo.dir, my_dir
+simple.equal {{LINE}}, hSourceInfo.filename, my_fname
+simple.equal {{LINE}}, hSourceInfo.fullpath, my_path
+simple.equal {{LINE}}, hSourceInfo.stub, fileStub(my_fname)
+simple.equal {{LINE}}, hSourceInfo.ext, fileExt(my_fname)
+
+hSourceInfo2 = parseSource(my_path)    # should be the same
+
+simple.equal {{LINE}}, hSourceInfo2.dir, my_dir
+simple.equal {{LINE}}, hSourceInfo2.filename, my_fname
+simple.equal {{LINE}}, hSourceInfo.fullpath, my_path
+simple.equal {{LINE}}, hSourceInfo2.stub, fileStub(my_fname)
+simple.equal {{LINE}}, hSourceInfo2.ext, fileExt(my_fname)
+
+hSourceInfo3 = parseSource(my_dir)     # should know that it's a directory
+
+simple.equal {{LINE}}, hSourceInfo3.dir, my_dir
+simple.equal {{LINE}}, hSourceInfo3.filename, undef
+simple.equal {{LINE}}, hSourceInfo3.fullpath, my_dir
+simple.equal {{LINE}}, hSourceInfo3.stub, undef
+simple.equal {{LINE}}, hSourceInfo3.ext, undef
 
 simple.equal {{LINE}}, parseSource("test.js"), {
 	filename: 'test.js'
@@ -118,11 +138,11 @@ simple.equal {{LINE}}, parseSource("test.js"), {
 	ext: '.js'
 	}
 
-simple.equal {{LINE}}, parseSource("c:/Users/johnd/oz/src/test.js"), {
-	dir: 'c:/Users/johnd/oz/src'
-	fullpath: 'c:/Users/johnd/oz/src/test.js'
-	filename: 'test.js'
-	stub: 'test'
+simple.equal {{LINE}}, parseSource(my_path), {
+	dir: my_dir
+	fullpath: my_path
+	filename: my_fname
+	stub: fileStub(my_fname)
 	ext: '.js'
 	}
 
@@ -159,7 +179,7 @@ simple.equal {{LINE}}, fileExt('file.'), ''
 simple.equal {{LINE}}, fileExt('file.99'), '.99'
 simple.equal {{LINE}}, fileExt('file._txt'), '._txt'
 
-filepath = pathTo('readline.txt', dir)
+filepath = pathTo('readline.txt', my_dir)
 simple.equal {{LINE}}, filepath, "c:/Users/johnd/coffee-utils/test/readline.txt"
 
 (() ->

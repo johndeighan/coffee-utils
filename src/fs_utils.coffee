@@ -62,7 +62,12 @@ export isFile = (fullpath) ->
 
 export isDir = (fullpath) ->
 
-	return fs.lstatSync(fullpath).isDirectory()
+	try
+		obj = fs.lstatSync(fullpath)
+		if !obj? then return false
+		return obj.isDirectory()
+	catch
+		return false
 
 # ---------------------------------------------------------------------------
 
@@ -70,6 +75,16 @@ export isSimpleFileName = (path) ->
 
 	h = pathlib.parse(path)
 	return ! h.root && ! h.dir && h.base
+
+# ---------------------------------------------------------------------------
+
+export fileStub = (path) ->
+
+	assert isString(path), "fileExt(): path not a string"
+	if lMatches = path.match(/^(.*)\.[A-Za-z0-9_]+$/)
+		return lMatches[1]
+	else
+		return ''
 
 # ---------------------------------------------------------------------------
 
@@ -343,6 +358,7 @@ export parseSource = (source) ->
 	# --- returns {
 	#        dir
 	#        filename
+	#        fullpath
 	#        stub
 	#        ext
 	#        }
@@ -356,22 +372,28 @@ export parseSource = (source) ->
 	if source.match(/^file\:\/\//)
 		source = urllib.fileURLToPath(source)
 
-	hInfo = pathlib.parse(source)
-	if hInfo.dir
-		dir = mkpath(hInfo.dir)   # change \ to /
+	if isDir(source)
 		hSourceInfo = {
-			dir
-			fullpath: mkpath(dir, hInfo.base)
-			filename: hInfo.base
-			stub: hInfo.name
-			ext: hInfo.ext
+			dir: source
+			fullpath: source
 			}
 	else
-		hSourceInfo = {
-			filename: hInfo.base
-			stub: hInfo.name
-			ext: hInfo.ext
-			}
+		hInfo = pathlib.parse(source)
+		if hInfo.dir
+			dir = mkpath(hInfo.dir)   # change \ to /
+			hSourceInfo = {
+				dir
+				fullpath: mkpath(dir, hInfo.base)
+				filename: hInfo.base
+				stub: hInfo.name
+				ext: hInfo.ext
+				}
+		else
+			hSourceInfo = {
+				filename: hInfo.base
+				stub: hInfo.name
+				ext: hInfo.ext
+				}
 	debug "return from parseSource()", hSourceInfo
 	return hSourceInfo
 

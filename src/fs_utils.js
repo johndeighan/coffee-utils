@@ -85,7 +85,16 @@ export var isFile = function(fullpath) {
 
 // ---------------------------------------------------------------------------
 export var isDir = function(fullpath) {
-  return fs.lstatSync(fullpath).isDirectory();
+  var obj;
+  try {
+    obj = fs.lstatSync(fullpath);
+    if (obj == null) {
+      return false;
+    }
+    return obj.isDirectory();
+  } catch (error1) {
+    return false;
+  }
 };
 
 // ---------------------------------------------------------------------------
@@ -93,6 +102,17 @@ export var isSimpleFileName = function(path) {
   var h;
   h = pathlib.parse(path);
   return !h.root && !h.dir && h.base;
+};
+
+// ---------------------------------------------------------------------------
+export var fileStub = function(path) {
+  var lMatches;
+  assert(isString(path), "fileExt(): path not a string");
+  if (lMatches = path.match(/^(.*)\.[A-Za-z0-9_]+$/)) {
+    return lMatches[1];
+  } else {
+    return '';
+  }
 };
 
 // ---------------------------------------------------------------------------
@@ -406,6 +426,7 @@ export var parseSource = function(source) {
   // --- returns {
   //        dir
   //        filename
+  //        fullpath
   //        stub
   //        ext
   //        }
@@ -418,22 +439,29 @@ export var parseSource = function(source) {
   if (source.match(/^file\:\/\//)) {
     source = urllib.fileURLToPath(source);
   }
-  hInfo = pathlib.parse(source);
-  if (hInfo.dir) {
-    dir = mkpath(hInfo.dir); // change \ to /
+  if (isDir(source)) {
     hSourceInfo = {
-      dir,
-      fullpath: mkpath(dir, hInfo.base),
-      filename: hInfo.base,
-      stub: hInfo.name,
-      ext: hInfo.ext
+      dir: source,
+      fullpath: source
     };
   } else {
-    hSourceInfo = {
-      filename: hInfo.base,
-      stub: hInfo.name,
-      ext: hInfo.ext
-    };
+    hInfo = pathlib.parse(source);
+    if (hInfo.dir) {
+      dir = mkpath(hInfo.dir); // change \ to /
+      hSourceInfo = {
+        dir,
+        fullpath: mkpath(dir, hInfo.base),
+        filename: hInfo.base,
+        stub: hInfo.name,
+        ext: hInfo.ext
+      };
+    } else {
+      hSourceInfo = {
+        filename: hInfo.base,
+        stub: hInfo.name,
+        ext: hInfo.ext
+      };
+    }
   }
   debug("return from parseSource()", hSourceInfo);
   return hSourceInfo;
