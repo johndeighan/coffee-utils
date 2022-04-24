@@ -429,12 +429,20 @@ export var strcat = function(...lItems) {
 // ---------------------------------------------------------------------------
 export var replaceVars = function(line, hVars = {}, rx = /__(env\.)?([A-Za-z_]\w*)__/g) {
   var replacerFunc;
+  assert(isHash(hVars), "replaceVars() hVars is not a hash");
   replacerFunc = (match, prefix, name) => {
+    var result;
     if (prefix) {
-      return process.env[name];
+      result = process.env[name];
+    } else if (hVars[name] == null) {
+      result = 'undef';
     } else {
-      return hVars[name].toString();
+      result = hVars[name];
+      if (!isString(result)) {
+        result = JSON.stringify(result);
+      }
     }
+    return result;
   };
   return line.replace(rx, replacerFunc);
 };

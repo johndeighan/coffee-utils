@@ -261,12 +261,19 @@ hVars = {
 	world: 'X'
 	FILE: 'utils.test.coffee'
 	LINE: 3
+	var1: undef
+	var2: ['a', 'b', 3]
+	var3: {a:1, b:2, c:'c'}
 	}
 
 simple.equal {{LINE}}, replaceVars("My __world__", hVars), "My X"
 simple.equal {{LINE}}, replaceVars("line __LINE__", hVars), "line 3"
 simple.equal {{LINE}}, replaceVars("file __env.FILE__"), "file sample.txt"
 simple.equal {{LINE}}, replaceVars("file __FILE__, line __LINE__", hVars), "file utils.test.coffee, line 3"
+
+simple.equal {{LINE}}, replaceVars("value is __var1__", hVars), "value is undef"
+simple.equal {{LINE}}, replaceVars("value is __var2__", hVars), 'value is ["a","b",3]'
+simple.equal {{LINE}}, replaceVars("value is __var3__", hVars), 'value is {"a":1,"b":2,"c":"c"}'
 
 # ---------------------------------------------------------------------------
 

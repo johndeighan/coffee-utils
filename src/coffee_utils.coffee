@@ -397,6 +397,17 @@ export strcat = (lItems...) ->
 
 export replaceVars = (line, hVars={}, rx=/__(env\.)?([A-Za-z_]\w*)__/g) ->
 
+	assert isHash(hVars), "replaceVars() hVars is not a hash"
+
 	replacerFunc = (match, prefix, name) =>
-		return if prefix then process.env[name] else hVars[name].toString()
+		if prefix
+			result = process.env[name]
+		else if ! hVars[name]?
+			result = 'undef'
+		else
+			result = hVars[name]
+			if ! isString(result)
+				result = JSON.stringify(result)
+		return result
+
 	return line.replace(rx, replacerFunc)
