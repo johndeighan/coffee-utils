@@ -133,24 +133,6 @@ export nonEmpty = (x) ->
 
 # ---------------------------------------------------------------------------
 
-commentRegExp = /^\s*\#+(?:\s|$)/
-
-# ---------------------------------------------------------------------------
-
-export setCommentRegexp = (regexp) ->
-
-	commentRegExp = regexp
-	return
-
-# ---------------------------------------------------------------------------
-
-export isComment = (str) ->
-
-	assert isString(str), "isComment(): not a string"
-	return if str.match(commentRegExp) then true else false
-
-# ---------------------------------------------------------------------------
-
 export words = (str) ->
 
 	return str.trim().split(/\s+/)
@@ -411,3 +393,11 @@ export replaceVars = (line, hVars={}, rx=/__(env\.)?([A-Za-z_]\w*)__/g) ->
 		return result
 
 	return line.replace(rx, replacerFunc)
+
+# ---------------------------------------------------------------------------
+
+export isIterable = (object) ->
+
+	if (object == undef) || (object == null)
+		return false
+	return typeof object[Symbol.iterator] == 'function'

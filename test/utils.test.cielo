@@ -3,7 +3,7 @@
 import {UnitTester, UnitTesterNorm} from '@jdeighan/unit-tester'
 import {
 	say, undef, error, warn, isString, isObject, isArray, isHash,
-	isEmpty, nonEmpty, isComment, getClassName, isNumber,
+	isEmpty, nonEmpty, getClassName, isNumber,
 	isFunction, isInteger, rtrim, isUniqueList,
 	ltrunc, rtrunc, extractMatches,
 	words, escapeStr, titleLine,
@@ -28,21 +28,6 @@ simple.truthy {{LINE}}, nonEmpty('a')
 simple.truthy {{LINE}}, nonEmpty('.')
 simple.truthy {{LINE}}, nonEmpty([2])
 simple.truthy {{LINE}}, nonEmpty({width: 2})
-
-simple.truthy {{LINE}}, isComment("# a comment")
-simple.truthy {{LINE}}, isComment("### a comment")
-simple.truthy {{LINE}}, isComment("#\ta comment")
-simple.truthy {{LINE}}, isComment("###\ta comment")
-simple.truthy {{LINE}}, isComment("   # a comment")
-simple.truthy {{LINE}}, isComment("   ### a comment")
-simple.falsy  {{LINE}}, isComment("not much")
-simple.falsy  {{LINE}}, isComment("#foreach x in lItems")
-simple.truthy {{LINE}}, isComment('#')
-simple.truthy {{LINE}}, isComment('   #')
-simple.truthy {{LINE}}, isComment('   ###')
-simple.falsy  {{LINE}}, isComment('#for')
-simple.falsy  {{LINE}}, isComment('   #for')
-simple.falsy  {{LINE}}, isComment('#for line in lLines')
 
 simple.equal  {{LINE}}, titleLine('a thing').length, 42
 simple.equal  {{LINE}}, titleLine('a thing','-',5,90).length, 90

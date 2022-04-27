@@ -4,7 +4,7 @@ import fs from 'fs'
 import readline from 'readline'
 
 import {
-	assert, isEmpty, isString, nonEmpty, error, isComment, rtrim,
+	assert, isEmpty, isString, nonEmpty, error, rtrim,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
@@ -108,7 +108,7 @@ var lineNum = 0
 for await (const line of rl) {
 	lineNum += 1
 	// Each line will be successively available here as 'line'
-	if (! isComment(line) && func(line, lineNum)) {
+	if (func(line, lineNum)) {
 		rl.close();      // close if true return value
 		return;
 		}
