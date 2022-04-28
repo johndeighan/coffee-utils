@@ -63,6 +63,11 @@ simple.equal {{LINE}}, remainingLines("""
 		"""
 	)()
 
+simple.equal {{LINE}}, joinBlocks('a', 'b'), "a\nb"
+simple.equal {{LINE}}, joinBlocks(['a', 'b']), "a\nb"
+# simple.equal {{LINE}}, joinBlocks([['a', 'b']]), "a\nb"
+simple.equal {{LINE}}, joinBlocks(['a'], ['b']), "a\nb"
+
 # ---------------------------------------------------------------------------
 
 simple.equal {{LINE}}, normalizeBlock("""

@@ -101,10 +101,11 @@ export var truncateBlock = function(str, numLines) {
 
 // ---------------------------------------------------------------------------
 export var joinBlocks = function(...lBlocks) {
-  var block, i, lNonEmptyBlocks, len1;
+  var block, i, lNonEmptyBlocks, len1, ref;
   lNonEmptyBlocks = [];
-  for (i = 0, len1 = lBlocks.length; i < len1; i++) {
-    block = lBlocks[i];
+  ref = lBlocks.flat(999);
+  for (i = 0, len1 = ref.length; i < len1; i++) {
+    block = ref[i];
     assert(isString(block), `joinBlocks(): ${block} is not a string`);
     if (nonEmpty(block)) {
       lNonEmptyBlocks.push(block);

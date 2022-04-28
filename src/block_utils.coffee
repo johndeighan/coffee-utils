@@ -84,7 +84,7 @@ export truncateBlock = (str, numLines) ->
 export joinBlocks = (lBlocks...) ->
 
 	lNonEmptyBlocks = []
-	for block in lBlocks
+	for block in lBlocks.flat(999)
 		assert isString(block), "joinBlocks(): #{block} is not a string"
 		if nonEmpty(block)
 			lNonEmptyBlocks.push block
