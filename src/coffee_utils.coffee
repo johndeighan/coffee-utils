@@ -396,8 +396,20 @@ export replaceVars = (line, hVars={}, rx=/__(env\.)?([A-Za-z_]\w*)__/g) ->
 
 # ---------------------------------------------------------------------------
 
-export isIterable = (object) ->
+export defined = (obj) ->
 
-	if (object == undef) || (object == null)
+	return (obj != undef) && (obj != null)
+
+# ---------------------------------------------------------------------------
+
+export notdefined = (obj) ->
+
+	return (obj == undef) || (obj == null)
+
+# ---------------------------------------------------------------------------
+
+export isIterable = (obj) ->
+
+	if (obj == undef) || (obj == null)
 		return false
-	return typeof object[Symbol.iterator] == 'function'
+	return typeof obj[Symbol.iterator] == 'function'

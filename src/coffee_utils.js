@@ -430,9 +430,19 @@ export var replaceVars = function(line, hVars = {}, rx = /__(env\.)?([A-Za-z_]\w
 };
 
 // ---------------------------------------------------------------------------
-export var isIterable = function(object) {
-  if ((object === undef) || (object === null)) {
+export var defined = function(obj) {
+  return (obj !== undef) && (obj !== null);
+};
+
+// ---------------------------------------------------------------------------
+export var notdefined = function(obj) {
+  return (obj === undef) || (obj === null);
+};
+
+// ---------------------------------------------------------------------------
+export var isIterable = function(obj) {
+  if ((obj === undef) || (obj === null)) {
     return false;
   }
-  return typeof object[Symbol.iterator] === 'function';
+  return typeof obj[Symbol.iterator] === 'function';
 };

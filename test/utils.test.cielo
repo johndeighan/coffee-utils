@@ -9,7 +9,7 @@ import {
 	words, escapeStr, titleLine,
 	removeCR, CWS, isArrayOfHashes,
 	oneline, croak, isRegExp, uniq, hashToStr, envVarsWithPrefix,
-	strcat, replaceVars,
+	strcat, replaceVars, defined, notdefined, isIterable,
 	} from '@jdeighan/coffee-utils'
 import {log, setLogger, resetLogger} from '@jdeighan/coffee-utils/log'
 import {setDebugging} from '@jdeighan/coffee-utils/debug'
@@ -270,3 +270,32 @@ simple.truthy {{LINE}}, isUniqueList(['a','b','c'])
 simple.truthy {{LINE}}, isUniqueList([1,2,3])
 simple.falsy  {{LINE}}, isUniqueList(['a','b','a'])
 simple.falsy  {{LINE}}, isUniqueList([1,2,1])
+
+# ---------------------------------------------------------------------------
+
+simple.truthy {{LINE}}, notdefined(undef)
+simple.truthy {{LINE}}, notdefined(null)
+simple.truthy {{LINE}}, defined('')
+simple.truthy {{LINE}}, defined(5)
+simple.truthy {{LINE}}, defined([])
+simple.truthy {{LINE}}, defined({})
+
+simple.falsy {{LINE}}, defined(undef)
+simple.falsy {{LINE}}, defined(null)
+simple.falsy {{LINE}}, notdefined('')
+simple.falsy {{LINE}}, notdefined(5)
+simple.falsy {{LINE}}, notdefined([])
+simple.falsy {{LINE}}, notdefined({})
+
+# ---------------------------------------------------------------------------
+
+simple.truthy {{LINE}}, isIterable([])
+simple.truthy {{LINE}}, isIterable(['a','b'])
+
+gen = () ->
+	yield 1
+	yield 2
+	yield 3
+	return
+
+simple.truthy {{LINE}}, isIterable(gen())
