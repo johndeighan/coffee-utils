@@ -181,7 +181,7 @@ export debug = (lArgs...) ->
 				logItem undef, item, hOptions
 		when 'return'
 			log label, hOptions
-			if item
+			if item?
 				# --- don't repeat the label
 				logItem undef, item, hOptions
 		when 'string'

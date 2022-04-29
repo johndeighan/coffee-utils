@@ -193,7 +193,7 @@ export var debug = function(...lArgs) {
       break;
     case 'return':
       log(label, hOptions);
-      if (item) {
+      if (item != null) {
         // --- don't repeat the label
         logItem(undef, item, hOptions);
       }
