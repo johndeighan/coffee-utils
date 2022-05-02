@@ -5,7 +5,7 @@ import {
 	say, undef, error, warn, isString, isObject, isArray, isHash,
 	isEmpty, nonEmpty, getClassName, isNumber,
 	isFunction, isInteger, rtrim, isUniqueList,
-	ltrunc, rtrunc, extractMatches,
+	ltrunc, rtrunc, extractMatches, range,
 	words, escapeStr, titleLine, className,
 	removeCR, CWS, isArrayOfHashes,
 	oneline, croak, isRegExp, uniq, hashToStr, envVarsWithPrefix,
@@ -310,3 +310,7 @@ simple.truthy {{LINE}}, isIterable(gen())
 	simple.equal {{LINE}}, className(MyClass), 'MyClass'
 
 	)()
+
+# ---------------------------------------------------------------------------
+
+simple.equal {{LINE}}, range(3), [0,1,2]

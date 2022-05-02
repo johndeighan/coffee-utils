@@ -422,3 +422,9 @@ export className = (aClass) ->
 		return lMatches[1]
 	else
 		croak "className(): Bad input class"
+
+# ---------------------------------------------------------------------------
+
+export range = (n) ->
+
+	return [0..n-1]

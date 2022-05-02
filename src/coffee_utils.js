@@ -456,3 +456,13 @@ export var className = function(aClass) {
     return croak("className(): Bad input class");
   }
 };
+
+// ---------------------------------------------------------------------------
+export var range = function(n) {
+  var ref;
+  return (function() {
+    var results = [];
+    for (var i = 0, ref = n - 1; 0 <= ref ? i <= ref : i >= ref; 0 <= ref ? i++ : i--){ results.push(i); }
+    return results;
+  }).apply(this);
+};
