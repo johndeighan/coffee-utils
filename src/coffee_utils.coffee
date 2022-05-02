@@ -413,3 +413,12 @@ export isIterable = (obj) ->
 	if (obj == undef) || (obj == null)
 		return false
 	return typeof obj[Symbol.iterator] == 'function'
+
+# ---------------------------------------------------------------------------
+
+export className = (aClass) ->
+
+	if lMatches = aClass.toString().match(/class\s+(\w+)/)
+		return lMatches[1]
+	else
+		croak "className(): Bad input class"

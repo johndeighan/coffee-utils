@@ -446,3 +446,13 @@ export var isIterable = function(obj) {
   }
   return typeof obj[Symbol.iterator] === 'function';
 };
+
+// ---------------------------------------------------------------------------
+export var className = function(aClass) {
+  var lMatches;
+  if (lMatches = aClass.toString().match(/class\s+(\w+)/)) {
+    return lMatches[1];
+  } else {
+    return croak("className(): Bad input class");
+  }
+};

@@ -6,7 +6,7 @@ import {
 	isEmpty, nonEmpty, getClassName, isNumber,
 	isFunction, isInteger, rtrim, isUniqueList,
 	ltrunc, rtrunc, extractMatches,
-	words, escapeStr, titleLine,
+	words, escapeStr, titleLine, className,
 	removeCR, CWS, isArrayOfHashes,
 	oneline, croak, isRegExp, uniq, hashToStr, envVarsWithPrefix,
 	strcat, replaceVars, defined, notdefined, isIterable,
@@ -299,3 +299,14 @@ gen = () ->
 	return
 
 simple.truthy {{LINE}}, isIterable(gen())
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	class MyClass
+		constructor: (str) ->
+			@mystr = str
+
+	simple.equal {{LINE}}, className(MyClass), 'MyClass'
+
+	)()
