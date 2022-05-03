@@ -92,7 +92,7 @@ export var hashHasKey = function(x, key) {
 //   isEmpty
 //      - string is whitespace, array has no elements, hash has no keys
 export var isEmpty = function(x) {
-  if (x == null) {
+  if ((x === undef) || (x === null)) {
     return true;
   }
   if (isString(x)) {
@@ -104,7 +104,7 @@ export var isEmpty = function(x) {
   if (isHash(x)) {
     return Object.keys(x).length === 0;
   } else {
-    return error("isEmpty(): Invalid parameter");
+    return false;
   }
 };
 

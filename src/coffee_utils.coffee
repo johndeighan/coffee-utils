@@ -103,7 +103,7 @@ export hashHasKey = (x, key) ->
 
 export isEmpty = (x) ->
 
-	if ! x?
+	if (x == undef) || (x == null)
 		return true
 	if isString(x)
 		return x.match(/^\s*$/)
@@ -112,7 +112,7 @@ export isEmpty = (x) ->
 	if isHash(x)
 		return Object.keys(x).length == 0
 	else
-		error "isEmpty(): Invalid parameter"
+		return false
 
 # ---------------------------------------------------------------------------
 #   nonEmpty

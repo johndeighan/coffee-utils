@@ -9,7 +9,7 @@ import {arrayToBlock, blockToArray} from '@jdeighan/coffee-utils/block'
 # ---------------------------------------------------------------------------
 #        NOTE: Currently, only TAB indentation is supported
 # ---------------------------------------------------------------------------
-#   splitLine - separate a line into {level, line}
+#   splitLine - separate a line into [level, line]
 
 export splitLine = (line) ->
 

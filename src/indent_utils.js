@@ -21,7 +21,7 @@ import {
 // ---------------------------------------------------------------------------
 //        NOTE: Currently, only TAB indentation is supported
 // ---------------------------------------------------------------------------
-//   splitLine - separate a line into {level, line}
+//   splitLine - separate a line into [level, line]
 export var splitLine = function(line) {
   var lMatches;
   assert(line != null, "splitLine(): line is undef");
