@@ -25,10 +25,12 @@ export var error = function(message) {
 
 // ---------------------------------------------------------------------------
 //   assert - mimic nodejs's assert
+//   return true so we can use it in boolean expressions
 export var assert = function(cond, msg) {
   if (!cond) {
     error(msg);
   }
+  return true;
 };
 
 // ---------------------------------------------------------------------------
@@ -77,8 +79,21 @@ export var isArray = function(x) {
 };
 
 // ---------------------------------------------------------------------------
-export var isHash = function(x) {
-  return getClassName(x) === 'Object';
+export var isHash = function(x, lKeys) {
+  var i, key, len;
+  if (!x || (getClassName(x) !== 'Object')) {
+    return false;
+  }
+  if (defined(lKeys)) {
+    assert(isArray(lKeys), "isHash(): lKeys not an array");
+    for (i = 0, len = lKeys.length; i < len; i++) {
+      key = lKeys[i];
+      if (!x.hasOwnProperty(key)) {
+        return false;
+      }
+    }
+  }
+  return true;
 };
 
 // ---------------------------------------------------------------------------

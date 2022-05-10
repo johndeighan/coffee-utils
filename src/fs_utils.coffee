@@ -361,6 +361,7 @@ export parseSource = (source) ->
 	#        fullpath
 	#        stub
 	#        ext
+	#        purpose
 	#        }
 	# --- NOTE: source may be a file URL, e.g. import.meta.url
 
@@ -394,6 +395,13 @@ export parseSource = (source) ->
 				stub: hInfo.name
 				ext: hInfo.ext
 				}
+
+		# --- check for a 'purpose'
+		if lMatches = hSourceInfo.stub.match(///
+				\.
+				([A-Za-z_]+)
+				$///)
+			hSourceInfo.purpose = lMatches[1]
 	debug "return from parseSource()", hSourceInfo
 	return hSourceInfo
 

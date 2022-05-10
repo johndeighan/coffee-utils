@@ -19,12 +19,13 @@ export error = (message) ->
 
 # ---------------------------------------------------------------------------
 #   assert - mimic nodejs's assert
+#   return true so we can use it in boolean expressions
 
 export assert = (cond, msg) ->
 
 	if ! cond
 		error(msg)
-	return
+	return true
 
 # ---------------------------------------------------------------------------
 #   croak - throws an error after possibly printing useful info
@@ -85,9 +86,16 @@ export isArray = (x) ->
 
 # ---------------------------------------------------------------------------
 
-export isHash = (x) ->
+export isHash = (x, lKeys) ->
 
-	return (getClassName(x) == 'Object')
+	if ! x || (getClassName(x) != 'Object')
+		return false
+	if defined(lKeys)
+		assert isArray(lKeys), "isHash(): lKeys not an array"
+		for key in lKeys
+			if ! x.hasOwnProperty(key)
+				return false
+	return true
 
 # ---------------------------------------------------------------------------
 

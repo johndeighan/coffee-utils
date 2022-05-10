@@ -422,13 +422,14 @@ export var shortenPath = function(path) {
 
 // ---------------------------------------------------------------------------
 export var parseSource = function(source) {
-  var dir, hInfo, hSourceInfo;
+  var dir, hInfo, hSourceInfo, lMatches;
   // --- returns {
   //        dir
   //        filename
   //        fullpath
   //        stub
   //        ext
+  //        purpose
   //        }
   // --- NOTE: source may be a file URL, e.g. import.meta.url
   debug("enter parseSource()");
@@ -461,6 +462,10 @@ export var parseSource = function(source) {
         stub: hInfo.name,
         ext: hInfo.ext
       };
+    }
+    // --- check for a 'purpose'
+    if (lMatches = hSourceInfo.stub.match(/\.([A-Za-z_]+)$/)) {
+      hSourceInfo.purpose = lMatches[1];
     }
   }
   debug("return from parseSource()", hSourceInfo);
