@@ -391,15 +391,16 @@ export replaceVars = (line, hVars={}, rx=/__(env\.)?([A-Za-z_]\w*)__/g) ->
 
 	replacerFunc = (match, prefix, name) =>
 		if prefix
-			result = process.env[name]
-		else if ! hVars[name]?
-			result = 'undef'
+			return process.env[name]
 		else
-			result = hVars[name]
-			if ! isString(result)
-				result = JSON.stringify(result)
-		return result
-
+			value = hVars[name]
+			if defined(value)
+				if isString(value)
+					return value
+				else
+					return JSON.stringify(value)
+			else
+				return "__#{name}__"
 	return line.replace(rx, replacerFunc)
 
 # ---------------------------------------------------------------------------

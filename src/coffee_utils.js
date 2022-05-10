@@ -428,18 +428,21 @@ export var replaceVars = function(line, hVars = {}, rx = /__(env\.)?([A-Za-z_]\w
   var replacerFunc;
   assert(isHash(hVars), "replaceVars() hVars is not a hash");
   replacerFunc = (match, prefix, name) => {
-    var result;
+    var value;
     if (prefix) {
-      result = process.env[name];
-    } else if (hVars[name] == null) {
-      result = 'undef';
+      return process.env[name];
     } else {
-      result = hVars[name];
-      if (!isString(result)) {
-        result = JSON.stringify(result);
+      value = hVars[name];
+      if (defined(value)) {
+        if (isString(value)) {
+          return value;
+        } else {
+          return JSON.stringify(value);
+        }
+      } else {
+        return `__${name}__`;
       }
     }
-    return result;
   };
   return line.replace(rx, replacerFunc);
 };
