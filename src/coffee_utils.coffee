@@ -61,10 +61,11 @@ getCallers = (stackTrace, lExclude=[]) ->
 export assert = (cond, msg) ->
 
 	if ! cond
-		try
-			throw new Error()
-		catch e
-			stackTrace = e.stack
+#		try
+#			throw new Error()
+#		catch e
+#			stackTrace = e.stack
+		stackTrace = new Error().stack
 		lCallers = getCallers(stackTrace, ['assert'])
 
 #		console.log 'STACK'

@@ -58,14 +58,13 @@ getCallers = function(stackTrace, lExclude = []) {
 //   assert - mimic nodejs's assert
 //   return true so we can use it in boolean expressions
 export var assert = function(cond, msg) {
-  var caller, e, i, lCallers, len, stackTrace;
+  var caller, i, lCallers, len, stackTrace;
   if (!cond) {
-    try {
-      throw new Error();
-    } catch (error1) {
-      e = error1;
-      stackTrace = e.stack;
-    }
+    //		try
+    //			throw new Error()
+    //		catch e
+    //			stackTrace = e.stack
+    stackTrace = new Error().stack;
     lCallers = getCallers(stackTrace, ['assert']);
     //		console.log 'STACK'
     //		console.log stackTrace
