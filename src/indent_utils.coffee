@@ -1,7 +1,7 @@
 # indent_utils.coffee
 
 import {
-	assert, undef, error, escapeStr,
+	assert, undef, error, escapeStr, defined,
 	OL, isInteger, isString, isArray, isEmpty, rtrim,
 	} from '@jdeighan/coffee-utils'
 import {arrayToBlock, blockToArray} from '@jdeighan/coffee-utils/block'
@@ -68,7 +68,7 @@ export indented = (input, level=1) ->
 
 export undented = (text, level=undef) ->
 
-	if level? && (level==0)
+	if defined(level) && (level==0)
 		return text
 
 	if isString(text)
@@ -85,7 +85,7 @@ export undented = (text, level=undef) ->
 		error "undented(): Not an array or string: #{OL(text)}"
 
 	# --- determine what to remove from beginning of each line
-	if level?
+	if defined(level)
 		assert isInteger(level), "undented(): level must be an integer"
 		toRemove = indentation(level)
 	else

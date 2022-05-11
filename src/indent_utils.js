@@ -5,6 +5,7 @@ import {
   undef,
   error,
   escapeStr,
+  defined,
   OL,
   isInteger,
   isString,
@@ -86,7 +87,7 @@ export var indented = function(input, level = 1) {
 //            - returns same type as text, i.e. either string or array
 export var undented = function(text, level = undef) {
   var i, j, lLines, lMatches, lNewLines, len, len1, line, nToRemove, toRemove;
-  if ((level != null) && (level === 0)) {
+  if (defined(level) && (level === 0)) {
     return text;
   }
   if (isString(text)) {
@@ -107,7 +108,7 @@ export var undented = function(text, level = undef) {
     error(`undented(): Not an array or string: ${OL(text)}`);
   }
   // --- determine what to remove from beginning of each line
-  if (level != null) {
+  if (defined(level)) {
     assert(isInteger(level), "undented(): level must be an integer");
     toRemove = indentation(level);
   } else {

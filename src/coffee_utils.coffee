@@ -5,6 +5,14 @@ export sep_eq = '='.repeat(42)
 `export const undef = undefined`
 LOG = (lArgs...) -> console.log lArgs...   # synonym for console.log()
 
+export doHaltOnError = false
+
+# ---------------------------------------------------------------------------
+
+export haltOnError = () ->
+
+	doHaltOnError = true
+
 # ---------------------------------------------------------------------------
 #   pass - do nothing
 
@@ -15,7 +23,36 @@ export pass = () ->
 
 export error = (message) ->
 
+	if doHaltOnError
+		console.trace("ERROR: #{message}")
+		process.exit()
 	throw new Error(message)
+
+# ---------------------------------------------------------------------------
+
+getCallers = (stackTrace, lExclude=[]) ->
+
+	iter = stackTrace.matchAll(///
+			at
+			\s+
+			(?:
+				async
+				\s+
+				)?
+			([^\s(]+)
+			///g)
+	if !iter
+		return ["<unknown>"]
+
+	lCallers = []
+	for lMatches from iter
+		[_, caller] = lMatches
+		if (caller.indexOf('file://') == 0)
+			break
+		if caller not in lExclude
+			lCallers.push caller
+
+	return lCallers
 
 # ---------------------------------------------------------------------------
 #   assert - mimic nodejs's assert
@@ -24,7 +61,23 @@ export error = (message) ->
 export assert = (cond, msg) ->
 
 	if ! cond
-		error(msg)
+		try
+			throw new Error()
+		catch e
+			stackTrace = e.stack
+		lCallers = getCallers(stackTrace, ['assert'])
+
+#		console.log 'STACK'
+#		console.log stackTrace
+		console.log '--------------------'
+		console.log 'CALL STACK:'
+		for caller in lCallers
+			console.log "   #{caller}"
+		console.log '--------------------'
+		console.log "ERROR: #{msg} (in #{lCallers[0]}())"
+		if doHaltOnError
+			process.exit()
+		error msg
 	return true
 
 # ---------------------------------------------------------------------------
