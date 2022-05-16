@@ -176,12 +176,12 @@ export debug = (lArgs...) ->
 	switch type
 		when 'enter'
 			log label, hOptions
-			if item
+			if (nArgs==2)
 				# --- don't repeat the label
 				logItem undef, item, hOptions
 		when 'return'
 			log label, hOptions
-			if item?
+			if (nArgs==2)
 				# --- don't repeat the label
 				logItem undef, item, hOptions
 		when 'string'
