@@ -186,14 +186,14 @@ export var debug = function(...lArgs) {
   switch (type) {
     case 'enter':
       log(label, hOptions);
-      if (item) {
+      if (nArgs === 2) {
         // --- don't repeat the label
         logItem(undef, item, hOptions);
       }
       break;
     case 'return':
       log(label, hOptions);
-      if (item != null) {
+      if (nArgs === 2) {
         // --- don't repeat the label
         logItem(undef, item, hOptions);
       }
