@@ -25,8 +25,8 @@ import {
 //   splitLine - separate a line into [level, line]
 export var splitLine = function(line) {
   var lMatches;
-  assert(line != null, "splitLine(): line is undef");
-  assert(isString(line), "splitLine(): line is not a string");
+  assert(defined(line), "splitLine(): line is undef");
+  assert(isString(line), `splitLine(): non-string ${OL(line)}`);
   line = rtrim(line);
   lMatches = line.match(/^(\s*)(.*)$/);
   return [lMatches[1].length, lMatches[2]];

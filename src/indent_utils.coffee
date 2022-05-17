@@ -13,8 +13,8 @@ import {arrayToBlock, blockToArray} from '@jdeighan/coffee-utils/block'
 
 export splitLine = (line) ->
 
-	assert line?, "splitLine(): line is undef"
-	assert isString(line), "splitLine(): line is not a string"
+	assert defined(line), "splitLine(): line is undef"
+	assert isString(line), "splitLine(): non-string #{OL(line)}"
 	line = rtrim(line)
 	lMatches = line.match(/^(\s*)(.*)$/)
 	return [lMatches[1].length, lMatches[2]]
