@@ -22,8 +22,10 @@ export LOG = (lArgs...) ->
 	[label, item] = lArgs
 	if lArgs.length > 1
 		# --- There's both a label and an item
-		if ! item?
+		if (item == undef)
 			console.log "#{label}: UNDEFINED"
+		else if (item == null)
+			console.log "#{label}: NULL"
 		else
 			console.log sep_dash
 			console.log "#{label}:"
@@ -152,6 +154,8 @@ export logItem = (label, item, hOptions={}) ->
 
 	if (item == undef)
 		putstr "#{prefix}#{labelStr}undef"
+	else if (item == null)
+		putstr "#{prefix}#{labelStr}null"
 	else if isString(item)
 		if (item.length <= maxOneLine)
 			putstr "#{prefix}#{labelStr}'#{escapeStr(item)}'"

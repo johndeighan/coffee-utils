@@ -39,8 +39,11 @@ export var LOG = function(...lArgs) {
   var item, label;
   [label, item] = lArgs;
   if (lArgs.length > 1) {
-    if (item == null) {
+    // --- There's both a label and an item
+    if (item === undef) {
       console.log(`${label}: UNDEFINED`);
+    } else if (item === null) {
+      console.log(`${label}: NULL`);
     } else {
       console.log(sep_dash);
       console.log(`${label}:`);
@@ -168,6 +171,8 @@ export var logItem = function(label, item, hOptions = {}) {
   labelStr = label ? `${label} = ` : "";
   if (item === undef) {
     putstr(`${prefix}${labelStr}undef`);
+  } else if (item === null) {
+    putstr(`${prefix}${labelStr}null`);
   } else if (isString(item)) {
     if (item.length <= maxOneLine) {
       putstr(`${prefix}${labelStr}'${escapeStr(item)}'`);
