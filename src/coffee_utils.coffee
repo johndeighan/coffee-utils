@@ -8,6 +8,18 @@ LOG = (lArgs...) -> console.log lArgs...   # synonym for console.log()
 export doHaltOnError = false
 
 # ---------------------------------------------------------------------------
+# TEMP!!!!!
+
+export isComment = (line) ->
+
+	lMatches = line.match(///^
+			\s*
+			\#
+			(\s|$)
+			///)
+	return defined(lMatches)
+
+# ---------------------------------------------------------------------------
 
 export haltOnError = () ->
 

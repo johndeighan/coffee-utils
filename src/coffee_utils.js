@@ -16,6 +16,14 @@ LOG = function(...lArgs) {
 export var doHaltOnError = false;
 
 // ---------------------------------------------------------------------------
+// TEMP!!!!!
+export var isComment = function(line) {
+  var lMatches;
+  lMatches = line.match(/^\s*\#(\s|$)/);
+  return defined(lMatches);
+};
+
+// ---------------------------------------------------------------------------
 export var haltOnError = function() {
   return doHaltOnError = true;
 };
