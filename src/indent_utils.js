@@ -43,10 +43,10 @@ export var indentation = function(level) {
 // ---------------------------------------------------------------------------
 //   indentLevel - determine indent level of a string
 //                 it's OK if the string is ONLY indentation
-export var indentLevel = function(str) {
+export var indentLevel = function(line) {
   var lMatches;
-  assert(isString(str), "indentLevel(): not a string");
-  lMatches = str.match(/^\t*/);
+  assert(isString(line), `indentLevel(): non-string ${OL(line)}`);
+  lMatches = line.match(/^\t*/);
   return lMatches[0].length;
 };
 
