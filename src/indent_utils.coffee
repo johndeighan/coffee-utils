@@ -78,7 +78,7 @@ export undented = (text, level=undef) ->
 	else if isArray(text)
 		lLines = text
 		for line in lLines
-			assert isString(line), "undented(): input array is not all strings"
+			assert isString(line), "undented(): array not all strings"
 		if (lLines.length == 0)
 			return []
 	else
@@ -91,7 +91,7 @@ export undented = (text, level=undef) ->
 	else
 		lMatches = lLines[0].match(/^\s*/)
 		toRemove = lMatches[0]
-	nToRemove = toRemove.length
+	nToRemove = indentLevel(toRemove)
 
 	lNewLines = []
 	for line in lLines

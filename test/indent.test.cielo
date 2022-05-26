@@ -34,8 +34,27 @@ simple.equal {{LINE}}, undented("\t\tabc", 2), "abc"
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, undented("\t\tfirst\n\t\tsecond\n\t\t\tthird\n"),
-		"first\nsecond\n\tthird\n",
+(() ->
+	block = "\t\tfirst\n\t\tsecond\n\t\t\tthird\n"
+	expected = "first\nsecond\n\tthird\n"
+	simple.equal {{LINE}}, undented(block), expected
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	array = [
+		"\t\tfirst",
+		"\t\tsecond",
+		"\t\t\tthird"
+		]
+	expected = [
+		"first",
+		"second",
+		"\tthird"
+		]
+	simple.equal {{LINE}}, undented(array), expected
+	)()
 
 # ---------------------------------------------------------------------------
 

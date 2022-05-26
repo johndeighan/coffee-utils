@@ -99,7 +99,7 @@ export var undented = function(text, level = undef) {
     lLines = text;
     for (i = 0, len = lLines.length; i < len; i++) {
       line = lLines[i];
-      assert(isString(line), "undented(): input array is not all strings");
+      assert(isString(line), "undented(): array not all strings");
     }
     if (lLines.length === 0) {
       return [];
@@ -115,7 +115,7 @@ export var undented = function(text, level = undef) {
     lMatches = lLines[0].match(/^\s*/);
     toRemove = lMatches[0];
   }
-  nToRemove = toRemove.length;
+  nToRemove = indentLevel(toRemove);
   lNewLines = [];
   for (j = 0, len1 = lLines.length; j < len1; j++) {
     line = lLines[j];
