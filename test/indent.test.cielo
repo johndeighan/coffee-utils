@@ -61,7 +61,10 @@ simple.equal {{LINE}}, undented("\t\tabc", 2), "abc"
 simple.equal {{LINE}}, splitLine("abc"), [0, "abc"]
 simple.equal {{LINE}}, splitLine("\tabc"), [1, "abc"]
 simple.equal {{LINE}}, splitLine("\t\tabc"), [2, "abc"]
+simple.equal {{LINE}}, splitLine(""),       [0, ""]
 simple.equal {{LINE}}, splitLine("\t\t\t"), [0, ""]
+simple.equal {{LINE}}, splitLine("\t \t"),  [0, ""]
+simple.equal {{LINE}}, splitLine("   "),    [0, ""]
 
 # ---------------------------------------------------------------------------
 
