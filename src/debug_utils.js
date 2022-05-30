@@ -213,7 +213,9 @@ export var debug = function(...lArgs) {
       LOG(`   Restore hEnv: debugging: ${trans}`);
     }
   }
+  return true; // allow use in boolean expressions
 };
+
 
 // ---------------------------------------------------------------------------
 reMethod = /^([A-Za-z_][A-Za-z0-9_]*)\.([A-Za-z_][A-Za-z0-9_]*)$/;

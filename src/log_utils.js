@@ -57,7 +57,9 @@ export var LOG = function(...lArgs) {
   } else {
     console.log(label);
   }
+  return true; // to allow use in boolean expressions
 };
+
 
 // --- Use this instead to make it easier to remove all instances
 export var DEBUG = LOG; // synonym
@@ -155,7 +157,9 @@ export var log = function(str, hOptions = {}) {
   assert(isHash(hOptions), "log(): arg 2 not a hash");
   prefix = fixStr(hOptions.prefix);
   putstr(`${prefix}${str}`);
+  return true; // to allow use in boolean expressions
 };
+
 
 // ---------------------------------------------------------------------------
 export var logItem = function(label, item, hOptions = {}) {
@@ -197,6 +201,7 @@ export var logItem = function(label, item, hOptions = {}) {
     }
     putstr(`${prefix}${sep_dash}`);
   }
+  return true;
 };
 
 // ---------------------------------------------------------------------------

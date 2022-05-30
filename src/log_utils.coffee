@@ -36,7 +36,7 @@ export LOG = (lArgs...) ->
 			console.log sep_dash
 	else
 		console.log label
-	return
+	return true   # to allow use in boolean expressions
 
 # --- Use this instead to make it easier to remove all instances
 export DEBUG = LOG   # synonym
@@ -135,7 +135,7 @@ export log = (str, hOptions={}) ->
 
 	prefix = fixStr(hOptions.prefix)
 	putstr "#{prefix}#{str}"
-	return
+	return true   # to allow use in boolean expressions
 
 # ---------------------------------------------------------------------------
 
@@ -173,7 +173,7 @@ export logItem = (label, item, hOptions={}) ->
 			putstr "#{prefix}#{indentation(1)}#{fixStr(str)}"
 		putstr "#{prefix}#{sep_dash}"
 
-	return
+	return true
 
 # ---------------------------------------------------------------------------
 

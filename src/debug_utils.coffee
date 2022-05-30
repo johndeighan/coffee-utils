@@ -196,7 +196,7 @@ export debug = (lArgs...) ->
 		if doDebugDebug
 			trans = "#{orgDebugging} => #{debugging}"
 			LOG "   Restore hEnv: debugging: #{trans}"
-	return
+	return true   # allow use in boolean expressions
 
 # ---------------------------------------------------------------------------
 
