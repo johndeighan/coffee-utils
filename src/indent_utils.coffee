@@ -39,6 +39,15 @@ export indentLevel = (line) ->
 	return lMatches[0].length
 
 # ---------------------------------------------------------------------------
+#   isUndented - true iff indentLevel(line) == 0
+
+export isUndented = (line) ->
+
+	assert isString(line), "non-string #{OL(line)}"
+	lMatches = line.match(/^\t*/)
+	return (lMatches[0].length == 0)
+
+# ---------------------------------------------------------------------------
 #   indented - add indentation to each string in a block
 
 export indented = (input, level=1) ->

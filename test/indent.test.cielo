@@ -5,7 +5,7 @@ import assert from 'assert'
 import {UnitTesterNorm} from '@jdeighan/unit-tester'
 import {isInteger} from '@jdeighan/coffee-utils'
 import {
-	indentLevel, indentation, undented, splitLine,
+	indentLevel, isUndented, indentation, undented, splitLine,
 	indented, tabify, untabify,
 	} from '@jdeighan/coffee-utils/indent'
 
@@ -16,6 +16,12 @@ simple = new UnitTesterNorm("indent.test")
 simple.equal {{LINE}}, indentLevel("abc"), 0
 simple.equal {{LINE}}, indentLevel("\tabc"), 1
 simple.equal {{LINE}}, indentLevel("\t\tabc"), 2
+
+# ---------------------------------------------------------------------------
+
+simple.truthy {{LINE}}, isUndented("abc")
+simple.falsy  {{LINE}}, isUndented("\tabc")
+simple.falsy  {{LINE}}, isUndented("\t\tabc")
 
 # ---------------------------------------------------------------------------
 
