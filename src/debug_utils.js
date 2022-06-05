@@ -174,6 +174,7 @@ export var debug = function(...lArgs) {
     } else {
       LOG(`debug('${escapeStr(label)}', ${typeof item}) - 2 args`);
     }
+    LOG(`debugging flag = ${OL(debugging)}`);
   }
   // --- We always need to manipulate the stack when we encounter
   //     either "enter X" or "return from X", so we can't short-circuit
