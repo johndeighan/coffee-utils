@@ -161,7 +161,7 @@ adjustStack = function(str) {
 
 // ---------------------------------------------------------------------------
 export var debug = function(...lArgs) {
-  var auxPre, hEnv, hOptions, item, label, mainPre, nArgs, orgDebugging, trans, type;
+  var auxPre, hEnv, hOptions, item, lResult, label, mainPre, nArgs, orgDebugging, trans, type;
   // --- We want to allow item to be undef. Therefore, we need to
   //     distinguish between 1 arg sent vs. 2 args sent
   nArgs = lArgs.length;
@@ -170,15 +170,22 @@ export var debug = function(...lArgs) {
   assert(isString(label), `debug(): 1st arg ${OL(label)} should be a string`);
   if (doDebugDebug) {
     if (nArgs === 1) {
-      LOG(`debug('${escapeStr(label)}')`);
+      LOG(`debug('${escapeStr(label)}') - 1 arg`);
     } else {
-      LOG(`debug('${escapeStr(label)}', ${typeof item})`);
+      LOG(`debug('${escapeStr(label)}', ${typeof item}) - 2 args`);
     }
   }
   // --- We always need to manipulate the stack when we encounter
   //     either "enter X" or "return from X", so we can't short-circuit
   //     when debugging is off
-  [mainPre, auxPre, hEnv, type] = adjustStack(label);
+  lResult = adjustStack(label);
+  if (doDebugDebug) {
+    LOG('lResult', lResult);
+  }
+  [mainPre, auxPre, hEnv, type] = lResult;
+  if (doDebugDebug && (type === undef)) {
+    LOG("type is undef - NOT LOGGING");
+  }
   hOptions = {
     prefix: mainPre,
     itemPrefix: auxPre

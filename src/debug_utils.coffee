@@ -143,7 +143,6 @@ adjustStack = (str) ->
 			undef
 			if shouldLogString(str) then 'string' else undef
 			]
-	return
 
 # ---------------------------------------------------------------------------
 
@@ -159,15 +158,21 @@ export debug = (lArgs...) ->
 
 	if doDebugDebug
 		if nArgs==1
-			LOG "debug('#{escapeStr(label)}')"
+			LOG "debug('#{escapeStr(label)}') - 1 arg"
 		else
-			LOG "debug('#{escapeStr(label)}', #{typeof item})"
+			LOG "debug('#{escapeStr(label)}', #{typeof item}) - 2 args"
 
 	# --- We always need to manipulate the stack when we encounter
 	#     either "enter X" or "return from X", so we can't short-circuit
 	#     when debugging is off
 
-	[mainPre, auxPre, hEnv, type] = adjustStack(label)
+	lResult = adjustStack(label)
+	if doDebugDebug
+		LOG 'lResult', lResult
+	[mainPre, auxPre, hEnv, type] = lResult
+	if doDebugDebug && (type == undef)
+		LOG "type is undef - NOT LOGGING"
+
 	hOptions = {
 		prefix: mainPre
 		itemPrefix: auxPre
