@@ -1,6 +1,8 @@
 # call_stack.coffee
 
-import {undef, croak, assert} from '@jdeighan/coffee-utils'
+import {
+	undef, defined, croak, assert, isBoolean,
+	} from '@jdeighan/coffee-utils'
 import {log, LOG} from '@jdeighan/coffee-utils/log'
 import {getPrefix} from '@jdeighan/coffee-utils/arrow'
 
@@ -64,9 +66,9 @@ export class CallStack
 	# ........................................................................
 	# ........................................................................
 
-	call: (funcName, hInfo, isLogged=undef) ->
+	doCall: (funcName, hInfo, isLogged) ->
 
-		assert isLogged != undef, "CallStack.call(): 3 args required"
+		assert isBoolean(isLogged), "CallStack.call(): 3 args required"
 		mainPre = getPrefix(@level)
 
 		if doDebugStack
@@ -75,7 +77,7 @@ export class CallStack
 
 		@addCall funcName, hInfo, isLogged
 		auxPre = getPrefix(@level)
-		return [mainPre, auxPre, undef]
+		return [mainPre, auxPre]
 
 	# ........................................................................
 

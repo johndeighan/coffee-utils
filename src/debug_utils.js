@@ -8,6 +8,7 @@ import {
   error,
   croak,
   warn,
+  defined,
   isString,
   isFunction,
   isBoolean,
@@ -108,7 +109,7 @@ export var setDebugging = function(funcDoDebug = undef, funcDoLog = undef) {
   } else {
     croak(`setDebugging(): bad parameter ${OL(funcDoDebug)}`);
   }
-  if (funcDoLog) {
+  if (isFunction(funcDoLog)) {
     assert(isFunction(funcDoLog), "setDebugging: arg 2 not a function");
     shouldLogString = funcDoLog;
   }
@@ -132,11 +133,12 @@ export var funcMatch = function(curFunc, lFuncNames) {
 // ---------------------------------------------------------------------------
 // 1. adjust call stack on 'enter' or 'return from'
 // 2. adjust debugging flag
-// 3. return [mainPrefix, auxPrefix, hEnv] - hEnv can be undef
-// 4. disable logging by setting mainPrefix to undef
+// 3. return [mainPrefix, auxPrefix, hEnv, type] - hEnv can be undef
+// 4. disable logging by setting type to undef
 adjustStack = function(str) {
   var _, auxPre, curFunc, hEnv, lMatches, mainPre, trans;
   if ((lMatches = str.match(/^\s*enter\s+([A-Za-z_][A-Za-z0-9_\.]*)/))) {
+    // --- We are entering function curFunc
     curFunc = lMatches[1];
     hEnv = {debugging, shouldLogFunc, shouldLogString};
     debugging = shouldLogFunc(curFunc);
@@ -144,7 +146,7 @@ adjustStack = function(str) {
       trans = `${hEnv.debugging} => ${debugging}`;
       LOG(`   ENTER ${curFunc}, debugging: ${trans}`);
     }
-    [mainPre, auxPre, _] = stack.call(curFunc, hEnv, debugging);
+    [mainPre, auxPre] = stack.doCall(curFunc, hEnv, debugging);
     return [mainPre, auxPre, undef, shouldLogFunc(curFunc) ? 'enter' : undef];
   } else if ((lMatches = str.match(/^\s*return.+from\s+([A-Za-z_][A-Za-z0-9_\.]*)/))) {
     curFunc = lMatches[1];
@@ -166,6 +168,8 @@ export var debug = function(...lArgs) {
   //     distinguish between 1 arg sent vs. 2 args sent
   nArgs = lArgs.length;
   assert((nArgs === 1) || (nArgs === 2), `debug(): ${nArgs} args`);
+  // --- label must always be there, and be a string
+  //     item is optional
   [label, item] = lArgs;
   assert(isString(label), `debug(): 1st arg ${OL(label)} should be a string`);
   if (doDebugDebug) {

@@ -4,8 +4,10 @@ var doDebugStack;
 
 import {
   undef,
+  defined,
   croak,
-  assert
+  assert,
+  isBoolean
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -72,9 +74,9 @@ export var CallStack = class CallStack {
 
   // ........................................................................
   // ........................................................................
-  call(funcName, hInfo, isLogged = undef) {
+  doCall(funcName, hInfo, isLogged) {
     var auxPre, mainPre, prefix;
-    assert(isLogged !== undef, "CallStack.call(): 3 args required");
+    assert(isBoolean(isLogged), "CallStack.call(): 3 args required");
     mainPre = getPrefix(this.level);
     if (doDebugStack) {
       prefix = '   '.repeat(this.lStack.length);
@@ -82,7 +84,7 @@ export var CallStack = class CallStack {
     }
     this.addCall(funcName, hInfo, isLogged);
     auxPre = getPrefix(this.level);
-    return [mainPre, auxPre, undef];
+    return [mainPre, auxPre];
   }
 
   // ........................................................................

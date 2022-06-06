@@ -18,7 +18,7 @@ simple = new UnitTesterNorm()
 	simple.equal {{LINE}}, pre1, ''
 	simple.equal {{LINE}}, pre2, ''
 
-	[pre1, pre2] = stack.call('func1', {abc: 13}, true)
+	[pre1, pre2] = stack.doCall('func1', {abc: 13}, true)
 	simple.equal {{LINE}}, pre1, ''
 	simple.equal {{LINE}}, pre2, oneIndent
 
@@ -26,7 +26,7 @@ simple = new UnitTesterNorm()
 	simple.equal {{LINE}}, pre1, oneIndent
 	simple.equal {{LINE}}, pre2, oneIndent
 
-	[pre1, pre2] = stack.call('func2', {xyz: 42}, true)
+	[pre1, pre2] = stack.doCall('func2', {xyz: 42}, true)
 	simple.equal {{LINE}}, pre1, oneIndent
 	simple.equal {{LINE}}, pre2, oneIndent + oneIndent
 
