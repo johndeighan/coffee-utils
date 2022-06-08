@@ -1,56 +1,175 @@
 # call_stack.test.cielo
 
-import {UnitTesterNorm} from '@jdeighan/unit-tester'
+import {UnitTester} from '@jdeighan/unit-tester'
 import {
 	undef, say, isString, isHash, isEmpty, nonEmpty, assert,
 	} from '@jdeighan/coffee-utils'
-import {oneIndent, arrow, fourSpaces} from '@jdeighan/coffee-utils/arrow'
+import {oneIndent, arrow, clearIndent} from '@jdeighan/coffee-utils/arrow'
 import {CallStack} from '@jdeighan/coffee-utils/stack'
 
-simple = new UnitTesterNorm()
+twoIndents = oneIndent + oneIndent
+threeIndents = oneIndent + oneIndent + oneIndent
+simple = new UnitTester()
 
 # ----------------------------------------------------------------------------
 
 (() ->
 	stack = new CallStack()
 
-	[pre1, pre2] = stack.logStr()
-	simple.equal {{LINE}}, pre1, ''
-	simple.equal {{LINE}}, pre2, ''
+	simple.equal {{LINE}}, stack.getLevel(), 0
 
-	[pre1, pre2] = stack.doCall('func1', {abc: 13}, true)
-	simple.equal {{LINE}}, pre1, ''
-	simple.equal {{LINE}}, pre2, oneIndent
+	stack.enter('func1', true)
 
-	[pre1, pre2] = stack.logStr()
-	simple.equal {{LINE}}, pre1, oneIndent
-	simple.equal {{LINE}}, pre2, oneIndent
+	simple.equal {{LINE}}, stack.getLevel(), 1
 
-	[pre1, pre2] = stack.doCall('func2', {xyz: 42}, true)
-	simple.equal {{LINE}}, pre1, oneIndent
-	simple.equal {{LINE}}, pre2, oneIndent + oneIndent
+	stack.enter('func2', true)
 
-	[pre1, pre2] = stack.logStr()
-	simple.equal {{LINE}}, pre1, oneIndent + oneIndent
-	simple.equal {{LINE}}, pre2, oneIndent + oneIndent
+	simple.equal {{LINE}}, stack.getLevel(), 2
 
-	[pre1, pre2, hInfo] = stack.returnFrom('func2')
-	simple.equal {{LINE}}, pre1, oneIndent + arrow
-	simple.equal {{LINE}}, pre2, oneIndent + fourSpaces
-	simple.equal {{LINE}}, hInfo, {xyz: 42}
+	stack.returnFrom('func2')
 
-	[pre1, pre2] = stack.logStr()
-	simple.equal {{LINE}}, pre1, oneIndent
-	simple.equal {{LINE}}, pre2, oneIndent
+	simple.equal {{LINE}}, stack.getLevel(), 1
 
-	[pre1, pre2, hInfo] = stack.returnFrom('func1')
-	simple.equal {{LINE}}, pre1, arrow
-	simple.equal {{LINE}}, pre2, fourSpaces
-	simple.equal {{LINE}}, hInfo, {abc: 13}
+	stack.returnFrom('func1')
 
-	[pre1, pre2] = stack.logStr()
-	simple.equal {{LINE}}, pre1, ''
-	simple.equal {{LINE}}, pre2, ''
+	simple.equal {{LINE}}, stack.getLevel(), 0
+
+	stack.enter('func2', true)
+
+	simple.equal {{LINE}}, stack.getLevel(), 1
+
+	# ..........................................................
+
+	stack.reset()
+
+	simple.equal {{LINE}}, stack.getLevel(), 0
+
+	stack.enter('func1', true)
+
+	simple.equal {{LINE}}, stack.getLevel(), 1
+
+	stack.enter('func2', false)
+
+	simple.equal {{LINE}}, stack.getLevel(), 1
+
+	stack.returnFrom('func2')
+
+	simple.equal {{LINE}}, stack.getLevel(), 1
+
+	stack.returnFrom('func1')
+
+	simple.equal {{LINE}}, stack.getLevel(), 0
 	)()
 
 # ----------------------------------------------------------------------------
+# --- test stack.curFunc()
+
+(() ->
+	stack = new CallStack()
+
+	simple.equal {{LINE}}, stack.curFunc(), 'main'
+
+	stack.enter('func1', true)
+	simple.equal {{LINE}}, stack.curFunc(), 'func1'
+
+	stack.enter('func2', true)
+	simple.equal {{LINE}}, stack.curFunc(), 'func2'
+
+	stack.returnFrom('func2')
+	simple.equal {{LINE}}, stack.curFunc(), 'func1'
+
+	stack.returnFrom('func1')
+	simple.equal {{LINE}}, stack.curFunc(), 'main'
+
+	stack.enter('func2', true)
+	simple.equal {{LINE}}, stack.curFunc(), 'func2'
+
+	)()
+
+# ----------------------------------------------------------------------------
+# --- test stack.curFunc() - it shouldn't matter if we are logging or not
+
+(() ->
+	stack = new CallStack()
+
+	simple.equal {{LINE}}, stack.curFunc(), 'main'
+
+	stack.enter('func1', false)
+	simple.equal {{LINE}}, stack.curFunc(), 'func1'
+
+	stack.enter('func2', true)
+	simple.equal {{LINE}}, stack.curFunc(), 'func2'
+
+	stack.returnFrom('func2')
+	simple.equal {{LINE}}, stack.curFunc(), 'func1'
+
+	stack.returnFrom('func1')
+	simple.equal {{LINE}}, stack.curFunc(), 'main'
+
+	stack.enter('func2', false)
+	simple.equal {{LINE}}, stack.curFunc(), 'func2'
+
+	)()
+
+# ----------------------------------------------------------------------------
+# --- test stack.isActive()
+
+(() ->
+	stack = new CallStack()
+
+	simple.falsy {{LINE}}, stack.isActive('func1')
+	simple.falsy {{LINE}}, stack.isActive('func2')
+
+	stack.enter('func1', true)
+	simple.truthy {{LINE}}, stack.isActive('func1')
+	simple.falsy {{LINE}}, stack.isActive('func2')
+
+	stack.enter('func2', true)
+	simple.truthy {{LINE}}, stack.isActive('func1')
+	simple.truthy {{LINE}}, stack.isActive('func2')
+
+	stack.returnFrom('func2')
+	simple.truthy {{LINE}}, stack.isActive('func1')
+	simple.falsy {{LINE}}, stack.isActive('func2')
+
+	stack.returnFrom('func1')
+	simple.falsy {{LINE}}, stack.isActive('func1')
+	simple.falsy {{LINE}}, stack.isActive('func2')
+
+	stack.enter('func2', true)
+	simple.falsy {{LINE}}, stack.isActive('func1')
+	simple.truthy {{LINE}}, stack.isActive('func2')
+
+	)()
+
+# ----------------------------------------------------------------------------
+# --- test stack.isActive() - it shouldn't matter if we are logging or not
+
+(() ->
+	stack = new CallStack()
+
+	simple.falsy {{LINE}}, stack.isActive('func1')
+	simple.falsy {{LINE}}, stack.isActive('func2')
+
+	stack.enter('func1', false)
+	simple.truthy {{LINE}}, stack.isActive('func1')
+	simple.falsy {{LINE}}, stack.isActive('func2')
+
+	stack.enter('func2', true)
+	simple.truthy {{LINE}}, stack.isActive('func1')
+	simple.truthy {{LINE}}, stack.isActive('func2')
+
+	stack.returnFrom('func2')
+	simple.truthy {{LINE}}, stack.isActive('func1')
+	simple.falsy {{LINE}}, stack.isActive('func2')
+
+	stack.returnFrom('func1')
+	simple.falsy {{LINE}}, stack.isActive('func1')
+	simple.falsy {{LINE}}, stack.isActive('func2')
+
+	stack.enter('func2', false)
+	simple.falsy {{LINE}}, stack.isActive('func1')
+	simple.truthy {{LINE}}, stack.isActive('func2')
+
+	)()
+

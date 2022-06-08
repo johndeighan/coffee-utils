@@ -7,7 +7,8 @@ import {
   defined,
   croak,
   assert,
-  isBoolean
+  isBoolean,
+  escapeStr
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -29,7 +30,8 @@ export var debugStack = function(flag = true) {
 // ---------------------------------------------------------------------------
 export var CallStack = class CallStack {
   constructor() {
-    this.reset();
+    this.lStack = [];
+    this.level = 0;
   }
 
   // ........................................................................
@@ -42,74 +44,70 @@ export var CallStack = class CallStack {
   }
 
   // ........................................................................
-  addCall(funcName, hInfo, isLogged) {
-    this.lStack.push({funcName, hInfo, isLogged});
+  enter(funcName, isLogged = false) {
+    if (doDebugStack) {
+      LOG(`[--> CALL ${funcName}]`);
+    }
+    this.lStack.push({funcName, isLogged});
     if (isLogged) {
       this.level += 1;
     }
   }
 
   // ........................................................................
-  removeCall(fName) {
-    var funcName, hInfo, isLogged;
-    ({funcName, hInfo, isLogged} = this.lStack.pop());
+  // --- if stack is empty, log the error, but continue
+  returnFrom(fName) {
+    var funcName, isLogged;
+    if (doDebugStack) {
+      LOG(`[<-- BACK ${fName}]`);
+    }
+    if (this.lStack.length === 0) {
+      LOG(`ERROR: returnFrom('${funcName}') but stack is empty`);
+      return;
+    }
+    ({funcName, isLogged} = this.lStack.pop());
     if (isLogged && (this.level > 0)) {
       this.level -= 1;
     }
+    // --- This should do nothing
     while ((funcName !== fName) && (this.lStack.length > 0)) {
       LOG(`[MISSING RETURN FROM ${funcName} (return from ${fName})]`);
-      ({funcName, hInfo, isLogged} = this.lStack.pop());
+      ({funcName, isLogged} = this.lStack.pop());
       if (isLogged && (this.level > 0)) {
         this.level -= 1;
       }
     }
-    if (funcName === fName) {
-      return hInfo;
-    } else {
+    if (funcName !== fName) {
       this.dump();
       LOG(`BAD BAD BAD BAD returnFrom('${fName}')`);
-      return undef;
     }
   }
 
   // ........................................................................
-  // ........................................................................
-  doCall(funcName, hInfo, isLogged) {
-    var auxPre, mainPre, prefix;
-    assert(isBoolean(isLogged), "CallStack.call(): 3 args required");
-    mainPre = getPrefix(this.level);
-    if (doDebugStack) {
-      prefix = '   '.repeat(this.lStack.length);
-      LOG(`${prefix}[--> CALL ${funcName}]`);
-    }
-    this.addCall(funcName, hInfo, isLogged);
-    auxPre = getPrefix(this.level);
-    return [mainPre, auxPre];
+  getLevel() {
+    return this.level;
   }
 
   // ........................................................................
-  logStr() {
-    var pre;
-    pre = getPrefix(this.level);
-    return [pre, pre, undef];
-  }
-
-  // ........................................................................
-  returnFrom(funcName) {
-    var auxPre, hInfo, mainPre, prefix;
-    // --- Prefixes are based on level before stack adjustment
-    mainPre = getPrefix(this.level, 'withArrow');
-    auxPre = getPrefix(this.level, 'returnVal');
+  curFunc() {
     if (this.lStack.length === 0) {
-      LOG(`returnFrom('${funcName}') but stack is empty`);
-      return [mainPre, auxPre, undef];
+      return 'main';
+    } else {
+      return this.lStack[this.lStack.length - 1].funcName;
     }
-    hInfo = this.removeCall(funcName);
-    if (doDebugStack) {
-      prefix = '   '.repeat(this.lStack.length);
-      LOG(`${prefix}[<-- BACK ${funcName}]`);
+  }
+
+  // ........................................................................
+  isActive(fName) {
+    var h, j, len, ref;
+    ref = this.lStack;
+    for (j = 0, len = ref.length; j < len; j++) {
+      h = ref[j];
+      if (h.funcName === fName) {
+        return true;
+      }
     }
-    return [mainPre, auxPre, hInfo];
+    return false;
   }
 
   // ........................................................................

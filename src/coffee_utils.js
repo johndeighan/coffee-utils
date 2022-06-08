@@ -543,3 +543,14 @@ export var range = function(n) {
     return results;
   }).apply(this);
 };
+
+// ---------------------------------------------------------------------------
+export var setCharsAt = function(str, pos, str2) {
+  assert(pos >= 0, `negative pos ${pos} not allowed`);
+  assert(pos < str.length, `pos ${pos} not in ${OL(str)}`);
+  if (pos + str2.length >= str.length) {
+    return str.substring(0, pos) + str2;
+  } else {
+    return str.substring(0, pos) + str2 + str.substring(pos + str2.length);
+  }
+};

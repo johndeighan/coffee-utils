@@ -3,18 +3,33 @@
 import {UnitTesterNorm, UnitTester} from '@jdeighan/unit-tester'
 import {undef, OL, isString} from '@jdeighan/coffee-utils'
 import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
-import {log, setLogger} from '@jdeighan/coffee-utils/log'
+import {log, setLogger, debugLog} from '@jdeighan/coffee-utils/log'
 import {untabify} from '@jdeighan/coffee-utils/indent'
+import {CallStack} from '@jdeighan/coffee-utils/stack'
 import {
 	setDebugging, debug, funcMatch, debugDebug,
 	} from '@jdeighan/coffee-utils/debug'
 
 simple = new UnitTesterNorm()
+lLines = undef
+setLogger (str) -> lLines.push(untabify(str))
+
+# ---------------------------------------------------------------------------
+# funcMatch() expects a CallStack object as 1st parameter
+
+(() ->
+	stack = new CallStack()
+	stack.enter('get')
+	simple.truthy {{LINE}}, funcMatch(stack, ['get'])
+	)()
 
 # ---------------------------------------------------------------------------
 
-lLines = undef
-setLogger (str) -> lLines.push(untabify(str))
+(() ->
+	stack = new CallStack()
+	stack.enter('StringInput.get')
+	simple.truthy {{LINE}}, funcMatch(stack, ['get'])
+	)()
 
 # ---------------------------------------------------------------------------
 
@@ -31,6 +46,7 @@ setLogger (str) -> lLines.push(untabify(str))
 	setDebugging true
 	lLines = []
 	debug 'value', undef
+	debugDebug false
 	simple.equal {{LINE}}, lLines, ['value = undef']
 	)()
 
@@ -142,6 +158,7 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"│   something"
+		"│   call newfunc"
 		"└─> return 42 from myfunc"
 		]
 	debugDebug false
@@ -150,6 +167,7 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
+	setDebugging "myfunc"
 	lLines = []
 	obj = {
 		first: 1
@@ -162,12 +180,10 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"│   something"
-		"│   ------------------------------------------"
 		"│   obj:"
-		"│      ---"
-		"│      first: 1"
-		"│      second: 2"
-		"│   ------------------------------------------"
+		"│       ---"
+		"│       first: 1"
+		"│       second: 2"
 		"└─> return 42 from myfunc"
 		]
 	)()
@@ -175,6 +191,7 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
+	setDebugging "myfunc"
 	lLines = []
 	obj = {
 		first: "this is the first item in the hash"
@@ -187,12 +204,10 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"│   something"
-		"│   ------------------------------------------"
 		"│   obj:"
-		"│      ---"
-		"│      first: this˳is˳the˳first˳item˳in˳the˳hash"
-		"│      second: this˳is˳the˳second˳item˳in˳the˳hash"
-		"│   ------------------------------------------"
+		"│       ---"
+		"│       first: this˳is˳the˳first˳item˳in˳the˳hash"
+		"│       second: this˳is˳the˳second˳item˳in˳the˳hash"
 		"└─> return 42 from myfunc"
 		]
 	)()
@@ -255,13 +270,6 @@ tester = new TraceTester()
 # ---------------------------------------------------------------------------
 
 (() ->
-	simple.truthy {{LINE}}, funcMatch('get', ['get'])
-	simple.truthy {{LINE}}, funcMatch('StringInput.get', ['get'])
-	)()
-
-# ---------------------------------------------------------------------------
-
-(() ->
 	setDebugging true
 	lLines = []
 
@@ -292,11 +300,9 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc"
-		"    ------------------------------------------"
-		"       ---"
-		"       first: this˳is˳the˳first˳item˳in˳the˳hash"
-		"       second: this˳is˳the˳second˳item˳in˳the˳hash"
-		"    ------------------------------------------"
+		"        ---"
+		"        first: this˳is˳the˳first˳item˳in˳the˳hash"
+		"        second: this˳is˳the˳second˳item˳in˳the˳hash"
 		"Answer is 42"
 		]
 	)()
@@ -318,10 +324,10 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc"
-		"    =========================================="
-		"    this˳is˳one˳very˳long˳line"
-		"    this˳is˳another˳very˳long˳line"
-		"    =========================================="
+		"        =========================================="
+		"        this˳is˳one˳very˳long˳line"
+		"        this˳is˳another˳very˳long˳line"
+		"        =========================================="
 		"Answer is 42"
 		]
 	)()
@@ -347,64 +353,7 @@ tester = new TraceTester()
 
 	tester.equal {{LINE}}, block, """
 		enter get
-		└─> return from get
-		enter get
-		│   something
-		└─> return from get
-		"""
-	)()
-
-# ---------------------------------------------------------------------------
-#     Use new functions: funcDoDebug and funcDoLog
-
-(() ->
-	setDebugging (funcName, debugOn) -> debugOn || (funcName=='get')
-
-	block = """
-		enter myfunc
-		enter get
-		enter fetch
-		return from fetch
-		return from get
-		enter nofunc
-		return from nofunc
-		enter get
-		something
-		return from get
-		return from myfunc
-		"""
-
-	tester.equal {{LINE}}, block, """
-		enter get
-		└─> return from get
-		enter get
-		│   something
-		└─> return from get
-		"""
-	)()
-
-# ---------------------------------------------------------------------------
-#     Use new functions: funcDoDebug and funcDoLog
-
-(() ->
-	setDebugging (funcName) -> (funcName=='get')
-
-	block = """
-		enter myfunc
-		enter get
-		enter fetch
-		return from fetch
-		return from get
-		enter nofunc
-		return from nofunc
-		enter get
-		something
-		return from get
-		return from myfunc
-		"""
-
-	tester.equal {{LINE}}, block, """
-		enter get
+		│   call fetch
 		└─> return from get
 		enter get
 		│   something
@@ -473,6 +422,7 @@ tester = new TraceTester()
 
 	simple.equal {{LINE}}, lLines, [
 		'enter coffeeCodeToJS()'
+		'│   call func()'
 		'└─> return from coffeeCodeToJS()'
 		]
 	)()

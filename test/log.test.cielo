@@ -1,17 +1,14 @@
 # log.test.cielo
 
+import {UnitTesterNorm, UnitTester} from '@jdeighan/unit-tester'
 import {undef, escapeStr} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
-import {UnitTesterNorm, UnitTester} from '@jdeighan/unit-tester'
 import {
-	stringify, setStringifier, log, logItem, setLogger,
+	stringify, setStringifier, log, LOG, logItem, setLogger,
 	tamlStringify, orderedStringify,
 	} from '@jdeighan/coffee-utils/log'
 
 simple = new UnitTesterNorm()
-
-# ---------------------------------------------------------------------------
-
 lLines = undef
 setLogger (str) -> lLines.push(str)
 
@@ -21,6 +18,9 @@ class LogTester extends UnitTester
 
 	transformValue: (lLines) ->
 		return arrayToBlock(lLines)
+
+	transformExpected: (str) ->
+		return str.replace(/\t/g, '    ')
 
 tester = new LogTester()
 
@@ -87,12 +87,10 @@ tester = new LogTester()
 	logItem 'name', {a: 1, b: 'xyz'}
 	tester.equal {{LINE}}, lLines, """
 		abc
-		------------------------------------------
 		name:
 			---
 			a: 1
 			b: xyz
-		------------------------------------------
 		"""
 	)()
 
@@ -100,7 +98,6 @@ tester = new LogTester()
 	lLines = []
 	logItem 'name', ['a', 42, [1,2]]
 	tester.equal {{LINE}}, lLines, """
-		------------------------------------------
 		name:
 			---
 			- a
@@ -108,7 +105,6 @@ tester = new LogTester()
 			-
 				- 1
 				- 2
-		------------------------------------------
 		"""
 	)()
 
@@ -126,11 +122,11 @@ tester = new LogTester()
 	tester.equal {{LINE}}, lLines, """
 		abc
 		name:
-		==========================================
-		This˳is˳a˳rather˳long˳bit˳of
-		text˳which˳changes
-		how˳it's˳displayed
-		==========================================
+			==========================================
+			This˳is˳a˳rather˳long˳bit˳of
+			text˳which˳changes
+			how˳it's˳displayed
+			==========================================
 		"""
 	)()
 
@@ -145,14 +141,12 @@ tester = new LogTester()
 		}
 	tester.equal {{LINE}}, lLines, """
 		abc
-		------------------------------------------
 		name:
 			---
 			age: 68
 			fname: John
 			home: Blacksburg,˳VA
 			lname: Deighan
-		------------------------------------------
 		"""
 	)()
 
@@ -166,7 +160,6 @@ tester = new LogTester()
 		]
 	tester.equal {{LINE}}, lLines, """
 		abc
-		------------------------------------------
 		name:
 			---
 			- 68
@@ -174,7 +167,6 @@ tester = new LogTester()
 			-
 				a: 1
 				b: 2
-		------------------------------------------
 		"""
 	)()
 
@@ -194,14 +186,12 @@ tester = new LogTester()
 		}
 	tester.equal {{LINE}}, lLines, """
 		abc
-		------------------------------------------
 		name:
 			---
 			age: 68
 			fname: John
 			home: Blacksburg,˳VA
 			lname: Deighan
-		------------------------------------------
 		"""
 
 	setStringifier tamlStringify    # reset
@@ -238,12 +228,10 @@ tester = new LogTester()
 	lLines = []
 	logItem 'name', {a: 1, b: 'xyz'}, {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
-		<-->------------------------------------------
 		<-->name:
 		<-->	---
 		<-->	a: 1
 		<-->	b: xyz
-		<-->------------------------------------------
 		"""
 	)()
 
@@ -251,7 +239,6 @@ tester = new LogTester()
 	lLines = []
 	logItem 'name', ['a', 42, [1,2]], {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
-		<-->------------------------------------------
 		<-->name:
 		<-->	---
 		<-->	- a
@@ -259,7 +246,6 @@ tester = new LogTester()
 		<-->	-
 		<-->		- 1
 		<-->		- 2
-		<-->------------------------------------------
 		"""
 	)()
 
@@ -272,11 +258,11 @@ tester = new LogTester()
 		""", {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
 		<-->name:
-		<-->==========================================
-		<-->This˳is˳a˳rather˳long˳bit˳of
-		<-->text˳which˳changes
-		<-->how˳it's˳displayed
-		<-->==========================================
+		<-->	==========================================
+		<-->	This˳is˳a˳rather˳long˳bit˳of
+		<-->	text˳which˳changes
+		<-->	how˳it's˳displayed
+		<-->	==========================================
 		"""
 	)()
 
@@ -289,14 +275,12 @@ tester = new LogTester()
 		home: 'Blacksburg, VA',
 		}, {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
-		<-->------------------------------------------
 		<-->name:
 		<-->	---
 		<-->	fname: John
 		<-->	lname: Deighan
 		<-->	age: 68
 		<-->	home: Blacksburg,˳VA
-		<-->------------------------------------------
 		"""
 	)()
 
@@ -308,7 +292,6 @@ tester = new LogTester()
 		{a:1, b:2}
 		], {prefix: '<-->'}
 	tester.equal {{LINE}}, lLines, """
-		<-->------------------------------------------
 		<-->name:
 		<-->	---
 		<-->	- 68
@@ -316,7 +299,6 @@ tester = new LogTester()
 		<-->	-
 		<-->		a: 1
 		<-->		b: 2
-		<-->------------------------------------------
 		"""
 	)()
 

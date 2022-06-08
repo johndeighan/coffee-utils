@@ -7,7 +7,7 @@ import {
 	isFunction, isInteger, rtrim, isUniqueList,
 	ltrunc, rtrunc, extractMatches, range,
 	words, escapeStr, titleLine, className,
-	removeCR, CWS, isArrayOfHashes,
+	removeCR, CWS, isArrayOfHashes, setCharsAt,
 	oneline, croak, isRegExp, uniq, hashToStr, envVarsWithPrefix,
 	strcat, replaceVars, defined, notdefined, isIterable,
 	} from '@jdeighan/coffee-utils'
@@ -326,3 +326,9 @@ simple.truthy {{LINE}}, isIterable(gen())
 # ---------------------------------------------------------------------------
 
 simple.equal {{LINE}}, range(3), [0,1,2]
+
+# ---------------------------------------------------------------------------
+
+simple.equal {{LINE}}, setCharsAt('abc', 1, 'x'), 'axc'
+simple.equal {{LINE}}, setCharsAt('abc', 1, 'xy'), 'axy'
+simple.equal {{LINE}}, setCharsAt('abc', 1, 'xyz'), 'axyz'

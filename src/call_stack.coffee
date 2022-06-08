@@ -1,7 +1,7 @@
 # call_stack.coffee
 
 import {
-	undef, defined, croak, assert, isBoolean,
+	undef, defined, croak, assert, isBoolean, escapeStr,
 	} from '@jdeighan/coffee-utils'
 import {log, LOG} from '@jdeighan/coffee-utils/log'
 import {getPrefix} from '@jdeighan/coffee-utils/arrow'
@@ -21,7 +21,8 @@ export class CallStack
 
 	constructor: () ->
 
-		@reset()
+		@lStack = []
+		@level = 0
 
 	# ........................................................................
 
@@ -29,81 +30,73 @@ export class CallStack
 
 		if doDebugStack
 			LOG "RESET STACK"
-
 		@lStack = []
 		@level = 0
 		return
 
 	# ........................................................................
 
-	addCall: (funcName, hInfo, isLogged) ->
+	enter: (funcName, isLogged=false) ->
 
-		@lStack.push({funcName, hInfo, isLogged})
+		if doDebugStack
+			LOG "[--> CALL #{funcName}]"
+
+		@lStack.push({funcName, isLogged})
 		if isLogged
 			@level += 1
 		return
 
 	# ........................................................................
+	# --- if stack is empty, log the error, but continue
 
-	removeCall: (fName) ->
+	returnFrom: (fName) ->
 
-		{funcName, hInfo, isLogged} = @lStack.pop()
+		if doDebugStack
+			LOG "[<-- BACK #{fName}]"
+
+		if @lStack.length == 0
+			LOG "ERROR: returnFrom('#{funcName}') but stack is empty"
+			return
+
+		{funcName, isLogged} = @lStack.pop()
 		if isLogged && (@level > 0)
 			@level -= 1
+
+		# --- This should do nothing
 		while (funcName != fName) && (@lStack.length > 0)
 			LOG "[MISSING RETURN FROM #{funcName} (return from #{fName})]"
-			{funcName, hInfo, isLogged} = @lStack.pop()
+			{funcName, isLogged} = @lStack.pop()
 			if isLogged && (@level > 0)
 				@level -= 1
 
-		if funcName == fName
-			return hInfo
-		else
+		if funcName != fName
 			@dump()
 			LOG "BAD BAD BAD BAD returnFrom('#{fName}')"
-			return undef
-
-	# ........................................................................
-	# ........................................................................
-
-	doCall: (funcName, hInfo, isLogged) ->
-
-		assert isBoolean(isLogged), "CallStack.call(): 3 args required"
-		mainPre = getPrefix(@level)
-
-		if doDebugStack
-			prefix = '   '.repeat(@lStack.length)
-			LOG "#{prefix}[--> CALL #{funcName}]"
-
-		@addCall funcName, hInfo, isLogged
-		auxPre = getPrefix(@level)
-		return [mainPre, auxPre]
+		return
 
 	# ........................................................................
 
-	logStr: () ->
+	getLevel: () ->
 
-		pre = getPrefix(@level)
-		return [pre, pre, undef]
+		return @level
 
 	# ........................................................................
 
-	returnFrom: (funcName) ->
+	curFunc: () ->
 
-		# --- Prefixes are based on level before stack adjustment
-		mainPre = getPrefix(@level, 'withArrow')
-		auxPre = getPrefix(@level, 'returnVal')
+		if (@lStack.length == 0)
+			return 'main'
+		else
+			return @lStack[@lStack.length - 1].funcName
 
-		if @lStack.length == 0
-			LOG "returnFrom('#{funcName}') but stack is empty"
-			return [mainPre, auxPre, undef]
+	# ........................................................................
 
-		hInfo = @removeCall(funcName)
-		if doDebugStack
-			prefix = '   '.repeat(@lStack.length)
-			LOG "#{prefix}[<-- BACK #{funcName}]"
+	isActive: (fName) ->
 
-		return [mainPre, auxPre, hInfo]
+		for h in @lStack
+			if (h.funcName == fName)
+				return true
+		return false
 
 	# ........................................................................
 	# ........................................................................

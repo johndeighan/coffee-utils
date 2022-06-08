@@ -4,15 +4,28 @@ import yaml from 'js-yaml'
 
 import {
 	assert, undef, isNumber, isInteger, isString, isHash, isFunction,
-	escapeStr, sep_eq, sep_dash, pass
+	escapeStr, sep_eq, sep_dash, pass, OL,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
-import {tabify, untabify, indentation} from '@jdeighan/coffee-utils/indent'
+import {
+	tabify, untabify, indentation, indented,
+	} from '@jdeighan/coffee-utils/indent'
 
 # --- This logger only ever gets passed a single string argument
 putstr = undef
+doDebugLog = false
 
 export stringify = undef
+fourSpaces  = '    '
+
+# ---------------------------------------------------------------------------
+
+export debugLog = (flag=true) ->
+
+	doDebugLog = flag
+	if doDebugLog
+		LOG "doDebugLog = #{flag}"
+	return
 
 # ---------------------------------------------------------------------------
 # This is useful for debugging
@@ -112,19 +125,6 @@ maxOneLine = 32
 
 # ---------------------------------------------------------------------------
 
-fixStr = (str) ->
-
-	if !str
-		return ''
-
-	# --- If putstr is console.log, we'll convert TAB char to 3 spaces
-	if putstr == console.log
-		return untabify(str)
-	else
-		return str
-
-# ---------------------------------------------------------------------------
-
 export log = (str, hOptions={}) ->
 	# --- valid options:
 	#   prefix
@@ -132,8 +132,11 @@ export log = (str, hOptions={}) ->
 	assert isFunction(putstr), "putstr not properly set"
 	assert isString(str),      "log(): not a string"
 	assert isHash(hOptions),   "log(): arg 2 not a hash"
+	prefix = fixForTerminal(hOptions.prefix)
 
-	prefix = fixStr(hOptions.prefix)
+	if doDebugLog
+		LOG "CALL log(#{OL(str)}), prefix = #{OL(prefix)}"
+
 	putstr "#{prefix}#{str}"
 	return true   # to allow use in boolean expressions
 
@@ -141,15 +144,20 @@ export log = (str, hOptions={}) ->
 
 export logItem = (label, item, hOptions={}) ->
 	# --- valid options:
-	#   prefix     - not used
-	#   itemPrefix - always used
+	#   prefix
 
 	assert isFunction(putstr), "putstr not properly set"
 	assert !label || isString(label), "label a non-string"
 	assert isHash(hOptions), "arg 3 not a hash"
 
-	label = fixStr(label)
-	prefix = fixStr(hOptions.itemPrefix || hOptions.prefix)
+	label = fixForTerminal(label)
+	prefix = fixForTerminal(hOptions.prefix)
+	assert prefix.indexOf("\t") == -1, "prefix has TAB"
+
+	if doDebugLog
+		LOG "CALL logItem(#{OL(label)}, #{OL(item)})"
+		LOG "prefix = #{OL(prefix)}"
+
 	labelStr = if label then "#{label} = " else ""
 
 	if (item == undef)
@@ -162,18 +170,33 @@ export logItem = (label, item, hOptions={}) ->
 		else
 			if label
 				putstr "#{prefix}#{label}:"
-			putBlock item, prefix
+			putBlock item, prefix + fourSpaces
 	else if isNumber(item)
 		putstr "#{prefix}#{labelStr}#{item}"
 	else
-		putstr "#{prefix}#{sep_dash}"
 		if label
 			putstr "#{prefix}#{label}:"
 		for str in blockToArray(stringify(item, true))  # escape special chars
-			putstr "#{prefix}#{indentation(1)}#{fixStr(str)}"
-		putstr "#{prefix}#{sep_dash}"
+			putstr "#{prefix + fourSpaces}#{fixForTerminal(str)}"
 
 	return true
+
+# ---------------------------------------------------------------------------
+
+export shortEnough = (label, value) ->
+
+	return (value == undef)
+
+# ---------------------------------------------------------------------------
+# --- needed because Windows Terminal handles TAB chars badly
+
+fixForTerminal = (str) ->
+
+	if !str
+		return ''
+
+	# --- convert TAB char to 4 spaces
+	return str.replace(/\t/g, fourSpaces)
 
 # ---------------------------------------------------------------------------
 
