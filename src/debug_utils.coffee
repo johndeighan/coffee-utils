@@ -95,7 +95,7 @@ export debug = (label, lObjects...) ->
 					for obj in lObjects
 						logItem undef, obj, {prefix}
 
-	if (type == 'enter') && doLog
+	if (type == 'enter') && doLog && (label.indexOf('call') == -1)
 		callStack.logCurFunc()
 	else if (type == 'return')
 		callStack.returnFrom funcName
@@ -119,20 +119,25 @@ export stdShouldLog = (label, type, funcName, stack) ->
 	else
 		assert funcName == undef, "func name #{OL(funcName)} not undef"
 	assert stack instanceof CallStack, "not a call stack object"
+
 	if doDebugDebug
 		LOG "stdShouldLog(#{OL(label)}, #{OL(type)}, #{OL(funcName)}, stack)"
 		LOG "stack", stack
 		LOG "lFuncList", lFuncList
+
 	switch type
 		when 'enter'
 			if funcMatch(stack, lFuncList)
 				return label
 
-			# --- As a special case, if we enter a function where we will not
-			#     be logging, but we were logging in the calling function,
-			#     we'll log out the call itself
-			else if stack.isLoggingPrev()
-				return label.replace('enter', 'call')
+			else
+				# --- As a special case, if we enter a function where we will not
+				#     be logging, but we were logging in the calling function,
+				#     we'll log out the call itself
+
+				prevLogged = stack.isLoggingPrev()
+				if prevLogged
+					return label.replace('enter', 'call')
 		else
 			if funcMatch(stack, lFuncList)
 				return label

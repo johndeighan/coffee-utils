@@ -153,7 +153,7 @@ export var debug = function(label, ...lObjects) {
         }
     }
   }
-  if ((type === 'enter') && doLog) {
+  if ((type === 'enter') && doLog && (label.indexOf('call') === -1)) {
     callStack.logCurFunc();
   } else if (type === 'return') {
     callStack.returnFrom(funcName);
@@ -164,6 +164,7 @@ export var debug = function(label, ...lObjects) {
 
 // ---------------------------------------------------------------------------
 export var stdShouldLog = function(label, type, funcName, stack) {
+  var prevLogged;
   // --- if type is 'enter', then funcName won't be on the stack yet
   //     returns the (possibly modified) label to log
 
@@ -187,11 +188,14 @@ export var stdShouldLog = function(label, type, funcName, stack) {
     case 'enter':
       if (funcMatch(stack, lFuncList)) {
         return label;
-      // --- As a special case, if we enter a function where we will not
-      //     be logging, but we were logging in the calling function,
-      //     we'll log out the call itself
-      } else if (stack.isLoggingPrev()) {
-        return label.replace('enter', 'call');
+      } else {
+        // --- As a special case, if we enter a function where we will not
+        //     be logging, but we were logging in the calling function,
+        //     we'll log out the call itself
+        prevLogged = stack.isLoggingPrev();
+        if (prevLogged) {
+          return label.replace('enter', 'call');
+        }
       }
       break;
     default:

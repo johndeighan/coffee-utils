@@ -215,6 +215,30 @@ tester = new TraceTester()
 
 (() ->
 	setDebugging "myfunc"
+
+	lLines = []
+	debug 'enter myfunc'
+	debug 'something'
+	debug 'enter newfunc'
+	debug 'something else'
+	debug 'enter newfunc2'
+	debug 'something entirely new'
+	debug 'return from newfunc2'
+	debug 'return abc from newfunc'
+	debug 'return 42 from myfunc'
+	simple.equal {{LINE}}, lLines, [
+		"enter myfunc"
+		"│   something"
+		"│   call newfunc"
+		"└─> return 42 from myfunc"
+		]
+	debugDebug false
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	setDebugging "myfunc"
 	lLines = []
 	obj = {
 		first: 1

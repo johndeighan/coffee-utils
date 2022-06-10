@@ -168,7 +168,7 @@ export var CallStack = class CallStack {
       ref = this.lStack;
       for (i = j = 0, len = ref.length; j < len; i = ++j) {
         item = ref[i];
-        LOG(`   ${i}: ${JSON.stringify(item)}`);
+        LOG(`   ${i}: ${item.fullName} ${item.isLogged}`);
       }
     }
   }

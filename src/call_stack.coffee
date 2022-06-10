@@ -160,5 +160,5 @@ export class CallStack
 			LOG "   <EMPTY>"
 		else
 			for item, i in @lStack
-				LOG "   #{i}: #{JSON.stringify(item)}"
+				LOG "   #{i}: #{item.fullName} #{item.isLogged}"
 		return
