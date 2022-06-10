@@ -7,6 +7,7 @@ import {
   defined,
   croak,
   assert,
+  OL,
   isBoolean,
   escapeStr
 } from '@jdeighan/coffee-utils';
@@ -44,20 +45,64 @@ export var CallStack = class CallStack {
   }
 
   // ........................................................................
-  enter(funcName, isLogged = false) {
+  enter(funcName, oldFlag = undef) {
+    var _, ident1, ident2, lMatches;
+    // --- funcName might be <object>.<method>
+    assert(oldFlag === undef, "enter() takes only 1 arg");
     if (doDebugStack) {
-      LOG(`[--> CALL ${funcName}]`);
+      LOG(`[--> ENTER ${funcName}]`);
     }
-    this.lStack.push({funcName, isLogged});
-    if (isLogged) {
-      this.level += 1;
+    lMatches = funcName.match(/^([A-Za-z_][A-Za-z0-9_]*)(?:\.([A-Za-z_][A-Za-z0-9_]*))?$/);
+    assert(defined(lMatches), `Bad funcName: ${OL(funcName)}`);
+    [_, ident1, ident2] = lMatches;
+    if (ident2) {
+      this.lStack.push({
+        fullName: `${ident1}.${ident2}`,
+        funcName: ident2,
+        isLogged: false
+      });
+    } else {
+      this.lStack.push({
+        fullName: ident1,
+        funcName: ident1,
+        isLogged: false
+      });
     }
+  }
+
+  // ........................................................................
+  isLogging() {
+    if (this.lStack.length === 0) {
+      return false;
+    } else {
+      return this.lStack[this.lStack.length - 1].isLogged;
+    }
+  }
+
+  // ........................................................................
+  isLoggingPrev() {
+    if (this.lStack.length < 2) {
+      return false;
+    } else {
+      return this.lStack[this.lStack.length - 2].isLogged;
+    }
+  }
+
+  // ........................................................................
+  logCurFunc() {
+    var cur;
+    // --- funcName must be  the current function
+    //     and the isLogged flag must currently be false
+    cur = this.lStack[this.lStack.length - 1];
+    assert(cur.isLogged === false, "isLogged is already true");
+    cur.isLogged = true;
+    this.level += 1;
   }
 
   // ........................................................................
   // --- if stack is empty, log the error, but continue
   returnFrom(fName) {
-    var funcName, isLogged;
+    var fullName, isLogged;
     if (doDebugStack) {
       LOG(`[<-- BACK ${fName}]`);
     }
@@ -65,19 +110,19 @@ export var CallStack = class CallStack {
       LOG(`ERROR: returnFrom('${funcName}') but stack is empty`);
       return;
     }
-    ({funcName, isLogged} = this.lStack.pop());
+    ({fullName, isLogged} = this.lStack.pop());
     if (isLogged && (this.level > 0)) {
       this.level -= 1;
     }
     // --- This should do nothing
-    while ((funcName !== fName) && (this.lStack.length > 0)) {
-      LOG(`[MISSING RETURN FROM ${funcName} (return from ${fName})]`);
-      ({funcName, isLogged} = this.lStack.pop());
+    while ((fullName !== fName) && (this.lStack.length > 0)) {
+      LOG(`[MISSING RETURN FROM ${fullName} (return from ${fName})]`);
+      ({fullName, isLogged} = this.lStack.pop());
       if (isLogged && (this.level > 0)) {
         this.level -= 1;
       }
     }
-    if (funcName !== fName) {
+    if (fullName !== fName) {
       this.dump();
       LOG(`BAD BAD BAD BAD returnFrom('${fName}')`);
     }
@@ -98,12 +143,14 @@ export var CallStack = class CallStack {
   }
 
   // ........................................................................
-  isActive(fName) {
+  isActive(funcName) {
     var h, j, len, ref;
     ref = this.lStack;
+    // --- funcName won't be <obj>.<method>
+    //     but the stack might contain that form
     for (j = 0, len = ref.length; j < len; j++) {
       h = ref[j];
-      if (h.funcName === fName) {
+      if (h.funcName === funcName) {
         return true;
       }
     }
@@ -112,7 +159,7 @@ export var CallStack = class CallStack {
 
   // ........................................................................
   // ........................................................................
-  dump(label = 'CALL STACK') {
+  dump(prefix = '', label = 'CALL STACK') {
     var i, item, j, len, ref;
     LOG(`${label}:`);
     if (this.lStack.length === 0) {

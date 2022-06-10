@@ -18,101 +18,9 @@ import {
 
 callStack = new CallStack()
 doDebugDebug = false
-shouldLog = undef     # set in resetDebugging() and setDebugging()
 
-# ---------------------------------------------------------------------------
-
-export debugDebug = (flag=true) ->
-
-	doDebugDebug = flag
-	if doDebugDebug
-		LOG "doDebugDebug = #{flag}"
-	return
-
-# ---------------------------------------------------------------------------
-
-resetDebugging = () ->
-
-	if doDebugDebug
-		LOG "resetDebugging()"
-	callStack.reset()
-	shouldLog = (type, str, stack) -> false
-	return
-
-# ---------------------------------------------------------------------------
-
-export setDebugging = (option) ->
-
-	resetDebugging()
-	if isBoolean(option)
-		shouldLog = (type, str, stack) -> option
-	else if isString(option)
-		shouldLog = (type, str, stack) ->
-			lFuncs = words(option)
-			switch type
-				when 'enter'
-					return funcMatch(stack, lFuncs, str)
-				else
-					return funcMatch(stack, lFuncs)
-		if doDebugDebug
-			LOG "setDebugging FUNCS: #{option}"
-	else if isFunction(option)
-		shouldLog = option
-		if doDebugDebug
-			LOG "setDebugging to custom func"
-	else
-		croak "setDebugging(): bad parameter #{OL(option)}"
-	return
-
-# ---------------------------------------------------------------------------
-# --- export only to allow unit tests
-
-export funcMatch = (stack, lFuncNames, enteringFunc=undef) ->
-
-	if defined(enteringFunc) && (enteringFunc in lFuncNames)
-		return true
-
-	curFunc = stack.curFunc()
-	assert isString(curFunc), "funcMatch(): not a string #{OL(curFunc)}"
-	assert isArray(lFuncNames), "funcMatch(): bad array #{lFuncNames}"
-	if lFuncNames.includes(curFunc)
-		return true
-	else if (lMatches = curFunc.match(reMethod)) \
-			&& ([_, cls, meth] = lMatches) \
-			&& lFuncNames.includes(meth)
-		return true
-	else
-		return false
-
-# ---------------------------------------------------------------------------
-# --- type is one of: 'enter', 'return', 'string', 'object'
-
-export getType = (str, nObjects) ->
-
-	if lMatches = str.match(///^
-			\s*
-			enter
-			\s+
-			([A-Za-z_][A-Za-z0-9_\.]*)
-			///)
-
-		# --- We are entering function curFunc
-		return ['enter', lMatches[1]]
-
-	else if lMatches = str.match(///^
-			\s*
-			return
-			.+
-			from
-			\s+
-			([A-Za-z_][A-Za-z0-9_\.]*)
-			///)
-		return ['return', lMatches[1]]
-
-	else if (nObjects > 0)
-		return ['objects', undef]
-	else
-		return ['string', undef]
+export shouldLog = undef  # set in resetDebugging() and setDebugging()
+export lFuncList = []
 
 # ---------------------------------------------------------------------------
 
@@ -126,26 +34,25 @@ export debug = (label, lObjects...) ->
 
 	# --- funcName is only set for types 'enter' and 'return'
 	[type, funcName] = getType(label, nObjects)
+	if doDebugDebug
+		LOG "debug(): type = #{OL(type)}"
+		LOG "debug(): funcName = #{OL(funcName)}"
+
 	switch type
 		when 'enter'
-			doLog = shouldLog(type, funcName, callStack)
-
-			# --- If we won't be logging when funcName is activated
-			#     then change 'enter' to 'call'
-			callStack.enter funcName       # add to call stack
-			if ! shouldLog('string', 'abc', callStack)
-				label = label.replace('enter', 'call')
-			callStack.returnFrom funcName  # remove from call stack
+			callStack.enter funcName
+			label = shouldLog(label, type, funcName, callStack)
 		when 'return'
-			doLog = shouldLog(type, funcName, callStack)
+			label = shouldLog(label, type, funcName, callStack)
 		when 'string'
-			doLog = shouldLog(type, label, callStack)
+			label = shouldLog(label, type, undef, callStack)
 			assert (nObjects == 0),
 					"multiple objects only not allowed for #{OL(type)}"
 		when 'objects'
-			doLog = shouldLog(type, label, callStack)
+			label = shouldLog(label, type, undef, callStack)
 			assert (nObjects > 0),
 					"multiple objects only not allowed for #{OL(type)}"
+	doLog = defined(label)
 
 	if doDebugDebug
 		if nObjects == 0
@@ -153,8 +60,6 @@ export debug = (label, lObjects...) ->
 		else
 			LOG "debug(#{OL(label)}), #{nObjects} args"
 		LOG "doLog = #{OL(doLog)}"
-		LOG "type = #{OL(type)}"
-		LOG "funcName = #{OL(funcName)}"
 
 	if doLog
 		level = callStack.getLevel()
@@ -190,12 +95,180 @@ export debug = (label, lObjects...) ->
 					for obj in lObjects
 						logItem undef, obj, {prefix}
 
-	if (type == 'enter')
-		callStack.enter funcName, doLog
+	if (type == 'enter') && doLog
+		callStack.logCurFunc()
 	else if (type == 'return')
 		callStack.returnFrom funcName
 
 	return true   # allow use in boolean expressions
+
+# ---------------------------------------------------------------------------
+
+export stdShouldLog = (label, type, funcName, stack) ->
+	# --- if type is 'enter', then funcName won't be on the stack yet
+	#     returns the (possibly modified) label to log
+
+	# --- If we're logging now,
+	#     but we won't be logging when funcName is activated
+	#     then change 'enter' to 'call'
+
+	assert isString(label), "label #{OL(label)} not a string"
+	assert isString(type),  "type #{OL(type)} not a string"
+	if (type == 'enter') || (type == 'return')
+		assert isString(funcName), "func name #{OL(funcName)} not a string"
+	else
+		assert funcName == undef, "func name #{OL(funcName)} not undef"
+	assert stack instanceof CallStack, "not a call stack object"
+	if doDebugDebug
+		LOG "stdShouldLog(#{OL(label)}, #{OL(type)}, #{OL(funcName)}, stack)"
+		LOG "stack", stack
+		LOG "lFuncList", lFuncList
+	switch type
+		when 'enter'
+			if funcMatch(stack, lFuncList)
+				return label
+
+			# --- As a special case, if we enter a function where we will not
+			#     be logging, but we were logging in the calling function,
+			#     we'll log out the call itself
+			else if stack.isLoggingPrev()
+				return label.replace('enter', 'call')
+		else
+			if funcMatch(stack, lFuncList)
+				return label
+	return undef
+
+# ---------------------------------------------------------------------------
+
+export debugDebug = (flag=true) ->
+
+	doDebugDebug = flag
+	if doDebugDebug
+		LOG "doDebugDebug = #{flag}"
+	return
+
+# ---------------------------------------------------------------------------
+
+resetDebugging = () ->
+
+	if doDebugDebug
+		LOG "resetDebugging()"
+	callStack.reset()
+	shouldLog = (label, type, funcName, stack) -> undef
+	return
+
+# ---------------------------------------------------------------------------
+
+export setDebugging = (option) ->
+
+	resetDebugging()
+	if isBoolean(option)
+		if option
+			shouldLog = (label, type, funcName, stack) -> label
+		else
+			shouldLog = (label, type, funcName, stack) -> undef
+		if doDebugDebug
+			LOG "setDebugging = #{option}"
+	else if isString(option)
+		lFuncList = getFuncList(option)
+		shouldLog = stdShouldLog
+		if doDebugDebug
+			LOG "setDebugging FUNCS: #{option}"
+			LOG 'lFuncList', lFuncList
+	else if isFunction(option)
+		shouldLog = option
+		if doDebugDebug
+			LOG "setDebugging to custom func"
+	else
+		croak "bad parameter #{OL(option)}"
+	return
+
+# ---------------------------------------------------------------------------
+# --- export only to allow unit tests
+
+export getFuncList = (str) ->
+
+	lFuncList = []
+	for word in words(str)
+		if lMatches = word.match(///^
+				([A-Za-z_][A-Za-z0-9_]*)
+				(?:
+					\.
+					([A-Za-z_][A-Za-z0-9_]*)
+					)?
+				(\+)?
+				$///)
+			[_, ident1, ident2, plus] = lMatches
+			if ident2
+				lFuncList.push {
+					name: ident2
+					object: ident1
+					plus: (plus == '+')
+					}
+			else
+				lFuncList.push {
+					name: ident1
+					plus: (plus == '+')
+					}
+		else
+			croak "Bad word in func list: #{OL(word)}"
+	return lFuncList
+
+# ---------------------------------------------------------------------------
+# --- export only to allow unit tests
+
+export funcMatch = (stack, lFuncList) ->
+
+	assert isArray(lFuncList), "not an array #{OL(lFuncList)}"
+
+	curFunc = stack.curFunc()
+	if doDebugDebug
+		LOG "funcMatch(): curFunc = #{OL(curFunc)}"
+		stack.dump('   ')
+		LOG 'lFuncList', lFuncList
+	for h in lFuncList
+		{name, object, plus} = h
+		if (name == curFunc)
+			if doDebugDebug
+				LOG "   curFunc in lFuncList - match successful"
+			return true
+		if plus && stack.isActive(name)
+			if doDebugDebug
+				LOG "   func #{OL(name)} is active - match successful"
+			return true
+	if doDebugDebug
+		LOG "   - no match"
+	return false
+
+# ---------------------------------------------------------------------------
+# --- type is one of: 'enter', 'return', 'string', 'object'
+
+export getType = (str, nObjects) ->
+
+	if lMatches = str.match(///^
+			\s*
+			enter
+			\s+
+			([A-Za-z_][A-Za-z0-9_\.]*)
+			///)
+
+		# --- We are entering function curFunc
+		return ['enter', lMatches[1]]
+
+	else if lMatches = str.match(///^
+			\s*
+			return
+			.+
+			from
+			\s+
+			([A-Za-z_][A-Za-z0-9_\.]*)
+			///)
+		return ['return', lMatches[1]]
+
+	else if (nObjects > 0)
+		return ['objects', undef]
+	else
+		return ['string', undef]
 
 # ---------------------------------------------------------------------------
 

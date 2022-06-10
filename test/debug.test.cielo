@@ -3,11 +3,11 @@
 import {UnitTesterNorm, UnitTester} from '@jdeighan/unit-tester'
 import {undef, OL, isString} from '@jdeighan/coffee-utils'
 import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
-import {log, setLogger, debugLog} from '@jdeighan/coffee-utils/log'
+import {log, LOG, setLogger, debugLog} from '@jdeighan/coffee-utils/log'
 import {untabify} from '@jdeighan/coffee-utils/indent'
 import {CallStack} from '@jdeighan/coffee-utils/stack'
 import {
-	setDebugging, debug, funcMatch, debugDebug,
+	setDebugging, debug, getFuncList, funcMatch, debugDebug,
 	} from '@jdeighan/coffee-utils/debug'
 
 simple = new UnitTesterNorm()
@@ -15,12 +15,56 @@ lLines = undef
 setLogger (str) -> lLines.push(untabify(str))
 
 # ---------------------------------------------------------------------------
+
+(() ->
+
+	lFuncList = getFuncList("get fetch obj.match func+ obj.list+")
+	simple.equal {{LINE}}, lFuncList, [
+		{
+			name: 'get'
+			plus: false
+			}
+		{
+			name: 'fetch'
+			plus: false
+			}
+		{
+			object: 'obj'
+			name: 'match'
+			plus: false
+			}
+		{
+			name: 'func'
+			plus: true
+			}
+		{
+			object: 'obj'
+			name: 'list'
+			plus: true
+			}
+		]
+
+	)()
+
+# ---------------------------------------------------------------------------
 # funcMatch() expects a CallStack object as 1st parameter
 
 (() ->
 	stack = new CallStack()
 	stack.enter('get')
-	simple.truthy {{LINE}}, funcMatch(stack, ['get'])
+
+	lFuncList = getFuncList("get")
+	simple.equal {{LINE}}, funcMatch(stack, lFuncList), true
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	stack = new CallStack()
+	stack.enter('get')
+
+	lFuncList = getFuncList("get+")
+	simple.equal {{LINE}}, funcMatch(stack, lFuncList), true
 	)()
 
 # ---------------------------------------------------------------------------
@@ -28,7 +72,9 @@ setLogger (str) -> lLines.push(untabify(str))
 (() ->
 	stack = new CallStack()
 	stack.enter('StringInput.get')
-	simple.truthy {{LINE}}, funcMatch(stack, ['get'])
+
+	lFuncList = getFuncList("get")
+	simple.equal {{LINE}}, funcMatch(stack, lFuncList), true
 	)()
 
 # ---------------------------------------------------------------------------
@@ -148,6 +194,7 @@ tester = new TraceTester()
 
 (() ->
 	setDebugging "myfunc"
+
 	lLines = []
 	debug 'enter myfunc'
 	debug 'something'

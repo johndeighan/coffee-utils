@@ -55,9 +55,9 @@ export var LOG = function(...lArgs) {
   if (lArgs.length > 1) {
     // --- There's both a label and an item
     if (item === undef) {
-      console.log(`${label}: UNDEFINED`);
+      console.log(`${label} = undef`);
     } else if (item === null) {
-      console.log(`${label}: NULL`);
+      console.log(`${label} = null`);
     } else {
       console.log(sep_dash);
       console.log(`${label}:`);

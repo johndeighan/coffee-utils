@@ -1,7 +1,7 @@
 # call_stack.coffee
 
 import {
-	undef, defined, croak, assert, isBoolean, escapeStr,
+	undef, defined, croak, assert, OL, isBoolean, escapeStr,
 	} from '@jdeighan/coffee-utils'
 import {log, LOG} from '@jdeighan/coffee-utils/log'
 import {getPrefix} from '@jdeighan/coffee-utils/arrow'
@@ -36,14 +36,64 @@ export class CallStack
 
 	# ........................................................................
 
-	enter: (funcName, isLogged=false) ->
+	enter: (funcName, oldFlag=undef) ->
+		# --- funcName might be <object>.<method>
 
+		assert (oldFlag == undef), "enter() takes only 1 arg"
 		if doDebugStack
-			LOG "[--> CALL #{funcName}]"
+			LOG "[--> ENTER #{funcName}]"
 
-		@lStack.push({funcName, isLogged})
-		if isLogged
-			@level += 1
+		lMatches = funcName.match(///^
+				([A-Za-z_][A-Za-z0-9_]*)
+				(?:
+					\.
+					([A-Za-z_][A-Za-z0-9_]*)
+					)?
+				$///)
+		assert defined(lMatches), "Bad funcName: #{OL(funcName)}"
+		[_, ident1, ident2] = lMatches
+		if ident2
+			@lStack.push({
+				fullName: "#{ident1}.#{ident2}"
+				funcName: ident2
+				isLogged: false
+				})
+		else
+			@lStack.push({
+				fullName: ident1
+				funcName: ident1
+				isLogged: false
+				})
+		return
+
+	# ........................................................................
+
+	isLogging: () ->
+
+		if (@lStack.length == 0)
+			return false
+		else
+			return @lStack[@lStack.length - 1].isLogged
+
+	# ........................................................................
+
+	isLoggingPrev: () ->
+
+		if (@lStack.length < 2)
+			return false
+		else
+			return @lStack[@lStack.length - 2].isLogged
+
+	# ........................................................................
+
+	logCurFunc: () ->
+
+		# --- funcName must be  the current function
+		#     and the isLogged flag must currently be false
+		cur = @lStack[@lStack.length - 1]
+		assert (cur.isLogged == false), "isLogged is already true"
+		cur.isLogged = true
+		@level += 1
 		return
 
 	# ........................................................................
@@ -58,18 +108,18 @@ export class CallStack
 			LOG "ERROR: returnFrom('#{funcName}') but stack is empty"
 			return
 
-		{funcName, isLogged} = @lStack.pop()
+		{fullName, isLogged} = @lStack.pop()
 		if isLogged && (@level > 0)
 			@level -= 1
 
 		# --- This should do nothing
-		while (funcName != fName) && (@lStack.length > 0)
-			LOG "[MISSING RETURN FROM #{funcName} (return from #{fName})]"
-			{funcName, isLogged} = @lStack.pop()
+		while (fullName != fName) && (@lStack.length > 0)
+			LOG "[MISSING RETURN FROM #{fullName} (return from #{fName})]"
+			{fullName, isLogged} = @lStack.pop()
 			if isLogged && (@level > 0)
 				@level -= 1
 
-		if funcName != fName
+		if fullName != fName
 			@dump()
 			LOG "BAD BAD BAD BAD returnFrom('#{fName}')"
 		return
@@ -91,17 +141,19 @@ export class CallStack
 
 	# ........................................................................
 
-	isActive: (fName) ->
+	isActive: (funcName) ->
+		# --- funcName won't be <obj>.<method>
+		#     but the stack might contain that form
 
 		for h in @lStack
-			if (h.funcName == fName)
+			if (h.funcName == funcName)
 				return true
 		return false
 
 	# ........................................................................
 	# ........................................................................
 
-	dump: (label='CALL STACK') ->
+	dump: (prefix='', label='CALL STACK') ->
 
 		LOG "#{label}:"
 		if @lStack.length == 0
