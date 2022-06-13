@@ -12,7 +12,6 @@ import {
   isString,
   isFunction,
   isBoolean,
-  sep_dash,
   OL,
   escapeStr,
   isNumber,
@@ -47,7 +46,8 @@ import {
   log,
   logItem,
   LOG,
-  shortEnough
+  shortEnough,
+  dashes
 } from '@jdeighan/coffee-utils/log';
 
 callStack = new CallStack();
@@ -107,32 +107,26 @@ export var debug = function(label, ...lObjects) {
     switch (type) {
       case 'enter':
         log(label, {prefix});
+        prefix = removeLastVbar(prefix);
         for (i = j = 0, len1 = lObjects.length; j < len1; i = ++j) {
           obj = lObjects[i];
           if (i > 0) {
-            log(sep_dash, {
-              prefix: removeLastVbar(prefix)
-            });
+            log(dashes(prefix));
           }
-          logItem(undef, obj, {
-            prefix: removeLastVbar(prefix)
-          });
+          logItem(undef, obj, {prefix});
         }
         break;
       case 'return':
         log(label, {
           prefix: addArrow(prefix)
         });
+        prefix = removeLastVbar(prefix);
         for (i = k = 0, len2 = lObjects.length; k < len2; i = ++k) {
           obj = lObjects[i];
           if (i > 0) {
-            log(sep_dash, {
-              prefix: removeLastVbar(prefix)
-            });
+            log(dashes(prefix));
           }
-          logItem(undef, obj, {
-            prefix: removeLastVbar(prefix)
-          });
+          logItem(undef, obj, {prefix});
         }
         break;
       case 'string':

@@ -40,6 +40,11 @@ export var stringify = undef;
 fourSpaces = '    ';
 
 // ---------------------------------------------------------------------------
+export var dashes = function(prefix, totalLen = 64, ch = '-') {
+  return prefix + ch.repeat(totalLen - prefix.length);
+};
+
+// ---------------------------------------------------------------------------
 export var debugLog = function(flag = true) {
   doDebugLog = flag;
   if (doDebugLog) {

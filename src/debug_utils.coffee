@@ -2,7 +2,7 @@
 
 import {
 	assert, undef, error, croak, warn, defined,
-	isString, isFunction, isBoolean, sep_dash,
+	isString, isFunction, isBoolean,
 	OL, escapeStr, isNumber, isArray, words, pass,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
@@ -13,7 +13,7 @@ import {
 	getPrefix, addArrow, removeLastVbar,
 	} from '@jdeighan/coffee-utils/arrow'
 import {
-	log, logItem, LOG, shortEnough,
+	log, logItem, LOG, shortEnough, dashes,
 	} from '@jdeighan/coffee-utils/log'
 
 callStack = new CallStack()
@@ -73,16 +73,18 @@ export debug = (label, lObjects...) ->
 		switch type
 			when 'enter'
 				log label, {prefix}
+				prefix = removeLastVbar(prefix)
 				for obj,i in lObjects
 					if (i > 0)
-						log sep_dash, {prefix: removeLastVbar(prefix)}
-					logItem undef, obj, {prefix: removeLastVbar(prefix)}
+						log dashes(prefix)
+					logItem undef, obj, {prefix}
 			when 'return'
 				log label, {prefix: addArrow(prefix)}
+				prefix = removeLastVbar(prefix)
 				for obj,i in lObjects
 					if (i > 0)
-						log sep_dash, {prefix: removeLastVbar(prefix)}
-					logItem undef, obj, {prefix: removeLastVbar(prefix)}
+						log dashes(prefix)
+					logItem undef, obj, {prefix}
 			when 'string'
 				log label, {prefix}
 			when 'objects'

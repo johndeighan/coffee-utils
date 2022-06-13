@@ -20,6 +20,12 @@ fourSpaces  = '    '
 
 # ---------------------------------------------------------------------------
 
+export dashes = (prefix, totalLen=64, ch='-') ->
+
+	return prefix + ch.repeat(totalLen - prefix.length)
+
+# ---------------------------------------------------------------------------
+
 export debugLog = (flag=true) ->
 
 	doDebugLog = flag

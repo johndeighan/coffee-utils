@@ -5,12 +5,17 @@ import {undef, escapeStr} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {
 	stringify, setStringifier, log, LOG, logItem, setLogger,
-	tamlStringify, orderedStringify,
+	tamlStringify, orderedStringify, dashes,
 	} from '@jdeighan/coffee-utils/log'
+
 
 simple = new UnitTesterNorm()
 lLines = undef
 setLogger (str) -> lLines.push(str)
+
+# ---------------------------------------------------------------------------
+
+simple.equal {{LINE}}, dashes('<->', 8), '<->-----'
 
 # ---------------------------------------------------------------------------
 
