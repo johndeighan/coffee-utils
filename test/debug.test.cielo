@@ -7,7 +7,7 @@ import {log, LOG, setLogger, debugLog} from '@jdeighan/coffee-utils/log'
 import {untabify} from '@jdeighan/coffee-utils/indent'
 import {CallStack} from '@jdeighan/coffee-utils/stack'
 import {
-	setDebugging, debug, getFuncList, funcMatch, debugDebug,
+	setDebugging, debug, getFuncList, funcMatch,
 	} from '@jdeighan/coffee-utils/debug'
 
 simple = new UnitTesterNorm()
@@ -92,7 +92,6 @@ setLogger (str) -> lLines.push(untabify(str))
 	setDebugging true
 	lLines = []
 	debug 'value', undef
-	debugDebug false
 	simple.equal {{LINE}}, lLines, ['value = undef']
 	)()
 
@@ -208,7 +207,6 @@ tester = new TraceTester()
 		"│   call newfunc"
 		"└─> return 42 from myfunc"
 		]
-	debugDebug false
 	)()
 
 # ---------------------------------------------------------------------------
@@ -232,7 +230,6 @@ tester = new TraceTester()
 		"│   call newfunc"
 		"└─> return 42 from myfunc"
 		]
-	debugDebug false
 	)()
 
 # ---------------------------------------------------------------------------
