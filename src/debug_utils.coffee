@@ -38,6 +38,9 @@ export debug = (label, lObjects...) ->
 		LOG "debug(): type = #{OL(type)}"
 		LOG "debug(): funcName = #{OL(funcName)}"
 
+	# --- function shouldLog() returns the (possibly modified) label
+	#     if we should log this, else it returns undef
+
 	switch type
 		when 'enter'
 			callStack.enter funcName
@@ -64,27 +67,27 @@ export debug = (label, lObjects...) ->
 	if doLog
 		level = callStack.getLevel()
 		prefix = getPrefix(level)
+		itemPrefix = removeLastVbar(prefix)
 
 		if doDebugDebug
 			LOG "callStack", callStack
 			LOG "level = #{OL(level)}"
 			LOG "prefix = #{OL(prefix)}"
+			LOG "itemPrefix = #{OL(itemPrefix)}"
 
 		switch type
 			when 'enter'
 				log label, {prefix}
-				prefix = removeLastVbar(prefix)
 				for obj,i in lObjects
 					if (i > 0)
-						log dashes(prefix)
-					logItem undef, obj, {prefix}
+						log dashes(itemPrefix, 40)
+					logItem undef, obj, {itemPrefix}
 			when 'return'
 				log label, {prefix: addArrow(prefix)}
-				prefix = removeLastVbar(prefix)
 				for obj,i in lObjects
 					if (i > 0)
-						log dashes(prefix)
-					logItem undef, obj, {prefix}
+						log dashes(itemPrefix, 40)
+					logItem undef, obj, {itemPrefix}
 			when 'string'
 				log label, {prefix}
 			when 'objects'

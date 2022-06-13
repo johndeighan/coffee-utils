@@ -60,7 +60,7 @@ export var lFuncList = [];
 
 // ---------------------------------------------------------------------------
 export var debug = function(label, ...lObjects) {
-  var doLog, funcName, i, j, k, l, len1, len2, len3, level, nObjects, obj, prefix, type;
+  var doLog, funcName, i, itemPrefix, j, k, l, len1, len2, len3, level, nObjects, obj, prefix, type;
   assert(isString(label), `1st arg ${OL(label)} should be a string`);
   // --- We want to allow objects to be undef. Therefore, we need to
   //     distinguish between 1 arg sent vs. 2 or more args sent
@@ -71,6 +71,8 @@ export var debug = function(label, ...lObjects) {
     LOG(`debug(): type = ${OL(type)}`);
     LOG(`debug(): funcName = ${OL(funcName)}`);
   }
+  // --- function shouldLog() returns the (possibly modified) label
+  //     if we should log this, else it returns undef
   switch (type) {
     case 'enter':
       callStack.enter(funcName);
@@ -99,34 +101,34 @@ export var debug = function(label, ...lObjects) {
   if (doLog) {
     level = callStack.getLevel();
     prefix = getPrefix(level);
+    itemPrefix = removeLastVbar(prefix);
     if (doDebugDebug) {
       LOG("callStack", callStack);
       LOG(`level = ${OL(level)}`);
       LOG(`prefix = ${OL(prefix)}`);
+      LOG(`itemPrefix = ${OL(itemPrefix)}`);
     }
     switch (type) {
       case 'enter':
         log(label, {prefix});
-        prefix = removeLastVbar(prefix);
         for (i = j = 0, len1 = lObjects.length; j < len1; i = ++j) {
           obj = lObjects[i];
           if (i > 0) {
-            log(dashes(prefix));
+            log(dashes(itemPrefix, 40));
           }
-          logItem(undef, obj, {prefix});
+          logItem(undef, obj, {itemPrefix});
         }
         break;
       case 'return':
         log(label, {
           prefix: addArrow(prefix)
         });
-        prefix = removeLastVbar(prefix);
         for (i = k = 0, len2 = lObjects.length; k < len2; i = ++k) {
           obj = lObjects[i];
           if (i > 0) {
-            log(dashes(prefix));
+            log(dashes(itemPrefix, 40));
           }
-          logItem(undef, obj, {prefix});
+          logItem(undef, obj, {itemPrefix});
         }
         break;
       case 'string':

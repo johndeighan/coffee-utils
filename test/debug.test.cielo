@@ -371,9 +371,9 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc"
-		"        ---"
-		"        first: this˳is˳the˳first˳item˳in˳the˳hash"
-		"        second: this˳is˳the˳second˳item˳in˳the˳hash"
+		"    ---"
+		"    first: this˳is˳the˳first˳item˳in˳the˳hash"
+		"    second: this˳is˳the˳second˳item˳in˳the˳hash"
 		"Answer is 42"
 		]
 	)()
@@ -395,10 +395,10 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc"
-		"        =========================================="
-		"        this˳is˳one˳very˳long˳line"
-		"        this˳is˳another˳very˳long˳line"
-		"        =========================================="
+		"    =========================================="
+		"    this˳is˳one˳very˳long˳line"
+		"    this˳is˳another˳very˳long˳line"
+		"    =========================================="
 		"Answer is 42"
 		]
 	)()
