@@ -81,39 +81,36 @@ export var setDebugDebugging = function(value = true) {
 
 // ---------------------------------------------------------------------------
 logif = function(label, ...lObjects) {
-  var funcName, nObjects, type;
+  var funcName, itemPrefix, level, nObjects, prefix, sep, type;
   if (!doDebugDebug) {
     return;
   }
   assert(isString(label), `1st arg ${OL(label)} should be a string`);
   nObjects = lObjects.length;
   [type, funcName] = getType(label, nObjects);
-  switch (type) {
-    case 'enter':
-      if (defined(lFunctions) && (indexOf.call(lFunctions, funcName) < 0)) {
-        return;
-      }
-      callStack.enter(funcName);
-      log(label, ...lObjects);
-      break;
-    case 'return':
-      if (defined(lFunctions) && (indexOf.call(lFunctions, funcName) < 0)) {
-        return;
-      }
-      log(label, ...lObjects);
-      callStack.returnFrom(funcName);
-      break;
-    case 'string':
-      log(label, ...lObjects);
-      break;
-    case 'objects':
-      log(label, ...lObjects);
+  level = callStack.getLevel();
+  prefix = getPrefix(level);
+  itemPrefix = removeLastVbar(prefix);
+  sep = dashes(itemPrefix, 40);
+  if (type === 'enter') {
+    if (defined(lFunctions) && (indexOf.call(lFunctions, funcName) < 0)) {
+      return;
+    }
+    callStack.enter(funcName);
+  } else if (type === 'return') {
+    if (defined(lFunctions) && (indexOf.call(lFunctions, funcName) < 0)) {
+      return;
+    }
+  }
+  doTheLogging(type, label, lObjects);
+  if (type === 'return') {
+    callStack.returnFrom(funcName);
   }
 };
 
 // ---------------------------------------------------------------------------
 export var debug = function(label, ...lObjects) {
-  var doLog, funcName, i, itemPrefix, j, k, l, len, len1, len2, level, nObjects, obj, prefix, sep, type;
+  var doLog, funcName, nObjects, type;
   logif(`enter debug(${OL(label)})`, ...lObjects);
   assert(isString(label), `1st arg ${OL(label)} should be a string`);
   // --- We want to allow objects to be undef. Therefore, we need to
@@ -146,56 +143,7 @@ export var debug = function(label, ...lObjects) {
   logif(`doLog = ${OL(doLog)}`);
   logif(`${nObjects} objects`);
   if (doLog) {
-    level = callStack.getLevel();
-    prefix = getPrefix(level);
-    itemPrefix = removeLastVbar(prefix);
-    sep = dashes(itemPrefix, 40);
-    assert(isString(sep), "sep is not a string");
-    logif("callStack", callStack);
-    logif(`level = ${OL(level)}`);
-    logif(`prefix = ${OL(prefix)}`);
-    logif(`itemPrefix = ${OL(itemPrefix)}`);
-    logif(`sep = ${OL(sep)}`);
-    switch (type) {
-      case 'enter':
-        log(label, {prefix});
-        for (i = j = 0, len = lObjects.length; j < len; i = ++j) {
-          obj = lObjects[i];
-          if (i > 0) {
-            log(sep);
-          }
-          logItem(undef, obj, {itemPrefix});
-        }
-        break;
-      case 'return':
-        log(label, {
-          prefix: addArrow(prefix)
-        });
-        for (i = k = 0, len1 = lObjects.length; k < len1; i = ++k) {
-          obj = lObjects[i];
-          if (i > 0) {
-            log(sep);
-          }
-          logItem(undef, obj, {itemPrefix});
-        }
-        break;
-      case 'string':
-        log(label, {prefix});
-        break;
-      case 'objects':
-        if ((nObjects === 1) && shortEnough(label, lObjects[0])) {
-          logItem(label, lObjects[0], {prefix});
-        } else {
-          if (label.indexOf(':') !== label.length - 1) {
-            label += ':';
-          }
-          log(label, {prefix});
-          for (l = 0, len2 = lObjects.length; l < len2; l++) {
-            obj = lObjects[l];
-            logItem(undef, obj, {prefix});
-          }
-        }
-    }
+    doTheLogging(type, label, lObjects);
   }
   if ((type === 'enter') && doLog && (label.indexOf('call') === -1)) {
     callStack.logCurFunc();
@@ -206,6 +154,61 @@ export var debug = function(label, ...lObjects) {
   return true; // allow use in boolean expressions
 };
 
+
+// ---------------------------------------------------------------------------
+export var doTheLogging = function(type, label, lObjects) {
+  var i, itemPrefix, j, k, l, len, len1, len2, level, obj, prefix, sep;
+  level = callStack.getLevel();
+  prefix = getPrefix(level);
+  itemPrefix = removeLastVbar(prefix);
+  sep = dashes(itemPrefix, 40);
+  assert(isString(sep), "sep is not a string");
+  logif("callStack", callStack);
+  logif(`level = ${OL(level)}`);
+  logif(`prefix = ${OL(prefix)}`);
+  logif(`itemPrefix = ${OL(itemPrefix)}`);
+  logif(`sep = ${OL(sep)}`);
+  switch (type) {
+    case 'enter':
+      log(label, {prefix});
+      for (i = j = 0, len = lObjects.length; j < len; i = ++j) {
+        obj = lObjects[i];
+        if (i > 0) {
+          log(sep);
+        }
+        logItem(undef, obj, {itemPrefix});
+      }
+      break;
+    case 'return':
+      log(label, {
+        prefix: addArrow(prefix)
+      });
+      for (i = k = 0, len1 = lObjects.length; k < len1; i = ++k) {
+        obj = lObjects[i];
+        if (i > 0) {
+          log(sep);
+        }
+        logItem(undef, obj, {itemPrefix});
+      }
+      break;
+    case 'string':
+      log(label, {prefix});
+      break;
+    case 'objects':
+      if ((lObjects.length === 1) && shortEnough(label, lObjects[0])) {
+        logItem(label, lObjects[0], {prefix});
+      } else {
+        if (label.indexOf(':') !== label.length - 1) {
+          label += ':';
+        }
+        log(label, {prefix});
+        for (l = 0, len2 = lObjects.length; l < len2; l++) {
+          obj = lObjects[l];
+          logItem(undef, obj, {prefix});
+        }
+      }
+  }
+};
 
 // ---------------------------------------------------------------------------
 export var stdShouldLog = function(label, type, funcName, stack) {

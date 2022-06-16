@@ -50,21 +50,25 @@ logif = (label, lObjects...) ->
 	assert isString(label), "1st arg #{OL(label)} should be a string"
 	nObjects = lObjects.length
 	[type, funcName] = getType(label, nObjects)
-	switch type
-		when 'enter'
-			if defined(lFunctions) && (funcName not in lFunctions)
-				return
-			callStack.enter funcName
-			log label, lObjects...
-		when 'return'
-			if defined(lFunctions) && (funcName not in lFunctions)
-				return
-			log label, lObjects...
-			callStack.returnFrom funcName
-		when 'string'
-			log label, lObjects...
-		when 'objects'
-			log label, lObjects...
+
+	level = callStack.getLevel()
+	prefix = getPrefix(level)
+	itemPrefix = removeLastVbar(prefix)
+	sep = dashes(itemPrefix, 40)
+
+	if (type == 'enter')
+		if defined(lFunctions) && (funcName not in lFunctions)
+			return
+		callStack.enter funcName
+	else if (type == 'return')
+		if defined(lFunctions) && (funcName not in lFunctions)
+			return
+
+	doTheLogging type, label, lObjects
+
+	if (type == 'return')
+		callStack.returnFrom funcName
+
 	return
 
 # ---------------------------------------------------------------------------
@@ -109,42 +113,7 @@ export debug = (label, lObjects...) ->
 	logif "#{nObjects} objects"
 
 	if doLog
-		level = callStack.getLevel()
-		prefix = getPrefix(level)
-		itemPrefix = removeLastVbar(prefix)
-		sep = dashes(itemPrefix, 40)
-		assert isString(sep), "sep is not a string"
-
-		logif "callStack", callStack
-		logif "level = #{OL(level)}"
-		logif "prefix = #{OL(prefix)}"
-		logif "itemPrefix = #{OL(itemPrefix)}"
-		logif "sep = #{OL(sep)}"
-
-		switch type
-			when 'enter'
-				log label, {prefix}
-				for obj,i in lObjects
-					if (i > 0)
-						log sep
-					logItem undef, obj, {itemPrefix}
-			when 'return'
-				log label, {prefix: addArrow(prefix)}
-				for obj,i in lObjects
-					if (i > 0)
-						log sep
-					logItem undef, obj, {itemPrefix}
-			when 'string'
-				log label, {prefix}
-			when 'objects'
-				if (nObjects==1) && shortEnough(label, lObjects[0])
-					logItem label, lObjects[0], {prefix}
-				else
-					if (label.indexOf(':') != label.length - 1)
-						label += ':'
-					log label, {prefix}
-					for obj in lObjects
-						logItem undef, obj, {prefix}
+		doTheLogging type, label, lObjects
 
 	if (type == 'enter') && doLog && (label.indexOf('call') == -1)
 		callStack.logCurFunc()
@@ -153,6 +122,48 @@ export debug = (label, lObjects...) ->
 
 	logif "return from debug()"
 	return true   # allow use in boolean expressions
+
+# ---------------------------------------------------------------------------
+
+export doTheLogging = (type, label, lObjects) ->
+
+	level = callStack.getLevel()
+	prefix = getPrefix(level)
+	itemPrefix = removeLastVbar(prefix)
+	sep = dashes(itemPrefix, 40)
+	assert isString(sep), "sep is not a string"
+
+	logif "callStack", callStack
+	logif "level = #{OL(level)}"
+	logif "prefix = #{OL(prefix)}"
+	logif "itemPrefix = #{OL(itemPrefix)}"
+	logif "sep = #{OL(sep)}"
+
+	switch type
+		when 'enter'
+			log label, {prefix}
+			for obj,i in lObjects
+				if (i > 0)
+					log sep
+				logItem undef, obj, {itemPrefix}
+		when 'return'
+			log label, {prefix: addArrow(prefix)}
+			for obj,i in lObjects
+				if (i > 0)
+					log sep
+				logItem undef, obj, {itemPrefix}
+		when 'string'
+			log label, {prefix}
+		when 'objects'
+			if (lObjects.length==1) && shortEnough(label, lObjects[0])
+				logItem label, lObjects[0], {prefix}
+			else
+				if (label.indexOf(':') != label.length - 1)
+					label += ':'
+				log label, {prefix}
+				for obj in lObjects
+					logItem undef, obj, {prefix}
+	return
 
 # ---------------------------------------------------------------------------
 
