@@ -135,9 +135,9 @@ export log = (str, hOptions={}) ->
 	# --- valid options:
 	#   prefix
 
+	assert isString(str),      "log(): not a string: #{OL(str)}"
 	assert isFunction(putstr), "putstr not properly set"
-	assert isString(str),      "log(): not a string"
-	assert isHash(hOptions),   "log(): arg 2 not a hash"
+	assert isHash(hOptions),   "log(): arg 2 not a hash: #{OL(hOptions)}"
 	prefix = fixForTerminal(hOptions.prefix)
 
 	if doDebugLog

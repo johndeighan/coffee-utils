@@ -17,14 +17,61 @@ import {
 	} from '@jdeighan/coffee-utils/log'
 
 callStack = new CallStack()
-doDebugDebug = false
 
-export shouldLog = undef  # set in resetDebugging() and setDebugging()
+# --- set in resetDebugging() and setDebugging()
+export shouldLog = () -> undef
 export lFuncList = []
+
+# --- internal debugging
+doDebugDebug = false
+lFunctions = undef     # --- only used when doDebugDebug is true
+
+# ---------------------------------------------------------------------------
+
+export setDebugDebugging = (value=true) ->
+	# --- value can be a boolean or string of words
+
+	if isBoolean(value)
+		doDebugDebug = value
+	else if isString(value)
+		doDebugDebug = true
+		lFunctions = words(value)
+	else
+		croak "Bad value: #{OL(value)}"
+	return
+
+# ---------------------------------------------------------------------------
+
+logif = (label, lObjects...) ->
+
+	if ! doDebugDebug
+		return
+
+	assert isString(label), "1st arg #{OL(label)} should be a string"
+	nObjects = lObjects.length
+	[type, funcName] = getType(label, nObjects)
+	switch type
+		when 'enter'
+			if defined(lFunctions) && (funcName not in lFunctions)
+				return
+			callStack.enter funcName
+			log label, lObjects...
+		when 'return'
+			if defined(lFunctions) && (funcName not in lFunctions)
+				return
+			log label, lObjects...
+			callStack.returnFrom funcName
+		when 'string'
+			log label, lObjects...
+		when 'objects'
+			log label, lObjects...
+	return
 
 # ---------------------------------------------------------------------------
 
 export debug = (label, lObjects...) ->
+
+	logif "enter debug(#{OL(label)})", lObjects...
 
 	assert isString(label), "1st arg #{OL(label)} should be a string"
 
@@ -34,9 +81,8 @@ export debug = (label, lObjects...) ->
 
 	# --- funcName is only set for types 'enter' and 'return'
 	[type, funcName] = getType(label, nObjects)
-	if doDebugDebug
-		LOG "debug(): type = #{OL(type)}"
-		LOG "debug(): funcName = #{OL(funcName)}"
+	logif "type = #{OL(type)}"
+	logif "funcName = #{OL(funcName)}"
 
 	# --- function shouldLog() returns the (possibly modified) label
 	#     if we should log this, else it returns undef
@@ -50,43 +96,43 @@ export debug = (label, lObjects...) ->
 		when 'string'
 			label = shouldLog(label, type, undef, callStack)
 			assert (nObjects == 0),
-					"multiple objects only not allowed for #{OL(type)}"
+					"Objects not allowed for #{OL(type)}"
 		when 'objects'
 			label = shouldLog(label, type, undef, callStack)
 			assert (nObjects > 0),
-					"multiple objects only not allowed for #{OL(type)}"
-	doLog = defined(label)
+					"Objects required for #{OL(type)}"
 
-	if doDebugDebug
-		if nObjects == 0
-			LOG "debug(#{OL(label)}) - 1 arg"
-		else
-			LOG "debug(#{OL(label)}), #{nObjects} args"
-		LOG "doLog = #{OL(doLog)}"
+	assert (label == undef) || isString(label),
+			"label not a string: #{OL(label)}"
+	doLog = defined(label)
+	logif "doLog = #{OL(doLog)}"
+	logif "#{nObjects} objects"
 
 	if doLog
 		level = callStack.getLevel()
 		prefix = getPrefix(level)
 		itemPrefix = removeLastVbar(prefix)
+		sep = dashes(itemPrefix, 40)
+		assert isString(sep), "sep is not a string"
 
-		if doDebugDebug
-			LOG "callStack", callStack
-			LOG "level = #{OL(level)}"
-			LOG "prefix = #{OL(prefix)}"
-			LOG "itemPrefix = #{OL(itemPrefix)}"
+		logif "callStack", callStack
+		logif "level = #{OL(level)}"
+		logif "prefix = #{OL(prefix)}"
+		logif "itemPrefix = #{OL(itemPrefix)}"
+		logif "sep = #{OL(sep)}"
 
 		switch type
 			when 'enter'
 				log label, {prefix}
 				for obj,i in lObjects
 					if (i > 0)
-						log dashes(itemPrefix, 40)
+						log sep
 					logItem undef, obj, {itemPrefix}
 			when 'return'
 				log label, {prefix: addArrow(prefix)}
 				for obj,i in lObjects
 					if (i > 0)
-						log dashes(itemPrefix, 40)
+						log sep
 					logItem undef, obj, {itemPrefix}
 			when 'string'
 				log label, {prefix}
@@ -105,6 +151,7 @@ export debug = (label, lObjects...) ->
 	else if (type == 'return')
 		callStack.returnFrom funcName
 
+	logif "return from debug()"
 	return true   # allow use in boolean expressions
 
 # ---------------------------------------------------------------------------
@@ -125,10 +172,9 @@ export stdShouldLog = (label, type, funcName, stack) ->
 		assert funcName == undef, "func name #{OL(funcName)} not undef"
 	assert stack instanceof CallStack, "not a call stack object"
 
-	if doDebugDebug
-		LOG "stdShouldLog(#{OL(label)}, #{OL(type)}, #{OL(funcName)}, stack)"
-		LOG "stack", stack
-		LOG "lFuncList", lFuncList
+	logif "stdShouldLog(#{OL(label)}, #{OL(type)}, #{OL(funcName)}, stack)"
+	logif "stack", stack
+	logif "lFuncList", lFuncList
 
 	switch type
 		when 'enter'
@@ -150,45 +196,19 @@ export stdShouldLog = (label, type, funcName, stack) ->
 
 # ---------------------------------------------------------------------------
 
-export debugDebug = (flag=true) ->
-
-	doDebugDebug = flag
-	if doDebugDebug
-		LOG "doDebugDebug = #{flag}"
-	return
-
-# ---------------------------------------------------------------------------
-
-resetDebugging = () ->
-
-	if doDebugDebug
-		LOG "resetDebugging()"
-	callStack.reset()
-	shouldLog = (label, type, funcName, stack) -> undef
-	return
-
-# ---------------------------------------------------------------------------
-
 export setDebugging = (option) ->
 
-	resetDebugging()
+	callStack.reset()
 	if isBoolean(option)
 		if option
 			shouldLog = (label, type, funcName, stack) -> label
 		else
 			shouldLog = (label, type, funcName, stack) -> undef
-		if doDebugDebug
-			LOG "setDebugging = #{option}"
 	else if isString(option)
 		lFuncList = getFuncList(option)
 		shouldLog = stdShouldLog
-		if doDebugDebug
-			LOG "setDebugging FUNCS: #{option}"
-			LOG 'lFuncList', lFuncList
 	else if isFunction(option)
 		shouldLog = option
-		if doDebugDebug
-			LOG "setDebugging to custom func"
 	else
 		croak "bad parameter #{OL(option)}"
 	return
@@ -232,22 +252,18 @@ export funcMatch = (stack, lFuncList) ->
 	assert isArray(lFuncList), "not an array #{OL(lFuncList)}"
 
 	curFunc = stack.curFunc()
-	if doDebugDebug
-		LOG "funcMatch(): curFunc = #{OL(curFunc)}"
-		stack.dump('   ')
-		LOG 'lFuncList', lFuncList
+	logif "funcMatch(): curFunc = #{OL(curFunc)}"
+	logif stack.dump('   ')
+	logif 'lFuncList', lFuncList
 	for h in lFuncList
 		{name, object, plus} = h
 		if (name == curFunc)
-			if doDebugDebug
-				LOG "   curFunc in lFuncList - match successful"
+			logif "   curFunc in lFuncList - match successful"
 			return true
 		if plus && stack.isActive(name)
-			if doDebugDebug
-				LOG "   func #{OL(name)} is active - match successful"
+			logif "   func #{OL(name)} is active - match successful"
 			return true
-	if doDebugDebug
-		LOG "   - no match"
+	logif "   - no match"
 	return false
 
 # ---------------------------------------------------------------------------
@@ -290,40 +306,3 @@ reMethod = ///^
 
 # ---------------------------------------------------------------------------
 
-export checkTrace = (block) ->
-	# --- export only to allow unit tests
-
-	lStack = []
-
-	for line in blockToArray(block)
-		if lMatches = line.match(///
-				enter
-				\s+
-				([A-Za-z_][A-Za-z0-9_\.]*)
-				///)
-			funcName = lMatches[1]
-			lStack.push funcName
-		else if lMatches = line.match(///
-				return
-				.*
-				from
-				\s+
-				([A-Za-z_][A-Za-z0-9_\.]*)
-				///)
-			funcName = lMatches[1]
-			len = lStack.length
-			if (len == 0)
-				log "return from #{funcName} with empty stack"
-			else if (lStack[len-1] == funcName)
-				lStack.pop()
-			else if (lStack[len-2] == funcName)
-				log "missing return from #{lStack[len-2]}"
-				lStack.pop()
-				lStack.pop()
-			else
-				log "return from #{funcName} - not found on stack"
-	return
-
-# ---------------------------------------------------------------------------
-
-resetDebugging()

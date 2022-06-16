@@ -105,7 +105,7 @@ export class CallStack
 			LOG "[<-- BACK #{fName}]"
 
 		if @lStack.length == 0
-			LOG "ERROR: returnFrom('#{funcName}') but stack is empty"
+			LOG "ERROR: returnFrom('#{fName}') but stack is empty"
 			return
 
 		{fullName, isLogged} = @lStack.pop()
@@ -155,10 +155,10 @@ export class CallStack
 
 	dump: (prefix='', label='CALL STACK') ->
 
-		LOG "#{label}:"
+		lLines = ["#{label}:"]
 		if @lStack.length == 0
-			LOG "   <EMPTY>"
+			lLines.push "   <EMPTY>"
 		else
 			for item, i in @lStack
-				LOG "   #{i}: #{item.fullName} #{item.isLogged}"
-		return
+				lLines.push "   #{i}: #{item.fullName} #{item.isLogged}"
+		return lLines.join("\n") + "\n"

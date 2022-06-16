@@ -107,7 +107,7 @@ export var CallStack = class CallStack {
       LOG(`[<-- BACK ${fName}]`);
     }
     if (this.lStack.length === 0) {
-      LOG(`ERROR: returnFrom('${funcName}') but stack is empty`);
+      LOG(`ERROR: returnFrom('${fName}') but stack is empty`);
       return;
     }
     ({fullName, isLogged} = this.lStack.pop());
@@ -160,17 +160,18 @@ export var CallStack = class CallStack {
   // ........................................................................
   // ........................................................................
   dump(prefix = '', label = 'CALL STACK') {
-    var i, item, j, len, ref;
-    LOG(`${label}:`);
+    var i, item, j, lLines, len, ref;
+    lLines = [`${label}:`];
     if (this.lStack.length === 0) {
-      LOG("   <EMPTY>");
+      lLines.push("   <EMPTY>");
     } else {
       ref = this.lStack;
       for (i = j = 0, len = ref.length; j < len; i = ++j) {
         item = ref[i];
-        LOG(`   ${i}: ${item.fullName} ${item.isLogged}`);
+        lLines.push(`   ${i}: ${item.fullName} ${item.isLogged}`);
       }
     }
+    return lLines.join("\n") + "\n";
   }
 
 };
