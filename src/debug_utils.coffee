@@ -16,15 +16,23 @@ import {
 	log, logItem, LOG, shortEnough, dashes,
 	} from '@jdeighan/coffee-utils/log'
 
-callStack = new CallStack()
-
 # --- set in resetDebugging() and setDebugging()
+export callStack = new CallStack()
 export shouldLog = () -> undef
-export lFuncList = []
+
+lFuncList = []
+strFuncList = undef     # original string
 
 # --- internal debugging
 doDebugDebug = false
 lFunctions = undef     # --- only used when doDebugDebug is true
+
+# ---------------------------------------------------------------------------
+
+export dumpCallStack = (label) ->
+
+	LOG callStack.dump('', label)
+	return
 
 # ---------------------------------------------------------------------------
 
@@ -42,58 +50,72 @@ export setDebugDebugging = (value=true) ->
 
 # ---------------------------------------------------------------------------
 
-logif = (label, lObjects...) ->
+debugDebug = (label, lObjects...) ->
+	# --- For debugging functions in this module
 
 	if ! doDebugDebug
 		return
+
+	# --- At this point, doDebugDebug is true
+	doDebugDebug = false   # temp - reset before returning
 
 	assert isString(label), "1st arg #{OL(label)} should be a string"
 	nObjects = lObjects.length
 	[type, funcName] = getType(label, nObjects)
 
-	level = callStack.getLevel()
-	prefix = getPrefix(level)
-	itemPrefix = removeLastVbar(prefix)
-	sep = dashes(itemPrefix, 40)
+	switch type
+		when 'enter'
+			assert defined(funcName), "type enter, funcName = undef"
+			callStack.enter funcName
+			doLog = (lFunctions == undef) || (funcName in lFunctions)
 
-	if (type == 'enter')
-		if defined(lFunctions) && (funcName not in lFunctions)
-			return
-		callStack.enter funcName
+		when 'return'
+			assert defined(funcName), "type return, funcName = undef"
+			doLog = (lFunctions == undef) || (funcName in lFunctions)
+
+		when 'string'
+			assert (funcName == undef), "type string, funcName defined"
+			assert (nObjects == 0), "Objects not allowed for #{OL(type)}"
+			doLog = true
+
+		when 'objects'
+			assert (funcName == undef), "type objects, funcName defined"
+			assert (nObjects > 0), "Objects required for #{OL(type)}"
+			dolog = true
+
+	if doLog
+		doTheLogging type, label, lObjects
+
+	if (type == 'enter') && doLog
+		callStack.logCurFunc(funcName)
 	else if (type == 'return')
-		if defined(lFunctions) && (funcName not in lFunctions)
-			return
-
-	doTheLogging type, label, lObjects
-
-	if (type == 'return')
 		callStack.returnFrom funcName
 
+	doDebugDebug = true
 	return
 
 # ---------------------------------------------------------------------------
 
 export debug = (label, lObjects...) ->
 
-	logif "enter debug(#{OL(label)})", lObjects...
-
 	assert isString(label), "1st arg #{OL(label)} should be a string"
 
-	# --- We want to allow objects to be undef. Therefore, we need to
-	#     distinguish between 1 arg sent vs. 2 or more args sent
+	# --- If label is "enter <funcname>, we need to put that on the stack
+	#     BEFORE we do any internal logging
 	nObjects = lObjects.length
-
-	# --- funcName is only set for types 'enter' and 'return'
 	[type, funcName] = getType(label, nObjects)
-	logif "type = #{OL(type)}"
-	logif "funcName = #{OL(funcName)}"
+	if (type == 'enter')
+		callStack.enter funcName
+
+	debugDebug "enter debug(#{OL(label)})", lObjects...
+	debugDebug "type = #{OL(type)}"
+	debugDebug "funcName = #{OL(funcName)}"
 
 	# --- function shouldLog() returns the (possibly modified) label
 	#     if we should log this, else it returns undef
 
 	switch type
 		when 'enter'
-			callStack.enter funcName
 			label = shouldLog(label, type, funcName, callStack)
 		when 'return'
 			label = shouldLog(label, type, funcName, callStack)
@@ -109,18 +131,21 @@ export debug = (label, lObjects...) ->
 	assert (label == undef) || isString(label),
 			"label not a string: #{OL(label)}"
 	doLog = defined(label)
-	logif "doLog = #{OL(doLog)}"
-	logif "#{nObjects} objects"
+	debugDebug "doLog = #{OL(doLog)}"
+	debugDebug "#{nObjects} objects"
 
 	if doLog
 		doTheLogging type, label, lObjects
 
 	if (type == 'enter') && doLog && (label.indexOf('call') == -1)
-		callStack.logCurFunc()
-	else if (type == 'return')
+		callStack.logCurFunc(funcName)
+
+	# --- This must be called BEFORE we return from funcName
+	debugDebug "return from debug()"
+
+	if (type == 'return')
 		callStack.returnFrom funcName
 
-	logif "return from debug()"
 	return true   # allow use in boolean expressions
 
 # ---------------------------------------------------------------------------
@@ -133,11 +158,11 @@ export doTheLogging = (type, label, lObjects) ->
 	sep = dashes(itemPrefix, 40)
 	assert isString(sep), "sep is not a string"
 
-	logif "callStack", callStack
-	logif "level = #{OL(level)}"
-	logif "prefix = #{OL(prefix)}"
-	logif "itemPrefix = #{OL(itemPrefix)}"
-	logif "sep = #{OL(sep)}"
+	debugDebug "callStack", callStack
+	debugDebug "level = #{OL(level)}"
+	debugDebug "prefix = #{OL(prefix)}"
+	debugDebug "itemPrefix = #{OL(itemPrefix)}"
+	debugDebug "sep = #{OL(sep)}"
 
 	switch type
 		when 'enter'
@@ -183,13 +208,12 @@ export stdShouldLog = (label, type, funcName, stack) ->
 		assert funcName == undef, "func name #{OL(funcName)} not undef"
 	assert stack instanceof CallStack, "not a call stack object"
 
-	logif "stdShouldLog(#{OL(label)}, #{OL(type)}, #{OL(funcName)}, stack)"
-	logif "stack", stack
-	logif "lFuncList", lFuncList
+	debugDebug "enter stdShouldLog(#{OL(label)}, #{OL(type)}, #{OL(funcName)}, stack)"
 
 	switch type
 		when 'enter'
-			if funcMatch(stack, lFuncList)
+			if funcMatch()
+				debugDebug "return #{OL(label)} from stdShouldLog() - funcMatch"
 				return label
 
 			else
@@ -199,10 +223,14 @@ export stdShouldLog = (label, type, funcName, stack) ->
 
 				prevLogged = stack.isLoggingPrev()
 				if prevLogged
-					return label.replace('enter', 'call')
+					result = label.replace('enter', 'call')
+					debugDebug "return #{OL(result)} from stdShouldLog() - s/enter/call/"
+					return result
 		else
-			if funcMatch(stack, lFuncList)
+			if funcMatch()
+				debugDebug "return #{OL(label)} from stdShouldLog()"
 				return label
+	debugDebug "return undef from stdShouldLog()"
 	return undef
 
 # ---------------------------------------------------------------------------
@@ -229,6 +257,7 @@ export setDebugging = (option) ->
 
 export getFuncList = (str) ->
 
+	strFuncList = str     # store original string for debugging
 	lFuncList = []
 	for word in words(str)
 		if lMatches = word.match(///^
@@ -258,23 +287,23 @@ export getFuncList = (str) ->
 # ---------------------------------------------------------------------------
 # --- export only to allow unit tests
 
-export funcMatch = (stack, lFuncList) ->
+export funcMatch = () ->
 
 	assert isArray(lFuncList), "not an array #{OL(lFuncList)}"
 
-	curFunc = stack.curFunc()
-	logif "funcMatch(): curFunc = #{OL(curFunc)}"
-	logif stack.dump('   ')
-	logif 'lFuncList', lFuncList
+	debugDebug "enter funcMatch()"
+	curFunc = callStack.curFunc()
+	debugDebug "curFunc = #{OL(curFunc)}"
+	debugDebug "lFuncList = #{strFuncList}"
 	for h in lFuncList
 		{name, object, plus} = h
 		if (name == curFunc)
-			logif "   curFunc in lFuncList - match successful"
+			debugDebug "return from funcMatch() - curFunc in lFuncList"
 			return true
-		if plus && stack.isActive(name)
-			logif "   func #{OL(name)} is active - match successful"
+		if plus && callStack.isActive(name)
+			debugDebug "return from funcMatch() - func #{OL(name)} is active"
 			return true
-	logif "   - no match"
+	debugDebug "return from funcMatch() - no match"
 	return false
 
 # ---------------------------------------------------------------------------

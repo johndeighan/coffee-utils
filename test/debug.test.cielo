@@ -47,37 +47,6 @@ setLogger (str) -> lLines.push(untabify(str))
 	)()
 
 # ---------------------------------------------------------------------------
-# funcMatch() expects a CallStack object as 1st parameter
-
-(() ->
-	stack = new CallStack()
-	stack.enter('get')
-
-	lFuncList = getFuncList("get")
-	simple.equal {{LINE}}, funcMatch(stack, lFuncList), true
-	)()
-
-# ---------------------------------------------------------------------------
-
-(() ->
-	stack = new CallStack()
-	stack.enter('get')
-
-	lFuncList = getFuncList("get+")
-	simple.equal {{LINE}}, funcMatch(stack, lFuncList), true
-	)()
-
-# ---------------------------------------------------------------------------
-
-(() ->
-	stack = new CallStack()
-	stack.enter('StringInput.get')
-
-	lFuncList = getFuncList("get")
-	simple.equal {{LINE}}, funcMatch(stack, lFuncList), true
-	)()
-
-# ---------------------------------------------------------------------------
 
 (() ->
 	setDebugging true

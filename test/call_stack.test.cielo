@@ -19,12 +19,12 @@ simple = new UnitTester()
 	simple.equal {{LINE}}, stack.getLevel(), 0
 
 	stack.enter('func1')
-	stack.logCurFunc()
+	stack.logCurFunc('func1')
 
 	simple.equal {{LINE}}, stack.getLevel(), 1
 
 	stack.enter('func2')
-	stack.logCurFunc()
+	stack.logCurFunc('func2')
 
 	simple.equal {{LINE}}, stack.getLevel(), 2
 
@@ -37,7 +37,7 @@ simple = new UnitTester()
 	simple.equal {{LINE}}, stack.getLevel(), 0
 
 	stack.enter('func2')
-	stack.logCurFunc()
+	stack.logCurFunc('func2')
 
 	simple.equal {{LINE}}, stack.getLevel(), 1
 
@@ -48,7 +48,7 @@ simple = new UnitTester()
 	simple.equal {{LINE}}, stack.getLevel(), 0
 
 	stack.enter('func1')
-	stack.logCurFunc()
+	stack.logCurFunc('func1')
 
 	simple.equal {{LINE}}, stack.getLevel(), 1
 
@@ -74,11 +74,11 @@ simple = new UnitTester()
 	simple.equal {{LINE}}, stack.curFunc(), 'main'
 
 	stack.enter('func1')
-	stack.logCurFunc()
+	stack.logCurFunc('func1')
 	simple.equal {{LINE}}, stack.curFunc(), 'func1'
 
 	stack.enter('func2')
-	stack.logCurFunc()
+	stack.logCurFunc('func2')
 	simple.equal {{LINE}}, stack.curFunc(), 'func2'
 
 	stack.returnFrom('func2')
@@ -88,7 +88,7 @@ simple = new UnitTester()
 	simple.equal {{LINE}}, stack.curFunc(), 'main'
 
 	stack.enter('func2')
-	stack.logCurFunc()
+	stack.logCurFunc('func2')
 	simple.equal {{LINE}}, stack.curFunc(), 'func2'
 
 	)()
@@ -105,7 +105,7 @@ simple = new UnitTester()
 	simple.equal {{LINE}}, stack.curFunc(), 'func1'
 
 	stack.enter('func2')
-	stack.logCurFunc()
+	stack.logCurFunc('func2')
 	simple.equal {{LINE}}, stack.curFunc(), 'func2'
 
 	stack.returnFrom('func2')
@@ -129,12 +129,12 @@ simple = new UnitTester()
 	simple.falsy {{LINE}}, stack.isActive('func2')
 
 	stack.enter('func1')
-	stack.logCurFunc()
+	stack.logCurFunc('func1')
 	simple.truthy {{LINE}}, stack.isActive('func1')
 	simple.falsy {{LINE}}, stack.isActive('func2')
 
 	stack.enter('func2')
-	stack.logCurFunc()
+	stack.logCurFunc('func2')
 	simple.truthy {{LINE}}, stack.isActive('func1')
 	simple.truthy {{LINE}}, stack.isActive('func2')
 
@@ -147,7 +147,7 @@ simple = new UnitTester()
 	simple.falsy {{LINE}}, stack.isActive('func2')
 
 	stack.enter('func2')
-	stack.logCurFunc()
+	stack.logCurFunc('func2')
 	simple.falsy {{LINE}}, stack.isActive('func1')
 	simple.truthy {{LINE}}, stack.isActive('func2')
 
@@ -167,7 +167,7 @@ simple = new UnitTester()
 	simple.falsy {{LINE}}, stack.isActive('func2')
 
 	stack.enter('func2')
-	stack.logCurFunc()
+	stack.logCurFunc('func2')
 	simple.truthy {{LINE}}, stack.isActive('func1')
 	simple.truthy {{LINE}}, stack.isActive('func2')
 

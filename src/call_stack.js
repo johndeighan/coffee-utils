@@ -45,10 +45,9 @@ export var CallStack = class CallStack {
   }
 
   // ........................................................................
-  enter(funcName, oldFlag = undef) {
+  enter(funcName) {
     var _, ident1, ident2, lMatches;
     // --- funcName might be <object>.<method>
-    assert(oldFlag === undef, "enter() takes only 1 arg");
     if (doDebugStack) {
       LOG(`[--> ENTER ${funcName}]`);
     }
@@ -57,17 +56,22 @@ export var CallStack = class CallStack {
     [_, ident1, ident2] = lMatches;
     if (ident2) {
       this.lStack.push({
-        fullName: `${ident1}.${ident2}`,
+        fullName: funcName, //    "#{ident1}.#{ident2}"
         funcName: ident2,
         isLogged: false
       });
     } else {
       this.lStack.push({
-        fullName: ident1,
+        fullName: funcName,
         funcName: ident1,
         isLogged: false
       });
     }
+  }
+
+  // ........................................................................
+  getLevel() {
+    return this.level;
   }
 
   // ........................................................................
@@ -89,12 +93,17 @@ export var CallStack = class CallStack {
   }
 
   // ........................................................................
-  logCurFunc() {
+  logCurFunc(funcName) {
     var cur;
     // --- funcName must be  the current function
     //     and the isLogged flag must currently be false
     cur = this.lStack[this.lStack.length - 1];
     assert(cur.isLogged === false, "isLogged is already true");
+    if (funcName !== cur.fullName) {
+      LOG(`cur func ${cur.fullName} is not ${funcName}`);
+      LOG(this.dump());
+      croak("BAD");
+    }
     cur.isLogged = true;
     this.level += 1;
   }
@@ -129,11 +138,6 @@ export var CallStack = class CallStack {
   }
 
   // ........................................................................
-  getLevel() {
-    return this.level;
-  }
-
-  // ........................................................................
   curFunc() {
     if (this.lStack.length === 0) {
       return 'main';
@@ -158,7 +162,6 @@ export var CallStack = class CallStack {
   }
 
   // ........................................................................
-  // ........................................................................
   dump(prefix = '', label = 'CALL STACK') {
     var i, item, j, lLines, len, ref;
     lLines = [`${label}:`];
@@ -172,6 +175,26 @@ export var CallStack = class CallStack {
       }
     }
     return lLines.join("\n") + "\n";
+  }
+
+  // ........................................................................
+  sdump(label = 'CALL STACK') {
+    var item, j, lFuncNames, len, ref;
+    lFuncNames = [];
+    ref = this.lStack;
+    for (j = 0, len = ref.length; j < len; j++) {
+      item = ref[j];
+      if (item.isLogged) {
+        lFuncNames.push('*' + item.fullName);
+      } else {
+        lFuncNames.push(item.fullName);
+      }
+    }
+    if (this.lStack.length === 0) {
+      return `${label} <EMPTY>`;
+    } else {
+      return `${label} ${lFuncNames.join(' ')}`;
+    }
   }
 
 };

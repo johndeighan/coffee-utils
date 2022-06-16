@@ -36,10 +36,9 @@ export class CallStack
 
 	# ........................................................................
 
-	enter: (funcName, oldFlag=undef) ->
+	enter: (funcName) ->
 		# --- funcName might be <object>.<method>
 
-		assert (oldFlag == undef), "enter() takes only 1 arg"
 		if doDebugStack
 			LOG "[--> ENTER #{funcName}]"
 
@@ -54,17 +53,23 @@ export class CallStack
 		[_, ident1, ident2] = lMatches
 		if ident2
 			@lStack.push({
-				fullName: "#{ident1}.#{ident2}"
+				fullName: funcName     #    "#{ident1}.#{ident2}"
 				funcName: ident2
 				isLogged: false
 				})
 		else
 			@lStack.push({
-				fullName: ident1
+				fullName: funcName
 				funcName: ident1
 				isLogged: false
 				})
 		return
+
+	# ........................................................................
+
+	getLevel: () ->
+
+		return @level
 
 	# ........................................................................
 
@@ -86,12 +91,17 @@ export class CallStack
 
 	# ........................................................................
 
-	logCurFunc: () ->
+	logCurFunc: (funcName) ->
 
 		# --- funcName must be  the current function
 		#     and the isLogged flag must currently be false
+
 		cur = @lStack[@lStack.length - 1]
 		assert (cur.isLogged == false), "isLogged is already true"
+		if (funcName != cur.fullName)
+			LOG "cur func #{cur.fullName} is not #{funcName}"
+			LOG @dump()
+			croak "BAD"
 		cur.isLogged = true
 		@level += 1
 		return
@@ -126,12 +136,6 @@ export class CallStack
 
 	# ........................................................................
 
-	getLevel: () ->
-
-		return @level
-
-	# ........................................................................
-
 	curFunc: () ->
 
 		if (@lStack.length == 0)
@@ -151,7 +155,6 @@ export class CallStack
 		return false
 
 	# ........................................................................
-	# ........................................................................
 
 	dump: (prefix='', label='CALL STACK') ->
 
@@ -162,3 +165,18 @@ export class CallStack
 			for item, i in @lStack
 				lLines.push "   #{i}: #{item.fullName} #{item.isLogged}"
 		return lLines.join("\n") + "\n"
+
+	# ........................................................................
+
+	sdump: (label='CALL STACK') ->
+
+		lFuncNames = []
+		for item in @lStack
+			if item.isLogged
+				lFuncNames.push '*' + item.fullName
+			else
+				lFuncNames.push item.fullName
+		if @lStack.length == 0
+			return "#{label} <EMPTY>"
+		else
+			return "#{label} #{lFuncNames.join(' ')}"
