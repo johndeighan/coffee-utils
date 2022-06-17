@@ -1,7 +1,7 @@
 # call_stack.coffee
 
 import {
-	undef, defined, croak, assert, OL, isBoolean, escapeStr,
+	undef, defined, croak, assert, OL, isBoolean, escapeStr, deepCopy,
 	} from '@jdeighan/coffee-utils'
 import {log, LOG} from '@jdeighan/coffee-utils/log'
 import {getPrefix} from '@jdeighan/coffee-utils/arrow'
@@ -36,7 +36,7 @@ export class CallStack
 
 	# ........................................................................
 
-	enter: (funcName) ->
+	enter: (funcName, lArgs=[]) ->
 		# --- funcName might be <object>.<method>
 
 		if doDebugStack
@@ -56,12 +56,14 @@ export class CallStack
 				fullName: funcName     #    "#{ident1}.#{ident2}"
 				funcName: ident2
 				isLogged: false
+				lArgs: deepCopy(lArgs)
 				})
 		else
 			@lStack.push({
 				fullName: funcName
 				funcName: ident1
 				isLogged: false
+				lArgs: deepCopy(lArgs)
 				})
 		return
 
@@ -156,15 +158,25 @@ export class CallStack
 
 	# ........................................................................
 
-	dump: (prefix='', label='CALL STACK') ->
+	dump: () ->
 
-		lLines = ["#{label}:"]
+		lLines = ["CALL STACK:"]
 		if @lStack.length == 0
 			lLines.push "   <EMPTY>"
 		else
 			for item, i in @lStack
-				lLines.push "   #{i}: #{item.fullName} #{item.isLogged}"
-		return lLines.join("\n") + "\n"
+				lLines.push "   " + @callStr(i, item)
+		return lLines.join("\n")
+
+	# ........................................................................
+
+	callStr: (i, item) ->
+
+		sym = if item.isLogged then '*' else ''
+		str = "#{i}#{sym}: #{item.fullName}"
+		for arg in item.lArgs
+			str += " #{OL(arg)}"
+		return str
 
 	# ........................................................................
 

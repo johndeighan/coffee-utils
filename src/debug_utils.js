@@ -70,8 +70,8 @@ lFunctions = undef; // --- only used when doDebugDebug is true
 
 
 // ---------------------------------------------------------------------------
-export var dumpCallStack = function(label) {
-  LOG(callStack.dump('', label));
+export var dumpCallStack = function() {
+  LOG(callStack.dump());
 };
 
 // ---------------------------------------------------------------------------
@@ -101,7 +101,7 @@ debugDebug = function(label, ...lObjects) {
   switch (type) {
     case 'enter':
       assert(defined(funcName), "type enter, funcName = undef");
-      callStack.enter(funcName);
+      callStack.enter(funcName, lObjects);
       doLog = (lFunctions === undef) || (indexOf.call(lFunctions, funcName) >= 0);
       break;
     case 'return':
@@ -138,7 +138,7 @@ export var debug = function(label, ...lObjects) {
   nObjects = lObjects.length;
   [type, funcName] = getType(label, nObjects);
   if (type === 'enter') {
-    callStack.enter(funcName);
+    callStack.enter(funcName, lObjects);
   }
   debugDebug(`enter debug(${OL(label)})`, ...lObjects);
   debugDebug(`type = ${OL(type)}`);

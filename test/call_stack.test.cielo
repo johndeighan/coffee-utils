@@ -182,6 +182,23 @@ simple = new UnitTester()
 	stack.enter('func2')
 	simple.falsy {{LINE}}, stack.isActive('func1')
 	simple.truthy {{LINE}}, stack.isActive('func2')
+	)()
 
+# ----------------------------------------------------------------------------
+# --- test dump()
+
+(() ->
+	stack = new CallStack()
+
+	stack.enter 'func1', [1, 'a']
+	stack.enter 'func2', []
+	stack.enter 'func3', [[1,2,3], {why: 'not'}]
+
+	simple.same {{LINE}}, stack.dump(), """
+			CALL STACK:
+			0: func1 1 'a'
+			1: func2
+			2: func3 [1,2,3] {"why":"not"}
+			"""
 	)()
 

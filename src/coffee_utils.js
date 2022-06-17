@@ -347,7 +347,18 @@ export var ltrunc = function(str, nChars) {
 // ---------------------------------------------------------------------------
 //   deepCopy - deep copy an array or object
 export var deepCopy = function(obj) {
-  return JSON.parse(JSON.stringify(obj));
+  var err, newObj, objStr;
+  if (obj === undef) {
+    return undef;
+  }
+  objStr = JSON.stringify(obj);
+  try {
+    newObj = JSON.parse(objStr);
+  } catch (error1) {
+    err = error1;
+    croak("ERROR: err.message", objStr);
+  }
+  return newObj;
 };
 
 // ---------------------------------------------------------------------------

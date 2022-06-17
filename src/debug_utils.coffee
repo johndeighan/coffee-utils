@@ -29,9 +29,9 @@ lFunctions = undef     # --- only used when doDebugDebug is true
 
 # ---------------------------------------------------------------------------
 
-export dumpCallStack = (label) ->
+export dumpCallStack = () ->
 
-	LOG callStack.dump('', label)
+	LOG callStack.dump()
 	return
 
 # ---------------------------------------------------------------------------
@@ -66,7 +66,7 @@ debugDebug = (label, lObjects...) ->
 	switch type
 		when 'enter'
 			assert defined(funcName), "type enter, funcName = undef"
-			callStack.enter funcName
+			callStack.enter funcName, lObjects
 			doLog = (lFunctions == undef) || (funcName in lFunctions)
 
 		when 'return'
@@ -105,7 +105,7 @@ export debug = (label, lObjects...) ->
 	nObjects = lObjects.length
 	[type, funcName] = getType(label, nObjects)
 	if (type == 'enter')
-		callStack.enter funcName
+		callStack.enter funcName, lObjects
 
 	debugDebug "enter debug(#{OL(label)})", lObjects...
 	debugDebug "type = #{OL(type)}"

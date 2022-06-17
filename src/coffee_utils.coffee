@@ -349,7 +349,15 @@ export ltrunc = (str, nChars) ->
 
 export deepCopy = (obj) ->
 
-	return JSON.parse(JSON.stringify(obj))
+	if (obj == undef)
+		return undef
+	objStr = JSON.stringify(obj)
+	try
+		newObj = JSON.parse(objStr)
+	catch err
+		croak "ERROR: err.message", objStr
+
+	return newObj
 
 # ---------------------------------------------------------------------------
 #   escapeStr - escape newlines, TAB chars, etc.

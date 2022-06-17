@@ -9,7 +9,8 @@ import {
   assert,
   OL,
   isBoolean,
-  escapeStr
+  escapeStr,
+  deepCopy
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -45,7 +46,7 @@ export var CallStack = class CallStack {
   }
 
   // ........................................................................
-  enter(funcName) {
+  enter(funcName, lArgs = []) {
     var _, ident1, ident2, lMatches;
     // --- funcName might be <object>.<method>
     if (doDebugStack) {
@@ -58,13 +59,15 @@ export var CallStack = class CallStack {
       this.lStack.push({
         fullName: funcName, //    "#{ident1}.#{ident2}"
         funcName: ident2,
-        isLogged: false
+        isLogged: false,
+        lArgs: deepCopy(lArgs)
       });
     } else {
       this.lStack.push({
         fullName: funcName,
         funcName: ident1,
-        isLogged: false
+        isLogged: false,
+        lArgs: deepCopy(lArgs)
       });
     }
   }
@@ -162,19 +165,32 @@ export var CallStack = class CallStack {
   }
 
   // ........................................................................
-  dump(prefix = '', label = 'CALL STACK') {
+  dump() {
     var i, item, j, lLines, len, ref;
-    lLines = [`${label}:`];
+    lLines = ["CALL STACK:"];
     if (this.lStack.length === 0) {
       lLines.push("   <EMPTY>");
     } else {
       ref = this.lStack;
       for (i = j = 0, len = ref.length; j < len; i = ++j) {
         item = ref[i];
-        lLines.push(`   ${i}: ${item.fullName} ${item.isLogged}`);
+        lLines.push("   " + this.callStr(i, item));
       }
     }
-    return lLines.join("\n") + "\n";
+    return lLines.join("\n");
+  }
+
+  // ........................................................................
+  callStr(i, item) {
+    var arg, j, len, ref, str, sym;
+    sym = item.isLogged ? '*' : '';
+    str = `${i}${sym}: ${item.fullName}`;
+    ref = item.lArgs;
+    for (j = 0, len = ref.length; j < len; j++) {
+      arg = ref[j];
+      str += ` ${OL(arg)}`;
+    }
+    return str;
   }
 
   // ........................................................................
