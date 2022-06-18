@@ -2,7 +2,7 @@
 
 import {
 	assert, undef, error, croak, warn, defined,
-	isString, isFunction, isBoolean,
+	isString, isFunction, isBoolean, patchStr,
 	OL, escapeStr, isNumber, isArray, words, pass,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'
@@ -10,10 +10,10 @@ import {untabify} from '@jdeighan/coffee-utils/indent'
 import {slurp} from '@jdeighan/coffee-utils/fs'
 import {CallStack} from '@jdeighan/coffee-utils/stack'
 import {
-	getPrefix, addArrow, removeLastVbar,
+	prefix, addArrow, removeLastVbar, vbar,
 	} from '@jdeighan/coffee-utils/arrow'
 import {
-	log, logItem, LOG, shortEnough, dashes,
+	log, logItem, logBareItem, LOG, shortEnough,
 	} from '@jdeighan/coffee-utils/log'
 
 # --- set in resetDebugging() and setDebugging()
@@ -152,42 +152,37 @@ export debug = (label, lObjects...) ->
 
 export doTheLogging = (type, label, lObjects) ->
 
-	level = callStack.getLevel()
-	prefix = getPrefix(level)
-	itemPrefix = removeLastVbar(prefix)
-	sep = dashes(itemPrefix, 40)
-	assert isString(sep), "sep is not a string"
-
 	debugDebug "callStack", callStack
+	level = callStack.getLevel()
 	debugDebug "level = #{OL(level)}"
-	debugDebug "prefix = #{OL(prefix)}"
-	debugDebug "itemPrefix = #{OL(itemPrefix)}"
-	debugDebug "sep = #{OL(sep)}"
+	sep = '-'.repeat(40)
 
 	switch type
 		when 'enter'
-			log label, {prefix}
+			log label, prefix(level)
+			pre = prefix(level+1)
 			for obj,i in lObjects
-				if (i > 0)
-					log sep
-				logItem undef, obj, {itemPrefix}
+				log patchStr(sep, 15, " arg #{i} "), pre
+				logBareItem obj, pre
 		when 'return'
-			log label, {prefix: addArrow(prefix)}
+			assert (level > 0), "type=return, level=#{level}"
+			log label, prefix(level, 'withArrow')
+			pre = prefix(level, 'noLastVbar')
 			for obj,i in lObjects
-				if (i > 0)
-					log sep
-				logItem undef, obj, {itemPrefix}
+				log patchStr(sep, 15, " ret #{i} "), pre
+				logBareItem obj, pre
 		when 'string'
-			log label, {prefix}
+			log label, prefix(level)
 		when 'objects'
+			pre = prefix(level)
 			if (lObjects.length==1) && shortEnough(label, lObjects[0])
-				logItem label, lObjects[0], {prefix}
+				logItem label, lObjects[0], pre
 			else
 				if (label.indexOf(':') != label.length - 1)
 					label += ':'
-				log label, {prefix}
+				log label, pre
 				for obj in lObjects
-					logItem undef, obj, {prefix}
+					logBareItem obj, pre
 	return
 
 # ---------------------------------------------------------------------------

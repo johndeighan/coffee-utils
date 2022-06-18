@@ -14,13 +14,8 @@ import {
 } from '@jdeighan/coffee-utils';
 
 import {
-  log,
   LOG
 } from '@jdeighan/coffee-utils/log';
-
-import {
-  getPrefix
-} from '@jdeighan/coffee-utils/arrow';
 
 doDebugStack = false;
 

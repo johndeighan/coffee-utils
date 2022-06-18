@@ -5,7 +5,7 @@ import {
 	say, undef, error, warn, isString, isObject, isArray, isHash,
 	isEmpty, nonEmpty, getClassName, isNumber,
 	isFunction, isInteger, rtrim, isUniqueList,
-	ltrunc, rtrunc, extractMatches, range,
+	ltrunc, rtrunc, extractMatches, range, patchStr,
 	words, escapeStr, titleLine, className,
 	removeCR, CWS, isArrayOfHashes, setCharsAt,
 	oneline, croak, isRegExp, uniq, hashToStr, envVarsWithPrefix,
@@ -332,3 +332,9 @@ simple.equal {{LINE}}, range(3), [0,1,2]
 simple.equal {{LINE}}, setCharsAt('abc', 1, 'x'), 'axc'
 simple.equal {{LINE}}, setCharsAt('abc', 1, 'xy'), 'axy'
 simple.equal {{LINE}}, setCharsAt('abc', 1, 'xyz'), 'axyz'
+
+# ---------------------------------------------------------------------------
+
+simple.equal {{LINE}}, patchStr('------------', 3, 'arg 3'), '---arg 3----'
+simple.equal {{LINE}}, patchStr('------------', 3, ' arg 3 '), '--- arg 3 --'
+simple.equal {{LINE}}, patchStr('-----', 3, 'arg 3'), '---arg 3'

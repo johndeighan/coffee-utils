@@ -13,6 +13,7 @@ import {
   isString,
   isFunction,
   isBoolean,
+  patchStr,
   OL,
   escapeStr,
   isNumber,
@@ -38,17 +39,18 @@ import {
 } from '@jdeighan/coffee-utils/stack';
 
 import {
-  getPrefix,
+  prefix,
   addArrow,
-  removeLastVbar
+  removeLastVbar,
+  vbar
 } from '@jdeighan/coffee-utils/arrow';
 
 import {
   log,
   logItem,
+  logBareItem,
   LOG,
-  shortEnough,
-  dashes
+  shortEnough
 } from '@jdeighan/coffee-utils/log';
 
 // --- set in resetDebugging() and setDebugging()
@@ -181,54 +183,46 @@ export var debug = function(label, ...lObjects) {
 
 // ---------------------------------------------------------------------------
 export var doTheLogging = function(type, label, lObjects) {
-  var i, itemPrefix, j, k, l, len, len1, len2, level, obj, prefix, sep;
-  level = callStack.getLevel();
-  prefix = getPrefix(level);
-  itemPrefix = removeLastVbar(prefix);
-  sep = dashes(itemPrefix, 40);
-  assert(isString(sep), "sep is not a string");
+  var i, j, k, l, len, len1, len2, level, obj, pre, sep;
   debugDebug("callStack", callStack);
+  level = callStack.getLevel();
   debugDebug(`level = ${OL(level)}`);
-  debugDebug(`prefix = ${OL(prefix)}`);
-  debugDebug(`itemPrefix = ${OL(itemPrefix)}`);
-  debugDebug(`sep = ${OL(sep)}`);
+  sep = '-'.repeat(40);
   switch (type) {
     case 'enter':
-      log(label, {prefix});
+      log(label, prefix(level));
+      pre = prefix(level + 1);
       for (i = j = 0, len = lObjects.length; j < len; i = ++j) {
         obj = lObjects[i];
-        if (i > 0) {
-          log(sep);
-        }
-        logItem(undef, obj, {itemPrefix});
+        log(patchStr(sep, 15, ` arg ${i} `), pre);
+        logBareItem(obj, pre);
       }
       break;
     case 'return':
-      log(label, {
-        prefix: addArrow(prefix)
-      });
+      assert(level > 0, `type=return, level=${level}`);
+      log(label, prefix(level, 'withArrow'));
+      pre = prefix(level, 'noLastVbar');
       for (i = k = 0, len1 = lObjects.length; k < len1; i = ++k) {
         obj = lObjects[i];
-        if (i > 0) {
-          log(sep);
-        }
-        logItem(undef, obj, {itemPrefix});
+        log(patchStr(sep, 15, ` ret ${i} `), pre);
+        logBareItem(obj, pre);
       }
       break;
     case 'string':
-      log(label, {prefix});
+      log(label, prefix(level));
       break;
     case 'objects':
+      pre = prefix(level);
       if ((lObjects.length === 1) && shortEnough(label, lObjects[0])) {
-        logItem(label, lObjects[0], {prefix});
+        logItem(label, lObjects[0], pre);
       } else {
         if (label.indexOf(':') !== label.length - 1) {
           label += ':';
         }
-        log(label, {prefix});
+        log(label, pre);
         for (l = 0, len2 = lObjects.length; l < len2; l++) {
           obj = lObjects[l];
-          logItem(undef, obj, {prefix});
+          logBareItem(obj, pre);
         }
       }
   }

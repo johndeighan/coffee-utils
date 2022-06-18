@@ -40,11 +40,6 @@ export var stringify = undef;
 fourSpaces = '    ';
 
 // ---------------------------------------------------------------------------
-export var dashes = function(prefix, totalLen = 64, ch = '-') {
-  return prefix + ch.repeat(totalLen - prefix.length);
-};
-
-// ---------------------------------------------------------------------------
 export var debugLog = function(flag = true) {
   doDebugLog = flag;
   if (doDebugLog) {
@@ -132,7 +127,7 @@ export var tamlStringify = function(obj, escape = false) {
       return value;
     }
   });
-  return "---\n" + tabify(str, 1);
+  return "---\n" + str;
 };
 
 // ---------------------------------------------------------------------------
@@ -147,21 +142,18 @@ export var orderedStringify = function(obj, escape = false) {
       return value;
     }
   });
-  return "---\n" + tabify(str, 1);
+  return "---\n" + str;
 };
 
 // ---------------------------------------------------------------------------
 maxOneLine = 32;
 
 // ---------------------------------------------------------------------------
-export var log = function(str, hOptions = {}) {
-  var prefix;
-  // --- valid options:
-  //   prefix
+export var log = function(str, prefix = '') {
+  assert(isString(prefix), `not a string: ${OL(prefix)}`);
   assert(isString(str), `log(): not a string: ${OL(str)}`);
   assert(isFunction(putstr), "putstr not properly set");
-  assert(isHash(hOptions), `log(): arg 2 not a hash: ${OL(hOptions)}`);
-  prefix = fixForTerminal(hOptions.prefix);
+  prefix = fixForTerminal(prefix);
   if (doDebugLog) {
     LOG(`CALL log(${OL(str)}), prefix = ${OL(prefix)}`);
   }
@@ -171,45 +163,48 @@ export var log = function(str, hOptions = {}) {
 
 
 // ---------------------------------------------------------------------------
-export var logItem = function(label, item, hOptions = {}) {
-  var i, labelStr, len, prefix, ref, str;
-  // --- valid options:
-  //   prefix
+export var logBareItem = function(item, pre = '') {
+  logItem(undef, item, pre);
+};
+
+// ---------------------------------------------------------------------------
+export var logItem = function(label, item, pre = '') {
+  var i, labelStr, len, ref, str;
+  assert(isString(pre), `not a string: ${OL(pre)}`);
   assert(isFunction(putstr), "putstr not properly set");
   assert(!label || isString(label), "label a non-string");
-  assert(isHash(hOptions), "arg 3 not a hash");
-  label = fixForTerminal(label);
-  prefix = fixForTerminal(hOptions.prefix);
-  assert(prefix.indexOf("\t") === -1, "prefix has TAB");
+  //	label = fixForTerminal(label)
+  //	pre = fixForTerminal(pre)
+  assert(pre.indexOf("\t") === -1, "pre has TAB");
   if (doDebugLog) {
     LOG(`CALL logItem(${OL(label)}, ${OL(item)})`);
-    LOG(`prefix = ${OL(prefix)}`);
+    LOG(`pre = ${OL(pre)}`);
   }
   labelStr = label ? `${label} = ` : "";
   if (item === undef) {
-    putstr(`${prefix}${labelStr}undef`);
+    putstr(`${pre}${labelStr}undef`);
   } else if (item === null) {
-    putstr(`${prefix}${labelStr}null`);
+    putstr(`${pre}${labelStr}null`);
   } else if (isString(item)) {
     if (item.length <= maxOneLine) {
-      putstr(`${prefix}${labelStr}'${escapeStr(item)}'`);
+      putstr(`${pre}${labelStr}'${escapeStr(item)}'`);
     } else {
       if (label) {
-        putstr(`${prefix}${label}:`);
+        putstr(`${pre}${label}:`);
       }
-      putBlock(item, prefix + fourSpaces);
+      putBlock(item, pre); //     + fourSpaces
     }
   } else if (isNumber(item)) {
-    putstr(`${prefix}${labelStr}${item}`);
+    putstr(`${pre}${labelStr}${item}`);
   } else {
     if (label) {
-      putstr(`${prefix}${label}:`);
+      putstr(`${pre}${label}:`);
     }
     ref = blockToArray(stringify(item, true));
     // escape special chars
     for (i = 0, len = ref.length; i < len; i++) {
       str = ref[i];
-      putstr(`${prefix + fourSpaces}${fixForTerminal(str)}`);
+      putstr(`${pre + fourSpaces}${fixForTerminal(str)}`);
     }
   }
   return true;

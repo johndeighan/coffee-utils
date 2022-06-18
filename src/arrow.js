@@ -24,30 +24,23 @@ export var arrow = corner + hbar + arrowhead + space;
 export var clearIndent = space + space + space + space;
 
 // ---------------------------------------------------------------------------
-export var getPrefix = function(level, option = 'none') {
+export var prefix = function(level, option = 'none') {
   var result;
-  if (level === 0) {
-    if (option === 'object') {
-      return clearIndent;
-    } else {
-      return '';
-    }
-  }
   switch (option) {
     case 'withArrow':
       result = oneIndent.repeat(level - 1) + arrow;
       break;
-    case 'object':
-      result = oneIndent.repeat(level) + clearIndent;
+    case 'noLastVbar':
+      result = oneIndent.repeat(level - 1) + clearIndent;
       break;
     case 'none':
       result = oneIndent.repeat(level);
       break;
     default:
-      throw new Error(`getPrefix(): Bad option: '${option}'`);
+      throw new Error(`prefix(): Bad option: '${option}'`);
   }
   if (result.length % 4 !== 0) {
-    throw new Error(`getPrefix(): Bad prefix '${result}'`);
+    throw new Error(`prefix(): Bad prefix '${result}'`);
   }
   return result;
 };
@@ -55,29 +48,23 @@ export var getPrefix = function(level, option = 'none') {
 // ---------------------------------------------------------------------------
 export var addArrow = function(prefix) {
   var pos, result;
-  //	console.log "in addArrow(#{OL(prefix)})"
   pos = prefix.lastIndexOf(vbar);
-  //	console.log "pos = #{pos}"
   if (pos === -1) {
     result = prefix;
   } else {
     result = setCharsAt(prefix, pos, arrow);
   }
-  //	console.log "result = #{OL(result)}"
   return result;
 };
 
 // ---------------------------------------------------------------------------
 export var removeLastVbar = function(prefix) {
   var pos, result;
-  //	console.log "in removeLastVbar(#{OL(prefix)})"
   pos = prefix.lastIndexOf(vbar);
-  //	console.log "pos = #{pos}"
   if (pos === -1) {
     result = prefix;
   } else {
     result = setCharsAt(prefix, pos, ' ');
   }
-  //	console.log "result = #{OL(result)}"
   return result;
 };

@@ -20,12 +20,6 @@ fourSpaces  = '    '
 
 # ---------------------------------------------------------------------------
 
-export dashes = (prefix, totalLen=64, ch='-') ->
-
-	return prefix + ch.repeat(totalLen - prefix.length)
-
-# ---------------------------------------------------------------------------
-
 export debugLog = (flag=true) ->
 
 	doDebugLog = flag
@@ -109,7 +103,7 @@ export tamlStringify = (obj, escape=false) ->
 		lineWidth: -1
 		replacer: if escape then escReplacer else (name,value) -> value
 		})
-	return "---\n" + tabify(str, 1)
+	return "---\n" + str
 
 # ---------------------------------------------------------------------------
 
@@ -123,7 +117,7 @@ export orderedStringify = (obj, escape=false) ->
 		replacer: if escape then escReplacer else (name,value) -> value
 		})
 
-	return "---\n" + tabify(str, 1)
+	return "---\n" + str
 
 # ---------------------------------------------------------------------------
 
@@ -131,14 +125,12 @@ maxOneLine = 32
 
 # ---------------------------------------------------------------------------
 
-export log = (str, hOptions={}) ->
-	# --- valid options:
-	#   prefix
+export log = (str, prefix='') ->
 
+	assert isString(prefix), "not a string: #{OL(prefix)}"
 	assert isString(str),      "log(): not a string: #{OL(str)}"
 	assert isFunction(putstr), "putstr not properly set"
-	assert isHash(hOptions),   "log(): arg 2 not a hash: #{OL(hOptions)}"
-	prefix = fixForTerminal(hOptions.prefix)
+	prefix = fixForTerminal(prefix)
 
 	if doDebugLog
 		LOG "CALL log(#{OL(str)}), prefix = #{OL(prefix)}"
@@ -148,42 +140,47 @@ export log = (str, hOptions={}) ->
 
 # ---------------------------------------------------------------------------
 
-export logItem = (label, item, hOptions={}) ->
-	# --- valid options:
-	#   prefix
+export logBareItem = (item, pre='') ->
 
+	logItem undef, item, pre
+	return
+
+# ---------------------------------------------------------------------------
+
+export logItem = (label, item, pre='') ->
+
+	assert isString(pre), "not a string: #{OL(pre)}"
 	assert isFunction(putstr), "putstr not properly set"
 	assert !label || isString(label), "label a non-string"
-	assert isHash(hOptions), "arg 3 not a hash"
 
-	label = fixForTerminal(label)
-	prefix = fixForTerminal(hOptions.prefix)
-	assert prefix.indexOf("\t") == -1, "prefix has TAB"
+#	label = fixForTerminal(label)
+#	pre = fixForTerminal(pre)
+	assert pre.indexOf("\t") == -1, "pre has TAB"
 
 	if doDebugLog
 		LOG "CALL logItem(#{OL(label)}, #{OL(item)})"
-		LOG "prefix = #{OL(prefix)}"
+		LOG "pre = #{OL(pre)}"
 
 	labelStr = if label then "#{label} = " else ""
 
 	if (item == undef)
-		putstr "#{prefix}#{labelStr}undef"
+		putstr "#{pre}#{labelStr}undef"
 	else if (item == null)
-		putstr "#{prefix}#{labelStr}null"
+		putstr "#{pre}#{labelStr}null"
 	else if isString(item)
 		if (item.length <= maxOneLine)
-			putstr "#{prefix}#{labelStr}'#{escapeStr(item)}'"
+			putstr "#{pre}#{labelStr}'#{escapeStr(item)}'"
 		else
 			if label
-				putstr "#{prefix}#{label}:"
-			putBlock item, prefix + fourSpaces
+				putstr "#{pre}#{label}:"
+			putBlock item, pre              #     + fourSpaces
 	else if isNumber(item)
-		putstr "#{prefix}#{labelStr}#{item}"
+		putstr "#{pre}#{labelStr}#{item}"
 	else
 		if label
-			putstr "#{prefix}#{label}:"
+			putstr "#{pre}#{label}:"
 		for str in blockToArray(stringify(item, true))  # escape special chars
-			putstr "#{prefix + fourSpaces}#{fixForTerminal(str)}"
+			putstr "#{pre + fourSpaces}#{fixForTerminal(str)}"
 
 	return true
 

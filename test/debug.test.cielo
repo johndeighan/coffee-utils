@@ -3,7 +3,7 @@
 import {UnitTesterNorm, UnitTester} from '@jdeighan/unit-tester'
 import {undef, OL, isString} from '@jdeighan/coffee-utils'
 import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
-import {log, LOG, setLogger, debugLog} from '@jdeighan/coffee-utils/log'
+import {LOG, setLogger, debugLog} from '@jdeighan/coffee-utils/log'
 import {untabify} from '@jdeighan/coffee-utils/indent'
 import {CallStack} from '@jdeighan/coffee-utils/stack'
 import {
@@ -84,16 +84,20 @@ tester = new TraceTester()
 (() ->
 	setDebugging true
 	lLines = []
-	debug 'enter myfunc'
+	debug 'enter myfunc()', 'abc', 42
 	debug 'something'
 	debug 'more'
-	debug 'return 42 from myfunc'
+	debug 'return 42 from myfunc()'
 	debug "Answer is 42"
 	simple.equal {{LINE}}, lLines, [
-		"enter myfunc"
+		"enter myfunc()"
+		"│   --------------- arg 0 ------------------"
+		"│   \'abc\'"
+		"│   --------------- arg 1 ------------------"
+		"│   42"
 		"│   something"
 		"│   more"
-		"└─> return 42 from myfunc"
+		"└─> return 42 from myfunc()"
 		"Answer is 42"
 		]
 	)()
@@ -337,6 +341,7 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc"
+		"    --------------- ret 0 ------------------"
 		"    ---"
 		"    first: this˳is˳the˳first˳item˳in˳the˳hash"
 		"    second: this˳is˳the˳second˳item˳in˳the˳hash"
@@ -361,6 +366,7 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc"
+		"    ----------- ret 0 ------------------"
 		"    =========================================="
 		"    this˳is˳one˳very˳long˳line"
 		"    this˳is˳another˳very˳long˳line"

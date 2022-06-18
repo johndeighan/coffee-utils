@@ -5,17 +5,13 @@ import {undef, escapeStr} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {
 	stringify, setStringifier, log, LOG, logItem, setLogger,
-	tamlStringify, orderedStringify, dashes,
+	tamlStringify, orderedStringify,
 	} from '@jdeighan/coffee-utils/log'
 
 
 simple = new UnitTesterNorm()
 lLines = undef
 setLogger (str) -> lLines.push(str)
-
-# ---------------------------------------------------------------------------
-
-simple.equal {{LINE}}, dashes('<->', 8), '<->-----'
 
 # ---------------------------------------------------------------------------
 
@@ -207,7 +203,7 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	logItem 'name', undef, {prefix: '<-->'}
+	logItem 'name', undef, '<-->'
 	tester.equal {{LINE}}, lLines, """
 		<-->name = undef
 		"""
@@ -215,7 +211,7 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	logItem 'name', 42, {prefix: '<-->'}
+	logItem 'name', 42, '<-->'
 	tester.equal {{LINE}}, lLines, """
 		<-->name = 42
 		"""
@@ -223,7 +219,7 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	logItem 'name', 'John', {prefix: '<-->'}
+	logItem 'name', 'John', '<-->'
 	tester.equal {{LINE}}, lLines, """
 		<-->name = 'John'
 		"""
@@ -231,7 +227,7 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	logItem 'name', {a: 1, b: 'xyz'}, {prefix: '<-->'}
+	logItem 'name', {a: 1, b: 'xyz'}, '<-->'
 	tester.equal {{LINE}}, lLines, """
 		<-->name:
 		<-->	---
@@ -242,7 +238,7 @@ tester = new LogTester()
 
 (() ->
 	lLines = []
-	logItem 'name', ['a', 42, [1,2]], {prefix: '<-->'}
+	logItem 'name', ['a', 42, [1,2]], '<-->'
 	tester.equal {{LINE}}, lLines, """
 		<-->name:
 		<-->	---
@@ -260,7 +256,7 @@ tester = new LogTester()
 		This is a rather long bit of
 		text which changes
 		how it's displayed
-		""", {prefix: '<-->'}
+		""", '<-->'
 	tester.equal {{LINE}}, lLines, """
 		<-->name:
 		<-->	==========================================
@@ -278,7 +274,7 @@ tester = new LogTester()
 		lname: 'Deighan',
 		age: 68,
 		home: 'Blacksburg, VA',
-		}, {prefix: '<-->'}
+		}, '<-->'
 	tester.equal {{LINE}}, lLines, """
 		<-->name:
 		<-->	---
@@ -295,7 +291,7 @@ tester = new LogTester()
 		68,
 		'a rather long string of text',
 		{a:1, b:2}
-		], {prefix: '<-->'}
+		], '<-->'
 	tester.equal {{LINE}}, lLines, """
 		<-->name:
 		<-->	---

@@ -113,6 +113,17 @@ export var getClassName = function(obj) {
 };
 
 // ---------------------------------------------------------------------------
+export var patchStr = function(bigstr, pos, str) {
+  var endpos;
+  endpos = pos + str.length;
+  if (endpos < bigstr.length) {
+    return bigstr.substring(0, pos) + str + bigstr.substring(endpos);
+  } else {
+    return bigstr.substring(0, pos) + str;
+  }
+};
+
+// ---------------------------------------------------------------------------
 export var isString = function(x) {
   return typeof x === 'string' || x instanceof String;
 };

@@ -118,6 +118,16 @@ export getClassName = (obj) ->
 
 # ---------------------------------------------------------------------------
 
+export patchStr = (bigstr, pos, str) ->
+
+	endpos = pos + str.length
+	if (endpos < bigstr.length)
+		return bigstr.substring(0, pos) + str + bigstr.substring(endpos)
+	else
+		return bigstr.substring(0, pos) + str
+
+# ---------------------------------------------------------------------------
+
 export isString = (x) ->
 
 	return typeof x == 'string' || x instanceof String

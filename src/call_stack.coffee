@@ -3,8 +3,7 @@
 import {
 	undef, defined, croak, assert, OL, isBoolean, escapeStr, deepCopy,
 	} from '@jdeighan/coffee-utils'
-import {log, LOG} from '@jdeighan/coffee-utils/log'
-import {getPrefix} from '@jdeighan/coffee-utils/arrow'
+import {LOG} from '@jdeighan/coffee-utils/log'
 
 doDebugStack = false
 

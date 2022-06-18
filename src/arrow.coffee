@@ -16,50 +16,39 @@ export clearIndent = space + space + space + space
 
 # ---------------------------------------------------------------------------
 
-export getPrefix = (level, option='none') ->
+export prefix = (level, option='none') ->
 
-	if level==0
-		if (option == 'object')
-			return clearIndent
-		else
-			return ''
 	switch option
 		when 'withArrow'
 			result = oneIndent.repeat(level-1) + arrow
-		when 'object'
-			result = oneIndent.repeat(level) + clearIndent
+		when 'noLastVbar'
+			result = oneIndent.repeat(level-1) + clearIndent
 		when 'none'
 			result = oneIndent.repeat(level)
 		else
-			throw new Error("getPrefix(): Bad option: '#{option}'")
+			throw new Error("prefix(): Bad option: '#{option}'")
 	if result.length % 4 != 0
-		throw new Error("getPrefix(): Bad prefix '#{result}'")
+		throw new Error("prefix(): Bad prefix '#{result}'")
 	return result
 
 # ---------------------------------------------------------------------------
 
 export addArrow = (prefix) ->
 
-#	console.log "in addArrow(#{OL(prefix)})"
 	pos = prefix.lastIndexOf(vbar)
-#	console.log "pos = #{pos}"
 	if (pos == -1)
 		result = prefix
 	else
 		result = setCharsAt(prefix, pos, arrow)
-#	console.log "result = #{OL(result)}"
 	return result
 
 # ---------------------------------------------------------------------------
 
 export removeLastVbar = (prefix) ->
 
-#	console.log "in removeLastVbar(#{OL(prefix)})"
 	pos = prefix.lastIndexOf(vbar)
-#	console.log "pos = #{pos}"
 	if (pos == -1)
 		result = prefix
 	else
 		result = setCharsAt(prefix, pos, ' ')
-#	console.log "result = #{OL(result)}"
 	return result
