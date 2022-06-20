@@ -7,9 +7,8 @@ import {
 	} from '@jdeighan/coffee-utils/log'
 
 simple = new UnitTester()
-# simple.same {{LINE}}, stringify, orderedStringify
 
-simple.equal {{LINE}}, orderedStringify(['a', 42, [1,2]]), """
+simple.same {{LINE}}, orderedStringify(['a', 42, [1,2]]), """
 	---
 	- a
 	- 42

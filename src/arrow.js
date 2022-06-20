@@ -2,6 +2,7 @@
   // arrow.coffee
 import {
   undef,
+  assert,
   OL,
   setCharsAt
 } from '@jdeighan/coffee-utils';
@@ -25,24 +26,23 @@ export var clearIndent = space + space + space + space;
 
 // ---------------------------------------------------------------------------
 export var prefix = function(level, option = 'none') {
-  var result;
   switch (option) {
     case 'withArrow':
-      result = oneIndent.repeat(level - 1) + arrow;
+      if (level === 0) {
+        return arrow;
+      } else {
+        return oneIndent.repeat(level - 1) + arrow;
+      }
       break;
     case 'noLastVbar':
-      result = oneIndent.repeat(level - 1) + clearIndent;
-      break;
-    case 'none':
-      result = oneIndent.repeat(level);
-      break;
+      assert(level >= 1, `prefix(), noLastVbar but level=${OL(level)}`);
+      return oneIndent.repeat(level - 1) + clearIndent;
+    case 'noLast2Vbars':
+      assert(level >= 2, `prefix(), noLast2Vbars but level=${OL(level)}`);
+      return oneIndent.repeat(level - 2) + clearIndent + clearIndent;
     default:
-      throw new Error(`prefix(): Bad option: '${option}'`);
+      return oneIndent.repeat(level);
   }
-  if (result.length % 4 !== 0) {
-    throw new Error(`prefix(): Bad prefix '${result}'`);
-  }
-  return result;
 };
 
 // ---------------------------------------------------------------------------

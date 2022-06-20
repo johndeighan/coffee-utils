@@ -1,6 +1,6 @@
 # arrow.coffee
 
-import {undef, OL, setCharsAt} from '@jdeighan/coffee-utils'
+import {undef, assert, OL, setCharsAt} from '@jdeighan/coffee-utils'
 
 # --- We use spaces here because Windows Terminal handles TAB chars badly
 
@@ -20,16 +20,18 @@ export prefix = (level, option='none') ->
 
 	switch option
 		when 'withArrow'
-			result = oneIndent.repeat(level-1) + arrow
+			if (level == 0)
+				return arrow
+			else
+				return oneIndent.repeat(level-1) + arrow
 		when 'noLastVbar'
-			result = oneIndent.repeat(level-1) + clearIndent
-		when 'none'
-			result = oneIndent.repeat(level)
+			assert (level >= 1), "prefix(), noLastVbar but level=#{OL(level)}"
+			return oneIndent.repeat(level-1) + clearIndent
+		when 'noLast2Vbars'
+			assert (level >= 2), "prefix(), noLast2Vbars but level=#{OL(level)}"
+			return oneIndent.repeat(level-2) + clearIndent + clearIndent
 		else
-			throw new Error("prefix(): Bad option: '#{option}'")
-	if result.length % 4 != 0
-		throw new Error("prefix(): Bad prefix '#{result}'")
-	return result
+			return oneIndent.repeat(level)
 
 # ---------------------------------------------------------------------------
 

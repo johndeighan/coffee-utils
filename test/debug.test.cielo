@@ -87,17 +87,16 @@ tester = new TraceTester()
 	debug 'enter myfunc()', 'abc', 42
 	debug 'something'
 	debug 'more'
-	debug 'return 42 from myfunc()'
+	debug 'return from myfunc()', 42
 	debug "Answer is 42"
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc()"
-		"│   --------------- arg 0 ------------------"
-		"│   \'abc\'"
-		"│   --------------- arg 1 ------------------"
-		"│   42"
+		"│   arg[0] = \'abc\'"
+		"│   arg[1] = 42"
 		"│   something"
 		"│   more"
-		"└─> return 42 from myfunc()"
+		"└─> return from myfunc()"
+		"    ret[0] = 42"
 		"Answer is 42"
 		]
 	)()
@@ -341,10 +340,10 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc"
-		"    --------------- ret 0 ------------------"
-		"    ---"
-		"    first: this˳is˳the˳first˳item˳in˳the˳hash"
-		"    second: this˳is˳the˳second˳item˳in˳the˳hash"
+		"    ret[0]:"
+		"        ---"
+		"        first: this˳is˳the˳first˳item˳in˳the˳hash"
+		"        second: this˳is˳the˳second˳item˳in˳the˳hash"
 		"Answer is 42"
 		]
 	)()
@@ -366,11 +365,11 @@ tester = new TraceTester()
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc"
 		"└─> return from myfunc"
-		"    ----------- ret 0 ------------------"
-		"    =========================================="
-		"    this˳is˳one˳very˳long˳line"
-		"    this˳is˳another˳very˳long˳line"
-		"    =========================================="
+		"    ret[0]:"
+		"        =========================================="
+		"        this˳is˳one˳very˳long˳line"
+		"        this˳is˳another˳very˳long˳line"
+		"        =========================================="
 		"Answer is 42"
 		]
 	)()

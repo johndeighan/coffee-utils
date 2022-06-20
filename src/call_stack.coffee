@@ -1,7 +1,8 @@
 # call_stack.coffee
 
 import {
-	undef, defined, croak, assert, OL, isBoolean, escapeStr, deepCopy,
+	undef, defined, croak, assert, OL,  escapeStr, deepCopy,
+	isArray, isBoolean,
 	} from '@jdeighan/coffee-utils'
 import {LOG} from '@jdeighan/coffee-utils/log'
 
@@ -21,7 +22,6 @@ export class CallStack
 	constructor: () ->
 
 		@lStack = []
-		@level = 0
 
 	# ........................................................................
 
@@ -30,13 +30,15 @@ export class CallStack
 		if doDebugStack
 			LOG "RESET STACK"
 		@lStack = []
-		@level = 0
 		return
 
 	# ........................................................................
 
-	enter: (funcName, lArgs=[]) ->
+	enter: (funcName, lArgs=[], isLogged) ->
 		# --- funcName might be <object>.<method>
+
+		assert isArray(lArgs), "missing lArgs"
+		assert isBoolean(isLogged), "missing isLogged"
 
 		if doDebugStack
 			LOG "[--> ENTER #{funcName}]"
@@ -51,26 +53,31 @@ export class CallStack
 		assert defined(lMatches), "Bad funcName: #{OL(funcName)}"
 		[_, ident1, ident2] = lMatches
 		if ident2
-			@lStack.push({
+			hStackItem = {
 				fullName: funcName     #    "#{ident1}.#{ident2}"
 				funcName: ident2
-				isLogged: false
+				isLogged
 				lArgs: deepCopy(lArgs)
-				})
+				}
 		else
-			@lStack.push({
+			hStackItem = {
 				fullName: funcName
 				funcName: ident1
-				isLogged: false
+				isLogged
 				lArgs: deepCopy(lArgs)
-				})
-		return
+				}
+		@lStack.push hStackItem
+		return hStackItem
 
 	# ........................................................................
 
 	getLevel: () ->
 
-		return @level
+		level = 0
+		for item in @lStack
+			if item.isLogged
+				level += 1
+		return level
 
 	# ........................................................................
 
@@ -80,32 +87,6 @@ export class CallStack
 			return false
 		else
 			return @lStack[@lStack.length - 1].isLogged
-
-	# ........................................................................
-
-	isLoggingPrev: () ->
-
-		if (@lStack.length < 2)
-			return false
-		else
-			return @lStack[@lStack.length - 2].isLogged
-
-	# ........................................................................
-
-	logCurFunc: (funcName) ->
-
-		# --- funcName must be  the current function
-		#     and the isLogged flag must currently be false
-
-		cur = @lStack[@lStack.length - 1]
-		assert (cur.isLogged == false), "isLogged is already true"
-		if (funcName != cur.fullName)
-			LOG "cur func #{cur.fullName} is not #{funcName}"
-			LOG @dump()
-			croak "BAD"
-		cur.isLogged = true
-		@level += 1
-		return
 
 	# ........................................................................
 	# --- if stack is empty, log the error, but continue
@@ -120,19 +101,10 @@ export class CallStack
 			return
 
 		{fullName, isLogged} = @lStack.pop()
-		if isLogged && (@level > 0)
-			@level -= 1
+		if (fullName != fName)
+			LOG "ERROR: returnFrom('#{fName}') but TOS is #{fullName}"
+			return
 
-		# --- This should do nothing
-		while (fullName != fName) && (@lStack.length > 0)
-			LOG "[MISSING RETURN FROM #{fullName} (return from #{fName})]"
-			{fullName, isLogged} = @lStack.pop()
-			if isLogged && (@level > 0)
-				@level -= 1
-
-		if fullName != fName
-			@dump()
-			LOG "BAD BAD BAD BAD returnFrom('#{fName}')"
 		return
 
 	# ........................................................................
@@ -157,9 +129,9 @@ export class CallStack
 
 	# ........................................................................
 
-	dump: () ->
+	dump: (label="CALL STACK") ->
 
-		lLines = ["CALL STACK:"]
+		lLines = [label]
 		if @lStack.length == 0
 			lLines.push "   <EMPTY>"
 		else
@@ -171,8 +143,8 @@ export class CallStack
 
 	callStr: (i, item) ->
 
-		sym = if item.isLogged then '*' else ''
-		str = "#{i}#{sym}: #{item.fullName}"
+		sym = if item.isLogged then '*' else '-'
+		str = "#{i}: #{sym}#{item.fullName}"
 		for arg in item.lArgs
 			str += " #{OL(arg)}"
 		return str

@@ -80,6 +80,16 @@ export var DEBUG = LOG; // synonym
 
 
 // ---------------------------------------------------------------------------
+export var LOGLINES = function(label, lLines) {
+  var i, len, line;
+  LOG(`${label}:`);
+  for (i = 0, len = lLines.length; i < len; i++) {
+    line = lLines[i];
+    LOG(`${OL(line)}`);
+  }
+};
+
+// ---------------------------------------------------------------------------
 export var setStringifier = function(func) {
   var orgStringifier;
   orgStringifier = stringify;
@@ -168,23 +178,28 @@ export var logBareItem = function(item, pre = '') {
 };
 
 // ---------------------------------------------------------------------------
-export var logItem = function(label, item, pre = '') {
+export var logItem = function(label, item, pre = '', itemPre = undef) {
   var i, labelStr, len, ref, str;
   assert(isString(pre), `not a string: ${OL(pre)}`);
   assert(isFunction(putstr), "putstr not properly set");
   assert(!label || isString(label), "label a non-string");
-  //	label = fixForTerminal(label)
-  //	pre = fixForTerminal(pre)
+  if (itemPre === undef) {
+    itemPre = pre;
+  }
   assert(pre.indexOf("\t") === -1, "pre has TAB");
+  assert(itemPre.indexOf("\t") === -1, "itemPre has TAB");
   if (doDebugLog) {
     LOG(`CALL logItem(${OL(label)}, ${OL(item)})`);
     LOG(`pre = ${OL(pre)}`);
+    LOG(`itemPre = ${OL(itemPre)}`);
   }
   labelStr = label ? `${label} = ` : "";
   if (item === undef) {
     putstr(`${pre}${labelStr}undef`);
   } else if (item === null) {
     putstr(`${pre}${labelStr}null`);
+  } else if (isNumber(item)) {
+    putstr(`${pre}${labelStr}${item}`);
   } else if (isString(item)) {
     if (item.length <= maxOneLine) {
       putstr(`${pre}${labelStr}'${escapeStr(item)}'`);
@@ -192,19 +207,17 @@ export var logItem = function(label, item, pre = '') {
       if (label) {
         putstr(`${pre}${label}:`);
       }
-      putBlock(item, pre); //     + fourSpaces
+      putBlock(item, itemPre);
     }
-  } else if (isNumber(item)) {
-    putstr(`${pre}${labelStr}${item}`);
   } else {
     if (label) {
       putstr(`${pre}${label}:`);
     }
     ref = blockToArray(stringify(item, true));
-    // escape special chars
+    // --- escape special chars
     for (i = 0, len = ref.length; i < len; i++) {
       str = ref[i];
-      putstr(`${pre + fourSpaces}${fixForTerminal(str)}`);
+      putstr(`${itemPre}${str}`);
     }
   }
   return true;

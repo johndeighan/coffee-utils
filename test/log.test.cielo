@@ -2,7 +2,7 @@
 
 import {UnitTesterNorm, UnitTester} from '@jdeighan/unit-tester'
 import {undef, escapeStr} from '@jdeighan/coffee-utils'
-import {arrayToBlock} from '@jdeighan/coffee-utils/block'
+import {arrayToBlock, blockToArray} from '@jdeighan/coffee-utils/block'
 import {
 	stringify, setStringifier, log, LOG, logItem, setLogger,
 	tamlStringify, orderedStringify,
@@ -13,15 +13,15 @@ simple = new UnitTesterNorm()
 lLines = undef
 setLogger (str) -> lLines.push(str)
 
+threeSpaces = '   '
+fourSpaces  = '    '
+
 # ---------------------------------------------------------------------------
 
 class LogTester extends UnitTester
 
 	transformValue: (lLines) ->
 		return arrayToBlock(lLines)
-
-	transformExpected: (str) ->
-		return str.replace(/\t/g, '    ')
 
 tester = new LogTester()
 
@@ -85,27 +85,27 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	log 'abc'
-	logItem 'name', {a: 1, b: 'xyz'}
-	tester.equal {{LINE}}, lLines, """
+	logItem 'name', {a: 1, b: 'xyz'}, '', fourSpaces
+	tester.same {{LINE}}, lLines, """
 		abc
 		name:
-			---
-			a: 1
-			b: xyz
+		    ---
+		    a: 1
+		    b: xyz
 		"""
 	)()
 
 (() ->
 	lLines = []
-	logItem 'name', ['a', 42, [1,2]]
-	tester.equal {{LINE}}, lLines, """
+	logItem 'name', ['a', 42, [1,2]], '', fourSpaces
+	tester.same {{LINE}}, lLines, """
 		name:
-			---
-			- a
-			- 42
-			-
-				- 1
-				- 2
+		    ---
+		    - a
+		    - 42
+		    -
+		        - 1
+		        - 2
 		"""
 	)()
 
@@ -120,7 +120,7 @@ tester = new LogTester()
 		text which changes
 		how it's displayed
 		"""
-	tester.equal {{LINE}}, lLines, """
+	tester.same {{LINE}}, lLines, """
 		abc
 		name:
 			==========================================
@@ -140,7 +140,7 @@ tester = new LogTester()
 		age: 68,
 		home: 'Blacksburg, VA',
 		}
-	tester.equal {{LINE}}, lLines, """
+	tester.same {{LINE}}, lLines, """
 		abc
 		name:
 			---
@@ -159,7 +159,7 @@ tester = new LogTester()
 		'a rather long string of text',
 		{a:1, b:2}
 		]
-	tester.equal {{LINE}}, lLines, """
+	tester.same {{LINE}}, lLines, """
 		abc
 		name:
 			---
@@ -185,7 +185,7 @@ tester = new LogTester()
 		age: 68,
 		home: 'Blacksburg, VA',
 		}
-	tester.equal {{LINE}}, lLines, """
+	tester.same {{LINE}}, lLines, """
 		abc
 		name:
 			---
@@ -228,7 +228,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	logItem 'name', {a: 1, b: 'xyz'}, '<-->'
-	tester.equal {{LINE}}, lLines, """
+	tester.same {{LINE}}, lLines, """
 		<-->name:
 		<-->	---
 		<-->	a: 1
@@ -239,7 +239,7 @@ tester = new LogTester()
 (() ->
 	lLines = []
 	logItem 'name', ['a', 42, [1,2]], '<-->'
-	tester.equal {{LINE}}, lLines, """
+	tester.same {{LINE}}, lLines, """
 		<-->name:
 		<-->	---
 		<-->	- a
@@ -257,7 +257,7 @@ tester = new LogTester()
 		text which changes
 		how it's displayed
 		""", '<-->'
-	tester.equal {{LINE}}, lLines, """
+	tester.same {{LINE}}, lLines, """
 		<-->name:
 		<-->	==========================================
 		<-->	This˳is˳a˳rather˳long˳bit˳of
@@ -275,7 +275,7 @@ tester = new LogTester()
 		age: 68,
 		home: 'Blacksburg, VA',
 		}, '<-->'
-	tester.equal {{LINE}}, lLines, """
+	tester.same {{LINE}}, lLines, """
 		<-->name:
 		<-->	---
 		<-->	fname: John
@@ -292,7 +292,7 @@ tester = new LogTester()
 		'a rather long string of text',
 		{a:1, b:2}
 		], '<-->'
-	tester.equal {{LINE}}, lLines, """
+	tester.same {{LINE}}, lLines, """
 		<-->name:
 		<-->	---
 		<-->	- 68

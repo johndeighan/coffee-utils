@@ -68,16 +68,10 @@ getCallers = function(stackTrace, lExclude = []) {
 export var assert = function(cond, msg) {
   var caller, i, lCallers, len, stackTrace;
   if (!cond) {
-    //		try
-    //			throw new Error()
-    //		catch e
-    //			stackTrace = e.stack
     stackTrace = new Error().stack;
     lCallers = getCallers(stackTrace, ['assert']);
-    //		console.log 'STACK'
-    //		console.log stackTrace
     console.log('--------------------');
-    console.log('CALL STACK:');
+    console.log('JavaScript CALL STACK:');
     for (i = 0, len = lCallers.length; i < len; i++) {
       caller = lCallers[i];
       console.log(`   ${caller}`);

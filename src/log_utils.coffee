@@ -56,6 +56,15 @@ export DEBUG = LOG   # synonym
 
 # ---------------------------------------------------------------------------
 
+export LOGLINES = (label, lLines) ->
+
+	LOG "#{label}:"
+	for line in lLines
+		LOG "#{OL(line)}"
+	return
+
+# ---------------------------------------------------------------------------
+
 export setStringifier = (func) ->
 
 	orgStringifier = stringify
@@ -147,19 +156,21 @@ export logBareItem = (item, pre='') ->
 
 # ---------------------------------------------------------------------------
 
-export logItem = (label, item, pre='') ->
+export logItem = (label, item, pre='', itemPre=undef) ->
 
 	assert isString(pre), "not a string: #{OL(pre)}"
 	assert isFunction(putstr), "putstr not properly set"
 	assert !label || isString(label), "label a non-string"
+	if (itemPre == undef)
+		itemPre = pre
 
-#	label = fixForTerminal(label)
-#	pre = fixForTerminal(pre)
 	assert pre.indexOf("\t") == -1, "pre has TAB"
+	assert itemPre.indexOf("\t") == -1, "itemPre has TAB"
 
 	if doDebugLog
 		LOG "CALL logItem(#{OL(label)}, #{OL(item)})"
 		LOG "pre = #{OL(pre)}"
+		LOG "itemPre = #{OL(itemPre)}"
 
 	labelStr = if label then "#{label} = " else ""
 
@@ -167,20 +178,22 @@ export logItem = (label, item, pre='') ->
 		putstr "#{pre}#{labelStr}undef"
 	else if (item == null)
 		putstr "#{pre}#{labelStr}null"
+	else if isNumber(item)
+		putstr "#{pre}#{labelStr}#{item}"
 	else if isString(item)
 		if (item.length <= maxOneLine)
 			putstr "#{pre}#{labelStr}'#{escapeStr(item)}'"
 		else
 			if label
 				putstr "#{pre}#{label}:"
-			putBlock item, pre              #     + fourSpaces
-	else if isNumber(item)
-		putstr "#{pre}#{labelStr}#{item}"
+			putBlock item, itemPre
 	else
 		if label
 			putstr "#{pre}#{label}:"
-		for str in blockToArray(stringify(item, true))  # escape special chars
-			putstr "#{pre + fourSpaces}#{fixForTerminal(str)}"
+
+		# --- escape special chars
+		for str in blockToArray(stringify(item, true))
+			putstr "#{itemPre}#{str}"
 
 	return true
 

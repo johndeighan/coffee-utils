@@ -15,53 +15,38 @@ simple = new UnitTester()
 
 (() ->
 	stack = new CallStack()
-
 	simple.equal {{LINE}}, stack.getLevel(), 0
 
-	stack.enter('func1')
-	stack.logCurFunc('func1')
-
+	stack.enter('func1', [], true)
 	simple.equal {{LINE}}, stack.getLevel(), 1
 
-	stack.enter('func2')
-	stack.logCurFunc('func2')
-
+	stack.enter('func2', [], true)
 	simple.equal {{LINE}}, stack.getLevel(), 2
 
 	stack.returnFrom('func2')
-
 	simple.equal {{LINE}}, stack.getLevel(), 1
 
 	stack.returnFrom('func1')
-
 	simple.equal {{LINE}}, stack.getLevel(), 0
 
-	stack.enter('func2')
-	stack.logCurFunc('func2')
-
+	stack.enter('func2', [], true)
 	simple.equal {{LINE}}, stack.getLevel(), 1
 
 	# ..........................................................
 
 	stack.reset()
-
 	simple.equal {{LINE}}, stack.getLevel(), 0
 
-	stack.enter('func1')
-	stack.logCurFunc('func1')
-
+	stack.enter('func1', [], true)
 	simple.equal {{LINE}}, stack.getLevel(), 1
 
-	stack.enter('func2')
-
+	stack.enter('func2', [], false)
 	simple.equal {{LINE}}, stack.getLevel(), 1
 
-	stack.returnFrom('func2')
-
+	stack.returnFrom('func2', [], false)
 	simple.equal {{LINE}}, stack.getLevel(), 1
 
 	stack.returnFrom('func1')
-
 	simple.equal {{LINE}}, stack.getLevel(), 0
 	)()
 
@@ -73,12 +58,10 @@ simple = new UnitTester()
 
 	simple.equal {{LINE}}, stack.curFunc(), 'main'
 
-	stack.enter('func1')
-	stack.logCurFunc('func1')
+	stack.enter('func1', [], true)
 	simple.equal {{LINE}}, stack.curFunc(), 'func1'
 
-	stack.enter('func2')
-	stack.logCurFunc('func2')
+	stack.enter('func2', [], true)
 	simple.equal {{LINE}}, stack.curFunc(), 'func2'
 
 	stack.returnFrom('func2')
@@ -87,10 +70,8 @@ simple = new UnitTester()
 	stack.returnFrom('func1')
 	simple.equal {{LINE}}, stack.curFunc(), 'main'
 
-	stack.enter('func2')
-	stack.logCurFunc('func2')
+	stack.enter('func2', [], true)
 	simple.equal {{LINE}}, stack.curFunc(), 'func2'
-
 	)()
 
 # ----------------------------------------------------------------------------
@@ -101,11 +82,10 @@ simple = new UnitTester()
 
 	simple.equal {{LINE}}, stack.curFunc(), 'main'
 
-	stack.enter('func1')
+	stack.enter('func1', [], false)
 	simple.equal {{LINE}}, stack.curFunc(), 'func1'
 
-	stack.enter('func2')
-	stack.logCurFunc('func2')
+	stack.enter('func2', [], true)
 	simple.equal {{LINE}}, stack.curFunc(), 'func2'
 
 	stack.returnFrom('func2')
@@ -114,9 +94,8 @@ simple = new UnitTester()
 	stack.returnFrom('func1')
 	simple.equal {{LINE}}, stack.curFunc(), 'main'
 
-	stack.enter('func2')
+	stack.enter('func2', [], false)
 	simple.equal {{LINE}}, stack.curFunc(), 'func2'
-
 	)()
 
 # ----------------------------------------------------------------------------
@@ -128,13 +107,11 @@ simple = new UnitTester()
 	simple.falsy {{LINE}}, stack.isActive('func1')
 	simple.falsy {{LINE}}, stack.isActive('func2')
 
-	stack.enter('func1')
-	stack.logCurFunc('func1')
+	stack.enter('func1', [], true)
 	simple.truthy {{LINE}}, stack.isActive('func1')
 	simple.falsy {{LINE}}, stack.isActive('func2')
 
-	stack.enter('func2')
-	stack.logCurFunc('func2')
+	stack.enter('func2', [], true)
 	simple.truthy {{LINE}}, stack.isActive('func1')
 	simple.truthy {{LINE}}, stack.isActive('func2')
 
@@ -146,8 +123,7 @@ simple = new UnitTester()
 	simple.falsy {{LINE}}, stack.isActive('func1')
 	simple.falsy {{LINE}}, stack.isActive('func2')
 
-	stack.enter('func2')
-	stack.logCurFunc('func2')
+	stack.enter('func2', [], true)
 	simple.falsy {{LINE}}, stack.isActive('func1')
 	simple.truthy {{LINE}}, stack.isActive('func2')
 
@@ -162,12 +138,11 @@ simple = new UnitTester()
 	simple.falsy {{LINE}}, stack.isActive('func1')
 	simple.falsy {{LINE}}, stack.isActive('func2')
 
-	stack.enter('func1')
+	stack.enter('func1', [], false)
 	simple.truthy {{LINE}}, stack.isActive('func1')
 	simple.falsy {{LINE}}, stack.isActive('func2')
 
-	stack.enter('func2')
-	stack.logCurFunc('func2')
+	stack.enter('func2', [], true)
 	simple.truthy {{LINE}}, stack.isActive('func1')
 	simple.truthy {{LINE}}, stack.isActive('func2')
 
@@ -179,7 +154,7 @@ simple = new UnitTester()
 	simple.falsy {{LINE}}, stack.isActive('func1')
 	simple.falsy {{LINE}}, stack.isActive('func2')
 
-	stack.enter('func2')
+	stack.enter('func2', [], false)
 	simple.falsy {{LINE}}, stack.isActive('func1')
 	simple.truthy {{LINE}}, stack.isActive('func2')
 	)()
@@ -190,9 +165,9 @@ simple = new UnitTester()
 (() ->
 	stack = new CallStack()
 
-	stack.enter 'func1', [1, 'a']
-	stack.enter 'func2', []
-	stack.enter 'func3', [[1,2,3], {why: 'not'}]
+	stack.enter 'func1', [1, 'a'], false
+	stack.enter 'func2', [], false
+	stack.enter 'func3', [[1,2,3], {why: 'not'}], false
 
 	simple.same {{LINE}}, stack.dump(), """
 			CALL STACK:
@@ -201,4 +176,3 @@ simple = new UnitTester()
 			2: func3 [1,2,3] {"why":"not"}
 			"""
 	)()
-

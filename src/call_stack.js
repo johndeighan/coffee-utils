@@ -8,9 +8,10 @@ import {
   croak,
   assert,
   OL,
-  isBoolean,
   escapeStr,
-  deepCopy
+  deepCopy,
+  isArray,
+  isBoolean
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -28,7 +29,6 @@ export var debugStack = function(flag = true) {
 export var CallStack = class CallStack {
   constructor() {
     this.lStack = [];
-    this.level = 0;
   }
 
   // ........................................................................
@@ -37,13 +37,14 @@ export var CallStack = class CallStack {
       LOG("RESET STACK");
     }
     this.lStack = [];
-    this.level = 0;
   }
 
   // ........................................................................
-  enter(funcName, lArgs = []) {
-    var _, ident1, ident2, lMatches;
+  enter(funcName, lArgs = [], isLogged) {
+    var _, hStackItem, ident1, ident2, lMatches;
     // --- funcName might be <object>.<method>
+    assert(isArray(lArgs), "missing lArgs");
+    assert(isBoolean(isLogged), "missing isLogged");
     if (doDebugStack) {
       LOG(`[--> ENTER ${funcName}]`);
     }
@@ -51,25 +52,36 @@ export var CallStack = class CallStack {
     assert(defined(lMatches), `Bad funcName: ${OL(funcName)}`);
     [_, ident1, ident2] = lMatches;
     if (ident2) {
-      this.lStack.push({
+      hStackItem = {
         fullName: funcName, //    "#{ident1}.#{ident2}"
         funcName: ident2,
-        isLogged: false,
+        isLogged,
         lArgs: deepCopy(lArgs)
-      });
+      };
     } else {
-      this.lStack.push({
+      hStackItem = {
         fullName: funcName,
         funcName: ident1,
-        isLogged: false,
+        isLogged,
         lArgs: deepCopy(lArgs)
-      });
+      };
     }
+    this.lStack.push(hStackItem);
+    return hStackItem;
   }
 
   // ........................................................................
   getLevel() {
-    return this.level;
+    var item, j, len, level, ref;
+    level = 0;
+    ref = this.lStack;
+    for (j = 0, len = ref.length; j < len; j++) {
+      item = ref[j];
+      if (item.isLogged) {
+        level += 1;
+      }
+    }
+    return level;
   }
 
   // ........................................................................
@@ -79,31 +91,6 @@ export var CallStack = class CallStack {
     } else {
       return this.lStack[this.lStack.length - 1].isLogged;
     }
-  }
-
-  // ........................................................................
-  isLoggingPrev() {
-    if (this.lStack.length < 2) {
-      return false;
-    } else {
-      return this.lStack[this.lStack.length - 2].isLogged;
-    }
-  }
-
-  // ........................................................................
-  logCurFunc(funcName) {
-    var cur;
-    // --- funcName must be  the current function
-    //     and the isLogged flag must currently be false
-    cur = this.lStack[this.lStack.length - 1];
-    assert(cur.isLogged === false, "isLogged is already true");
-    if (funcName !== cur.fullName) {
-      LOG(`cur func ${cur.fullName} is not ${funcName}`);
-      LOG(this.dump());
-      croak("BAD");
-    }
-    cur.isLogged = true;
-    this.level += 1;
   }
 
   // ........................................................................
@@ -118,20 +105,9 @@ export var CallStack = class CallStack {
       return;
     }
     ({fullName, isLogged} = this.lStack.pop());
-    if (isLogged && (this.level > 0)) {
-      this.level -= 1;
-    }
-    // --- This should do nothing
-    while ((fullName !== fName) && (this.lStack.length > 0)) {
-      LOG(`[MISSING RETURN FROM ${fullName} (return from ${fName})]`);
-      ({fullName, isLogged} = this.lStack.pop());
-      if (isLogged && (this.level > 0)) {
-        this.level -= 1;
-      }
-    }
     if (fullName !== fName) {
-      this.dump();
-      LOG(`BAD BAD BAD BAD returnFrom('${fName}')`);
+      LOG(`ERROR: returnFrom('${fName}') but TOS is ${fullName}`);
+      return;
     }
   }
 
@@ -160,9 +136,9 @@ export var CallStack = class CallStack {
   }
 
   // ........................................................................
-  dump() {
+  dump(label = "CALL STACK") {
     var i, item, j, lLines, len, ref;
-    lLines = ["CALL STACK:"];
+    lLines = [label];
     if (this.lStack.length === 0) {
       lLines.push("   <EMPTY>");
     } else {
@@ -178,8 +154,8 @@ export var CallStack = class CallStack {
   // ........................................................................
   callStr(i, item) {
     var arg, j, len, ref, str, sym;
-    sym = item.isLogged ? '*' : '';
-    str = `${i}${sym}: ${item.fullName}`;
+    sym = item.isLogged ? '*' : '-';
+    str = `${i}: ${sym}${item.fullName}`;
     ref = item.lArgs;
     for (j = 0, len = ref.length; j < len; j++) {
       arg = ref[j];
