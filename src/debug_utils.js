@@ -131,15 +131,19 @@ export var debug2 = function(orgLabel, ...lObjects) {
 
 // ---------------------------------------------------------------------------
 export var doTheLogging = function(type, label, lObjects) {
-  var i, itemPre, j, k, l, len, len1, len2, level, obj, pre, sep;
+  var i, itemPre, j, k, l, len, len1, len2, level, obj, pre;
   assert(isString(label), `non-string label ${OL(label)}`);
   level = callStack.getLevel();
-  sep = '-'.repeat(40);
   switch (type) {
     case 'enter':
       log(label, prefix(level));
-      pre = prefix(level + 1);
-      itemPre = prefix(level + 2, 'noLastVbar');
+      if (label.match(/^\s*call/)) {
+        pre = prefix(level + 1, 'noLastVbar');
+        itemPre = prefix(level + 2, 'noLast2Vbars');
+      } else {
+        pre = prefix(level + 1);
+        itemPre = prefix(level + 2, 'noLastVbar');
+      }
       for (i = j = 0, len = lObjects.length; j < len; i = ++j) {
         obj = lObjects[i];
         logItem(`arg[${i}]`, obj, pre, itemPre);

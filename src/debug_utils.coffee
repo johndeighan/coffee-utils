@@ -92,14 +92,17 @@ export doTheLogging = (type, label, lObjects) ->
 
 	assert isString(label), "non-string label #{OL(label)}"
 	level = callStack.getLevel()
-	sep = '-'.repeat(40)
 
 	switch type
 
 		when 'enter'
 			log label, prefix(level)
-			pre = prefix(level+1)
-			itemPre = prefix(level+2, 'noLastVbar')
+			if label.match(///^ \s* call///)
+				pre = prefix(level+1, 'noLastVbar')
+				itemPre = prefix(level+2, 'noLast2Vbars')
+			else
+				pre = prefix(level+1)
+				itemPre = prefix(level+2, 'noLastVbar')
 			for obj,i in lObjects
 				logItem "arg[#{i}]", obj, pre, itemPre
 

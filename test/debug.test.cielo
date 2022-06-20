@@ -182,6 +182,32 @@ tester = new TraceTester()
 	)()
 
 # ---------------------------------------------------------------------------
+# --- inner func is not logged, but has arguments
+
+(() ->
+	setDebugging "myfunc"
+
+	lLines = []
+	debug 'enter myfunc'
+	debug 'something'
+	debug 'enter newfunc', 42, ['a','b']
+	debug 'something else'
+	debug 'return abc from newfunc'
+	debug 'return 42 from myfunc'
+	simple.equal {{LINE}}, lLines, [
+		"enter myfunc"
+		"│   something"
+		"│   call newfunc"
+		'│       arg[0] = 42',
+		'│       arg[1]:',
+		'│           ---',
+		'│           - a',
+		'│           - b',
+		"└─> return 42 from myfunc"
+		]
+	)()
+
+# ---------------------------------------------------------------------------
 
 (() ->
 	setDebugging "myfunc"
