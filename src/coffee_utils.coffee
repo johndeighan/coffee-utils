@@ -21,6 +21,13 @@ export isComment = (line) ->
 
 # ---------------------------------------------------------------------------
 
+export eval_expr = (str) ->
+
+	str = str.replace(/\bundef\b/g, 'undefined')
+	return Function('"use strict";return (' + str + ')')();
+
+# ---------------------------------------------------------------------------
+
 export haltOnError = () ->
 
 	doHaltOnError = true

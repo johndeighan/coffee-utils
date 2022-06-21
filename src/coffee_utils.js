@@ -24,6 +24,12 @@ export var isComment = function(line) {
 };
 
 // ---------------------------------------------------------------------------
+export var eval_expr = function(str) {
+  str = str.replace(/\bundef\b/g, 'undefined');
+  return Function('"use strict";return (' + str + ')')();
+};
+
+// ---------------------------------------------------------------------------
 export var haltOnError = function() {
   return doHaltOnError = true;
 };

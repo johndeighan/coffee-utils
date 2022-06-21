@@ -6,7 +6,7 @@ import {
 	isEmpty, nonEmpty, getClassName, isNumber,
 	isFunction, isInteger, rtrim, isUniqueList,
 	ltrunc, rtrunc, extractMatches, range, patchStr,
-	words, escapeStr, titleLine, className,
+	words, escapeStr, titleLine, className, eval_expr,
 	removeCR, CWS, isArrayOfHashes, setCharsAt,
 	oneline, croak, isRegExp, uniq, hashToStr, envVarsWithPrefix,
 	strcat, replaceVars, defined, notdefined, isIterable,
@@ -31,6 +31,11 @@ simple.truthy {{LINE}}, nonEmpty({width: 2})
 
 simple.equal  {{LINE}}, titleLine('a thing').length, 42
 simple.equal  {{LINE}}, titleLine('a thing','-',5,90).length, 90
+
+# ---------------------------------------------------------------------------
+
+simple.equal {{LINE}}, eval_expr("2 + 2"), 4
+simple.equal {{LINE}}, eval_expr("{a:1, b:undef}"), {a:1, b:undefined}
 
 # ---------------------------------------------------------------------------
 
