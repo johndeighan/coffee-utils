@@ -7,10 +7,10 @@ import {LOG, setLogger, debugLog} from '@jdeighan/coffee-utils/log'
 import {untabify} from '@jdeighan/coffee-utils/indent'
 import {CallStack} from '@jdeighan/coffee-utils/stack'
 import {
-	setDebugging, debug, getFuncList, funcMatch,
+	setDebugging, debug, getFuncList, funcMatch, interp,
 	} from '@jdeighan/coffee-utils/debug'
 
-simple = new UnitTesterNorm()
+simple = new UnitTester()
 lLines = undef
 setLogger (str) -> lLines.push(untabify(str))
 
@@ -78,6 +78,44 @@ class TraceTester extends UnitTester
 		return arrayToBlock(lLines)
 
 tester = new TraceTester()
+
+# ---------------------------------------------------------------------------
+# very simple example
+
+(() ->
+	setDebugging 'myfunc'
+	lLines = []
+
+	debug 'enter myfunc()', 'abc'
+	debug 'something'
+	debug 'return from myfunc()', 42
+	simple.equal {{LINE}}, lLines, [
+		"enter myfunc()"
+		"│   arg[0] = \'abc\'"
+		"│   something"
+		"└─> return from myfunc()"
+		"    ret[0] = 42"
+		]
+	)()
+
+# ---------------------------------------------------------------------------
+# very simple example - in an object's method
+
+(() ->
+	setDebugging 'myfunc'
+	lLines = []
+
+	debug 'enter MyObject.myfunc()', 'abc'
+	debug 'something'
+	debug 'return from MyObject.myfunc()', 42
+	simple.equal {{LINE}}, lLines, [
+		"enter MyObject.myfunc()"
+		"│   arg[0] = \'abc\'"
+		"│   something"
+		"└─> return from MyObject.myfunc()"
+		"    ret[0] = 42"
+		]
+	)()
 
 # ---------------------------------------------------------------------------
 
@@ -496,3 +534,10 @@ tester = new TraceTester()
 	)()
 
 # ---------------------------------------------------------------------------
+
+(() ->
+
+	simple.equal {{LINE}}, interp('abc'), 'abc'
+	simple.equal {{LINE}}, interp('x = $x'), 'x = #{OL(x)}'
+	simple.equal {{LINE}}, interp('x = $x, y = $y'), 'x = #{OL(x)}, y = #{OL(y)}'
+	)()

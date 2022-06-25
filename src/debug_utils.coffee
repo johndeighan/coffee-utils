@@ -25,12 +25,22 @@ strFuncList = undef     # original string
 
 # ---------------------------------------------------------------------------
 
+export interp = (label) ->
+
+	return label.replace(/// \$ ([A-Za-z_][A-Za-z0-9_]*) ///g,
+			(match, varName) -> return "\#{OL(#{varName})\}"
+			)
+
+# ---------------------------------------------------------------------------
+
 export debug = (orgLabel, lObjects...) ->
 
 	assert isString(orgLabel), "1st arg #{OL(orgLabel)} should be a string"
 
 	[type, funcName] = getType(orgLabel, lObjects)
 	label = shouldLog(orgLabel, type, funcName, callStack)
+	if defined(label)
+		label = interp(label)
 
 	switch type
 
@@ -243,22 +253,25 @@ export getType = (str, lObjects) ->
 
 	if lMatches = str.match(///^
 			\s*
-			enter
+			( enter | (?: return .+ from ) )
 			\s+
-			([A-Za-z_][A-Za-z0-9_\.]*)
+			([A-Za-z_][A-Za-z0-9_]*)
+			(?:
+				\.
+				([A-Za-z_][A-Za-z0-9_]*)
+				)?
 			///)
+		[_, type, ident1, ident2] = lMatches
 
-		# --- We are entering function curFunc
-		return ['enter', lMatches[1]]
-	else if lMatches = str.match(///^
-			\s*
-			return
-			.+
-			from
-			\s+
-			([A-Za-z_][A-Za-z0-9_\.]*)
-			///)
-		return ['return', lMatches[1]]
+		if ident2
+			funcName = ident2
+		else
+			funcName = ident1
+
+		if (type == 'enter')
+			return ['enter', funcName]
+		else
+			return ['return', funcName]
 	else
 		return ['string', undef]
 
