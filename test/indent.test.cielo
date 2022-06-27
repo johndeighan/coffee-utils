@@ -2,14 +2,12 @@
 
 import assert from 'assert'
 
-import {UnitTesterNorm} from '@jdeighan/unit-tester'
+import {UnitTesterNorm, simple} from '@jdeighan/unit-tester'
 import {isInteger} from '@jdeighan/coffee-utils'
 import {
 	indentLevel, isUndented, indentation, undented, splitLine,
 	indented, tabify, untabify,
 	} from '@jdeighan/coffee-utils/indent'
-
-simple = new UnitTesterNorm("indent.test")
 
 # ---------------------------------------------------------------------------
 
@@ -42,7 +40,7 @@ simple.equal {{LINE}}, undented("\t\tabc", 2), "abc"
 
 (() ->
 	block = "\t\tfirst\n\t\tsecond\n\t\t\tthird\n"
-	expected = "first\nsecond\n\tthird\n"
+	expected = "first\nsecond\n\tthird"
 	simple.equal {{LINE}}, undented(block), expected
 	)()
 

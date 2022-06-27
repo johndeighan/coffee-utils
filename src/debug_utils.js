@@ -67,8 +67,12 @@ strFuncList = undef; // original string
 
 // ---------------------------------------------------------------------------
 export var interp = function(label) {
-  return label.replace(/\$([A-Za-z_][A-Za-z0-9_]*)/g, function(match, varName) {
-    return `\#{OL(${varName})\}`;
+  return label.replace(/\$(\@)?([A-Za-z_][A-Za-z0-9_]*)/g, function(_, atSign, varName) {
+    if (atSign) {
+      return `\#{OL(@${varName})\}`;
+    } else {
+      return `\#{OL(${varName})\}`;
+    }
   });
 };
 

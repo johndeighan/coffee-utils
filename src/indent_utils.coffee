@@ -131,13 +131,14 @@ export tabify = (str, numSpaces=undef) ->
 		if prefixLen == 0
 			lLines.push theRest
 		else
-			if (prefix.indexOf('\t') != -1)
-				error "tabify(): leading TAB characters not allowed"
+			assert (prefix.indexOf('\t') == -1), "found TAB"
 			if numSpaces == undef
 				numSpaces = prefixLen
 			assert (prefixLen % numSpaces == 0), "Bad prefix"
-			lLines.push '\t'.repeat(prefixLen) + theRest
-	return arrayToBlock(lLines)
+			level = prefixLen / numSpaces
+			lLines.push '\t'.repeat(level) + theRest
+	result = arrayToBlock(lLines)
+	return result
 
 # ---------------------------------------------------------------------------
 #    untabify - convert ALL TABs to spaces

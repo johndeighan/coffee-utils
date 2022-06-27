@@ -14,6 +14,7 @@ import {
   assert,
   undef,
   pass,
+  defined,
   rtrim,
   error,
   isEmpty,
@@ -326,37 +327,40 @@ export var forEachFile = function(dir, cb, filt = undef, level = 0) {
 
 // ---------------------------------------------------------------------------
 export var pathTo = function(fname, searchDir, direction = "down") {
-  var dirpath, filepath, fpath, i, len, ref, subdir;
-  debug(`enter pathTo('${fname}','${searchDir}','${direction}')`);
+  var dirPath, dirpath, filepath, fpath, i, len, ref, subdir;
+  debug("enter pathTo()", fname, searchDir, direction);
   if (!searchDir) {
     searchDir = process.cwd();
   }
-  assert(fs.existsSync(searchDir), `Directory ${searchDir} does not exist`);
+  assert(fs.existsSync(searchDir), `Dir ${searchDir} does not exist`);
   filepath = mkpath(searchDir, fname);
   if (fs.existsSync(filepath)) {
-    debug(`return from pathTo: ${filepath} - file exists`);
+    debug("return from pathTo() - file exists", filepath);
     return filepath;
-  } else if (direction === 'down') {
+  }
+  if (direction === 'down') {
     ref = getSubDirs(searchDir);
     // --- Search all directories in this directory
     //     getSubDirs() returns dirs sorted alphabetically
     for (i = 0, len = ref.length; i < len; i++) {
       subdir = ref[i];
       dirpath = mkpath(searchDir, subdir);
-      debug(`check ${dirpath}`);
-      if (fpath = pathTo(fname, dirpath)) {
-        debug(`return from pathTo: ${fpath}`);
+      debug(`check ${subdir}`);
+      if (defined(fpath = pathTo(fname, dirpath))) {
+        debug("return from pathTo()", fpath);
         return fpath;
       }
     }
   } else if (direction === 'up') {
-    while (dirpath = getParentDir(searchDir)) {
-      debug(`check ${dirpath}`);
-      filepath = mkpath(dirpath, fname);
+    while (defined(dirPath = getParentDir(searchDir))) {
+      debug(`check ${dirPath}`);
+      filepath = mkpath(dirPath, fname);
+      debug(`check for ${filepath}`);
       if (fs.existsSync(filepath)) {
-        debug(`return from pathTo(): ${filepath}`);
+        debug("return from pathTo()", filepath);
         return filepath;
       }
+      searchDir = dirPath;
     }
   } else {
     error(`pathTo(): Invalid direction '${direction}'`);

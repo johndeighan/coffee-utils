@@ -2,14 +2,12 @@
 
 import assert from 'assert'
 
-import {UnitTesterNorm} from '@jdeighan/unit-tester'
+import {simple} from '@jdeighan/unit-tester'
 import {
 	blockToArray, arrayToBlock, firstLine, remainingLines,
 	normalizeBlock, truncateBlock,
 	joinBlocks, forEachLine, forEachBlock, forEachSetOfBlocks,
 	} from '@jdeighan/coffee-utils/block'
-
-simple = new UnitTesterNorm()
 
 # ---------------------------------------------------------------------------
 
@@ -31,7 +29,7 @@ simple.equal {{LINE}}, blockToArray("abc\n\nxyz\n"), [
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, arrayToBlock(['a','b','c']), "a\nb\nc\n"
+simple.equal {{LINE}}, arrayToBlock(['a','b','c']), "a\nb\nc"
 
 # ---------------------------------------------------------------------------
 
@@ -76,7 +74,7 @@ simple.equal {{LINE}}, normalizeBlock("""
 	"""), """
 	line 1
 	line 2
-	""" + '\n'
+	"""
 
 simple.equal {{LINE}}, normalizeBlock("""
 	line 1
@@ -85,7 +83,7 @@ simple.equal {{LINE}}, normalizeBlock("""
 	"""), """
 	line 1
 	line 2
-	""" + '\n'
+	"""
 
 simple.equal {{LINE}}, normalizeBlock("""
 
@@ -97,7 +95,7 @@ simple.equal {{LINE}}, normalizeBlock("""
 	"""), """
 	line 1
 	line 2
-	""" + '\n'
+	"""
 
 # ---------------------------------------------------------------------------
 
@@ -109,7 +107,7 @@ simple.equal {{LINE}}, truncateBlock("""
 	""", 2), """
 	line 1
 	line 2
-	""" + '\n'
+	"""
 
 # ---------------------------------------------------------------------------
 
@@ -141,7 +139,6 @@ simple.equal {{LINE}}, truncateBlock("""
 		"""
 	str = joinBlocks(lImports..., code)
 	simple.equal {{LINE}}, str, """
-
 		import {say} from '@jdeighan/coffee-utils'
 		if (x==42)
 			log "line 2 in unit test"

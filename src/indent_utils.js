@@ -147,7 +147,7 @@ export var undented = function(text, level = undef) {
 //             if numSpaces is not defined, then the first line
 //             that contains at least one space sets it
 export var tabify = function(str, numSpaces = undef) {
-  var _, i, lLines, len, prefix, prefixLen, ref, theRest;
+  var _, i, lLines, len, level, prefix, prefixLen, ref, result, theRest;
   lLines = [];
   ref = blockToArray(str);
   for (i = 0, len = ref.length; i < len; i++) {
@@ -157,17 +157,17 @@ export var tabify = function(str, numSpaces = undef) {
     if (prefixLen === 0) {
       lLines.push(theRest);
     } else {
-      if (prefix.indexOf('\t') !== -1) {
-        error("tabify(): leading TAB characters not allowed");
-      }
+      assert(prefix.indexOf('\t') === -1, "found TAB");
       if (numSpaces === undef) {
         numSpaces = prefixLen;
       }
       assert(prefixLen % numSpaces === 0, "Bad prefix");
-      lLines.push('\t'.repeat(prefixLen) + theRest);
+      level = prefixLen / numSpaces;
+      lLines.push('\t'.repeat(level) + theRest);
     }
   }
-  return arrayToBlock(lLines);
+  result = arrayToBlock(lLines);
+  return result;
 };
 
 // ---------------------------------------------------------------------------

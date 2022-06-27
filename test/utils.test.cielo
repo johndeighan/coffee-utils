@@ -1,6 +1,6 @@
 # utils.test.cielo
 
-import {UnitTester, UnitTesterNorm} from '@jdeighan/unit-tester'
+import {simple} from '@jdeighan/unit-tester'
 import {
 	say, undef, error, warn, isString, isObject, isArray, isHash,
 	isEmpty, nonEmpty, getClassName, isNumber,
@@ -14,8 +14,6 @@ import {
 import {log, setLogger, resetLogger} from '@jdeighan/coffee-utils/log'
 import {setDebugging} from '@jdeighan/coffee-utils/debug'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
-
-simple = new UnitTesterNorm()
 
 # ---------------------------------------------------------------------------
 

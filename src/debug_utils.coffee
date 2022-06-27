@@ -27,8 +27,12 @@ strFuncList = undef     # original string
 
 export interp = (label) ->
 
-	return label.replace(/// \$ ([A-Za-z_][A-Za-z0-9_]*) ///g,
-			(match, varName) -> return "\#{OL(#{varName})\}"
+	return label.replace(/// \$ (\@)? ([A-Za-z_][A-Za-z0-9_]*) ///g,
+			(_, atSign, varName) ->
+				if atSign
+					return "\#{OL(@#{varName})\}"
+				else
+					return "\#{OL(#{varName})\}"
 			)
 
 # ---------------------------------------------------------------------------

@@ -1,16 +1,14 @@
 # debug.test.cielo
 
-import {UnitTesterNorm, UnitTester} from '@jdeighan/unit-tester'
+import {UnitTester, simple} from '@jdeighan/unit-tester'
 import {undef, OL, isString} from '@jdeighan/coffee-utils'
 import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {LOG, setLogger, debugLog} from '@jdeighan/coffee-utils/log'
 import {untabify} from '@jdeighan/coffee-utils/indent'
-import {CallStack} from '@jdeighan/coffee-utils/stack'
 import {
 	setDebugging, debug, getFuncList, funcMatch, interp,
 	} from '@jdeighan/coffee-utils/debug'
 
-simple = new UnitTester()
 lLines = undef
 setLogger (str) -> lLines.push(untabify(str))
 
@@ -539,5 +537,6 @@ tester = new TraceTester()
 
 	simple.equal {{LINE}}, interp('abc'), 'abc'
 	simple.equal {{LINE}}, interp('x = $x'), 'x = #{OL(x)}'
+	simple.equal {{LINE}}, interp('x = $@x'), 'x = #{OL(@x)}'
 	simple.equal {{LINE}}, interp('x = $x, y = $y'), 'x = #{OL(x)}, y = #{OL(y)}'
 	)()

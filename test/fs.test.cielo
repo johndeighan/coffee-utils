@@ -6,7 +6,7 @@ import {
 	existsSync, copyFileSync, readFileSync, writeFileSync,
 	} from 'fs'
 
-import {UnitTesterNorm} from '@jdeighan/unit-tester'
+import {simple} from '@jdeighan/unit-tester'
 import {say, undef, assert} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {LOG} from '@jdeighan/coffee-utils/log'
@@ -16,15 +16,11 @@ import {
 	withExt, withUnderScore, forEachLineInFile, slurp, barf
 	} from '@jdeighan/coffee-utils/fs'
 
-simple = new UnitTesterNorm()
 
 my_dir = mydir(import.meta.url)
-# LOG 'my_dir', my_dir
 assert existsSync(my_dir)
 my_fname = 'fs.test.js'
-# LOG 'my_fname', my_fname
 my_path = mkpath(my_dir, my_fname)
-# LOG 'my_path', my_path
 
 # ---------------------------------------------------------------------------
 
@@ -143,6 +139,7 @@ simple.equal {{LINE}}, parseSource(my_path), {
 	fullpath: my_path
 	filename: my_fname
 	stub: fileStub(my_fname)
+	purpose: 'test'
 	ext: '.js'
 	}
 

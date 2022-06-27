@@ -6,7 +6,7 @@ import fs from 'fs'
 import NReadLines from 'n-readlines'
 
 import {
-	assert, undef, pass, rtrim, error, isEmpty, nonEmpty,
+	assert, undef, pass, defined, rtrim, error, isEmpty, nonEmpty,
 	isString, isArray, isRegExp, isFunction, croak, OL,
 	} from '@jdeighan/coffee-utils'
 import {log, LOG} from '@jdeighan/coffee-utils/log'
@@ -270,30 +270,33 @@ export forEachFile = (dir, cb, filt=undef, level=0) ->
 
 export pathTo = (fname, searchDir, direction="down") ->
 
-	debug "enter pathTo('#{fname}','#{searchDir}','#{direction}')"
+	debug "enter pathTo()", fname, searchDir, direction
 	if ! searchDir
 		searchDir = process.cwd()
-	assert fs.existsSync(searchDir), "Directory #{searchDir} does not exist"
+	assert fs.existsSync(searchDir), "Dir #{searchDir} does not exist"
 	filepath = mkpath(searchDir, fname)
 	if fs.existsSync(filepath)
-		debug "return from pathTo: #{filepath} - file exists"
+		debug "return from pathTo() - file exists", filepath
 		return filepath
-	else if (direction == 'down')
+
+	if (direction == 'down')
 		# --- Search all directories in this directory
 		#     getSubDirs() returns dirs sorted alphabetically
 		for subdir in getSubDirs(searchDir)
 			dirpath = mkpath(searchDir, subdir)
-			debug "check #{dirpath}"
-			if fpath = pathTo(fname, dirpath)
-				debug "return from pathTo: #{fpath}"
+			debug "check #{subdir}"
+			if defined(fpath = pathTo(fname, dirpath))
+				debug "return from pathTo()", fpath
 				return fpath
 	else if (direction == 'up')
-		while dirpath = getParentDir(searchDir)
-			debug "check #{dirpath}"
-			filepath = mkpath(dirpath, fname)
+		while defined(dirPath = getParentDir(searchDir))
+			debug "check #{dirPath}"
+			filepath = mkpath(dirPath, fname)
+			debug "check for #{filepath}"
 			if fs.existsSync(filepath)
-				debug "return from pathTo(): #{filepath}"
+				debug "return from pathTo()", filepath
 				return filepath
+			searchDir = dirPath
 	else
 		error "pathTo(): Invalid direction '#{direction}'"
 	debug "return undef from pathTo - file not found"
