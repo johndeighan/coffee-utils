@@ -3,6 +3,7 @@
 import assert from 'assert'
 
 import {simple} from '@jdeighan/unit-tester'
+import {undef} from '@jdeighan/coffee-utils'
 import {
 	blockToArray, arrayToBlock, firstLine, remainingLines,
 	normalizeBlock, truncateBlock,
@@ -30,6 +31,8 @@ simple.equal {{LINE}}, blockToArray("abc\n\nxyz\n"), [
 # ---------------------------------------------------------------------------
 
 simple.equal {{LINE}}, arrayToBlock(['a','b','c']), "a\nb\nc"
+simple.equal {{LINE}}, arrayToBlock(['a',undef,'b','c']), "a\nb\nc"
+simple.equal {{LINE}}, arrayToBlock([undef,'a','b','c',undef]), "a\nb\nc"
 
 # ---------------------------------------------------------------------------
 
