@@ -6,6 +6,7 @@ import readline from 'readline';
 
 import {
   assert,
+  defined,
   isEmpty,
   isString,
   nonEmpty,
@@ -34,6 +35,9 @@ export var blockToArray = function(block) {
 // ---------------------------------------------------------------------------
 //   arrayToBlock - block will have no trailing whitespace
 export var arrayToBlock = function(lLines) {
+  lLines = lLines.filter((line) => {
+    return defined(line);
+  });
   if (lLines.length === 0) {
     return '';
   } else {

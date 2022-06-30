@@ -4,7 +4,7 @@ import fs from 'fs'
 import readline from 'readline'
 
 import {
-	assert, isEmpty, isString, nonEmpty, error, rtrim,
+	assert, defined, isEmpty, isString, nonEmpty, error, rtrim,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
@@ -29,6 +29,7 @@ export blockToArray = (block) ->
 
 export arrayToBlock = (lLines) ->
 
+	lLines = lLines.filter((line) => defined(line));
 	if lLines.length == 0
 		return ''
 	else
