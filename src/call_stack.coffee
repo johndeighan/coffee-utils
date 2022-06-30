@@ -34,6 +34,12 @@ export class CallStack
 
 	# ........................................................................
 
+	indent: () ->
+
+		return '   '.repeat(@lStack.length)
+
+	# ........................................................................
+
 	enter: (funcName, lArgs=[], isLogged) ->
 		# --- funcName might be <object>.<method>
 
@@ -41,7 +47,7 @@ export class CallStack
 		assert isBoolean(isLogged), "missing isLogged"
 
 		if doDebugStack
-			LOG "[--> ENTER #{funcName}]"
+			LOG @indent() + "[--> ENTER #{funcName}]"
 
 		lMatches = funcName.match(///^
 				([A-Za-z_][A-Za-z0-9_]*)
@@ -94,7 +100,7 @@ export class CallStack
 	returnFrom: (fName) ->
 
 		if doDebugStack
-			LOG "[<-- BACK #{fName}]"
+			LOG @indent() + "[<-- BACK #{fName}]"
 
 		if @lStack.length == 0
 			LOG "ERROR: returnFrom('#{fName}') but stack is empty"

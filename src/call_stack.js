@@ -40,13 +40,18 @@ export var CallStack = class CallStack {
   }
 
   // ........................................................................
+  indent() {
+    return '   '.repeat(this.lStack.length);
+  }
+
+  // ........................................................................
   enter(funcName, lArgs = [], isLogged) {
     var _, hStackItem, ident1, ident2, lMatches;
     // --- funcName might be <object>.<method>
     assert(isArray(lArgs), "missing lArgs");
     assert(isBoolean(isLogged), "missing isLogged");
     if (doDebugStack) {
-      LOG(`[--> ENTER ${funcName}]`);
+      LOG(this.indent() + `[--> ENTER ${funcName}]`);
     }
     lMatches = funcName.match(/^([A-Za-z_][A-Za-z0-9_]*)(?:\.([A-Za-z_][A-Za-z0-9_]*))?$/);
     assert(defined(lMatches), `Bad funcName: ${OL(funcName)}`);
@@ -98,7 +103,7 @@ export var CallStack = class CallStack {
   returnFrom(fName) {
     var fullName, isLogged;
     if (doDebugStack) {
-      LOG(`[<-- BACK ${fName}]`);
+      LOG(this.indent() + `[<-- BACK ${fName}]`);
     }
     if (this.lStack.length === 0) {
       LOG(`ERROR: returnFrom('${fName}') but stack is empty`);
