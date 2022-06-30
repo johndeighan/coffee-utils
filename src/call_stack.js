@@ -102,14 +102,14 @@ export var CallStack = class CallStack {
   // --- if stack is empty, log the error, but continue
   returnFrom(fName) {
     var fullName, isLogged;
-    if (doDebugStack) {
-      LOG(this.indent() + `[<-- BACK ${fName}]`);
-    }
     if (this.lStack.length === 0) {
       LOG(`ERROR: returnFrom('${fName}') but stack is empty`);
       return;
     }
     ({fullName, isLogged} = this.lStack.pop());
+    if (doDebugStack) {
+      LOG(this.indent() + `[<-- BACK ${fName}]`);
+    }
     if (fullName !== fName) {
       LOG(`ERROR: returnFrom('${fName}') but TOS is ${fullName}`);
       return;

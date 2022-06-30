@@ -99,14 +99,12 @@ export class CallStack
 
 	returnFrom: (fName) ->
 
-		if doDebugStack
-			LOG @indent() + "[<-- BACK #{fName}]"
-
 		if @lStack.length == 0
 			LOG "ERROR: returnFrom('#{fName}') but stack is empty"
 			return
-
 		{fullName, isLogged} = @lStack.pop()
+		if doDebugStack
+			LOG @indent() + "[<-- BACK #{fName}]"
 		if (fullName != fName)
 			LOG "ERROR: returnFrom('#{fName}') but TOS is #{fullName}"
 			return
