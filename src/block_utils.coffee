@@ -4,7 +4,7 @@ import fs from 'fs'
 import readline from 'readline'
 
 import {
-	assert, defined, isEmpty, isString, nonEmpty, error, rtrim,
+	undef, assert, defined, isEmpty, isString, isArray, nonEmpty, error, rtrim,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
@@ -29,6 +29,9 @@ export blockToArray = (block) ->
 
 export arrayToBlock = (lLines) ->
 
+	if (lLines == undef)
+		return ''
+	assert isArray(lLines), "lLines is not an array"
 	lLines = lLines.filter((line) => defined(line));
 	if lLines.length == 0
 		return ''

@@ -5,10 +5,12 @@ import fs from 'fs';
 import readline from 'readline';
 
 import {
+  undef,
   assert,
   defined,
   isEmpty,
   isString,
+  isArray,
   nonEmpty,
   error,
   rtrim
@@ -35,6 +37,10 @@ export var blockToArray = function(block) {
 // ---------------------------------------------------------------------------
 //   arrayToBlock - block will have no trailing whitespace
 export var arrayToBlock = function(lLines) {
+  if (lLines === undef) {
+    return '';
+  }
+  assert(isArray(lLines), "lLines is not an array");
   lLines = lLines.filter((line) => {
     return defined(line);
   });
