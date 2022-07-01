@@ -7,7 +7,7 @@ import NReadLines from 'n-readlines'
 
 import {
 	assert, undef, pass, defined, rtrim, error, isEmpty, nonEmpty,
-	isString, isArray, isRegExp, isFunction, croak, OL,
+	isString, isArray, isHash, isRegExp, isFunction, croak, OL,
 	} from '@jdeighan/coffee-utils'
 import {log, LOG} from '@jdeighan/coffee-utils/log'
 import {debug} from '@jdeighan/coffee-utils/debug'
@@ -268,7 +268,13 @@ export forEachFile = (dir, cb, filt=undef, level=0) ->
 
 # ---------------------------------------------------------------------------
 
-export pathTo = (fname, searchDir, direction="down") ->
+export pathTo = (fname, searchDir, hOptions={}) ->
+
+	{direction, relative} = hOptions
+	if isEmpty(direction)
+		direction = 'down'
+	if isEmpty(relative)
+		relative = false
 
 	debug "enter pathTo()", fname, searchDir, direction
 	if ! searchDir
@@ -276,6 +282,8 @@ export pathTo = (fname, searchDir, direction="down") ->
 	assert fs.existsSync(searchDir), "Dir #{searchDir} does not exist"
 	filepath = mkpath(searchDir, fname)
 	if fs.existsSync(filepath)
+		if relative
+			filepath = "./#{fname}"
 		debug "return from pathTo() - file exists", filepath
 		return filepath
 
@@ -285,17 +293,26 @@ export pathTo = (fname, searchDir, direction="down") ->
 		for subdir in getSubDirs(searchDir)
 			dirpath = mkpath(searchDir, subdir)
 			debug "check #{subdir}"
-			if defined(fpath = pathTo(fname, dirpath))
+			if defined(fpath = pathTo(fname, dirpath, hOptions))
+				if relative
+					fpath = fpath.replace('./', "./#{subdir}/")
 				debug "return from pathTo()", fpath
 				return fpath
 	else if (direction == 'up')
+		nLevels = 0
 		while defined(dirPath = getParentDir(searchDir))
+			nLevels += 1
 			debug "check #{dirPath}"
-			filepath = mkpath(dirPath, fname)
-			debug "check for #{filepath}"
-			if fs.existsSync(filepath)
-				debug "return from pathTo()", filepath
-				return filepath
+			fpath = mkpath(dirPath, fname)
+			debug "check for #{fpath}"
+			if fs.existsSync(fpath)
+				if relative
+					fpath = "../".repeat(nLevels) + fname
+					debug "return from pathTo()", fpath
+					return fpath
+				else
+					debug "return from pathTo()", fpath
+					return fpath
 			searchDir = dirPath
 	else
 		error "pathTo(): Invalid direction '#{direction}'"
@@ -309,12 +326,12 @@ export allPathsTo = (fname, searchDir) ->
 
 	if ! searchDir
 		searchDir = process.cwd()
-	path = pathTo(fname, searchDir, "up")
+	path = pathTo(fname, searchDir, {direction: "up"})
 	if path?
 		lPaths = [path]    # --- build an array of paths
 		# --- search upward for files, but return ordered top down
 		while (h = pathlib.parse(path)) \
-				&& (path = pathTo(fname, pathlib.resolve(h.dir, '..'), "up"))
+				&& (path = pathTo(fname, pathlib.resolve(h.dir, '..'), {direction: "up"}))
 			lPaths.unshift path
 		return lPaths
 	else

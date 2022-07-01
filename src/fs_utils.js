@@ -21,6 +21,7 @@ import {
   nonEmpty,
   isString,
   isArray,
+  isHash,
   isRegExp,
   isFunction,
   croak,
@@ -326,8 +327,15 @@ export var forEachFile = function(dir, cb, filt = undef, level = 0) {
 };
 
 // ---------------------------------------------------------------------------
-export var pathTo = function(fname, searchDir, direction = "down") {
-  var dirPath, dirpath, filepath, fpath, i, len, ref, subdir;
+export var pathTo = function(fname, searchDir, hOptions = {}) {
+  var dirPath, direction, dirpath, filepath, fpath, i, len, nLevels, ref, relative, subdir;
+  ({direction, relative} = hOptions);
+  if (isEmpty(direction)) {
+    direction = 'down';
+  }
+  if (isEmpty(relative)) {
+    relative = false;
+  }
   debug("enter pathTo()", fname, searchDir, direction);
   if (!searchDir) {
     searchDir = process.cwd();
@@ -335,6 +343,9 @@ export var pathTo = function(fname, searchDir, direction = "down") {
   assert(fs.existsSync(searchDir), `Dir ${searchDir} does not exist`);
   filepath = mkpath(searchDir, fname);
   if (fs.existsSync(filepath)) {
+    if (relative) {
+      filepath = `./${fname}`;
+    }
     debug("return from pathTo() - file exists", filepath);
     return filepath;
   }
@@ -346,19 +357,30 @@ export var pathTo = function(fname, searchDir, direction = "down") {
       subdir = ref[i];
       dirpath = mkpath(searchDir, subdir);
       debug(`check ${subdir}`);
-      if (defined(fpath = pathTo(fname, dirpath))) {
+      if (defined(fpath = pathTo(fname, dirpath, hOptions))) {
+        if (relative) {
+          fpath = fpath.replace('./', `./${subdir}/`);
+        }
         debug("return from pathTo()", fpath);
         return fpath;
       }
     }
   } else if (direction === 'up') {
+    nLevels = 0;
     while (defined(dirPath = getParentDir(searchDir))) {
+      nLevels += 1;
       debug(`check ${dirPath}`);
-      filepath = mkpath(dirPath, fname);
-      debug(`check for ${filepath}`);
-      if (fs.existsSync(filepath)) {
-        debug("return from pathTo()", filepath);
-        return filepath;
+      fpath = mkpath(dirPath, fname);
+      debug(`check for ${fpath}`);
+      if (fs.existsSync(fpath)) {
+        if (relative) {
+          fpath = "../".repeat(nLevels) + fname;
+          debug("return from pathTo()", fpath);
+          return fpath;
+        } else {
+          debug("return from pathTo()", fpath);
+          return fpath;
+        }
       }
       searchDir = dirPath;
     }
@@ -375,11 +397,15 @@ export var allPathsTo = function(fname, searchDir) {
   if (!searchDir) {
     searchDir = process.cwd();
   }
-  path = pathTo(fname, searchDir, "up");
+  path = pathTo(fname, searchDir, {
+    direction: "up"
+  });
   if (path != null) {
     lPaths = [path]; // --- build an array of paths
     // --- search upward for files, but return ordered top down
-    while ((h = pathlib.parse(path)) && (path = pathTo(fname, pathlib.resolve(h.dir, '..'), "up"))) {
+    while ((h = pathlib.parse(path)) && (path = pathTo(fname, pathlib.resolve(h.dir, '..'), {
+        direction: "up"
+      }))) {
       lPaths.unshift(path);
     }
     return lPaths;
