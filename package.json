@@ -1,7 +1,7 @@
 {
 	"name": "@jdeighan/coffee-utils",
 	"type": "module",
-	"version": "7.0.75",
+	"version": "8.0.0",
 	"description": "A set of utility functions for CoffeeScript",
 	"main": "coffee_utils.js",
 	"exports": {
