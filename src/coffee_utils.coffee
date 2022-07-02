@@ -135,6 +135,16 @@ export isString = (x) ->
 
 # ---------------------------------------------------------------------------
 
+export isNonEmptyString = (x) ->
+
+	if typeof x != 'string' && x ! instanceof String
+		return false
+	if x.match(/^\s*$/)
+		return false
+	return true
+
+# ---------------------------------------------------------------------------
+
 export isBoolean = (x) ->
 
 	return typeof x == 'boolean'
@@ -269,13 +279,17 @@ export isInteger = (x) ->
 
 # ---------------------------------------------------------------------------
 
-export isUniqueList = (lItems) ->
+export isUniqueList = (lItems, func=undef) ->
 
 	if ! lItems?
 		return true     # empty list is unique
+	if defined(func)
+		assert isFunction(func), "Not a function: #{OL(func)}"
 	h = {}
 	for item in lItems
-		if h[item]
+		if defined(func) && !func(item)
+			return false
+		if defined(h[item])
 			return false
 		h[item] = 1
 	return true

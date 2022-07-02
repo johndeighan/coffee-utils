@@ -3,7 +3,7 @@
 import {simple} from '@jdeighan/unit-tester'
 import {
 	say, undef, error, warn, isString, isObject, isArray, isHash,
-	isEmpty, nonEmpty, getClassName, isNumber,
+	isEmpty, nonEmpty, getClassName, isNumber, isNonEmptyString,
 	isFunction, isInteger, rtrim, isUniqueList,
 	ltrunc, rtrunc, extractMatches, range, patchStr,
 	words, escapeStr, titleLine, className, eval_expr,
@@ -26,6 +26,13 @@ simple.truthy {{LINE}}, nonEmpty('a')
 simple.truthy {{LINE}}, nonEmpty('.')
 simple.truthy {{LINE}}, nonEmpty([2])
 simple.truthy {{LINE}}, nonEmpty({width: 2})
+
+simple.truthy {{LINE}}, isNonEmptyString('abc')
+simple.falsy  {{LINE}}, isNonEmptyString(undef)
+simple.falsy  {{LINE}}, isNonEmptyString('')
+simple.falsy  {{LINE}}, isNonEmptyString('   ')
+simple.falsy  {{LINE}}, isNonEmptyString("\t\t\t")
+simple.falsy  {{LINE}}, isNonEmptyString(5)
 
 simple.equal  {{LINE}}, titleLine('a thing').length, 42
 simple.equal  {{LINE}}, titleLine('a thing','-',5,90).length, 90
@@ -277,14 +284,27 @@ simple.equal {{LINE}}, replaceVars("value is __var1__", hVars), "value is __var1
 
 # ---------------------------------------------------------------------------
 
-simple.truthy {{LINE}}, isUniqueList(undef)
-simple.truthy {{LINE}}, isUniqueList([])
-simple.truthy {{LINE}}, isUniqueList([1])
-simple.truthy {{LINE}}, isUniqueList(['a'])
-simple.truthy {{LINE}}, isUniqueList(['a','b','c'])
-simple.truthy {{LINE}}, isUniqueList([1,2,3])
-simple.falsy  {{LINE}}, isUniqueList(['a','b','a'])
-simple.falsy  {{LINE}}, isUniqueList([1,2,1])
+(() ->
+	simple.truthy {{LINE}}, isUniqueList(undef)
+	simple.truthy {{LINE}}, isUniqueList([])
+	simple.truthy {{LINE}}, isUniqueList([1])
+	simple.truthy {{LINE}}, isUniqueList(['a'])
+	simple.truthy {{LINE}}, isUniqueList(['a','b','c'])
+	simple.truthy {{LINE}}, isUniqueList([1,2,3])
+	simple.falsy  {{LINE}}, isUniqueList(['a','b','a'])
+	simple.falsy  {{LINE}}, isUniqueList([1,2,1])
+
+	# --- test for single, lower-case letter
+	func = (x) ->
+		isString(x) && defined(x.match(/^[a-z]$/))
+
+	simple.truthy {{LINE}}, isUniqueList(['a','b','c'], func)
+	simple.falsy  {{LINE}}, isUniqueList(['a','b','C'], func)
+	simple.falsy  {{LINE}}, isUniqueList(['a','b',1], func)
+	simple.falsy  {{LINE}}, isUniqueList(['a','b','a'], func)
+	simple.falsy  {{LINE}}, isUniqueList(['a','b',undef], func)
+	simple.falsy  {{LINE}}, isUniqueList(['a','b',''], func)
+	)()
 
 # ---------------------------------------------------------------------------
 

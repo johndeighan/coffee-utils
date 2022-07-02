@@ -129,6 +129,17 @@ export var isString = function(x) {
 };
 
 // ---------------------------------------------------------------------------
+export var isNonEmptyString = function(x) {
+  if (typeof x !== 'string' && !(x instanceof String)) {
+    return false;
+  }
+  if (x.match(/^\s*$/)) {
+    return false;
+  }
+  return true;
+};
+
+// ---------------------------------------------------------------------------
 export var isBoolean = function(x) {
   return typeof x === 'boolean';
 };
@@ -270,15 +281,21 @@ export var isInteger = function(x) {
 };
 
 // ---------------------------------------------------------------------------
-export var isUniqueList = function(lItems) {
+export var isUniqueList = function(lItems, func = undef) {
   var h, i, item, len;
   if (lItems == null) {
     return true; // empty list is unique
   }
+  if (defined(func)) {
+    assert(isFunction(func), `Not a function: ${OL(func)}`);
+  }
   h = {};
   for (i = 0, len = lItems.length; i < len; i++) {
     item = lItems[i];
-    if (h[item]) {
+    if (defined(func) && !func(item)) {
+      return false;
+    }
+    if (defined(h[item])) {
       return false;
     }
     h[item] = 1;
