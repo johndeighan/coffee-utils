@@ -4,7 +4,7 @@ import {simple} from '@jdeighan/unit-tester'
 import {
 	say, undef, error, warn, isString, isObject, isArray, isHash,
 	isEmpty, nonEmpty, getClassName, isNumber, isNonEmptyString,
-	isFunction, isInteger, rtrim, isUniqueList,
+	isFunction, isInteger, rtrim, isUniqueList, isUniqueTree,
 	ltrunc, rtrunc, extractMatches, range, patchStr,
 	words, escapeStr, titleLine, className, eval_expr,
 	removeCR, CWS, isArrayOfHashes, setCharsAt,
@@ -304,6 +304,20 @@ simple.equal {{LINE}}, replaceVars("value is __var1__", hVars), "value is __var1
 	simple.falsy  {{LINE}}, isUniqueList(['a','b','a'], func)
 	simple.falsy  {{LINE}}, isUniqueList(['a','b',undef], func)
 	simple.falsy  {{LINE}}, isUniqueList(['a','b',''], func)
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	simple.truthy {{LINE}}, isUniqueTree(['a', ['b','c'], 'd'])
+	simple.falsy  {{LINE}}, isUniqueTree(['a', ['b','a'], 'd'])
+
+	# --- test for single, lower-case letter
+	func = (x) ->
+		isString(x) && defined(x.match(/^[a-z]$/))
+
+	simple.falsy  {{LINE}}, isUniqueTree(['a', ['b','C'], 'd'], func)
+	simple.falsy  {{LINE}}, isUniqueTree(['a', ['b','cc'], 'd'], func)
 	)()
 
 # ---------------------------------------------------------------------------

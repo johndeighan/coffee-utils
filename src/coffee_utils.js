@@ -304,6 +304,34 @@ export var isUniqueList = function(lItems, func = undef) {
 };
 
 // ---------------------------------------------------------------------------
+export var isUniqueTree = function(lItems, func = undef, hFound = {}) {
+  var i, item, len;
+  if (isEmpty(lItems)) {
+    return true; // empty list is unique
+  }
+  if (defined(func)) {
+    assert(isFunction(func), `Not a function: ${OL(func)}`);
+  }
+  for (i = 0, len = lItems.length; i < len; i++) {
+    item = lItems[i];
+    if (isArray(item)) {
+      if (!isUniqueTree(item, func, hFound)) {
+        return false;
+      }
+    } else {
+      if (defined(func) && !func(item)) {
+        return false;
+      }
+      if (defined(hFound[item])) {
+        return false;
+      }
+      hFound[item] = 1;
+    }
+  }
+  return true;
+};
+
+// ---------------------------------------------------------------------------
 export var uniq = function(lItems) {
   return [...new Set(lItems)];
 };

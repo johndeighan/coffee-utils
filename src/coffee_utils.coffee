@@ -296,6 +296,26 @@ export isUniqueList = (lItems, func=undef) ->
 
 # ---------------------------------------------------------------------------
 
+export isUniqueTree = (lItems, func=undef, hFound={}) ->
+
+	if isEmpty(lItems)
+		return true     # empty list is unique
+	if defined(func)
+		assert isFunction(func), "Not a function: #{OL(func)}"
+	for item in lItems
+		if isArray(item)
+			if ! isUniqueTree(item, func, hFound)
+				return false
+		else
+			if defined(func) && !func(item)
+				return false
+			if defined(hFound[item])
+				return false
+			hFound[item] = 1
+	return true
+
+# ---------------------------------------------------------------------------
+
 export uniq = (lItems) ->
 
 	return [...new Set(lItems)]
