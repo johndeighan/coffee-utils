@@ -19,6 +19,8 @@
 		"./store": "./src/DataStores.js",
 		"./taml": "./src/taml.js",
 		"./placeholders": "./src/placeholders.js",
+		"./section": "./src/Section.js",
+		"./sectionmap": "./src/SectionMap.js",
 		"./package.json": "./package.json"
 	},
 	"engines": {
