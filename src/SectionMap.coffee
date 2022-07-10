@@ -5,6 +5,7 @@ import {
 	isString, isHash, isArray, isUniqueTree, isNonEmptyString,
 	} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
+import {indented} from '@jdeighan/coffee-utils/indent'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {Section} from '@jdeighan/coffee-utils/section'
 
@@ -12,28 +13,26 @@ import {Section} from '@jdeighan/coffee-utils/section'
 
 isSectionName = (name) ->
 
-	assert isString(name), "not a string"
-	return name.match(/^[a-z][a-z0-9]*/)
+	return isString(name) && name.match(/^[a-z][a-z0-9]*/)
 
 # ---------------------------------------------------------------------------
 
 isSetName = (name) ->
 
-	assert isString(name), "not a string"
-	return name.match(/^[A-Z][a-z0-9]*/)
+	return isString(name) && name.match(/^[A-Z][a-z0-9]*/)
 
 # ---------------------------------------------------------------------------
 
 export class SectionMap
 
-	constructor: (lSections) ->
-		# --- lSections is a tree of section names
+	constructor: (lSectionTree) ->
+		# --- lSectionTree is a tree of section names
 
-		debug "enter SectionMap()", lSections
-		@lSections = lSections   # a tree of section names
+		debug "enter SectionMap()", lSectionTree
+		@lSectionTree = lSectionTree   # a tree of section names
 		@hSets = {}
 		@hSections = {}
-		@addSections lSections
+		@addSections lSectionTree
 		debug "return from SectionMap()", @hSections
 
 	# ..........................................................
@@ -41,16 +40,28 @@ export class SectionMap
 	# --- TODO: Allow array to start with a set name ---
 
 	addSections: (desc) ->
+		# --- returns a flat array of sections that were added
 
 		if isString(desc)
 			assert nonEmpty(desc), "empty section name"
-			assert desc.match(/^[a-z][a-z0-9]*$/), "bad section name #{OL(desc)}"
+			assert isSectionName(desc), "bad section name #{OL(desc)}"
 			assert (@hSections[desc] == undef), "duplicate section #{OL(desc)}"
 			@hSections[desc] = new Section()
+			return [desc]
 		else
 			assert isArray(desc), "not an array or string #{OL(desc)}"
-			for item in desc
-				@addSections item
+			name = undef
+			lParts = []
+			for item,i in desc
+				if (i==0) && isSetName(item)
+					name = item
+				else
+					lAdded = @addSections item
+					for item in lAdded
+						lParts.push item
+			if defined(name)
+				@addSet name, lParts
+			return lParts
 		return
 
 	# ..........................................................
@@ -96,22 +107,22 @@ export class SectionMap
 
 	# ..........................................................
 
-	addSet: (name, lSections) ->
+	addSet: (name, lSectionTree) ->
 
-		debug "enter addSet()", name, lSections
+		debug "enter addSet()", name, lSectionTree
 
 		# --- check the name
 		assert isSetName(name), "not a valid set name #{OL(name)}"
 
-		# --- check lSections
-		assert isArray(lSections), "arg 2 not an array"
-		for secName in lSections
+		# --- check lSectionTree
+		assert isArray(lSectionTree), "arg 2 not an array"
+		for secName in lSectionTree
 			assert isNonEmptyString(secName),
 					"not a non-empty string #{OL(secName)}"
 			assert defined(@hSections[secName]),
 					"not a section name #{OL(secName)}"
 
-		@hSets[name] = lSections
+		@hSets[name] = lSectionTree
 		debug 'hSets', @hSets
 		debug "return from addSet()"
 		return
@@ -129,20 +140,20 @@ export class SectionMap
 	firstSection: (name) ->
 
 		assert isSetName(name), "bad set name #{OL(name)}"
-		lSections = @hSets[name]
-		assert defined(lSections), "no such set #{OL(name)}"
-		assert nonEmpty(lSections), "empty section #{OL(name)}"
-		return @section(lSections[0])
+		lSectionTree = @hSets[name]
+		assert defined(lSectionTree), "no such set #{OL(name)}"
+		assert nonEmpty(lSectionTree), "empty section #{OL(name)}"
+		return @section(lSectionTree[0])
 
 	# ..........................................................
 
 	lastSection: (name) ->
 
 		assert isSetName(name), "bad set name #{OL(name)}"
-		lSections = @hSets[name]
-		assert defined(lSections), "no such set #{OL(name)}"
-		assert nonEmpty(lSections), "empty section #{OL(name)}"
-		return @section(lSections[lSections.length - 1])
+		lSectionTree = @hSets[name]
+		assert defined(lSectionTree), "no such set #{OL(name)}"
+		assert nonEmpty(lSectionTree), "empty section #{OL(name)}"
+		return @section(lSectionTree[lSectionTree.length - 1])
 
 	# ..........................................................
 
@@ -198,8 +209,8 @@ export class SectionMap
 
 		debug "enter getBlock()"
 		@lAllBlocks = []
-		debug 'lSections', @lSections
-		@accumBlock @lSections
+		debug 'lSectionTree', @lSectionTree
+		@accumBlock @lSectionTree
 		debug 'lAllBlocks', @lAllBlocks
 		result = arrayToBlock(@lAllBlocks)
 		debug "return from getBlock()", result
@@ -218,4 +229,35 @@ export class SectionMap
 			assert isArray(tree), "not an array"
 			for subtree in tree
 				@accumBlock subtree
+		return
+
+	# ..........................................................
+
+	getShape: () ->
+
+		debug "enter getShape()"
+		@lAllShapes = []
+		debug 'lSectionTree', @lSectionTree
+		@accumShape @lSectionTree, -1
+		debug 'lAllShapes', @lAllShapes
+		result = arrayToBlock(@lAllShapes)
+		debug "return from getShape()", result
+		return result
+
+	# ..........................................................
+
+	accumShape: (tree, level) ->
+
+		if isSectionName(tree)
+			debug "accumShape #{OL(tree)}"
+			@lAllShapes.push indented(tree, level)
+		else if isSetName(tree)
+			lSections = @hSets[tree]
+			strSections = lSections.join(', ')
+			debug "accumShape SET: #{OL(tree)} = #{strSections}"
+			@lAllShapes.push indented("SET: #{tree} = #{strSections}", level)
+		else
+			assert isArray(tree), "not an array"
+			for subtree in tree
+				@accumShape subtree, level+1
 		return
