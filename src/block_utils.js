@@ -38,23 +38,35 @@ export var blockToArray = function(block) {
 //   arrayToBlock - block will have no trailing whitespace
 export var arrayToBlock = function(lLines) {
   if (lLines === undef) {
-    return '';
+    return undef;
   }
   assert(isArray(lLines), "lLines is not an array");
   lLines = lLines.filter((line) => {
     return defined(line);
   });
   if (lLines.length === 0) {
-    return '';
+    return undef;
   } else {
     return rtrim(lLines.join('\n'));
   }
 };
 
 // ---------------------------------------------------------------------------
+export var splitBlock = function(block) {
+  var pos;
+  assert(isString(block), "not a string");
+  pos = block.indexOf('\n');
+  if (pos === -1) {
+    return [block, undef];
+  } else {
+    return [block.substring(0, pos), block.substring(pos + 1)];
+  }
+};
+
+// ---------------------------------------------------------------------------
 export var firstLine = function(block) {
   var pos;
-  assert(isString(block), "firstLine(): string expected");
+  assert(isString(block), "not a string");
   pos = block.indexOf('\n');
   if (pos === -1) {
     return block;
@@ -66,10 +78,10 @@ export var firstLine = function(block) {
 // ---------------------------------------------------------------------------
 export var remainingLines = function(block) {
   var pos;
-  assert(isString(block), "remainingLines(): string expected");
+  assert(isString(block), "not a string");
   pos = block.indexOf('\n');
   if (pos === -1) {
-    return '';
+    return undef;
   } else {
     return block.substring(pos + 1);
   }

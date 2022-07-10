@@ -30,19 +30,31 @@ export blockToArray = (block) ->
 export arrayToBlock = (lLines) ->
 
 	if (lLines == undef)
-		return ''
+		return undef
 	assert isArray(lLines), "lLines is not an array"
 	lLines = lLines.filter((line) => defined(line));
 	if lLines.length == 0
-		return ''
+		return undef
 	else
 		return rtrim(lLines.join('\n'))
 
 # ---------------------------------------------------------------------------
 
+export splitBlock = (block) ->
+
+	assert isString(block), "not a string"
+	pos = block.indexOf('\n')
+	if (pos == -1)
+		return [block, undef]
+	else
+		return [block.substring(0, pos), block.substring(pos+1)]
+
+
+# ---------------------------------------------------------------------------
+
 export firstLine = (block) ->
 
-	assert isString(block), "firstLine(): string expected"
+	assert isString(block), "not a string"
 	pos = block.indexOf('\n')
 	if (pos == -1)
 		return block
@@ -53,10 +65,10 @@ export firstLine = (block) ->
 
 export remainingLines = (block) ->
 
-	assert isString(block), "remainingLines(): string expected"
+	assert isString(block), "not a string"
 	pos = block.indexOf('\n')
 	if (pos == -1)
-		return ''
+		return undef
 	else
 		return block.substring(pos+1)
 

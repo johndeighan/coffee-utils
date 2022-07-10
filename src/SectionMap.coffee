@@ -37,8 +37,6 @@ export class SectionMap
 
 	# ..........................................................
 
-	# --- TODO: Allow array to start with a set name ---
-
 	addSections: (desc) ->
 		# --- returns a flat array of sections that were added
 
@@ -46,7 +44,7 @@ export class SectionMap
 			assert nonEmpty(desc), "empty section name"
 			assert isSectionName(desc), "bad section name #{OL(desc)}"
 			assert (@hSections[desc] == undef), "duplicate section #{OL(desc)}"
-			@hSections[desc] = new Section()
+			@hSections[desc] = new Section(desc)
 			return [desc]
 		else
 			assert isArray(desc), "not an array or string #{OL(desc)}"
@@ -62,47 +60,6 @@ export class SectionMap
 			if defined(name)
 				@addSet name, lParts
 			return lParts
-		return
-
-	# ..........................................................
-	# --- a generator - yield order is not guaranteed
-
-	allSections: (desc) ->
-
-		debug "enter allSections()"
-		if (desc == undef)
-			# --- We want to return all sections
-			debug "yield all sections"
-			for _,sect of @hSections
-				yield sect
-		else if isString(desc)
-			if isSectionName(desc)
-				debug "yield section #{OL(desc)}"
-				yield @section(desc)
-			else if isSetName(desc)
-				debug "expand set #{OL(desc)}"
-				debug 'hSets', @hSets
-				lNames = @hSets[desc]
-				assert defined(lNames), "no set named #{OL(desc)}"
-				debug "set #{desc}", lNames
-				for name in lNames
-					debug "yield section #{OL(desc)}"
-					yield @section(name)
-			else
-				croak "bad name #{OL(desc)}"
-		else
-			assert isArray(desc), "not an array"
-			for name in desc
-				debug "yield section #{OL(name)}"
-				assert isString(name), "not a string #{OL(name)}"
-				if isSectionName(name)
-					yield @section(name)
-				else if isSetName(name)
-					for _,sect of @hSets[name]
-						yield sect
-				else
-					croak "bad name #{OL(name)}"
-		debug "return from allSections()"
 		return
 
 	# ..........................................................
@@ -126,6 +83,54 @@ export class SectionMap
 		debug 'hSets', @hSets
 		debug "return from addSet()"
 		return
+
+	# ..........................................................
+	# --- sections returned in depth-first order from section tree
+	#     Set names are simply skipped
+	#     yields: [<level>, <section>]
+
+	allSections: (desc=undef, level=0) ->
+
+		debug "enter allSections()", desc, level
+		if (desc == undef)
+			desc = @lSectionTree
+		if isArray(desc)
+			for item in desc
+				if isSectionName(item)
+					result = [level, @section(item)]
+					debug 'yield', result
+					yield result
+				else if isSetName(item)
+					pass
+				else
+					assert isArray(item), "not an array #{OL(item)}"
+					yield from @allSections(item, level+1)
+		else if isSectionName(desc)
+			result = [level, @section(desc)]
+			debug 'yield', result
+			yield result
+		else if isSetName(desc)
+			lTree = @hSets[desc]
+			assert defined(lTree), "Not a Set: #{OL(desc)}"
+			yield from @allSections(lTree, level)
+		else
+			croak "Bad item: #{OL(desc)}"
+		debug "return from allSections()"
+		return
+
+	# ..........................................................
+
+	getBlock: () ->
+
+		debug "enter getBlock()"
+		lParts = []
+		for [_, sect] from @allSections()
+			if sect.nonEmpty()
+				lParts.push sect.getBlock()
+		debug 'lParts', lParts
+		result = arrayToBlock(lParts)
+		debug "return from getBlock()", result
+		return result
 
 	# ..........................................................
 
@@ -160,7 +165,7 @@ export class SectionMap
 	length: (desc=undef) ->
 
 		result = 0
-		for sect from @allSections(desc)
+		for [_, sect] from @allSections(desc)
 			result += sect.length()
 		return result
 
@@ -180,7 +185,7 @@ export class SectionMap
 
 	indent: (desc=undef, level=1) ->
 
-		for sect from @allSections(desc)
+		for [_, sect] from @allSections(desc)
 			sect.indent(level)
 		return
 
@@ -205,59 +210,12 @@ export class SectionMap
 
 	# ..........................................................
 
-	getBlock: () ->
-
-		debug "enter getBlock()"
-		@lAllBlocks = []
-		debug 'lSectionTree', @lSectionTree
-		@accumBlock @lSectionTree
-		debug 'lAllBlocks', @lAllBlocks
-		result = arrayToBlock(@lAllBlocks)
-		debug "return from getBlock()", result
-		return result
-
-	# ..........................................................
-
-	accumBlock: (tree) ->
-
-		if isString(tree)
-			debug "accumBlock #{OL(tree)}"
-			block = @section(tree).getBlock()
-			if nonEmpty(block)
-				@lAllBlocks.push block
-		else
-			assert isArray(tree), "not an array"
-			for subtree in tree
-				@accumBlock subtree
-		return
-
-	# ..........................................................
-
 	getShape: () ->
 
 		debug "enter getShape()"
-		@lAllShapes = []
-		debug 'lSectionTree', @lSectionTree
-		@accumShape @lSectionTree, -1
-		debug 'lAllShapes', @lAllShapes
-		result = arrayToBlock(@lAllShapes)
+		lParts = []
+		for [level, sect] from @allSections()
+			lParts.push indented(sect.name, level)
+		result = arrayToBlock(lParts)
 		debug "return from getShape()", result
 		return result
-
-	# ..........................................................
-
-	accumShape: (tree, level) ->
-
-		if isSectionName(tree)
-			debug "accumShape #{OL(tree)}"
-			@lAllShapes.push indented(tree, level)
-		else if isSetName(tree)
-			lSections = @hSets[tree]
-			strSections = lSections.join(', ')
-			debug "accumShape SET: #{OL(tree)} = #{strSections}"
-			@lAllShapes.push indented("SET: #{tree} = #{strSections}", level)
-		else
-			assert isArray(tree), "not an array"
-			for subtree in tree
-				@accumShape subtree, level+1
-		return

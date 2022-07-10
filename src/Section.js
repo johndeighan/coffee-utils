@@ -19,7 +19,8 @@ import {
 
 // ---------------------------------------------------------------------------
 export var Section = class Section {
-  constructor() {
+  constructor(name) {
+    this.name = name;
     this.lLines = [];
   }
 

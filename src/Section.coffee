@@ -10,7 +10,7 @@ import {indented} from '@jdeighan/coffee-utils/indent'
 
 export class Section
 
-	constructor: () ->
+	constructor: (@name) ->
 
 		@lLines = []
 

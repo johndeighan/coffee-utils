@@ -57,8 +57,6 @@ export var SectionMap = class SectionMap {
   }
 
   // ..........................................................
-
-    // --- TODO: Allow array to start with a set name ---
   addSections(desc) {
     var i, item, j, k, lAdded, lParts, len, len1, name;
     // --- returns a flat array of sections that were added
@@ -66,7 +64,7 @@ export var SectionMap = class SectionMap {
       assert(nonEmpty(desc), "empty section name");
       assert(isSectionName(desc), `bad section name ${OL(desc)}`);
       assert(this.hSections[desc] === undef, `duplicate section ${OL(desc)}`);
-      this.hSections[desc] = new Section();
+      this.hSections[desc] = new Section(desc);
       return [desc];
     } else {
       assert(isArray(desc), `not an array or string ${OL(desc)}`);
@@ -92,59 +90,6 @@ export var SectionMap = class SectionMap {
   }
 
   // ..........................................................
-  // --- a generator - yield order is not guaranteed
-  * allSections(desc) {
-    var _, j, k, lNames, len, len1, name, ref, ref1, sect;
-    debug("enter allSections()");
-    if (desc === undef) {
-      // --- We want to return all sections
-      debug("yield all sections");
-      ref = this.hSections;
-      for (_ in ref) {
-        sect = ref[_];
-        yield sect;
-      }
-    } else if (isString(desc)) {
-      if (isSectionName(desc)) {
-        debug(`yield section ${OL(desc)}`);
-        yield this.section(desc);
-      } else if (isSetName(desc)) {
-        debug(`expand set ${OL(desc)}`);
-        debug('hSets', this.hSets);
-        lNames = this.hSets[desc];
-        assert(defined(lNames), `no set named ${OL(desc)}`);
-        debug(`set ${desc}`, lNames);
-        for (j = 0, len = lNames.length; j < len; j++) {
-          name = lNames[j];
-          debug(`yield section ${OL(desc)}`);
-          yield this.section(name);
-        }
-      } else {
-        croak(`bad name ${OL(desc)}`);
-      }
-    } else {
-      assert(isArray(desc), "not an array");
-      for (k = 0, len1 = desc.length; k < len1; k++) {
-        name = desc[k];
-        debug(`yield section ${OL(name)}`);
-        assert(isString(name), `not a string ${OL(name)}`);
-        if (isSectionName(name)) {
-          yield this.section(name);
-        } else if (isSetName(name)) {
-          ref1 = this.hSets[name];
-          for (_ in ref1) {
-            sect = ref1[_];
-            yield sect;
-          }
-        } else {
-          croak(`bad name ${OL(name)}`);
-        }
-      }
-    }
-    debug("return from allSections()");
-  }
-
-  // ..........................................................
   addSet(name, lSectionTree) {
     var j, len, secName;
     debug("enter addSet()", name, lSectionTree);
@@ -160,6 +105,62 @@ export var SectionMap = class SectionMap {
     this.hSets[name] = lSectionTree;
     debug('hSets', this.hSets);
     debug("return from addSet()");
+  }
+
+  // ..........................................................
+  // --- sections returned in depth-first order from section tree
+  //     Set names are simply skipped
+  //     yields: [<level>, <section>]
+  * allSections(desc = undef, level = 0) {
+    var item, j, lTree, len, result;
+    debug("enter allSections()", desc, level);
+    if (desc === undef) {
+      desc = this.lSectionTree;
+    }
+    if (isArray(desc)) {
+      for (j = 0, len = desc.length; j < len; j++) {
+        item = desc[j];
+        if (isSectionName(item)) {
+          result = [level, this.section(item)];
+          debug('yield', result);
+          yield result;
+        } else if (isSetName(item)) {
+          pass;
+        } else {
+          assert(isArray(item), `not an array ${OL(item)}`);
+          yield* this.allSections(item, level + 1);
+        }
+      }
+    } else if (isSectionName(desc)) {
+      result = [level, this.section(desc)];
+      debug('yield', result);
+      yield result;
+    } else if (isSetName(desc)) {
+      lTree = this.hSets[desc];
+      assert(defined(lTree), `Not a Set: ${OL(desc)}`);
+      yield* this.allSections(lTree, level);
+    } else {
+      croak(`Bad item: ${OL(desc)}`);
+    }
+    debug("return from allSections()");
+  }
+
+  // ..........................................................
+  getBlock() {
+    var _, lParts, ref, result, sect, x;
+    debug("enter getBlock()");
+    lParts = [];
+    ref = this.allSections();
+    for (x of ref) {
+      [_, sect] = x;
+      if (sect.nonEmpty()) {
+        lParts.push(sect.getBlock());
+      }
+    }
+    debug('lParts', lParts);
+    result = arrayToBlock(lParts);
+    debug("return from getBlock()", result);
+    return result;
   }
 
   // ..........................................................
@@ -192,10 +193,11 @@ export var SectionMap = class SectionMap {
 
   // ..........................................................
   length(desc = undef) {
-    var ref, result, sect;
+    var _, ref, result, sect, x;
     result = 0;
     ref = this.allSections(desc);
-    for (sect of ref) {
+    for (x of ref) {
+      [_, sect] = x;
       result += sect.length();
     }
     return result;
@@ -213,9 +215,10 @@ export var SectionMap = class SectionMap {
 
   // ..........................................................
   indent(desc = undef, level = 1) {
-    var ref, sect;
+    var _, ref, sect, x;
     ref = this.allSections(desc);
-    for (sect of ref) {
+    for (x of ref) {
+      [_, sect] = x;
       sect.indent(level);
     }
   }
@@ -242,67 +245,18 @@ export var SectionMap = class SectionMap {
   }
 
   // ..........................................................
-  getBlock() {
-    var result;
-    debug("enter getBlock()");
-    this.lAllBlocks = [];
-    debug('lSectionTree', this.lSectionTree);
-    this.accumBlock(this.lSectionTree);
-    debug('lAllBlocks', this.lAllBlocks);
-    result = arrayToBlock(this.lAllBlocks);
-    debug("return from getBlock()", result);
-    return result;
-  }
-
-  // ..........................................................
-  accumBlock(tree) {
-    var block, j, len, subtree;
-    if (isString(tree)) {
-      debug(`accumBlock ${OL(tree)}`);
-      block = this.section(tree).getBlock();
-      if (nonEmpty(block)) {
-        this.lAllBlocks.push(block);
-      }
-    } else {
-      assert(isArray(tree), "not an array");
-      for (j = 0, len = tree.length; j < len; j++) {
-        subtree = tree[j];
-        this.accumBlock(subtree);
-      }
-    }
-  }
-
-  // ..........................................................
   getShape() {
-    var result;
+    var lParts, level, ref, result, sect, x;
     debug("enter getShape()");
-    this.lAllShapes = [];
-    debug('lSectionTree', this.lSectionTree);
-    this.accumShape(this.lSectionTree, -1);
-    debug('lAllShapes', this.lAllShapes);
-    result = arrayToBlock(this.lAllShapes);
+    lParts = [];
+    ref = this.allSections();
+    for (x of ref) {
+      [level, sect] = x;
+      lParts.push(indented(sect.name, level));
+    }
+    result = arrayToBlock(lParts);
     debug("return from getShape()", result);
     return result;
-  }
-
-  // ..........................................................
-  accumShape(tree, level) {
-    var j, lSections, len, strSections, subtree;
-    if (isSectionName(tree)) {
-      debug(`accumShape ${OL(tree)}`);
-      this.lAllShapes.push(indented(tree, level));
-    } else if (isSetName(tree)) {
-      lSections = this.hSets[tree];
-      strSections = lSections.join(', ');
-      debug(`accumShape SET: ${OL(tree)} = ${strSections}`);
-      this.lAllShapes.push(indented(`SET: ${tree} = ${strSections}`, level));
-    } else {
-      assert(isArray(tree), "not an array");
-      for (j = 0, len = tree.length; j < len; j++) {
-        subtree = tree[j];
-        this.accumShape(subtree, level + 1);
-      }
-    }
   }
 
 };
