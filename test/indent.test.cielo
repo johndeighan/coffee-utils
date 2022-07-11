@@ -6,7 +6,7 @@ import {UnitTesterNorm, simple} from '@jdeighan/unit-tester'
 import {isInteger} from '@jdeighan/coffee-utils'
 import {
 	indentLevel, isUndented, indentation, undented, splitLine,
-	indented, tabify, untabify,
+	indented, tabify, untabify, enclose,
 	} from '@jdeighan/coffee-utils/indent'
 
 # ---------------------------------------------------------------------------
@@ -154,3 +154,19 @@ simple.equal {{LINE}}, indented("export name = undef", 2), "\t\texport name = un
 # make sure indentLevel() works for blocks
 
 simple.equal {{LINE}}, indentLevel("\t\tabc\n\t\tdef\n\t\t\tghi"), 2
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	block = """
+		x = 42
+		callme(x)
+		"""
+
+	simple.equal {{LINE}}, enclose(block, '<script>', '</script>'), """
+		<script>
+			x = 42
+			callme(x)
+		</script>
+		"""
+	)()

@@ -66,4 +66,7 @@ export class Section
 
 	getBlock: () ->
 
-		return arrayToBlock(@lLines)
+		if (@lLines.length == 0)
+			return undef
+		else
+			return arrayToBlock(@lLines)

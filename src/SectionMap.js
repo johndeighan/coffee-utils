@@ -15,7 +15,8 @@ import {
   isHash,
   isArray,
   isUniqueTree,
-  isNonEmptyString
+  isNonEmptyString,
+  isNonEmptyArray
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -146,15 +147,39 @@ export var SectionMap = class SectionMap {
   }
 
   // ..........................................................
-  getBlock() {
-    var _, lParts, ref, result, sect, x;
+  // --- procFunc should be (name, text) -> return processedText
+  getBlock(procFunc = undef, lTree = undef) {
+    var j, lParts, len, part, result, text;
     debug("enter getBlock()");
+    if (lTree === undef) {
+      lTree = this.lSectionTree;
+    } else {
+      assert(isArray(lTree), `not an array ${OL(lTree)}`);
+    }
     lParts = [];
-    ref = this.allSections();
-    for (x of ref) {
-      [_, sect] = x;
-      if (sect.nonEmpty()) {
-        lParts.push(sect.getBlock());
+    for (j = 0, len = lTree.length; j < len; j++) {
+      part = lTree[j];
+      if (isString(part)) {
+        text = this.section(part).getBlock();
+        if (nonEmpty(text) && defined(procFunc)) {
+          text = procFunc(part, text);
+        }
+      } else if (isNonEmptyArray(part)) {
+        if (isSectionName(part[0])) {
+          text = this.getBlock(procFunc, part);
+        } else if (isSetName(part[0])) {
+          text = this.getBlock(procFunc, part.slice(1));
+          if (nonEmpty(text) && defined(procFunc)) {
+            text = procFunc(part[0], text);
+          }
+        } else {
+          croak(`Bad part: ${OL(part)}`);
+        }
+      } else {
+        croak(`Bad part: ${OL(part)}`);
+      }
+      if (defined(text)) {
+        lParts.push(text);
       }
     }
     debug('lParts', lParts);
@@ -211,37 +236,6 @@ export var SectionMap = class SectionMap {
   // ..........................................................
   nonEmpty(desc = undef) {
     return this.length(desc) > 0;
-  }
-
-  // ..........................................................
-  indent(desc = undef, level = 1) {
-    var _, ref, sect, x;
-    ref = this.allSections(desc);
-    for (x of ref) {
-      [_, sect] = x;
-      sect.indent(level);
-    }
-  }
-
-  // ..........................................................
-  enclose(name, pre, post) {
-    var sect;
-    if (isSectionName(name)) {
-      sect = this.section(name);
-      if (sect.nonEmpty()) {
-        sect.indent();
-        sect.prepend(pre);
-        sect.add(post);
-      }
-    } else if (isSetName(name)) {
-      if (this.nonEmpty(name)) {
-        this.indent(name);
-        this.firstSection(name).prepend(pre);
-        this.lastSection(name).add(post);
-      }
-    } else {
-      croak(`Bad name param ${OL(name)}`);
-    }
   }
 
   // ..........................................................

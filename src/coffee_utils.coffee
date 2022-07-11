@@ -173,6 +173,12 @@ export isArray = (x) ->
 
 # ---------------------------------------------------------------------------
 
+export isNonEmptyArray = (x) ->
+
+	return isArray(x) && (x.length > 0)
+
+# ---------------------------------------------------------------------------
+
 export isHash = (x, lKeys) ->
 
 	if ! x || (getClassName(x) != 'Object')
@@ -183,6 +189,12 @@ export isHash = (x, lKeys) ->
 			if ! x.hasOwnProperty(key)
 				return false
 	return true
+
+# ---------------------------------------------------------------------------
+
+export isNonEmptyHash = (x) ->
+
+	return isHash(x) && (Object.keys(x).length > 0)
 
 # ---------------------------------------------------------------------------
 

@@ -146,3 +146,10 @@ export tabify = (str, numSpaces=undef) ->
 export untabify = (str, numSpaces=3) ->
 
 	return str.replace(/\t/g, ' '.repeat(numSpaces))
+
+# ---------------------------------------------------------------------------
+#    enclose - indent text, surround with pre and post
+
+export enclose = (text, pre, post) ->
+
+	return pre + "\n" + indented(text) + "\n" + post

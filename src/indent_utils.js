@@ -175,3 +175,9 @@ export var tabify = function(str, numSpaces = undef) {
 export var untabify = function(str, numSpaces = 3) {
   return str.replace(/\t/g, ' '.repeat(numSpaces));
 };
+
+// ---------------------------------------------------------------------------
+//    enclose - indent text, surround with pre and post
+export var enclose = function(text, pre, post) {
+  return pre + "\n" + indented(text) + "\n" + post;
+};

@@ -160,6 +160,11 @@ export var isArray = function(x) {
 };
 
 // ---------------------------------------------------------------------------
+export var isNonEmptyArray = function(x) {
+  return isArray(x) && (x.length > 0);
+};
+
+// ---------------------------------------------------------------------------
 export var isHash = function(x, lKeys) {
   var i, key, len;
   if (!x || (getClassName(x) !== 'Object')) {
@@ -175,6 +180,11 @@ export var isHash = function(x, lKeys) {
     }
   }
   return true;
+};
+
+// ---------------------------------------------------------------------------
+export var isNonEmptyHash = function(x) {
+  return isHash(x) && (Object.keys(x).length > 0);
 };
 
 // ---------------------------------------------------------------------------

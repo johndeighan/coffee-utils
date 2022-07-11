@@ -79,7 +79,11 @@ export var Section = class Section {
 
   // ..........................................................
   getBlock() {
-    return arrayToBlock(this.lLines);
+    if (this.lLines.length === 0) {
+      return undef;
+    } else {
+      return arrayToBlock(this.lLines);
+    }
   }
 
 };

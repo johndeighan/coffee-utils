@@ -3,6 +3,7 @@
 import {
 	assert, pass, undef, defined, croak, OL, isEmpty, nonEmpty,
 	isString, isHash, isArray, isUniqueTree, isNonEmptyString,
+	isNonEmptyArray,
 	} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {indented} from '@jdeighan/coffee-utils/indent'
@@ -119,14 +120,36 @@ export class SectionMap
 		return
 
 	# ..........................................................
+	# --- procFunc should be (name, text) -> return processedText
 
-	getBlock: () ->
+	getBlock: (procFunc=undef, lTree=undef) ->
 
 		debug "enter getBlock()"
+		if (lTree == undef)
+			lTree = @lSectionTree
+		else
+			assert isArray(lTree), "not an array #{OL(lTree)}"
+
 		lParts = []
-		for [_, sect] from @allSections()
-			if sect.nonEmpty()
-				lParts.push sect.getBlock()
+		for part in lTree
+			if isString(part)
+				text = @section(part).getBlock()
+				if nonEmpty(text) && defined(procFunc)
+					text = procFunc(part, text)
+			else if isNonEmptyArray(part)
+				if isSectionName(part[0])
+					text = @getBlock(procFunc, part)
+				else if isSetName(part[0])
+					text = @getBlock(procFunc, part.slice(1))
+					if nonEmpty(text) && defined(procFunc)
+						text = procFunc(part[0], text)
+				else
+					croak "Bad part: #{OL(part)}"
+			else
+				croak "Bad part: #{OL(part)}"
+			if defined(text)
+				lParts.push text
+
 		debug 'lParts', lParts
 		result = arrayToBlock(lParts)
 		debug "return from getBlock()", result
@@ -180,33 +203,6 @@ export class SectionMap
 	nonEmpty: (desc=undef) ->
 
 		return (@length(desc) > 0)
-
-	# ..........................................................
-
-	indent: (desc=undef, level=1) ->
-
-		for [_, sect] from @allSections(desc)
-			sect.indent(level)
-		return
-
-	# ..........................................................
-
-	enclose: (name, pre, post) ->
-
-		if isSectionName(name)
-			sect = @section(name)
-			if sect.nonEmpty()
-				sect.indent()
-				sect.prepend(pre)
-				sect.add(post)
-		else if isSetName(name)
-			if @nonEmpty(name)
-				@indent(name)
-				@firstSection(name).prepend(pre)
-				@lastSection(name).add(post)
-		else
-			croak "Bad name param #{OL(name)}"
-		return
 
 	# ..........................................................
 
