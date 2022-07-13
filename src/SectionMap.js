@@ -147,7 +147,8 @@ export var SectionMap = class SectionMap {
   }
 
   // ..........................................................
-  // --- procFunc should be (name, text) -> return processedText
+  // --- procFunc should be (name, block) ->
+  //        return processed block
   getBlock(procFunc = undef, lTree = undef) {
     var j, lParts, len, part, result, text;
     debug("enter getBlock()");

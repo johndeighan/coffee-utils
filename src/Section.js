@@ -21,12 +21,12 @@ import {
 export var Section = class Section {
   constructor(name) {
     this.name = name;
-    this.lLines = [];
+    this.lParts = [];
   }
 
   // ..........................................................
   length() {
-    return this.lLines.length;
+    return this.lParts.length;
   }
 
   // ..........................................................
@@ -34,7 +34,7 @@ export var Section = class Section {
     var lNewLines, line;
     lNewLines = (function() {
       var i, len, ref, results;
-      ref = this.lLines;
+      ref = this.lParts;
       results = [];
       for (i = 0, len = ref.length; i < len; i++) {
         line = ref[i];
@@ -42,17 +42,17 @@ export var Section = class Section {
       }
       return results;
     }).call(this);
-    this.lLines = lNewLines;
+    this.lParts = lNewLines;
   }
 
   // ..........................................................
   isEmpty() {
-    return this.lLines.length === 0;
+    return this.lParts.length === 0;
   }
 
   // ..........................................................
   nonEmpty() {
-    return this.lLines.length > 0;
+    return this.lParts.length > 0;
   }
 
   // ..........................................................
@@ -61,28 +61,33 @@ export var Section = class Section {
     if (isArray(data)) {
       for (i = 0, len = data.length; i < len; i++) {
         line = data[i];
-        this.lLines.push(line);
+        this.lParts.push(line);
       }
     } else {
-      this.lLines.push(data);
+      this.lParts.push(data);
     }
   }
 
   // ..........................................................
   prepend(data) {
     if (isArray(data)) {
-      this.lLines = [...data, ...this.lLines];
+      this.lParts = [...data, ...this.lParts];
     } else {
-      this.lLines = [data, ...this.lLines];
+      this.lParts = [data, ...this.lParts];
     }
   }
 
   // ..........................................................
+  getParts() {
+    return this.lParts;
+  }
+
+  // ..........................................................
   getBlock() {
-    if (this.lLines.length === 0) {
+    if (this.lParts.length === 0) {
       return undef;
     } else {
-      return arrayToBlock(this.lLines);
+      return arrayToBlock(this.lParts);
     }
   }
 
