@@ -12,34 +12,34 @@ export class Section
 
 	constructor: (@name) ->
 
-		@lLines = []
+		@lParts = []
 
 	# ..........................................................
 
 	length: () ->
 
-		return @lLines.length
+		return @lParts.length
 
 	# ..........................................................
 
 	indent: (level=1) ->
 
-		lNewLines = for line in @lLines
+		lNewLines = for line in @lParts
 			indented(line, level)
-		@lLines = lNewLines
+		@lParts = lNewLines
 		return
 
 	# ..........................................................
 
 	isEmpty: () ->
 
-		return (@lLines.length == 0)
+		return (@lParts.length == 0)
 
 	# ..........................................................
 
 	nonEmpty: () ->
 
-		return (@lLines.length > 0)
+		return (@lParts.length > 0)
 
 	# ..........................................................
 
@@ -47,9 +47,9 @@ export class Section
 
 		if isArray(data)
 			for line in data
-				@lLines.push line
+				@lParts.push line
 		else
-			@lLines.push data
+			@lParts.push data
 		return
 
 	# ..........................................................
@@ -57,16 +57,22 @@ export class Section
 	prepend: (data) ->
 
 		if isArray(data)
-			@lLines = [data..., @lLines...]
+			@lParts = [data..., @lParts...]
 		else
-			@lLines = [data, @lLines...]
+			@lParts = [data, @lParts...]
 		return
+
+	# ..........................................................
+
+	getParts: () ->
+
+		return @lParts
 
 	# ..........................................................
 
 	getBlock: () ->
 
-		if (@lLines.length == 0)
+		if (@lParts.length == 0)
 			return undef
 		else
-			return arrayToBlock(@lLines)
+			return arrayToBlock(@lParts)

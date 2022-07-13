@@ -120,7 +120,8 @@ export class SectionMap
 		return
 
 	# ..........................................................
-	# --- procFunc should be (name, text) -> return processedText
+	# --- procFunc should be (name, block) ->
+	#        return processed block
 
 	getBlock: (procFunc=undef, lTree=undef) ->
 
