@@ -20,16 +20,22 @@ import {
 } from '@jdeighan/coffee-utils/block';
 
 // ---------------------------------------------------------------------------
+export var splitPrefix = function(line) {
+  var lMatches;
+  assert(isString(line), `non-string ${OL(line)}`);
+  line = rtrim(line);
+  lMatches = line.match(/^(\s*)(.*)$/);
+  return [lMatches[1], lMatches[2]];
+};
+
+// ---------------------------------------------------------------------------
 //        NOTE: Currently, only TAB indentation is supported
 // ---------------------------------------------------------------------------
 //   splitLine - separate a line into [level, line]
 export var splitLine = function(line) {
-  var lMatches;
-  assert(defined(line), "splitLine(): line is undef");
-  assert(isString(line), `splitLine(): non-string ${OL(line)}`);
-  line = rtrim(line);
-  lMatches = line.match(/^(\s*)(.*)$/);
-  return [lMatches[1].length, lMatches[2]];
+  var prefix, str;
+  [prefix, str] = splitPrefix(line);
+  return [indentLevel(prefix), str];
 };
 
 // ---------------------------------------------------------------------------

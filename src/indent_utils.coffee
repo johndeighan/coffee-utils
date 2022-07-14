@@ -7,17 +7,23 @@ import {
 import {arrayToBlock, blockToArray} from '@jdeighan/coffee-utils/block'
 
 # ---------------------------------------------------------------------------
+
+export splitPrefix = (line) ->
+
+	assert isString(line), "non-string #{OL(line)}"
+	line = rtrim(line)
+	lMatches = line.match(/^(\s*)(.*)$/)
+	return [lMatches[1], lMatches[2]]
+
+# ---------------------------------------------------------------------------
 #        NOTE: Currently, only TAB indentation is supported
 # ---------------------------------------------------------------------------
 #   splitLine - separate a line into [level, line]
 
 export splitLine = (line) ->
 
-	assert defined(line), "splitLine(): line is undef"
-	assert isString(line), "splitLine(): non-string #{OL(line)}"
-	line = rtrim(line)
-	lMatches = line.match(/^(\s*)(.*)$/)
-	return [lMatches[1].length, lMatches[2]]
+	[prefix, str] = splitPrefix(line)
+	return [indentLevel(prefix), str]
 
 # ---------------------------------------------------------------------------
 #   indentation - return appropriate indentation string for given level
