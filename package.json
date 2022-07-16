@@ -52,9 +52,9 @@
 		"js-yaml": "^4.1.0",
 		"n-readlines": "^1.0.1",
 		"readline-sync": "^1.4.10",
-		"svelte": "^3.48.0"
+		"svelte": "^3.49.0"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^2.0.9"
+		"@jdeighan/unit-tester": "^2.0.10"
 	}
 }
