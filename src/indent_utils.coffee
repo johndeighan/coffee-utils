@@ -16,33 +16,44 @@ export splitPrefix = (line) ->
 	return [lMatches[1], lMatches[2]]
 
 # ---------------------------------------------------------------------------
-#        NOTE: Currently, only TAB indentation is supported
-# ---------------------------------------------------------------------------
 #   splitLine - separate a line into [level, line]
 
-export splitLine = (line) ->
+export splitLine = (line, oneIndent="\t") ->
 
 	[prefix, str] = splitPrefix(line)
-	return [indentLevel(prefix), str]
+	return [indentLevel(prefix, oneIndent), str]
 
 # ---------------------------------------------------------------------------
 #   indentation - return appropriate indentation string for given level
 #   export only to allow unit testing
 
-export indentation = (level) ->
+export indentation = (level, oneIndent="\t") ->
 
 	assert (level >= 0), "indentation(): negative level"
-	return '\t'.repeat(level)
+	return oneIndent.repeat(level)
 
 # ---------------------------------------------------------------------------
 #   indentLevel - determine indent level of a string
 #                 it's OK if the string is ONLY indentation
 
-export indentLevel = (line) ->
+export indentLevel = (line, oneIndent="\t") ->
 
-	assert isString(line), "indentLevel(): non-string #{OL(line)}"
-	lMatches = line.match(/^\t*/)
-	return lMatches[0].length
+	len = oneIndent.length
+
+	# --- This will always match
+	if lMatches = line.match(/^(\s*)/)
+		prefix = lMatches[1]
+		prefixLen = prefix.length
+
+	remain = prefixLen % len
+	if (remain != 0)
+		throw new Error("prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}")
+
+	level = prefixLen / len
+	if (prefix != oneIndent.repeat(level))
+		throw new Error("prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}")
+
+	return level
 
 # ---------------------------------------------------------------------------
 #   isUndented - true iff indentLevel(line) == 0
@@ -50,19 +61,19 @@ export indentLevel = (line) ->
 export isUndented = (line) ->
 
 	assert isString(line), "non-string #{OL(line)}"
-	lMatches = line.match(/^\t*/)
+	lMatches = line.match(/^\s*/)
 	return (lMatches[0].length == 0)
 
 # ---------------------------------------------------------------------------
 #   indented - add indentation to each string in a block
 
-export indented = (input, level=1) ->
+export indented = (input, level=1, oneIndent="\t") ->
 
 	assert (level >= 0), "indented(): negative level"
 	if level == 0
 		return input
 
-	toAdd = indentation(level)
+	toAdd = indentation(level, oneIndent)
 	if isArray(input)
 		lInputLines = input
 	else
@@ -81,7 +92,7 @@ export indented = (input, level=1) ->
 #              indentation is removed
 #            - returns same type as text, i.e. either string or array
 
-export undented = (text, level=undef) ->
+export undented = (text, level=undef, oneIndent="\t") ->
 
 	if defined(level) && (level==0)
 		return text
@@ -102,7 +113,7 @@ export undented = (text, level=undef) ->
 	# --- determine what to remove from beginning of each line
 	if defined(level)
 		assert isInteger(level), "undented(): level must be an integer"
-		toRemove = indentation(level)
+		toRemove = indentation(level, oneIndent)
 	else
 		lMatches = lLines[0].match(/^\s*/)
 		toRemove = lMatches[0]
@@ -113,9 +124,8 @@ export undented = (text, level=undef) ->
 		if isEmpty(line)
 			lNewLines.push('')
 		else
-			assert (line.indexOf(toRemove)==0),
-				"undented(): Error removing '#{escapeStr(toRemove)}' \
-					from #{OL(text)}"
+			if (line.indexOf(toRemove) != 0)
+				throw new Error("remove #{OL(toRemove)} from #{OL(text)}")
 			lNewLines.push(line.substr(nToRemove))
 
 	if isString(text)

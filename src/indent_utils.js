@@ -29,31 +29,41 @@ export var splitPrefix = function(line) {
 };
 
 // ---------------------------------------------------------------------------
-//        NOTE: Currently, only TAB indentation is supported
-// ---------------------------------------------------------------------------
 //   splitLine - separate a line into [level, line]
-export var splitLine = function(line) {
+export var splitLine = function(line, oneIndent = "\t") {
   var prefix, str;
   [prefix, str] = splitPrefix(line);
-  return [indentLevel(prefix), str];
+  return [indentLevel(prefix, oneIndent), str];
 };
 
 // ---------------------------------------------------------------------------
 //   indentation - return appropriate indentation string for given level
 //   export only to allow unit testing
-export var indentation = function(level) {
+export var indentation = function(level, oneIndent = "\t") {
   assert(level >= 0, "indentation(): negative level");
-  return '\t'.repeat(level);
+  return oneIndent.repeat(level);
 };
 
 // ---------------------------------------------------------------------------
 //   indentLevel - determine indent level of a string
 //                 it's OK if the string is ONLY indentation
-export var indentLevel = function(line) {
-  var lMatches;
-  assert(isString(line), `indentLevel(): non-string ${OL(line)}`);
-  lMatches = line.match(/^\t*/);
-  return lMatches[0].length;
+export var indentLevel = function(line, oneIndent = "\t") {
+  var lMatches, len, level, prefix, prefixLen, remain;
+  len = oneIndent.length;
+  // --- This will always match
+  if (lMatches = line.match(/^(\s*)/)) {
+    prefix = lMatches[1];
+    prefixLen = prefix.length;
+  }
+  remain = prefixLen % len;
+  if (remain !== 0) {
+    throw new Error(`prefix ${OL(prefix)} not a mult of ${OL(oneIndent)}`);
+  }
+  level = prefixLen / len;
+  if (prefix !== oneIndent.repeat(level)) {
+    throw new Error(`prefix ${OL(prefix)} not a mult of ${OL(oneIndent)}`);
+  }
+  return level;
 };
 
 // ---------------------------------------------------------------------------
@@ -61,28 +71,28 @@ export var indentLevel = function(line) {
 export var isUndented = function(line) {
   var lMatches;
   assert(isString(line), `non-string ${OL(line)}`);
-  lMatches = line.match(/^\t*/);
+  lMatches = line.match(/^\s*/);
   return lMatches[0].length === 0;
 };
 
 // ---------------------------------------------------------------------------
 //   indented - add indentation to each string in a block
-export var indented = function(input, level = 1) {
+export var indented = function(input, level = 1, oneIndent = "\t") {
   var lInputLines, lLines, line, toAdd;
   assert(level >= 0, "indented(): negative level");
   if (level === 0) {
     return input;
   }
-  toAdd = indentation(level);
+  toAdd = indentation(level, oneIndent);
   if (isArray(input)) {
     lInputLines = input;
   } else {
     lInputLines = blockToArray(input);
   }
   lLines = (function() {
-    var i, len, results;
+    var i, len1, results;
     results = [];
-    for (i = 0, len = lInputLines.length; i < len; i++) {
+    for (i = 0, len1 = lInputLines.length; i < len1; i++) {
       line = lInputLines[i];
       if (isEmpty(line)) {
         results.push("");
@@ -100,8 +110,8 @@ export var indented = function(input, level = 1) {
 //            - unless level is set, in which case exactly that
 //              indentation is removed
 //            - returns same type as text, i.e. either string or array
-export var undented = function(text, level = undef) {
-  var i, j, lLines, lMatches, lNewLines, len, len1, line, nToRemove, toRemove;
+export var undented = function(text, level = undef, oneIndent = "\t") {
+  var i, j, lLines, lMatches, lNewLines, len1, len2, line, nToRemove, toRemove;
   if (defined(level) && (level === 0)) {
     return text;
   }
@@ -112,7 +122,7 @@ export var undented = function(text, level = undef) {
     }
   } else if (isArray(text)) {
     lLines = text;
-    for (i = 0, len = lLines.length; i < len; i++) {
+    for (i = 0, len1 = lLines.length; i < len1; i++) {
       line = lLines[i];
       assert(isString(line), "undented(): array not all strings");
     }
@@ -125,19 +135,21 @@ export var undented = function(text, level = undef) {
   // --- determine what to remove from beginning of each line
   if (defined(level)) {
     assert(isInteger(level), "undented(): level must be an integer");
-    toRemove = indentation(level);
+    toRemove = indentation(level, oneIndent);
   } else {
     lMatches = lLines[0].match(/^\s*/);
     toRemove = lMatches[0];
   }
   nToRemove = indentLevel(toRemove);
   lNewLines = [];
-  for (j = 0, len1 = lLines.length; j < len1; j++) {
+  for (j = 0, len2 = lLines.length; j < len2; j++) {
     line = lLines[j];
     if (isEmpty(line)) {
       lNewLines.push('');
     } else {
-      assert(line.indexOf(toRemove) === 0, `undented(): Error removing '${escapeStr(toRemove)}' from ${OL(text)}`);
+      if (line.indexOf(toRemove) !== 0) {
+        throw new Error(`remove ${OL(toRemove)} from ${OL(text)}`);
+      }
       lNewLines.push(line.substr(nToRemove));
     }
   }
@@ -153,10 +165,10 @@ export var undented = function(text, level = undef) {
 //             if numSpaces is not defined, then the first line
 //             that contains at least one space sets it
 export var tabify = function(str, numSpaces = undef) {
-  var _, i, lLines, len, level, prefix, prefixLen, ref, result, theRest;
+  var _, i, lLines, len1, level, prefix, prefixLen, ref, result, theRest;
   lLines = [];
   ref = blockToArray(str);
-  for (i = 0, len = ref.length; i < len; i++) {
+  for (i = 0, len1 = ref.length; i < len1; i++) {
     str = ref[i];
     [_, prefix, theRest] = str.match(/^(\s*)(.*)$/);
     prefixLen = prefix.length;
