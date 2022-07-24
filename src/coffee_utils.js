@@ -145,11 +145,6 @@ export var isBoolean = function(x) {
 };
 
 // ---------------------------------------------------------------------------
-export var isNumber = function(x) {
-  return typeof x === 'number' || x instanceof Number;
-};
-
-// ---------------------------------------------------------------------------
 export var isObject = function(x) {
   return (typeof x === 'object') && !isString(x) && !isArray(x) && !isHash(x) && !isNumber(x);
 };
@@ -280,14 +275,39 @@ export var isRegExp = function(x) {
 };
 
 // ---------------------------------------------------------------------------
-export var isInteger = function(x) {
-  if (typeof x === 'number') {
-    return Number.isInteger(x);
-  } else if (getClassName(x) === 'Number') {
-    return Number.isInteger(x.valueOf());
-  } else {
-    return false;
+export var isNumber = function(x, hOptions = {}) {
+  var result;
+  result = (typeof x === 'number') || (x instanceof Number);
+  if (result) {
+    if (defined(hOptions.min) && (x < hOptions.min)) {
+      result = false;
+    }
+    if (defined(hOptions.max) && (x > hOptions.max)) {
+      result = false;
+    }
   }
+  return result;
+};
+
+// ---------------------------------------------------------------------------
+export var isInteger = function(x, hOptions = {}) {
+  var result;
+  if (typeof x === 'number') {
+    result = Number.isInteger(x);
+  } else if (x instanceof Number) {
+    result = Number.isInteger(x.valueOf());
+  } else {
+    result = false;
+  }
+  if (result) {
+    if (defined(hOptions.min) && (x < hOptions.min)) {
+      result = false;
+    }
+    if (defined(hOptions.max) && (x > hOptions.max)) {
+      result = false;
+    }
+  }
+  return result;
 };
 
 // ---------------------------------------------------------------------------

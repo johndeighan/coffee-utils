@@ -159,6 +159,10 @@ simple.falsy  {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}, [1,2]])
 	simple.falsy  {{LINE}}, isNumber(s)
 	simple.falsy  {{LINE}}, isNumber(s2)
 
+	simple.truthy {{LINE}}, isNumber(42.0, {min: 42.0})
+	simple.falsy  {{LINE}}, isNumber(42.0, {min: 42.1})
+	simple.truthy {{LINE}}, isNumber(42.0, {max: 42.0})
+	simple.falsy  {{LINE}}, isNumber(42.0, {max: 41.9})
 	)()
 
 # ---------------------------------------------------------------------------
@@ -171,6 +175,10 @@ simple.truthy {{LINE}}, isInteger(new Number(42))
 simple.falsy  {{LINE}}, isInteger('abc')
 simple.falsy  {{LINE}}, isInteger({})
 simple.falsy  {{LINE}}, isInteger([])
+simple.truthy {{LINE}}, isInteger(42, {min:  0})
+simple.falsy  {{LINE}}, isInteger(42, {min: 50})
+simple.truthy {{LINE}}, isInteger(42, {max: 50})
+simple.falsy  {{LINE}}, isInteger(42, {max:  0})
 
 # ---------------------------------------------------------------------------
 

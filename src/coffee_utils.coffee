@@ -151,12 +151,6 @@ export isBoolean = (x) ->
 
 # ---------------------------------------------------------------------------
 
-export isNumber = (x) ->
-
-	return typeof x == 'number' || x instanceof Number
-
-# ---------------------------------------------------------------------------
-
 export isObject = (x) ->
 
 	return (typeof x == 'object') \
@@ -280,14 +274,33 @@ export isRegExp = (x) ->
 
 # ---------------------------------------------------------------------------
 
-export isInteger = (x) ->
+export isNumber = (x, hOptions={}) ->
+
+	result = (typeof x == 'number') || (x instanceof Number)
+	if result
+		if defined(hOptions.min) && (x < hOptions.min)
+			result = false
+		if defined(hOptions.max) && (x > hOptions.max)
+			result = false
+	return result
+
+# ---------------------------------------------------------------------------
+
+export isInteger = (x, hOptions={}) ->
 
 	if (typeof x == 'number')
-		return Number.isInteger(x)
-	else if (getClassName(x) == 'Number')
-		return Number.isInteger(x.valueOf())
+		result = Number.isInteger(x)
+	else if (x instanceof Number)
+		result = Number.isInteger(x.valueOf())
 	else
-		return false
+		result = false
+
+	if result
+		if defined(hOptions.min) && (x < hOptions.min)
+			result = false
+		if defined(hOptions.max) && (x > hOptions.max)
+			result = false
+	return result
 
 # ---------------------------------------------------------------------------
 
