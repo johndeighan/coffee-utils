@@ -89,7 +89,7 @@ tester = new TraceTester()
 	debug 'return from myfunc()', 42
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc()"
-		"│   arg[0] = \'abc\'"
+		".   arg[0] = \'abc\'"
 		"│   something"
 		"└─> return from myfunc()"
 		"    ret[0] = 42"
@@ -108,7 +108,7 @@ tester = new TraceTester()
 	debug 'return from MyObject.myfunc()', 42
 	simple.equal {{LINE}}, lLines, [
 		"enter MyObject.myfunc()"
-		"│   arg[0] = \'abc\'"
+		".   arg[0] = \'abc\'"
 		"│   something"
 		"└─> return from MyObject.myfunc()"
 		"    ret[0] = 42"
@@ -127,8 +127,8 @@ tester = new TraceTester()
 	debug "Answer is 42"
 	simple.equal {{LINE}}, lLines, [
 		"enter myfunc()"
-		"│   arg[0] = \'abc\'"
-		"│   arg[1] = 42"
+		".   arg[0] = \'abc\'"
+		".   arg[1] = 42"
 		"│   something"
 		"│   more"
 		"└─> return from myfunc()"
@@ -234,11 +234,11 @@ tester = new TraceTester()
 		"enter myfunc"
 		"│   something"
 		"│   call newfunc"
-		'│       arg[0] = 42',
-		'│       arg[1]:',
-		'│           ---',
-		'│           - a',
-		'│           - b',
+		'│   .   arg[0] = 42',
+		'│   .   arg[1]:',
+		'│   .       ---',
+		'│   .       - a',
+		'│   .       - b',
 		"└─> return 42 from myfunc"
 		]
 	)()

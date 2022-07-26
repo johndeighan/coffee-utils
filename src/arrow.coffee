@@ -9,10 +9,12 @@ export hbar = '─'       # unicode 2500
 export corner = '└'     # unicode 2514
 export arrowhead = '>'
 export space = ' '
+export dot = '.'
 
-export oneIndent = vbar + space + space + space
-export arrow = corner + hbar + arrowhead + space
-export clearIndent = space + space + space + space
+export oneIndent   = vbar   + space + space     + space
+export arrow       = corner + hbar  + arrowhead + space
+export clearIndent = space  + space + space     + space
+export dotIndent   = dot    + space + space     + space
 
 # ---------------------------------------------------------------------------
 
@@ -30,6 +32,12 @@ export prefix = (level, option='none') ->
 		when 'noLast2Vbars'
 			assert (level >= 2), "prefix(), noLast2Vbars but level=#{OL(level)}"
 			return oneIndent.repeat(level-2) + clearIndent + clearIndent
+		when 'dotLastVbar'
+			assert (level >= 1), "prefix(), dotLastVbar but level=#{OL(level)}"
+			return oneIndent.repeat(level-1) + dotIndent
+		when 'dotLast2Vbars'
+			assert (level >= 2), "prefix(), dotLast2Vbars but level=#{OL(level)}"
+			return oneIndent.repeat(level-2) + dotIndent + clearIndent
 		else
 			return oneIndent.repeat(level)
 

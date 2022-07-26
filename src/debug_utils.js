@@ -151,13 +151,8 @@ export var doTheLogging = function(type, label, lObjects) {
   switch (type) {
     case 'enter':
       log(label, prefix(level));
-      if (label.match(/^\s*call/)) {
-        pre = prefix(level + 1, 'noLastVbar');
-        itemPre = prefix(level + 2, 'noLast2Vbars');
-      } else {
-        pre = prefix(level + 1);
-        itemPre = prefix(level + 2, 'noLastVbar');
-      }
+      pre = prefix(level + 1, 'dotLastVbar');
+      itemPre = prefix(level + 2, 'dotLast2Vbars');
       for (i = j = 0, len = lObjects.length; j < len; i = ++j) {
         obj = lObjects[i];
         logItem(`arg[${i}]`, obj, pre, itemPre);

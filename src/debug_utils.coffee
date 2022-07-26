@@ -111,12 +111,8 @@ export doTheLogging = (type, label, lObjects) ->
 
 		when 'enter'
 			log label, prefix(level)
-			if label.match(///^ \s* call///)
-				pre = prefix(level+1, 'noLastVbar')
-				itemPre = prefix(level+2, 'noLast2Vbars')
-			else
-				pre = prefix(level+1)
-				itemPre = prefix(level+2, 'noLastVbar')
+			pre = prefix(level+1, 'dotLastVbar')
+			itemPre = prefix(level+2, 'dotLast2Vbars')
 			for obj,i in lObjects
 				logItem "arg[#{i}]", obj, pre, itemPre
 
@@ -126,6 +122,7 @@ export doTheLogging = (type, label, lObjects) ->
 			itemPre = prefix(level+1, 'noLast2Vbars')
 			for obj,i in lObjects
 				logItem "ret[#{i}]", obj, pre, itemPre
+
 		when 'string'
 			pre = prefix(level)
 			itemPre = prefix(level+1, 'noLastVbar')

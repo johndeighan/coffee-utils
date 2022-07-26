@@ -18,11 +18,15 @@ export var arrowhead = '>';
 
 export var space = ' ';
 
+export var dot = '.';
+
 export var oneIndent = vbar + space + space + space;
 
 export var arrow = corner + hbar + arrowhead + space;
 
 export var clearIndent = space + space + space + space;
+
+export var dotIndent = dot + space + space + space;
 
 // ---------------------------------------------------------------------------
 export var prefix = function(level, option = 'none') {
@@ -40,6 +44,12 @@ export var prefix = function(level, option = 'none') {
     case 'noLast2Vbars':
       assert(level >= 2, `prefix(), noLast2Vbars but level=${OL(level)}`);
       return oneIndent.repeat(level - 2) + clearIndent + clearIndent;
+    case 'dotLastVbar':
+      assert(level >= 1, `prefix(), dotLastVbar but level=${OL(level)}`);
+      return oneIndent.repeat(level - 1) + dotIndent;
+    case 'dotLast2Vbars':
+      assert(level >= 2, `prefix(), dotLast2Vbars but level=${OL(level)}`);
+      return oneIndent.repeat(level - 2) + dotIndent + clearIndent;
     default:
       return oneIndent.repeat(level);
   }
