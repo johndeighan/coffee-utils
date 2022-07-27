@@ -4,9 +4,8 @@ import pathlib from 'path'
 import yaml from 'js-yaml'
 import {writable, readable, get} from 'svelte/store'
 
-import {
-	assert, undef, pass, error, isEmpty,
-	} from '@jdeighan/coffee-utils'
+import {assert, error} from '@jdeighan/unit-tester/utils'
+import {undef, pass, isEmpty} from '@jdeighan/coffee-utils'
 import {localStore} from '@jdeighan/coffee-utils/browser'
 import {
 	withExt, slurp, barf, newerDestFileExists,

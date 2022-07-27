@@ -1,7 +1,8 @@
 # call_stack.coffee
 
+import {assert, croak} from '@jdeighan/unit-tester/utils'
 import {
-	undef, defined, croak, assert, OL,  escapeStr, deepCopy,
+	undef, defined, OL,  escapeStr, deepCopy,
 	isArray, isBoolean,
 	} from '@jdeighan/coffee-utils'
 import {LOG} from '@jdeighan/coffee-utils/log'

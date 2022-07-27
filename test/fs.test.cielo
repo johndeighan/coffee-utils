@@ -7,7 +7,8 @@ import {
 	} from 'fs'
 
 import {simple} from '@jdeighan/unit-tester'
-import {say, undef, assert} from '@jdeighan/coffee-utils'
+import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {say, undef} from '@jdeighan/coffee-utils'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {LOG} from '@jdeighan/coffee-utils/log'
 import {

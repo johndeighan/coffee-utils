@@ -6,6 +6,11 @@ import yaml from 'js-yaml';
 
 import {
   assert,
+  error,
+  croak
+} from '@jdeighan/unit-tester/utils';
+
+import {
   undef,
   oneline,
   isString

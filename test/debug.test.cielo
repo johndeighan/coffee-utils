@@ -1,5 +1,6 @@
 # debug.test.cielo
 
+import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {UnitTester, simple} from '@jdeighan/unit-tester'
 import {undef, OL, isString} from '@jdeighan/coffee-utils'
 import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'

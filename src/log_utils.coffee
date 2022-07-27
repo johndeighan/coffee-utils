@@ -2,8 +2,9 @@
 
 import yaml from 'js-yaml'
 
+import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	assert, undef, isNumber, isInteger, isString, isHash, isFunction,
+	undef, isNumber, isInteger, isString, isHash, isFunction,
 	escapeStr, sep_eq, sep_dash, pass, OL,
 	} from '@jdeighan/coffee-utils'
 import {blockToArray} from '@jdeighan/coffee-utils/block'

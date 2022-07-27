@@ -1,7 +1,8 @@
 # debug_utils.coffee
 
+import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	assert, undef, error, croak, warn, defined,
+	undef, warn, defined,
 	isString, isFunction, isBoolean, patchStr,
 	OL, escapeStr, isNumber, isArray, words, pass,
 	} from '@jdeighan/coffee-utils'

@@ -5,9 +5,10 @@ import urllib from 'url'
 import fs from 'fs'
 import NReadLines from 'n-readlines'
 
+import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	assert, undef, pass, defined, rtrim, error, isEmpty, nonEmpty,
-	isString, isArray, isHash, isRegExp, isFunction, croak, OL,
+	undef, pass, defined, rtrim, isEmpty, nonEmpty,
+	isString, isArray, isHash, isRegExp, isFunction, OL,
 	} from '@jdeighan/coffee-utils'
 import {log, LOG} from '@jdeighan/coffee-utils/log'
 import {debug} from '@jdeighan/coffee-utils/debug'

@@ -2,10 +2,14 @@
   // Section.coffee
 import {
   assert,
+  error,
+  croak
+} from '@jdeighan/unit-tester/utils';
+
+import {
   pass,
   undef,
   defined,
-  croak,
   isArray
 } from '@jdeighan/coffee-utils';
 

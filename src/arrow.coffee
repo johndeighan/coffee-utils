@@ -1,6 +1,7 @@
 # arrow.coffee
 
-import {undef, assert, OL, setCharsAt} from '@jdeighan/coffee-utils'
+import {assert} from '@jdeighan/unit-tester/utils'
+import {undef, OL, setCharsAt} from '@jdeighan/coffee-utils'
 
 # --- We use spaces here because Windows Terminal handles TAB chars badly
 

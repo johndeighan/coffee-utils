@@ -1,7 +1,8 @@
 # Section.coffee
 
+import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	assert, pass, undef, defined, croak, isArray,
+	pass, undef, defined, isArray,
 	} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {indented} from '@jdeighan/coffee-utils/indent'

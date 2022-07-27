@@ -1,14 +1,15 @@
 # utils.test.cielo
 
 import {simple} from '@jdeighan/unit-tester'
+import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	say, undef, error, warn, isString, isObject, isArray, isHash,
+	say, undef, warn, isString, isObject, isArray, isHash,
 	isEmpty, nonEmpty, getClassName, isNumber, isNonEmptyString,
 	isFunction, isInteger, rtrim, isUniqueList, isUniqueTree,
 	ltrunc, rtrunc, extractMatches, range, patchStr,
 	words, escapeStr, titleLine, className, eval_expr,
 	removeCR, CWS, isArrayOfHashes, setCharsAt,
-	oneline, croak, isRegExp, uniq, hashToStr, envVarsWithPrefix,
+	oneline, isRegExp, uniq, hashToStr, envVarsWithPrefix,
 	strcat, replaceVars, defined, notdefined, isIterable,
 	} from '@jdeighan/coffee-utils'
 import {log, setLogger, resetLogger} from '@jdeighan/coffee-utils/log'
@@ -192,28 +193,6 @@ simple.equal {{LINE}}, CWS("""
 		a simple
 		error message
 		"""), "a simple error message"
-
-# ---------------------------------------------------------------------------
-# test croak()
-# --- At this time, this test will not pass
-#     i.e. output produced by croak() goes to the console
-
-# (() ->
-# 	lLines = []
-# 	setLogger (line) ->
-# 		lLines.push(line)
-# 		return
-#
-# 	obj = {a:1, b:2}
-# 	try
-# 		croak "bad stuff", "An Object", obj
-#
-# 	simple.equal {{LINE}}, arrayToBlock(lLines), """
-# 		ERROR (croak): bad stuff
-# 		An Object = {"a":1,"b":2}
-# 		"""
-# 	resetLogger()
-# 	)()
 
 # ---------------------------------------------------------------------------
 # test isRegExp()

@@ -1,8 +1,9 @@
 # call_stack.test.cielo
 
 import {simple} from '@jdeighan/unit-tester'
+import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	undef, say, isString, isHash, isEmpty, nonEmpty, assert,
+	undef, say, isString, isHash, isEmpty, nonEmpty,
 	} from '@jdeighan/coffee-utils'
 import {oneIndent, arrow, clearIndent} from '@jdeighan/coffee-utils/arrow'
 import {CallStack} from '@jdeighan/coffee-utils/stack'

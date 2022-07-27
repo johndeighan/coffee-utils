@@ -5,14 +5,17 @@ import fs from 'fs';
 import readline from 'readline';
 
 import {
-  undef,
   assert,
+  error
+} from '@jdeighan/unit-tester/utils';
+
+import {
+  undef,
   defined,
   isEmpty,
   isString,
   isArray,
   nonEmpty,
-  error,
   rtrim
 } from '@jdeighan/coffee-utils';
 

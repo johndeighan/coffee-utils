@@ -2,8 +2,9 @@
 
 import yaml from 'js-yaml'
 
+import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	assert, undef, oneline, isString,
+	undef, oneline, isString,
 	} from '@jdeighan/coffee-utils'
 import {untabify, tabify, splitLine} from '@jdeighan/coffee-utils/indent'
 import {slurp} from '@jdeighan/coffee-utils/fs'

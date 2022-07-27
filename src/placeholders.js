@@ -4,9 +4,13 @@ var hDefOptions;
 
 import {
   assert,
-  undef,
-  defined,
+  error,
   croak
+} from '@jdeighan/unit-tester/utils';
+
+import {
+  undef,
+  defined
 } from '@jdeighan/coffee-utils';
 
 hDefOptions = {

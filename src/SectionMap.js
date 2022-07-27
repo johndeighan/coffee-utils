@@ -4,10 +4,14 @@ var isSectionName, isSetName;
 
 import {
   assert,
+  error,
+  croak
+} from '@jdeighan/unit-tester/utils';
+
+import {
   pass,
   undef,
   defined,
-  croak,
   OL,
   isEmpty,
   nonEmpty,

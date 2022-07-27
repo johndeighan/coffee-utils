@@ -2,6 +2,11 @@
   // svelte_utils.coffee
 import {
   assert,
+  error,
+  croak
+} from '@jdeighan/unit-tester/utils';
+
+import {
   isFunction
 } from '@jdeighan/coffee-utils';
 

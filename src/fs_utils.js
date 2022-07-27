@@ -12,11 +12,15 @@ import NReadLines from 'n-readlines';
 
 import {
   assert,
+  error,
+  croak
+} from '@jdeighan/unit-tester/utils';
+
+import {
   undef,
   pass,
   defined,
   rtrim,
-  error,
   isEmpty,
   nonEmpty,
   isString,
@@ -24,7 +28,6 @@ import {
   isHash,
   isRegExp,
   isFunction,
-  croak,
   OL
 } from '@jdeighan/coffee-utils';
 

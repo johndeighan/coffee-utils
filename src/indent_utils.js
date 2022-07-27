@@ -2,8 +2,11 @@
   // indent_utils.coffee
 import {
   assert,
+  error
+} from '@jdeighan/unit-tester/utils';
+
+import {
   undef,
-  error,
   escapeStr,
   defined,
   OL,

@@ -12,9 +12,12 @@ import {
 
 import {
   assert,
+  error
+} from '@jdeighan/unit-tester/utils';
+
+import {
   undef,
   pass,
-  error,
   isEmpty
 } from '@jdeighan/coffee-utils';
 

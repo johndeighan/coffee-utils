@@ -3,8 +3,9 @@
 import fs from 'fs'
 import readline from 'readline'
 
+import {assert, error} from '@jdeighan/unit-tester/utils'
 import {
-	undef, assert, defined, isEmpty, isString, isArray, nonEmpty, error, rtrim,
+	undef, defined, isEmpty, isString, isArray, nonEmpty, rtrim,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------

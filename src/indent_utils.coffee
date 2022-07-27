@@ -1,7 +1,8 @@
 # indent_utils.coffee
 
+import {assert, error} from '@jdeighan/unit-tester/utils'
 import {
-	assert, undef, error, escapeStr, defined,
+	undef, escapeStr, defined,
 	OL, isInteger, isString, isArray, isEmpty, rtrim,
 	} from '@jdeighan/coffee-utils'
 import {arrayToBlock, blockToArray} from '@jdeighan/coffee-utils/block'

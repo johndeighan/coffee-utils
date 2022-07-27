@@ -5,9 +5,12 @@ var lFuncList, reMethod, strFuncList,
 
 import {
   assert,
-  undef,
   error,
-  croak,
+  croak
+} from '@jdeighan/unit-tester/utils';
+
+import {
+  undef,
   warn,
   defined,
   isString,

@@ -3,10 +3,13 @@
 var doDebugStack;
 
 import {
+  assert,
+  croak
+} from '@jdeighan/unit-tester/utils';
+
+import {
   undef,
   defined,
-  croak,
-  assert,
   OL,
   escapeStr,
   deepCopy,

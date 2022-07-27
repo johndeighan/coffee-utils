@@ -1,7 +1,8 @@
 # SectionMap.coffee
 
+import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	assert, pass, undef, defined, croak, OL, isEmpty, nonEmpty,
+	pass, undef, defined, OL, isEmpty, nonEmpty,
 	isString, isHash, isArray, isUniqueTree, isNonEmptyString,
 	isNonEmptyArray,
 	} from '@jdeighan/coffee-utils'

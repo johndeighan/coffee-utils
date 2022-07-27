@@ -1,6 +1,7 @@
 # svelte_utils.coffee
 
-import {assert, isFunction} from '@jdeighan/coffee-utils'
+import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {isFunction} from '@jdeighan/coffee-utils'
 import {log} from '@jdeighan/coffee-utils/log'
 
 # ---------------------------------------------------------------------------

@@ -1,11 +1,11 @@
 # coffee_utils.coffee
 
+import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+
 export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
 `export const undef = undefined`
 LOG = (lArgs...) -> console.log lArgs...   # synonym for console.log()
-
-export doHaltOnError = false
 
 # ---------------------------------------------------------------------------
 # TEMP!!!!!
@@ -27,87 +27,9 @@ export eval_expr = (str) ->
 	return Function('"use strict";return (' + str + ')')();
 
 # ---------------------------------------------------------------------------
-
-export haltOnError = () ->
-
-	doHaltOnError = true
-
-# ---------------------------------------------------------------------------
 #   pass - do nothing
 
 export pass = () ->
-
-# ---------------------------------------------------------------------------
-#   error - throw an error
-
-export error = (message) ->
-
-	if doHaltOnError
-		console.trace("ERROR: #{message}")
-		process.exit()
-	throw new Error(message)
-
-# ---------------------------------------------------------------------------
-
-getCallers = (stackTrace, lExclude=[]) ->
-
-	iter = stackTrace.matchAll(///
-			at
-			\s+
-			(?:
-				async
-				\s+
-				)?
-			([^\s(]+)
-			///g)
-	if !iter
-		return ["<unknown>"]
-
-	lCallers = []
-	for lMatches from iter
-		[_, caller] = lMatches
-		if (caller.indexOf('file://') == 0)
-			break
-		if caller not in lExclude
-			lCallers.push caller
-
-	return lCallers
-
-# ---------------------------------------------------------------------------
-#   assert - mimic nodejs's assert
-#   return true so we can use it in boolean expressions
-
-export assert = (cond, msg) ->
-
-	if ! cond
-		stackTrace = new Error().stack
-		lCallers = getCallers(stackTrace, ['assert'])
-
-		console.log '--------------------'
-		console.log 'JavaScript CALL STACK:'
-		for caller in lCallers
-			console.log "   #{caller}"
-		console.log '--------------------'
-		console.log "ERROR: #{msg} (in #{lCallers[0]}())"
-		if doHaltOnError
-			process.exit()
-		error msg
-	return true
-
-# ---------------------------------------------------------------------------
-#   croak - throws an error after possibly printing useful info
-
-export croak = (err, label, obj) ->
-
-	curmsg = if isString(err) then err else err.message
-	newmsg = """
-			ERROR (croak): #{curmsg}
-			#{label}:
-			#{JSON.stringify(obj)}
-			"""
-
-	# --- re-throw the error
-	throw new Error(newmsg)
 
 # ---------------------------------------------------------------------------
 
@@ -131,7 +53,7 @@ export patchStr = (bigstr, pos, str) ->
 
 export isString = (x) ->
 
-	return typeof x == 'string' || x instanceof String
+	return (typeof x == 'string') || (x instanceof String)
 
 # ---------------------------------------------------------------------------
 
