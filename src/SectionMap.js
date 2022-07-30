@@ -151,10 +151,11 @@ export var SectionMap = class SectionMap {
   }
 
   // ..........................................................
-  // --- procFunc should be (name, block) ->
-  //        return processed block
-  getBlock(procFunc = undef, lTree = undef) {
-    var j, lParts, len, part, result, text;
+  // --- hProc should be <name> -> <function>
+  //     <function> should be <block> -> <block>
+  // --- lTree allows you to get just a section
+  getBlock(hProc = {}, lTree = undef) {
+    var block, j, lParts, len, part, result;
     debug("enter getBlock()");
     if (lTree === undef) {
       lTree = this.lSectionTree;
@@ -165,17 +166,18 @@ export var SectionMap = class SectionMap {
     for (j = 0, len = lTree.length; j < len; j++) {
       part = lTree[j];
       if (isString(part)) {
-        text = this.section(part).getBlock();
-        if (nonEmpty(text) && defined(procFunc)) {
-          text = procFunc(part, text);
+        block = this.section(part).getBlock();
+        if (defined(hProc[part])) {
+          // --- called even if block is empty
+          block = hProc[part](block);
         }
       } else if (isNonEmptyArray(part)) {
         if (isSectionName(part[0])) {
-          text = this.getBlock(procFunc, part);
+          block = this.getBlock(hProc, part);
         } else if (isSetName(part[0])) {
-          text = this.getBlock(procFunc, part.slice(1));
-          if (nonEmpty(text) && defined(procFunc)) {
-            text = procFunc(part[0], text);
+          block = this.getBlock(hProc, part.slice(1));
+          if (defined(hProc[part[0]])) {
+            block = hProc[part[0]](block);
           }
         } else {
           croak(`Bad part: ${OL(part)}`);
@@ -183,8 +185,8 @@ export var SectionMap = class SectionMap {
       } else {
         croak(`Bad part: ${OL(part)}`);
       }
-      if (defined(text)) {
-        lParts.push(text);
+      if (defined(block)) {
+        lParts.push(block);
       }
     }
     debug('lParts', lParts);

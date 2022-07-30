@@ -121,10 +121,11 @@ export class SectionMap
 		return
 
 	# ..........................................................
-	# --- procFunc should be (name, block) ->
-	#        return processed block
+	# --- hProc should be <name> -> <function>
+	#     <function> should be <block> -> <block>
+	# --- lTree allows you to get just a section
 
-	getBlock: (procFunc=undef, lTree=undef) ->
+	getBlock: (hProc={}, lTree=undef) ->
 
 		debug "enter getBlock()"
 		if (lTree == undef)
@@ -135,22 +136,23 @@ export class SectionMap
 		lParts = []
 		for part in lTree
 			if isString(part)
-				text = @section(part).getBlock()
-				if nonEmpty(text) && defined(procFunc)
-					text = procFunc(part, text)
+				block = @section(part).getBlock()
+				if defined(hProc[part])
+					# --- called even if block is empty
+					block = hProc[part](block)
 			else if isNonEmptyArray(part)
 				if isSectionName(part[0])
-					text = @getBlock(procFunc, part)
+					block = @getBlock(hProc, part)
 				else if isSetName(part[0])
-					text = @getBlock(procFunc, part.slice(1))
-					if nonEmpty(text) && defined(procFunc)
-						text = procFunc(part[0], text)
+					block = @getBlock(hProc, part.slice(1))
+					if defined(hProc[part[0]])
+						block = hProc[part[0]](block)
 				else
 					croak "Bad part: #{OL(part)}"
 			else
 				croak "Bad part: #{OL(part)}"
-			if defined(text)
-				lParts.push text
+			if defined(block)
+				lParts.push block
 
 		debug 'lParts', lParts
 		result = arrayToBlock(lParts)

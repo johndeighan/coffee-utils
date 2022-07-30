@@ -23,10 +23,10 @@ export class Section
 
 	# ..........................................................
 
-	indent: (level=1) ->
+	indent: (level=1, oneIndent="\t") ->
 
 		lNewLines = for line in @lParts
-			indented(line, level)
+			indented(line, level, oneIndent)
 		@lParts = lNewLines
 		return
 

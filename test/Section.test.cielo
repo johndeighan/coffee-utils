@@ -1,0 +1,33 @@
+# Section.test.cielo
+
+import {simple} from '@jdeighan/unit-tester'
+import {assert} from '@jdeighan/unit-tester/utils'
+import {undef} from '@jdeighan/coffee-utils'
+import {
+	blockToArray, arrayToBlock, firstLine, remainingLines,
+	normalizeBlock, truncateBlock,
+	joinBlocks, forEachLine, forEachBlock, forEachSetOfBlocks,
+	} from '@jdeighan/coffee-utils/block'
+
+import {Section} from '@jdeighan/coffee-utils/section'
+
+# ---------------------------------------------------------------------------
+
+html = new Section('html')
+simple.equal  {{LINE}}, html.length(), 0
+simple.truthy {{LINE}}, html.isEmpty()
+simple.falsy  {{LINE}}, html.nonEmpty()
+
+html.add '<h1>title</h1>'
+simple.equal  {{LINE}}, html.length(), 1
+simple.falsy  {{LINE}}, html.isEmpty()
+simple.truthy  {{LINE}}, html.nonEmpty()
+
+html.add '<p>para</p>'
+simple.equal  {{LINE}}, html.length(), 2
+simple.falsy  {{LINE}}, html.isEmpty()
+simple.truthy {{LINE}}, html.nonEmpty()
+
+html.indent(1, "\t")
+
+simple.equal {{LINE}}, html.getBlock(), "\t<h1>title</h1>\n\t<p>para</p>"

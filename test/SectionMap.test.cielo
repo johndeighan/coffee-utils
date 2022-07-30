@@ -1,0 +1,79 @@
+# SectionMap.test.cielo
+
+import {simple} from '@jdeighan/unit-tester'
+import {assert} from '@jdeighan/unit-tester/utils'
+import {undef} from '@jdeighan/coffee-utils'
+import {
+	blockToArray, arrayToBlock, firstLine, remainingLines,
+	normalizeBlock, truncateBlock,
+	joinBlocks, forEachLine, forEachBlock, forEachSetOfBlocks,
+	} from '@jdeighan/coffee-utils/block'
+
+import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	map = new SectionMap([
+		'html'
+		'script'
+		])
+	simple.equal  {{LINE}}, map.length(), 0
+	simple.truthy {{LINE}}, map.isEmpty()
+	simple.falsy  {{LINE}}, map.nonEmpty()
+
+	map.section('script').add "x = 42"
+	map.section('html').add   "<p>para</p>"
+	simple.equal  {{LINE}}, map.length(), 2
+	simple.falsy  {{LINE}}, map.isEmpty()
+	simple.truthy {{LINE}}, map.nonEmpty()
+
+	simple.equal {{LINE}}, map.getBlock(), """
+		<p>para</p>
+		x = 42
+		"""
+
+	)()
+
+# ---------------------------------------------------------------------------
+# --- Test processing
+
+(() ->
+	map = new SectionMap([
+		'html'
+		'script'
+		])
+	map.section('script').add "x = 42"
+	map.section('html').add   "<p>para</p>"
+
+	toJS = (line) -> return "#{line};"
+
+	simple.equal {{LINE}}, map.getBlock({script: toJS}), """
+		<p>para</p>
+		x = 42;
+		"""
+
+	)()
+
+(() ->
+	map = new SectionMap([
+		'html'
+		'script'
+		])
+	map.section('script').add "x = 42"
+	map.section('html').add   "<p>para</p>"
+
+	toJS = (line) -> return "#{line};"
+	addSpaces = (line) -> return line.replace('<p>', '<p> ') \
+	                                 .replace('</p>', ' </p>')
+
+	hProc = {
+		script: toJS
+		html: addSpaces
+		}
+	simple.equal {{LINE}}, map.getBlock(hProc), """
+		<p> para </p>
+		x = 42;
+		"""
+
+	)()

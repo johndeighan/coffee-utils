@@ -34,7 +34,7 @@ export var Section = class Section {
   }
 
   // ..........................................................
-  indent(level = 1) {
+  indent(level = 1, oneIndent = "\t") {
     var lNewLines, line;
     lNewLines = (function() {
       var i, len, ref, results;
@@ -42,7 +42,7 @@ export var Section = class Section {
       results = [];
       for (i = 0, len = ref.length; i < len; i++) {
         line = ref[i];
-        results.push(indented(line, level));
+        results.push(indented(line, level, oneIndent));
       }
       return results;
     }).call(this);
