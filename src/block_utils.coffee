@@ -26,6 +26,23 @@ export blockToArray = (block) ->
 		return lLines
 
 # ---------------------------------------------------------------------------
+#   toArray - split a block or array into lines w/o newlines
+
+export toArray = (item) ->
+
+	if isString(item)
+		return item.split(/\r?\n/)
+	else if isArray(item)
+		# --- We still need to ensure that no strings contain newlines
+		lLines = []
+		for str in item
+			for substr in toArray(str)
+				lLines.push substr
+		return lLines
+	else
+		croak "Not a string or array"
+
+# ---------------------------------------------------------------------------
 #   arrayToBlock - block will have no trailing whitespace
 
 export arrayToBlock = (lLines) ->
@@ -38,6 +55,21 @@ export arrayToBlock = (lLines) ->
 		return undef
 	else
 		return rtrim(lLines.join('\n'))
+
+# ---------------------------------------------------------------------------
+#   toBlock - block may have trailing whitespace
+#             but undef items are ignored
+
+export toBlock = (lLines) ->
+
+	if (lLines == undef)
+		return undef
+	assert isArray(lLines), "lLines is not an array"
+	lLines = lLines.filter((line) => defined(line));
+	if lLines.length == 0
+		return undef
+	else
+		return lLines.join('\n')
 
 # ---------------------------------------------------------------------------
 

@@ -5,7 +5,7 @@ import assert from 'assert'
 import {simple} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'
 import {
-	blockToArray, arrayToBlock, firstLine, remainingLines,
+	blockToArray, toArray, arrayToBlock, firstLine, remainingLines,
 	normalizeBlock, truncateBlock,
 	joinBlocks, forEachLine, forEachBlock, forEachSetOfBlocks,
 	} from '@jdeighan/coffee-utils/block'
@@ -26,6 +26,55 @@ simple.equal {{LINE}}, blockToArray("abc\n\nxyz\n"), [
 	'abc'
 	''
 	'xyz'
+	]
+
+# ---------------------------------------------------------------------------
+
+simple.equal {{LINE}}, toArray("abc\nxyz"), [
+	'abc'
+	'xyz'
+	]
+
+simple.equal {{LINE}}, toArray("abc\n\nxyz"), [
+	'abc'
+	''
+	'xyz'
+	]
+
+simple.equal {{LINE}}, toArray("abc\n\n\nxyz\n"), [
+	'abc'
+	''
+	''
+	'xyz'
+	''
+	]
+
+# ---------------------------------------------------------------------------
+
+simple.equal {{LINE}}, toArray(['abc','xyz']), [
+	'abc'
+	'xyz'
+	]
+
+simple.equal {{LINE}}, toArray(['abc','xyz','']), [
+	'abc'
+	'xyz'
+	''
+	]
+
+simple.equal {{LINE}}, toArray(['abc','','xyz']), [
+	'abc'
+	''
+	'xyz'
+	]
+
+# ---------------------------------------------------------------------------
+# --- MUST also split internal strings
+
+simple.equal {{LINE}}, toArray(['abc\ndef', 'ghi']), [
+	'abc'
+	'def'
+	'ghi'
 	]
 
 # ---------------------------------------------------------------------------

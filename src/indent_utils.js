@@ -19,7 +19,9 @@ import {
 
 import {
   arrayToBlock,
-  blockToArray
+  blockToArray,
+  toArray,
+  toBlock
 } from '@jdeighan/coffee-utils/block';
 
 // ---------------------------------------------------------------------------
@@ -87,11 +89,7 @@ export var indented = function(input, level = 1, oneIndent = "\t") {
     return input;
   }
   toAdd = indentation(level, oneIndent);
-  if (isArray(input)) {
-    lInputLines = input;
-  } else {
-    lInputLines = blockToArray(input);
-  }
+  lInputLines = toArray(input);
   lLines = (function() {
     var i, len1, results;
     results = [];
@@ -113,31 +111,18 @@ export var indented = function(input, level = 1, oneIndent = "\t") {
 //            - unless level is set, in which case exactly that
 //              indentation is removed
 //            - returns same type as text, i.e. either string or array
-export var undented = function(text, level = undef, oneIndent = "\t") {
-  var i, j, lLines, lMatches, lNewLines, len1, len2, line, nToRemove, toRemove;
+export var undented = function(input, level = undef, oneIndent = "\t") {
+  var i, lLines, lMatches, lNewLines, len1, line, nToRemove, toRemove;
   if (defined(level) && (level === 0)) {
-    return text;
+    return input;
   }
-  if (isString(text)) {
-    lLines = blockToArray(text);
-    if (lLines.length === 0) {
-      return '';
-    }
-  } else if (isArray(text)) {
-    lLines = text;
-    for (i = 0, len1 = lLines.length; i < len1; i++) {
-      line = lLines[i];
-      assert(isString(line), "undented(): array not all strings");
-    }
-    if (lLines.length === 0) {
-      return [];
-    }
-  } else {
-    error(`undented(): Not an array or string: ${OL(text)}`);
+  lLines = toArray(input);
+  if (lLines.length === 0) {
+    return '';
   }
   // --- determine what to remove from beginning of each line
   if (defined(level)) {
-    assert(isInteger(level), "undented(): level must be an integer");
+    assert(isInteger(level), "level must be an integer");
     toRemove = indentation(level, oneIndent);
   } else {
     lMatches = lLines[0].match(/^\s*/);
@@ -145,8 +130,8 @@ export var undented = function(text, level = undef, oneIndent = "\t") {
   }
   nToRemove = indentLevel(toRemove);
   lNewLines = [];
-  for (j = 0, len2 = lLines.length; j < len2; j++) {
-    line = lLines[j];
+  for (i = 0, len1 = lLines.length; i < len1; i++) {
+    line = lLines[i];
     if (isEmpty(line)) {
       lNewLines.push('');
     } else {
@@ -156,8 +141,8 @@ export var undented = function(text, level = undef, oneIndent = "\t") {
       lNewLines.push(line.substr(nToRemove));
     }
   }
-  if (isString(text)) {
-    return arrayToBlock(lNewLines);
+  if (isString(input)) {
+    return toBlock(lNewLines);
   } else {
     return lNewLines;
   }

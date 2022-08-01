@@ -5,7 +5,9 @@ import {
 	undef, escapeStr, defined,
 	OL, isInteger, isString, isArray, isEmpty, rtrim,
 	} from '@jdeighan/coffee-utils'
-import {arrayToBlock, blockToArray} from '@jdeighan/coffee-utils/block'
+import {
+	arrayToBlock, blockToArray, toArray, toBlock,
+	} from '@jdeighan/coffee-utils/block'
 
 # ---------------------------------------------------------------------------
 
@@ -71,14 +73,11 @@ export isUndented = (line) ->
 export indented = (input, level=1, oneIndent="\t") ->
 
 	assert (level >= 0), "indented(): negative level"
-	if level == 0
+	if (level == 0)
 		return input
 
 	toAdd = indentation(level, oneIndent)
-	if isArray(input)
-		lInputLines = input
-	else
-		lInputLines = blockToArray(input)
+	lInputLines = toArray(input)
 
 	lLines = for line in lInputLines
 		if isEmpty(line)
@@ -93,27 +92,18 @@ export indented = (input, level=1, oneIndent="\t") ->
 #              indentation is removed
 #            - returns same type as text, i.e. either string or array
 
-export undented = (text, level=undef, oneIndent="\t") ->
+export undented = (input, level=undef, oneIndent="\t") ->
 
 	if defined(level) && (level==0)
-		return text
+		return input
 
-	if isString(text)
-		lLines = blockToArray(text)
-		if (lLines.length == 0)
-			return ''
-	else if isArray(text)
-		lLines = text
-		for line in lLines
-			assert isString(line), "undented(): array not all strings"
-		if (lLines.length == 0)
-			return []
-	else
-		error "undented(): Not an array or string: #{OL(text)}"
+	lLines = toArray(input)
+	if (lLines.length == 0)
+		return ''
 
 	# --- determine what to remove from beginning of each line
 	if defined(level)
-		assert isInteger(level), "undented(): level must be an integer"
+		assert isInteger(level), "level must be an integer"
 		toRemove = indentation(level, oneIndent)
 	else
 		lMatches = lLines[0].match(/^\s*/)
@@ -129,8 +119,8 @@ export undented = (text, level=undef, oneIndent="\t") ->
 				throw new Error("remove #{OL(toRemove)} from #{OL(text)}")
 			lNewLines.push(line.substr(nToRemove))
 
-	if isString(text)
-		return arrayToBlock(lNewLines)
+	if isString(input)
+		return toBlock(lNewLines)
 	else
 		return lNewLines
 
