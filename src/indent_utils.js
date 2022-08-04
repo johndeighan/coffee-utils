@@ -184,6 +184,12 @@ export var untabify = function(str, numSpaces = 3) {
 
 // ---------------------------------------------------------------------------
 //    enclose - indent text, surround with pre and post
-export var enclose = function(text, pre, post) {
-  return pre + "\n" + indented(text) + "\n" + post;
+export var enclose = function(text, pre, post, oneIndent = "\t") {
+  return arrayToBlock([pre, indented(text, 1, oneIndent), post]);
+};
+
+// ---------------------------------------------------------------------------
+//    elem - indent text, surround with HTML tags
+export var elem = function(text, tag, oneIndent = "\t") {
+  return arrayToBlock([`<${tag}>`, indented(text, 1, oneIndent), `</${tag}>`]);
 };

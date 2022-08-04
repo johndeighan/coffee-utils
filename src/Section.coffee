@@ -2,18 +2,22 @@
 
 import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	pass, undef, defined, isArray,
+	pass, undef, defined, isArray, isEmpty,
 	} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {indented} from '@jdeighan/coffee-utils/indent'
+import {debug} from '@jdeighan/coffee-utils/debug'
 
 # ---------------------------------------------------------------------------
 
 export class Section
 
-	constructor: (@name) ->
+	constructor: (@name, content=undef) ->
+		# --- name can be undef or empty
 
 		@lParts = []
+		if defined(content)
+			@lParts.push content
 
 	# ..........................................................
 
@@ -73,7 +77,11 @@ export class Section
 
 	getBlock: () ->
 
+		debug "enter Section.getBlock()"
 		if (@lParts.length == 0)
+			debug "return undef from Section.getBlock()"
 			return undef
 		else
-			return arrayToBlock(@lParts)
+			result = arrayToBlock(@lParts)
+			debug "return from Section.getBlock()", result
+			return result

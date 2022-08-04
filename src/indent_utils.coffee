@@ -157,6 +157,21 @@ export untabify = (str, numSpaces=3) ->
 # ---------------------------------------------------------------------------
 #    enclose - indent text, surround with pre and post
 
-export enclose = (text, pre, post) ->
+export enclose = (text, pre, post, oneIndent="\t") ->
 
-	return pre + "\n" + indented(text) + "\n" + post
+	return arrayToBlock([
+		pre
+		indented(text, 1, oneIndent)
+		post
+		])
+
+# ---------------------------------------------------------------------------
+#    elem - indent text, surround with HTML tags
+
+export elem = (text, tag, oneIndent="\t") ->
+
+	return arrayToBlock([
+		"<#{tag}>"
+		indented(text, 1, oneIndent)
+		"</#{tag}>"
+		])

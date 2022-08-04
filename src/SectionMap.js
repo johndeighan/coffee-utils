@@ -12,6 +12,7 @@ import {
   pass,
   undef,
   defined,
+  notdefined,
   OL,
   isEmpty,
   nonEmpty,
@@ -32,6 +33,10 @@ import {
 } from '@jdeighan/coffee-utils/indent';
 
 import {
+  LOG
+} from '@jdeighan/coffee-utils/log';
+
+import {
   debug
 } from '@jdeighan/coffee-utils/debug';
 
@@ -41,158 +46,140 @@ import {
 
 // ---------------------------------------------------------------------------
 isSectionName = function(name) {
-  return isString(name) && name.match(/^[a-z][a-z0-9]*/);
+  return isString(name) && name.match(/^[a-z][a-z0-9_]*/);
 };
 
 // ---------------------------------------------------------------------------
 isSetName = function(name) {
-  return isString(name) && name.match(/^[A-Z][a-z0-9]*/);
+  return isString(name) && name.match(/^[A-Z][a-z0-9_]*/);
 };
 
 // ---------------------------------------------------------------------------
 export var SectionMap = class SectionMap {
   constructor(lSectionTree) {
-    // --- lSectionTree is a tree of section names
-    debug("enter SectionMap()", lSectionTree);
-    this.lSectionTree = lSectionTree; // a tree of section names
-    this.hSets = {};
+    this.lSectionTree = lSectionTree;
+    // --- lSectionTree is a tree of section/set names
+    debug("enter SectionMap()", this.lSectionTree);
+    assert(isArray(this.lSectionTree), "not an array");
+    // --- keys are section names, values are Section objects
     this.hSections = {};
-    this.addSections(lSectionTree);
+    // --- keys are set names, values are subtrees of lSectionTree
+    this.hSets = {};
+    this.build(this.lSectionTree);
     debug("return from SectionMap()", this.hSections);
   }
 
   // ..........................................................
-  addSections(desc) {
-    var i, item, j, k, lAdded, lParts, len, len1, name;
-    // --- returns a flat array of sections that were added
-    if (isString(desc)) {
-      assert(nonEmpty(desc), "empty section name");
-      assert(isSectionName(desc), `bad section name ${OL(desc)}`);
-      assert(this.hSections[desc] === undef, `duplicate section ${OL(desc)}`);
-      this.hSections[desc] = new Section(desc);
-      return [desc];
-    } else {
-      assert(isArray(desc), `not an array or string ${OL(desc)}`);
-      name = undef;
-      lParts = [];
-      for (i = j = 0, len = desc.length; j < len; i = ++j) {
-        item = desc[i];
-        if ((i === 0) && isSetName(item)) {
-          name = item;
-        } else {
-          lAdded = this.addSections(item);
-          for (k = 0, len1 = lAdded.length; k < len1; k++) {
-            item = lAdded[k];
-            lParts.push(item);
-          }
+  build(lTree) {
+    var firstItem, i, item, j, len, len1, ref;
+    debug("enter build()", lTree);
+    assert(isArray(lTree), "not an array");
+    assert(nonEmpty(lTree), "empty array");
+    firstItem = lTree[0];
+    if (isSetName(firstItem)) {
+      assert(lTree.length >= 2, "set without sections");
+      this.hSets[firstItem] = lTree;
+      ref = lTree.slice(1);
+      for (i = 0, len = ref.length; i < len; i++) {
+        item = ref[i];
+        if (isArray(item)) {
+          this.build(item);
+        } else if (isSectionName(item)) {
+          this.hSections[item] = new Section(item);
+        } else if (!isString(item)) { // string would be literal
+          croak(`Bad section tree: ${OL(this.lSectionTree)}`);
         }
       }
-      if (defined(name)) {
-        this.addSet(name, lParts);
-      }
-      return lParts;
-    }
-  }
-
-  // ..........................................................
-  addSet(name, lSectionTree) {
-    var j, len, secName;
-    debug("enter addSet()", name, lSectionTree);
-    // --- check the name
-    assert(isSetName(name), `not a valid set name ${OL(name)}`);
-    // --- check lSectionTree
-    assert(isArray(lSectionTree), "arg 2 not an array");
-    for (j = 0, len = lSectionTree.length; j < len; j++) {
-      secName = lSectionTree[j];
-      assert(isNonEmptyString(secName), `not a non-empty string ${OL(secName)}`);
-      assert(defined(this.hSections[secName]), `not a section name ${OL(secName)}`);
-    }
-    this.hSets[name] = lSectionTree;
-    debug('hSets', this.hSets);
-    debug("return from addSet()");
-  }
-
-  // ..........................................................
-  // --- sections returned in depth-first order from section tree
-  //     Set names are simply skipped
-  //     yields: [<level>, <section>]
-  * allSections(desc = undef, level = 0) {
-    var item, j, lTree, len, result;
-    debug("enter allSections()", desc, level);
-    if (desc === undef) {
-      desc = this.lSectionTree;
-    }
-    if (isArray(desc)) {
-      for (j = 0, len = desc.length; j < len; j++) {
-        item = desc[j];
-        if (isSectionName(item)) {
-          result = [level, this.section(item)];
-          debug('yield', result);
-          yield result;
-        } else if (isSetName(item)) {
-          pass;
+    } else {
+      for (j = 0, len1 = lTree.length; j < len1; j++) {
+        item = lTree[j];
+        if (isArray(item)) {
+          this.build(item);
+        } else if (isSectionName(item)) {
+          this.hSections[item] = new Section(item);
         } else {
-          assert(isArray(item), `not an array ${OL(item)}`);
-          yield* this.allSections(item, level + 1);
+          croak(`Bad section tree: ${OL(this.lSectionTree)}`);
         }
       }
-    } else if (isSectionName(desc)) {
-      result = [level, this.section(desc)];
-      debug('yield', result);
-      yield result;
-    } else if (isSetName(desc)) {
-      lTree = this.hSets[desc];
-      assert(defined(lTree), `Not a Set: ${OL(desc)}`);
-      yield* this.allSections(lTree, level);
-    } else {
-      croak(`Bad item: ${OL(desc)}`);
     }
-    debug("return from allSections()");
+    debug("return from build()", this.hSections, this.hSets);
   }
 
   // ..........................................................
   // --- hProc should be <name> -> <function>
+  //     <name> can be a section name or a set name
   //     <function> should be <block> -> <block>
-  // --- lTree allows you to get just a section
-  getBlock(hProc = {}, lTree = undef) {
-    var block, j, lParts, len, part, result;
-    debug("enter getBlock()");
-    if (lTree === undef) {
-      lTree = this.lSectionTree;
-    } else {
-      assert(isArray(lTree), `not an array ${OL(lTree)}`);
+  // --- desc can be:
+  //        an array, which may begin with a set name
+  //        a section name
+  //        a set name
+  //        undef (equivalent to being set to @SectionTree)
+  getBlock(desc = undef, hProcs = {}) {
+    var block, i, item, lBlocks, len, proc, setName;
+    debug("enter SectionMap.getBlock()", desc, hProcs);
+    if (notdefined(desc)) {
+      desc = this.lSectionTree;
     }
-    lParts = [];
-    for (j = 0, len = lTree.length; j < len; j++) {
-      part = lTree[j];
-      if (isString(part)) {
-        block = this.section(part).getBlock();
-        if (defined(hProc[part])) {
-          // --- called even if block is empty
-          block = hProc[part](block);
-        }
-      } else if (isNonEmptyArray(part)) {
-        if (isSectionName(part[0])) {
-          block = this.getBlock(hProc, part);
-        } else if (isSetName(part[0])) {
-          block = this.getBlock(hProc, part.slice(1));
-          if (defined(hProc[part[0]])) {
-            block = hProc[part[0]](block);
-          }
+    if (isArray(desc)) {
+      lBlocks = [];
+      setName = undef;
+      for (i = 0, len = desc.length; i < len; i++) {
+        item = desc[i];
+        if (isArray(item) || isSectionName(item)) {
+          // --- arrayToBlock() will skip undef items
+          //     so, no need to check for undef block
+          lBlocks.push(this.getBlock(item, hProcs));
+        } else if (isSetName(item)) {
+          setName = item;
+        } else if (isString(item)) {
+          lBlocks.push(item); // a literal string
         } else {
-          croak(`Bad part: ${OL(part)}`);
+          croak(`Bad item: ${OL(item)}`);
         }
-      } else {
-        croak(`Bad part: ${OL(part)}`);
       }
-      if (defined(block)) {
-        lParts.push(block);
+      block = arrayToBlock(lBlocks);
+    } else if (isSectionName(desc)) {
+      block = this.section(desc).getBlock();
+      if (defined(proc = hProcs[desc])) {
+        block = proc(block);
+      }
+    } else if (isSetName(desc)) {
+      // --- pass array to getBlock()
+      block = this.getBlock(this.hSets[desc], hProcs);
+      if (defined(proc = hProcs[desc])) {
+        block = proc(block);
+      }
+    } else {
+      croak(`Bad 1st arg: ${OL(desc)}`);
+    }
+    debug("return from SectionMap.getBlock()", block);
+    return block;
+  }
+
+  // ..........................................................
+  isEmpty() {
+    var name, ref, sect;
+    ref = this.hSections;
+    for (name in ref) {
+      sect = ref[name];
+      if (sect.nonEmpty()) {
+        return false;
       }
     }
-    debug('lParts', lParts);
-    result = arrayToBlock(lParts);
-    debug("return from getBlock()", result);
-    return result;
+    return true;
+  }
+
+  // ..........................................................
+  nonEmpty() {
+    var name, ref, sect;
+    ref = this.hSections;
+    for (name in ref) {
+      sect = ref[name];
+      if (sect.nonEmpty()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // ..........................................................
@@ -205,59 +192,20 @@ export var SectionMap = class SectionMap {
 
   // ..........................................................
   firstSection(name) {
-    var lSectionTree;
+    var lSubTree;
     assert(isSetName(name), `bad set name ${OL(name)}`);
-    lSectionTree = this.hSets[name];
-    assert(defined(lSectionTree), `no such set ${OL(name)}`);
-    assert(nonEmpty(lSectionTree), `empty section ${OL(name)}`);
-    return this.section(lSectionTree[0]);
+    lSubTree = this.hSets[name];
+    assert(defined(lSubTree), `no such set ${OL(name)}`);
+    return this.section(lSubTree[1]);
   }
 
   // ..........................................................
   lastSection(name) {
-    var lSectionTree;
+    var lSubTree;
     assert(isSetName(name), `bad set name ${OL(name)}`);
-    lSectionTree = this.hSets[name];
-    assert(defined(lSectionTree), `no such set ${OL(name)}`);
-    assert(nonEmpty(lSectionTree), `empty section ${OL(name)}`);
-    return this.section(lSectionTree[lSectionTree.length - 1]);
-  }
-
-  // ..........................................................
-  length(desc = undef) {
-    var _, ref, result, sect, x;
-    result = 0;
-    ref = this.allSections(desc);
-    for (x of ref) {
-      [_, sect] = x;
-      result += sect.length();
-    }
-    return result;
-  }
-
-  // ..........................................................
-  isEmpty(desc = undef) {
-    return this.length(desc) === 0;
-  }
-
-  // ..........................................................
-  nonEmpty(desc = undef) {
-    return this.length(desc) > 0;
-  }
-
-  // ..........................................................
-  getShape() {
-    var lParts, level, ref, result, sect, x;
-    debug("enter getShape()");
-    lParts = [];
-    ref = this.allSections();
-    for (x of ref) {
-      [level, sect] = x;
-      lParts.push(indented(sect.name, level));
-    }
-    result = arrayToBlock(lParts);
-    debug("return from getShape()", result);
-    return result;
+    lSubTree = this.hSets[name];
+    assert(defined(lSubTree), `no such set ${OL(name)}`);
+    return this.section(lSubTree[lSubTree.length - 1]);
   }
 
 };

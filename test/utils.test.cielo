@@ -8,7 +8,7 @@ import {
 	isFunction, isInteger, rtrim, isUniqueList, isUniqueTree,
 	ltrunc, rtrunc, extractMatches, range, patchStr,
 	words, escapeStr, titleLine, className, eval_expr,
-	removeCR, CWS, isArrayOfHashes, setCharsAt,
+	removeCR, CWS, isArrayOfHashes, setCharsAt, charCount,
 	oneline, isRegExp, uniq, hashToStr, envVarsWithPrefix,
 	strcat, replaceVars, defined, notdefined, isIterable,
 	} from '@jdeighan/coffee-utils'
@@ -362,3 +362,12 @@ simple.equal {{LINE}}, setCharsAt('abc', 1, 'xyz'), 'axyz'
 simple.equal {{LINE}}, patchStr('------------', 3, 'arg 3'), '---arg 3----'
 simple.equal {{LINE}}, patchStr('------------', 3, ' arg 3 '), '--- arg 3 --'
 simple.equal {{LINE}}, patchStr('-----', 3, 'arg 3'), '---arg 3'
+
+# ---------------------------------------------------------------------------
+
+simple.equal {{LINE}}, charCount("aaa", "a"), 3
+simple.equal {{LINE}}, charCount("aaa", "b"), 0
+simple.equal {{LINE}}, charCount("aaa", "a"), 3
+simple.equal {{LINE}}, charCount("axaxa", "a"), 3
+simple.equal {{LINE}}, charCount("line\nline\nline", "\n"), 2
+simple.equal {{LINE}}, charCount("abc", "\n"), 0

@@ -10,7 +10,8 @@ import {
   pass,
   undef,
   defined,
-  isArray
+  isArray,
+  isEmpty
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -21,11 +22,19 @@ import {
   indented
 } from '@jdeighan/coffee-utils/indent';
 
+import {
+  debug
+} from '@jdeighan/coffee-utils/debug';
+
 // ---------------------------------------------------------------------------
 export var Section = class Section {
-  constructor(name) {
+  constructor(name, content = undef) {
     this.name = name;
+    // --- name can be undef or empty
     this.lParts = [];
+    if (defined(content)) {
+      this.lParts.push(content);
+    }
   }
 
   // ..........................................................
@@ -88,10 +97,15 @@ export var Section = class Section {
 
   // ..........................................................
   getBlock() {
+    var result;
+    debug("enter Section.getBlock()");
     if (this.lParts.length === 0) {
+      debug("return undef from Section.getBlock()");
       return undef;
     } else {
-      return arrayToBlock(this.lParts);
+      result = arrayToBlock(this.lParts);
+      debug("return from Section.getBlock()", result);
+      return result;
     }
   }
 

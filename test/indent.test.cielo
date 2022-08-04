@@ -174,4 +174,12 @@ simple.equal {{LINE}}, indentLevel("\t\tabc\n\t\tdef\n\t\t\tghi"), 2
 			callme(x)
 		</script>
 		"""
+
+	simple.equal {{LINE}}, enclose(block, 'pre', 'post', '...'), """
+		pre
+		...x = 42
+		...callme(x)
+		post
+		"""
+
 	)()

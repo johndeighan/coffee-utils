@@ -18,18 +18,41 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		'html'
 		'script'
 		])
-	simple.equal  {{LINE}}, map.length(), 0
 	simple.truthy {{LINE}}, map.isEmpty()
 	simple.falsy  {{LINE}}, map.nonEmpty()
 
 	map.section('script').add "x = 42"
 	map.section('html').add   "<p>para</p>"
-	simple.equal  {{LINE}}, map.length(), 2
 	simple.falsy  {{LINE}}, map.isEmpty()
 	simple.truthy {{LINE}}, map.nonEmpty()
 
 	simple.equal {{LINE}}, map.getBlock(), """
 		<p>para</p>
+		x = 42
+		"""
+
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	map = new SectionMap([
+		'Script'
+		'startup'
+		'# |||| ='
+		'code'
+		])
+	simple.falsy {{LINE}}, map.isEmpty()
+	simple.truthy  {{LINE}}, map.nonEmpty()
+
+	map.section('code').add      "x = 42"
+	map.section('startup').add   "n = 3"
+	simple.falsy  {{LINE}}, map.isEmpty()
+	simple.truthy {{LINE}}, map.nonEmpty()
+
+	simple.equal {{LINE}}, map.getBlock(), """
+		n = 3
+		# |||| =
 		x = 42
 		"""
 
@@ -48,7 +71,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 
 	toJS = (line) -> return "#{line};"
 
-	simple.equal {{LINE}}, map.getBlock({script: toJS}), """
+	simple.equal {{LINE}}, map.getBlock(undef, {script: toJS}), """
 		<p>para</p>
 		x = 42;
 		"""
@@ -71,7 +94,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		script: toJS
 		html: addSpaces
 		}
-	simple.equal {{LINE}}, map.getBlock(hProc), """
+	simple.equal {{LINE}}, map.getBlock(undef, hProc), """
 		<p> para </p>
 		x = 42;
 		"""

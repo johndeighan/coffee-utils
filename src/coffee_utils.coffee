@@ -51,6 +51,17 @@ export patchStr = (bigstr, pos, str) ->
 
 # ---------------------------------------------------------------------------
 
+export charCount = (str, ch) ->
+
+	count = 0
+	pos = str.indexOf(ch, 0)
+	while (pos >= 0)
+		count += 1
+		pos = str.indexOf(ch, pos+1)
+	return count
+
+# ---------------------------------------------------------------------------
+
 export isString = (x) ->
 
 	return (typeof x == 'string') || (x instanceof String)

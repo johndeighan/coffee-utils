@@ -57,6 +57,18 @@ export var patchStr = function(bigstr, pos, str) {
 };
 
 // ---------------------------------------------------------------------------
+export var charCount = function(str, ch) {
+  var count, pos;
+  count = 0;
+  pos = str.indexOf(ch, 0);
+  while (pos >= 0) {
+    count += 1;
+    pos = str.indexOf(ch, pos + 1);
+  }
+  return count;
+};
+
+// ---------------------------------------------------------------------------
 export var isString = function(x) {
   return (typeof x === 'string') || (x instanceof String);
 };

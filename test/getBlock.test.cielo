@@ -1,0 +1,170 @@
+# getBlock.test.cielo
+
+import {simple, UnitTester} from '@jdeighan/unit-tester'
+import {elem} from '@jdeighan/coffee-utils/indent'
+import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	map = new SectionMap([
+		'html'
+		'script'
+		])
+
+	map.section('script').add "x = 42"
+	map.section('html').add   "<p> hello </p>"
+
+	simple.equal {{LINE}}, map.getBlock(), """
+		<p> hello </p>
+		x = 42
+		"""
+
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+
+	map = new SectionMap([
+		'html'
+		[
+			'Script'
+			'startup'
+			'code'
+			]
+		])
+
+	map.section('code').add      "x = 42"
+	map.section('startup').add   "LOG 'starting'"
+	map.section('html').add      "<p> hello </p>"
+
+	simple.equal {{LINE}}, map.getBlock(), """
+		<p> hello </p>
+		LOG 'starting'
+		x = 42
+		"""
+
+	simple.equal {{LINE}}, map.getBlock('Script'), """
+		LOG 'starting'
+		x = 42
+		"""
+
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+
+	map = new SectionMap([
+		'html'
+		[
+			'Script'
+			'startup'
+			'# |||| ='
+			'code'
+			]
+		])
+
+	map.section('code').add      "x = 42"
+	map.section('startup').add   "LOG 'starting'"
+	map.section('html').add      "<h1> title </h1>"
+	map.section('startup').add   "y = 4*x"
+	map.section('html').add      "<p> hello </p>"
+	map.section('code').add      "LOG 'Done'"
+
+	simple.equal {{LINE}}, map.getBlock(), """
+		<h1> title </h1>
+		<p> hello </p>
+		LOG 'starting'
+		y = 4*x
+		# |||| =
+		x = 42
+		LOG 'Done'
+		"""
+
+	simple.equal {{LINE}}, map.getBlock('Script'), """
+		LOG 'starting'
+		y = 4*x
+		# |||| =
+		x = 42
+		LOG 'Done'
+		"""
+
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+
+	map = new SectionMap([
+		'html'
+		[
+			'Script'
+			'startup'
+			'# |||| ='
+			[
+				'NonStartup'
+				'imports'
+				'code'
+				]
+			]
+		'style'
+		])
+
+	map.section('style').add     ["p {", "...color: red", "...}"]
+	map.section('code').add      "x = 42"
+	map.section('startup').add   "LOG 'starting'"
+	map.section('html').add      "<h1> title </h1>"
+	map.section('startup').add   "y = 4*x"
+	map.section('html').add      "<p> hello </p>"
+	map.section('code').add      "LOG 'Done'"
+
+	simple.equal {{LINE}}, map.getBlock(), """
+		<h1> title </h1>
+		<p> hello </p>
+		LOG 'starting'
+		y = 4*x
+		# |||| =
+		x = 42
+		LOG 'Done'
+		p {
+		...color: red
+		...}
+		"""
+
+	simple.equal {{LINE}}, map.getBlock('Script'), """
+		LOG 'starting'
+		y = 4*x
+		# |||| =
+		x = 42
+		LOG 'Done'
+		"""
+
+	hProcs = {
+		Script: (block) -> return elem(block, 'script', "\t")
+		style:  (block) -> return elem(block, 'style', "\t")
+		}
+
+	simple.equal {{LINE}}, map.getBlock('Script', hProcs), """
+		<script>
+			LOG 'starting'
+			y = 4*x
+			# |||| =
+			x = 42
+			LOG 'Done'
+		</script>
+		"""
+
+	simple.equal {{LINE}}, map.getBlock('NonStartup'), """
+		x = 42
+		LOG 'Done'
+		"""
+
+	simple.equal {{LINE}}, map.getBlock('style'), """
+		p {
+		...color: red
+		...}
+		"""
+
+	)()

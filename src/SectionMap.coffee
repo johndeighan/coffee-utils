@@ -2,12 +2,13 @@
 
 import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	pass, undef, defined, OL, isEmpty, nonEmpty,
+	pass, undef, defined, notdefined, OL, isEmpty, nonEmpty,
 	isString, isHash, isArray, isUniqueTree, isNonEmptyString,
 	isNonEmptyArray,
 	} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {indented} from '@jdeighan/coffee-utils/indent'
+import {LOG} from '@jdeighan/coffee-utils/log'
 import {debug} from '@jdeighan/coffee-utils/debug'
 import {Section} from '@jdeighan/coffee-utils/section'
 
@@ -15,149 +16,126 @@ import {Section} from '@jdeighan/coffee-utils/section'
 
 isSectionName = (name) ->
 
-	return isString(name) && name.match(/^[a-z][a-z0-9]*/)
+	return isString(name) && name.match(/^[a-z][a-z0-9_]*/)
 
 # ---------------------------------------------------------------------------
 
 isSetName = (name) ->
 
-	return isString(name) && name.match(/^[A-Z][a-z0-9]*/)
+	return isString(name) && name.match(/^[A-Z][a-z0-9_]*/)
 
 # ---------------------------------------------------------------------------
 
 export class SectionMap
 
-	constructor: (lSectionTree) ->
-		# --- lSectionTree is a tree of section names
+	constructor: (@lSectionTree) ->
+		# --- lSectionTree is a tree of section/set names
 
-		debug "enter SectionMap()", lSectionTree
-		@lSectionTree = lSectionTree   # a tree of section names
-		@hSets = {}
+		debug "enter SectionMap()", @lSectionTree
+		assert isArray(@lSectionTree), "not an array"
+
+		# --- keys are section names, values are Section objects
 		@hSections = {}
-		@addSections lSectionTree
+
+		# --- keys are set names, values are subtrees of lSectionTree
+		@hSets = {}
+
+		@build @lSectionTree
 		debug "return from SectionMap()", @hSections
 
 	# ..........................................................
 
-	addSections: (desc) ->
-		# --- returns a flat array of sections that were added
+	build: (lTree) ->
 
-		if isString(desc)
-			assert nonEmpty(desc), "empty section name"
-			assert isSectionName(desc), "bad section name #{OL(desc)}"
-			assert (@hSections[desc] == undef), "duplicate section #{OL(desc)}"
-			@hSections[desc] = new Section(desc)
-			return [desc]
+		debug "enter build()", lTree
+		assert isArray(lTree), "not an array"
+		assert nonEmpty(lTree), "empty array"
+
+		firstItem = lTree[0]
+		if isSetName(firstItem)
+			assert (lTree.length >= 2), "set without sections"
+			@hSets[firstItem] = lTree
+			for item in lTree.slice(1)
+				if isArray(item)
+					@build item
+				else if isSectionName(item)
+					@hSections[item] = new Section(item)
+				else if ! isString(item)    # string would be literal
+					croak "Bad section tree: #{OL(@lSectionTree)}"
 		else
-			assert isArray(desc), "not an array or string #{OL(desc)}"
-			name = undef
-			lParts = []
-			for item,i in desc
-				if (i==0) && isSetName(item)
-					name = item
+			for item in lTree
+				if isArray(item)
+					@build item
+				else if isSectionName(item)
+					@hSections[item] = new Section(item)
 				else
-					lAdded = @addSections item
-					for item in lAdded
-						lParts.push item
-			if defined(name)
-				@addSet name, lParts
-			return lParts
-		return
-
-	# ..........................................................
-
-	addSet: (name, lSectionTree) ->
-
-		debug "enter addSet()", name, lSectionTree
-
-		# --- check the name
-		assert isSetName(name), "not a valid set name #{OL(name)}"
-
-		# --- check lSectionTree
-		assert isArray(lSectionTree), "arg 2 not an array"
-		for secName in lSectionTree
-			assert isNonEmptyString(secName),
-					"not a non-empty string #{OL(secName)}"
-			assert defined(@hSections[secName]),
-					"not a section name #{OL(secName)}"
-
-		@hSets[name] = lSectionTree
-		debug 'hSets', @hSets
-		debug "return from addSet()"
-		return
-
-	# ..........................................................
-	# --- sections returned in depth-first order from section tree
-	#     Set names are simply skipped
-	#     yields: [<level>, <section>]
-
-	allSections: (desc=undef, level=0) ->
-
-		debug "enter allSections()", desc, level
-		if (desc == undef)
-			desc = @lSectionTree
-		if isArray(desc)
-			for item in desc
-				if isSectionName(item)
-					result = [level, @section(item)]
-					debug 'yield', result
-					yield result
-				else if isSetName(item)
-					pass
-				else
-					assert isArray(item), "not an array #{OL(item)}"
-					yield from @allSections(item, level+1)
-		else if isSectionName(desc)
-			result = [level, @section(desc)]
-			debug 'yield', result
-			yield result
-		else if isSetName(desc)
-			lTree = @hSets[desc]
-			assert defined(lTree), "Not a Set: #{OL(desc)}"
-			yield from @allSections(lTree, level)
-		else
-			croak "Bad item: #{OL(desc)}"
-		debug "return from allSections()"
+					croak "Bad section tree: #{OL(@lSectionTree)}"
+		debug "return from build()", @hSections, @hSets
 		return
 
 	# ..........................................................
 	# --- hProc should be <name> -> <function>
+	#     <name> can be a section name or a set name
 	#     <function> should be <block> -> <block>
-	# --- lTree allows you to get just a section
+	# --- desc can be:
+	#        an array, which may begin with a set name
+	#        a section name
+	#        a set name
+	#        undef (equivalent to being set to @SectionTree)
 
-	getBlock: (hProc={}, lTree=undef) ->
+	getBlock: (desc=undef, hProcs={}) ->
 
-		debug "enter getBlock()"
-		if (lTree == undef)
-			lTree = @lSectionTree
-		else
-			assert isArray(lTree), "not an array #{OL(lTree)}"
+		debug "enter SectionMap.getBlock()", desc, hProcs
 
-		lParts = []
-		for part in lTree
-			if isString(part)
-				block = @section(part).getBlock()
-				if defined(hProc[part])
-					# --- called even if block is empty
-					block = hProc[part](block)
-			else if isNonEmptyArray(part)
-				if isSectionName(part[0])
-					block = @getBlock(hProc, part)
-				else if isSetName(part[0])
-					block = @getBlock(hProc, part.slice(1))
-					if defined(hProc[part[0]])
-						block = hProc[part[0]](block)
+		if notdefined(desc)
+			desc = @lSectionTree
+
+		if isArray(desc)
+			lBlocks = []
+			setName = undef
+			for item in desc
+				if isArray(item) || isSectionName(item)
+					# --- arrayToBlock() will skip undef items
+					#     so, no need to check for undef block
+					lBlocks.push @getBlock(item, hProcs)
+				else if isSetName(item)
+					setName = item
+				else if isString(item)
+					lBlocks.push item   # a literal string
 				else
-					croak "Bad part: #{OL(part)}"
-			else
-				croak "Bad part: #{OL(part)}"
-			if defined(block)
-				lParts.push block
+					croak "Bad item: #{OL(item)}"
+			block = arrayToBlock(lBlocks)
+		else if isSectionName(desc)
+			block = @section(desc).getBlock()
+			if defined(proc = hProcs[desc])
+				block = proc(block)
+		else if isSetName(desc)
+			# --- pass array to getBlock()
+			block = @getBlock(@hSets[desc], hProcs)
+			if defined(proc = hProcs[desc])
+				block = proc(block)
+		else
+			croak "Bad 1st arg: #{OL(desc)}"
+		debug "return from SectionMap.getBlock()", block
+		return block
 
-		debug 'lParts', lParts
-		result = arrayToBlock(lParts)
-		debug "return from getBlock()", result
-		return result
+	# ..........................................................
+
+	isEmpty: () ->
+
+		for name,sect of @hSections
+			if sect.nonEmpty()
+				return false
+		return true
+
+	# ..........................................................
+
+	nonEmpty: () ->
+
+		for name,sect of @hSections
+			if sect.nonEmpty()
+				return true
+		return false
 
 	# ..........................................................
 
@@ -172,50 +150,15 @@ export class SectionMap
 	firstSection: (name) ->
 
 		assert isSetName(name), "bad set name #{OL(name)}"
-		lSectionTree = @hSets[name]
-		assert defined(lSectionTree), "no such set #{OL(name)}"
-		assert nonEmpty(lSectionTree), "empty section #{OL(name)}"
-		return @section(lSectionTree[0])
+		lSubTree = @hSets[name]
+		assert defined(lSubTree), "no such set #{OL(name)}"
+		return @section(lSubTree[1])
 
 	# ..........................................................
 
 	lastSection: (name) ->
 
 		assert isSetName(name), "bad set name #{OL(name)}"
-		lSectionTree = @hSets[name]
-		assert defined(lSectionTree), "no such set #{OL(name)}"
-		assert nonEmpty(lSectionTree), "empty section #{OL(name)}"
-		return @section(lSectionTree[lSectionTree.length - 1])
-
-	# ..........................................................
-
-	length: (desc=undef) ->
-
-		result = 0
-		for [_, sect] from @allSections(desc)
-			result += sect.length()
-		return result
-
-	# ..........................................................
-
-	isEmpty: (desc=undef) ->
-
-		return (@length(desc) == 0)
-
-	# ..........................................................
-
-	nonEmpty: (desc=undef) ->
-
-		return (@length(desc) > 0)
-
-	# ..........................................................
-
-	getShape: () ->
-
-		debug "enter getShape()"
-		lParts = []
-		for [level, sect] from @allSections()
-			lParts.push indented(sect.name, level)
-		result = arrayToBlock(lParts)
-		debug "return from getShape()", result
-		return result
+		lSubTree = @hSets[name]
+		assert defined(lSubTree), "no such set #{OL(name)}"
+		return @section(lSubTree[lSubTree.length - 1])
