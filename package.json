@@ -12,6 +12,7 @@
 		"./log": "./src/log_utils.js",
 		"./block": "./src/block_utils.js",
 		"./indent": "./src/indent_utils.js",
+		"./html": "./src/html_utils.js",
 		"./stack": "./src/call_stack.js",
 		"./debug": "./src/debug_utils.js",
 		"./arrow": "./src/arrow.js",

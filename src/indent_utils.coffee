@@ -164,14 +164,3 @@ export enclose = (text, pre, post, oneIndent="\t") ->
 		indented(text, 1, oneIndent)
 		post
 		])
-
-# ---------------------------------------------------------------------------
-#    elem - indent text, surround with HTML tags
-
-export elem = (text, tag, oneIndent="\t") ->
-
-	return arrayToBlock([
-		"<#{tag}>"
-		indented(text, 1, oneIndent)
-		"</#{tag}>"
-		])

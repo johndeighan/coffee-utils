@@ -1,0 +1,242 @@
+# html.test.cielo
+
+import {simple, UnitTester} from '@jdeighan/unit-tester'
+import {assert} from '@jdeighan/unit-tester/utils'
+import {undef} from '@jdeighan/coffee-utils'
+import {
+	blockToArray, arrayToBlock, firstLine, remainingLines,
+	normalizeBlock, truncateBlock,
+	joinBlocks, forEachLine, forEachBlock, forEachSetOfBlocks,
+	} from '@jdeighan/coffee-utils/block'
+
+import {parsetag, elem} from '@jdeighan/coffee-utils/html'
+
+# ---------------------------------------------------------------------------
+
+class TraceTester extends UnitTester
+
+	transformValue: (str) ->
+		return parsetag(str)
+
+tester = new TraceTester()
+
+# ---------------------------------------------------------------------------
+
+tester.like {{LINE}}, 'p', {
+	type: 'tag'
+	tagName: 'p'
+	orgtag: 'p'
+	}
+
+# --- attributes - <name>=<value>    no intervening spaces
+tester.like {{LINE}}, 'p type=bold', {
+	type: 'tag'
+	tagName: 'p'
+	orgtag: 'p'
+	hAttr: {
+		type: {
+			quote: ''
+			value: 'bold'
+			}
+		}
+	}
+
+# --- attributes - alternate quoting
+tester.like {{LINE}}, 'p type="bold"', {
+	type: 'tag'
+	tagName: 'p'
+	orgtag: 'p'
+	hAttr: {
+		type: {
+			quote: '"'
+			value: 'bold'
+			}
+		}
+	}
+
+# --- attributes - alternate quoting
+tester.like {{LINE}}, "p type='bold'", {
+	type: 'tag'
+	tagName: 'p'
+	orgtag: 'p'
+	hAttr: {
+		type: {
+			quote: "'"
+			value: 'bold'
+			}
+		}
+	}
+
+# --- attributes - alternate quoting
+tester.like {{LINE}}, 'p type={bold}', {
+	type: 'tag'
+	tagName: 'p'
+	orgtag: 'p'
+	hAttr: {
+		type: {
+			quote: '{'
+			value: 'bold'
+			}
+		}
+	}
+
+# --- Included text
+
+tester.like {{LINE}}, 'p type=bold a paragraph', {
+	type: 'tag'
+	tagName: 'p'
+	orgtag: 'p'
+	hAttr: {
+		type: {
+			quote: ''
+			value: 'bold'
+			}
+		}
+	text: 'a paragraph'
+	}
+
+tester.like {{LINE}}, 'p type="bold" a paragraph', {
+	type: 'tag'
+	tagName: 'p'
+	orgtag: 'p'
+	hAttr: {
+		type: {
+			quote: '"'
+			value: 'bold'
+			}
+		}
+	text: 'a paragraph'
+	}
+
+tester.like {{LINE}}, "p type='bold' a paragraph", {
+	type: 'tag'
+	tagName: 'p'
+	orgtag: 'p'
+	hAttr: {
+		type: {
+			quote: "'"
+			value: 'bold'
+			}
+		}
+	text: 'a paragraph'
+	}
+
+tester.like {{LINE}}, 'p type={bold} a paragraph', {
+	type: 'tag'
+	tagName: 'p'
+	orgtag: 'p'
+	hAttr: {
+		type: {
+			quote: '{'
+			value: 'bold'
+			}
+		}
+	text: 'a paragraph'
+	}
+
+# --- classes
+tester.like {{LINE}}, 'p.blue', {
+	type: 'tag'
+	tagName: 'p'
+	orgtag: 'p'
+	hAttr: {
+		class: {
+			quote: '"'
+			value: 'blue'
+			}
+		}
+	}
+
+# --- subtypes - they also become classes
+tester.like {{LINE}}, 'div:markdown', {
+	type: 'tag'
+	tagName: 'div'
+	orgtag: 'div:markdown'
+	subtype: 'markdown'
+	hAttr: {
+		class: {
+			quote: '"'
+			value: 'markdown'
+			}
+		}
+	}
+
+# --- bind to variable
+tester.like {{LINE}}, 'canvasVar = canvas', {
+	type: 'tag'
+	tagName: 'canvas'
+	orgtag: 'canvas'
+	hAttr: {
+		'bind:this': {
+			quote: '{'
+			value: 'canvasVar'
+			}
+		}
+	}
+
+# --- bind to variable, plus attributes
+tester.like {{LINE}}, 'canvasVar = canvas width=800 height=600', {
+	type: 'tag'
+	tagName: 'canvas'
+	orgtag: 'canvas'
+	hAttr: {
+		'bind:this': {
+			quote: '{'
+			value: 'canvasVar'
+			}
+		width: {
+			quote: ''
+			value: '800'
+			}
+		height: {
+			quote: ''
+			value: '600'
+			}
+		}
+	}
+
+# --- bind to variable, text that looks like attributes
+tester.like {{LINE}}, 'canvasVar = canvas "width=800 height=600"', {
+	type: 'tag'
+	tagName: 'canvas'
+	orgtag: 'canvas'
+	hAttr: {
+		'bind:this': {
+			quote: '{'
+			value: 'canvasVar'
+			}
+		}
+	text: "width=800 height=600"
+	}
+
+# --- tag script:startup automatically gets attr context="module"
+tester.like {{LINE}}, 'script:startup', {
+	type: 'tag'
+	tagName: 'script'
+	orgtag: 'script:startup'
+	hAttr: {
+		class: {
+			quote: '"'
+			value: 'startup'
+			}
+		context: {
+			quote: '"'
+			value: 'module'
+			}
+		}
+	}
+
+# --- special handling of svelte:<something> tags
+tester.like {{LINE}}, 'svelte:head', {
+	type: 'tag'
+	subtype: 'head'
+	tagName: 'svelte:head'
+	orgtag: 'svelte:head'
+	}
+
+# --- Test elem
+simple.equal {{LINE}}, elem('script', undef, 'x = 42', "\t"), """
+	<script>
+		x = 42
+	</script>
+	"""
