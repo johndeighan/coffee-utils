@@ -6,7 +6,8 @@ import readline from 'readline';
 
 import {
   assert,
-  error
+  error,
+  croak
 } from '@jdeighan/unit-tester/utils';
 
 import {
