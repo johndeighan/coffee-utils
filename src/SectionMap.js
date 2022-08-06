@@ -121,6 +121,7 @@ export var SectionMap = class SectionMap {
     //     so, if it's a hash, then it's really the hReplacers
     //     and the real desc is undef
     if (isHash(desc)) {
+      debug("arg 1 is hReplacers, no desc");
       assert(isEmpty(hReplacers), "invalid parms");
       hReplacers = desc;
       desc = this.lSectionTree;
@@ -149,19 +150,30 @@ export var SectionMap = class SectionMap {
         }
       }
       block = arrayToBlock(lBlocks);
-      if (defined(setName) && defined(proc = hReplacers[setName])) {
-        block = proc(block);
+      if (defined(setName)) {
+        if (defined(proc = hReplacers[setName])) {
+          debug(`REPLACE ${setName}`);
+          block = proc(block);
+        } else {
+          debug(`NO REPLACER for ${setName}`);
+        }
       }
     } else if (isSectionName(desc)) {
       block = this.section(desc).getBlock();
       if (defined(proc = hReplacers[desc])) {
+        debug(`REPLACE ${desc}`);
         block = proc(block);
+      } else {
+        debug(`NO REPLACER for ${desc}`);
       }
     } else if (isSetName(desc)) {
       // --- pass array to getBlock()
       block = this.getBlock(this.hSets[desc], hReplacers);
       if (defined(proc = hReplacers[desc])) {
+        debug(`REPLACE ${desc}`);
         block = proc(block);
+      } else {
+        debug(`NO REPLACER for ${desc}`);
       }
     } else {
       croak(`Bad 1st arg: ${OL(desc)}`);

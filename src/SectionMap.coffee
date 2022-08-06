@@ -92,6 +92,7 @@ export class SectionMap
 		#     and the real desc is undef
 
 		if isHash(desc)
+			debug "arg 1 is hReplacers, no desc"
 			assert isEmpty(hReplacers), "invalid parms"
 			hReplacers = desc
 			desc = @lSectionTree
@@ -116,17 +117,27 @@ export class SectionMap
 				if defined(subBlock)
 					lBlocks.push subBlock
 			block = arrayToBlock(lBlocks)
-			if defined(setName) && defined(proc = hReplacers[setName])
-				block = proc(block)
+			if defined(setName)
+				if defined(proc = hReplacers[setName])
+					debug "REPLACE #{setName}"
+					block = proc(block)
+				else
+					debug "NO REPLACER for #{setName}"
 		else if isSectionName(desc)
 			block = @section(desc).getBlock()
 			if defined(proc = hReplacers[desc])
+				debug "REPLACE #{desc}"
 				block = proc(block)
+			else
+				debug "NO REPLACER for #{desc}"
 		else if isSetName(desc)
 			# --- pass array to getBlock()
 			block = @getBlock(@hSets[desc], hReplacers)
 			if defined(proc = hReplacers[desc])
+				debug "REPLACE #{desc}"
 				block = proc(block)
+			else
+				debug "NO REPLACER for #{desc}"
 		else
 			croak "Bad 1st arg: #{OL(desc)}"
 		debug "return from SectionMap.getBlock()", block
