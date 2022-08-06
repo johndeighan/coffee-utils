@@ -133,11 +133,6 @@ export class SectionMap
 		else if isSetName(desc)
 			# --- pass array to getBlock()
 			block = @getBlock(@hSets[desc], hReplacers)
-			if defined(proc = hReplacers[desc])
-				debug "REPLACE #{desc}"
-				block = proc(block)
-			else
-				debug "NO REPLACER for #{desc}"
 		else
 			croak "Bad 1st arg: #{OL(desc)}"
 		debug "return from SectionMap.getBlock()", block
