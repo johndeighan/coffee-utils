@@ -83,36 +83,49 @@ export class SectionMap
 	#        a set name
 	#        undef (equivalent to being set to @SectionTree)
 
-	getBlock: (desc=undef, hProcs={}) ->
+	getBlock: (desc=undef, hReplacers={}) ->
 
-		debug "enter SectionMap.getBlock()", desc, hProcs
+		debug "enter SectionMap.getBlock()", desc, hReplacers
 
-		if notdefined(desc)
+		# --- desc can only be a string or an array
+		#     so, if it's a hash, then it's really the hReplacers
+		#     and the real desc is undef
+
+		if isHash(desc)
+			assert isEmpty(hReplacers), "invalid parms"
+			hReplacers = desc
+			desc = @lSectionTree
+		else if notdefined(desc)
 			desc = @lSectionTree
 
 		if isArray(desc)
 			lBlocks = []
 			setName = undef
 			for item in desc
-				if isArray(item) || isSectionName(item)
-					# --- arrayToBlock() will skip undef items
-					#     so, no need to check for undef block
-					lBlocks.push @getBlock(item, hProcs)
+				subBlock = undef
+				if isArray(item)
+					subBlock = @getBlock(item, hReplacers)
+				else if isSectionName(item)
+					subBlock = @getBlock(item, hReplacers)
 				else if isSetName(item)
 					setName = item
 				else if isString(item)
-					lBlocks.push item   # a literal string
+					subBlock = item   # a literal string
 				else
 					croak "Bad item: #{OL(item)}"
+				if defined(subBlock)
+					lBlocks.push subBlock
 			block = arrayToBlock(lBlocks)
+			if defined(setName) && defined(proc = hReplacers[setName])
+				block = proc(block)
 		else if isSectionName(desc)
 			block = @section(desc).getBlock()
-			if defined(proc = hProcs[desc])
+			if defined(proc = hReplacers[desc])
 				block = proc(block)
 		else if isSetName(desc)
 			# --- pass array to getBlock()
-			block = @getBlock(@hSets[desc], hProcs)
-			if defined(proc = hProcs[desc])
+			block = @getBlock(@hSets[desc], hReplacers)
+			if defined(proc = hReplacers[desc])
 				block = proc(block)
 		else
 			croak "Bad 1st arg: #{OL(desc)}"

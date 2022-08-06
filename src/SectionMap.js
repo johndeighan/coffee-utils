@@ -114,10 +114,17 @@ export var SectionMap = class SectionMap {
   //        a section name
   //        a set name
   //        undef (equivalent to being set to @SectionTree)
-  getBlock(desc = undef, hProcs = {}) {
-    var block, i, item, lBlocks, len, proc, setName;
-    debug("enter SectionMap.getBlock()", desc, hProcs);
-    if (notdefined(desc)) {
+  getBlock(desc = undef, hReplacers = {}) {
+    var block, i, item, lBlocks, len, proc, setName, subBlock;
+    debug("enter SectionMap.getBlock()", desc, hReplacers);
+    // --- desc can only be a string or an array
+    //     so, if it's a hash, then it's really the hReplacers
+    //     and the real desc is undef
+    if (isHash(desc)) {
+      assert(isEmpty(hReplacers), "invalid parms");
+      hReplacers = desc;
+      desc = this.lSectionTree;
+    } else if (notdefined(desc)) {
       desc = this.lSectionTree;
     }
     if (isArray(desc)) {
@@ -125,28 +132,35 @@ export var SectionMap = class SectionMap {
       setName = undef;
       for (i = 0, len = desc.length; i < len; i++) {
         item = desc[i];
-        if (isArray(item) || isSectionName(item)) {
-          // --- arrayToBlock() will skip undef items
-          //     so, no need to check for undef block
-          lBlocks.push(this.getBlock(item, hProcs));
+        subBlock = undef;
+        if (isArray(item)) {
+          subBlock = this.getBlock(item, hReplacers);
+        } else if (isSectionName(item)) {
+          subBlock = this.getBlock(item, hReplacers);
         } else if (isSetName(item)) {
           setName = item;
         } else if (isString(item)) {
-          lBlocks.push(item); // a literal string
+          subBlock = item; // a literal string
         } else {
           croak(`Bad item: ${OL(item)}`);
         }
+        if (defined(subBlock)) {
+          lBlocks.push(subBlock);
+        }
       }
       block = arrayToBlock(lBlocks);
+      if (defined(setName) && defined(proc = hReplacers[setName])) {
+        block = proc(block);
+      }
     } else if (isSectionName(desc)) {
       block = this.section(desc).getBlock();
-      if (defined(proc = hProcs[desc])) {
+      if (defined(proc = hReplacers[desc])) {
         block = proc(block);
       }
     } else if (isSetName(desc)) {
       // --- pass array to getBlock()
-      block = this.getBlock(this.hSets[desc], hProcs);
-      if (defined(proc = hProcs[desc])) {
+      block = this.getBlock(this.hSets[desc], hReplacers);
+      if (defined(proc = hReplacers[desc])) {
         block = proc(block);
       }
     } else {
