@@ -1,7 +1,8 @@
 # getBlock.test.cielo
 
 import {simple, UnitTester} from '@jdeighan/unit-tester'
-import {elem} from '@jdeighan/coffee-utils/indent'
+import {undef} from '@jdeighan/coffee-utils'
+import {elem} from '@jdeighan/coffee-utils/html'
 import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 
 # ---------------------------------------------------------------------------
@@ -142,8 +143,8 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		"""
 
 	hProcs = {
-		Script: (block) -> return elem(block, 'script', "\t")
-		style:  (block) -> return elem(block, 'style', "\t")
+		Script: (block) -> return elem('script', undef, block, "\t")
+		style:  (block) -> return elem('style',  undef, block, "\t")
 		}
 
 	simple.equal {{LINE}}, map.getBlock('Script', hProcs), """

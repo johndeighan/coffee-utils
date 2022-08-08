@@ -24,6 +24,10 @@ import {
   arrayToBlock
 } from '@jdeighan/coffee-utils/block';
 
+import {
+  debug
+} from '@jdeighan/coffee-utils/debug';
+
 hNoEnd = {};
 
 ref = words('area base br col command embed hr img input' + ' keygen link meta param source track wbr');

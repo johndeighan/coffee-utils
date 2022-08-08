@@ -6,6 +6,7 @@ import {
 	} from '@jdeighan/coffee-utils'
 import {indented, enclose} from '@jdeighan/coffee-utils/indent'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
+import {debug} from '@jdeighan/coffee-utils/debug'
 
 hNoEnd = {}
 for tagName in words('area base br col command embed hr img input' \

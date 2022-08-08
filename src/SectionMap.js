@@ -126,39 +126,46 @@ export var SectionMap = class SectionMap {
       hReplacers = desc;
       desc = this.lSectionTree;
     } else if (notdefined(desc)) {
+      debug("desc is entire tree");
       desc = this.lSectionTree;
     }
     if (isArray(desc)) {
+      debug("item is an array");
       lBlocks = [];
       setName = undef;
       for (i = 0, len = desc.length; i < len; i++) {
         item = desc[i];
         subBlock = undef;
-        if (isArray(item)) {
-          subBlock = this.getBlock(item, hReplacers);
-        } else if (isSectionName(item)) {
-          subBlock = this.getBlock(item, hReplacers);
-        } else if (isSetName(item)) {
+        if (isSetName(item)) {
+          debug(`set name is ${item}`);
           setName = item;
-        } else if (isString(item)) {
-          subBlock = item; // a literal string
+        } else if (isSectionName(item) || isArray(item)) {
+          subBlock = this.getBlock(item, hReplacers);
+          if (defined(subBlock)) {
+            debug("add subBlock", subBlock);
+            lBlocks.push(subBlock);
+          } else {
+            debug("subBlock is undef");
+          }
+        } else if (isString(item) && nonEmpty(item)) {
+          debug("add string", item);
+          lBlocks.push(item);
         } else {
           croak(`Bad item: ${OL(item)}`);
         }
-        if (defined(subBlock)) {
-          lBlocks.push(subBlock);
-        }
       }
       block = arrayToBlock(lBlocks);
+      debug("block is", block);
       if (defined(setName)) {
         if (defined(proc = hReplacers[setName])) {
-          debug(`REPLACE ${setName}`);
           block = proc(block);
+          debug(`REPLACE ${setName} with`, block);
         } else {
           debug(`NO REPLACER for ${setName}`);
         }
       }
     } else if (isSectionName(desc)) {
+      debug("item is a section name");
       block = this.section(desc).getBlock();
       if (defined(proc = hReplacers[desc])) {
         debug(`REPLACE ${desc}`);
@@ -167,7 +174,7 @@ export var SectionMap = class SectionMap {
         debug(`NO REPLACER for ${desc}`);
       }
     } else if (isSetName(desc)) {
-      // --- pass array to getBlock()
+      debug("item is a set name");
       block = this.getBlock(this.hSets[desc], hReplacers);
     } else {
       croak(`Bad 1st arg: ${OL(desc)}`);

@@ -3,7 +3,7 @@
 import {simple} from '@jdeighan/unit-tester'
 import {assert} from '@jdeighan/unit-tester/utils'
 import {undef} from '@jdeighan/coffee-utils'
-import {elem} from '@jdeighan/coffee-utils/indent'
+import {elem} from '@jdeighan/coffee-utils/html'
 import {
 	blockToArray, arrayToBlock, firstLine, remainingLines,
 	normalizeBlock, truncateBlock,
@@ -114,8 +114,8 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 			'code'
 			]
 		])
-	map.section('code').add "x = 42"
-	map.section('html').add   "<p>para</p>"
+	map.section('code').add  "x = 42"
+	map.section('html').add  "<p>para</p>"
 
 	toJS = (line) -> return "#{line};"
 	addSpaces = (line) -> return line.replace('<p>', '<p> ') \
@@ -124,7 +124,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 	hProc = {
 		code: toJS
 		html: addSpaces
-		Script: (block) -> return elem(block, 'script', "\t")
+		Script: (block) -> return elem('script', undef, block, "\t")
 		}
 	simple.equal {{LINE}}, map.getBlock(undef, hProc), """
 		<p> para </p>
