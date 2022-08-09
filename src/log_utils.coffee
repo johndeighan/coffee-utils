@@ -183,7 +183,12 @@ export logItem = (label, item, pre='', itemPre=undef) ->
 		putstr "#{pre}#{labelStr}#{item}"
 	else if isString(item)
 		if (item.length <= maxOneLine)
-			putstr "#{pre}#{labelStr}'#{escapeStr(item)}'"
+			result = escapeStr(item)
+			hasApos = (result.indexOf("'") >= 0)
+			if hasApos
+				putstr "#{pre}#{labelStr}\"#{result}\""
+			else
+				putstr "#{pre}#{labelStr}'#{result}'"
 		else
 			if label
 				putstr "#{pre}#{label}:"
