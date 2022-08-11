@@ -10,6 +10,7 @@ import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {indented} from '@jdeighan/coffee-utils/indent'
 import {LOG} from '@jdeighan/coffee-utils/log'
 import {debug} from '@jdeighan/coffee-utils/debug'
+import {isTAML, taml} from '@jdeighan/coffee-utils/taml'
 import {Section} from '@jdeighan/coffee-utils/section'
 
 # ---------------------------------------------------------------------------
@@ -32,6 +33,10 @@ export class SectionMap
 		# --- lSectionTree is a tree of section/set names
 
 		debug "enter SectionMap()", @lSectionTree
+
+		if isTAML(@lSectionTree)
+			@SectionTree = taml(@lSectionTree)
+
 		assert isArray(@lSectionTree), "not an array"
 
 		# --- keys are section names, values are Section objects

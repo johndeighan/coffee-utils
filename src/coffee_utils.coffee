@@ -33,14 +33,6 @@ export pass = () ->
 
 # ---------------------------------------------------------------------------
 
-export getClassName = (obj) ->
-
-	if (typeof obj != 'object')
-		return undef
-	return obj.constructor.name
-
-# ---------------------------------------------------------------------------
-
 export patchStr = (bigstr, pos, str) ->
 
 	endpos = pos + str.length
@@ -59,6 +51,55 @@ export charCount = (str, ch) ->
 		count += 1
 		pos = str.indexOf(ch, pos+1)
 	return count
+
+# ---------------------------------------------------------------------------
+
+export isConstructor = (f) ->
+
+	try
+		new f()
+	catch err
+		if (err.message.indexOf('is not a constructor') >= 0)
+			return false;
+	return true;
+
+# ---------------------------------------------------------------------------
+
+export jsType = (x) ->
+
+	if notdefined(x)
+		return [undef, undef]
+	else if isString(x)
+		if x.match(/^\s*$/)
+			return ['string', 'empty']
+		else
+			return ['string', undef]
+	else if isNumber(x)
+		if Number.isInteger(x)
+			return ['number', 'integer']
+		else
+			return ['number', undef]
+	else if isBoolean(x)
+		return ['boolean', undef]
+	else if isHash(x)
+		lKeys = Object.keys(x);
+		if (lKeys.length == 0)
+			return ['hash', 'empty']
+		else
+			return ['hash', undef]
+	else if isArray(x)
+		if (x.length == 0)
+			return ['array', 'empty']
+		else
+			return ['array', undef]
+	else if isConstructor(x)
+		return ['function', 'constructor']
+	else if isFunction(x)
+		return ['function', undef]
+	else if isObject(x)
+		return ['object', undef]
+	else
+		croak "Unknown type: #{OL(x)}"
 
 # ---------------------------------------------------------------------------
 
@@ -91,6 +132,14 @@ export isObject = (x) ->
 			&& ! isArray(x) \
 			&& ! isHash(x) \
 			&& ! isNumber(x)
+
+# ---------------------------------------------------------------------------
+
+export getClassName = (obj) ->
+
+	if (typeof obj != 'object')
+		return undef
+	return obj.constructor.name
 
 # ---------------------------------------------------------------------------
 
@@ -207,13 +256,15 @@ export isRegExp = (x) ->
 
 # ---------------------------------------------------------------------------
 
-export isNumber = (x, hOptions={}) ->
+export isNumber = (x, hOptions=undef) ->
 
 	result = (typeof x == 'number') || (x instanceof Number)
-	if result
-		if defined(hOptions.min) && (x < hOptions.min)
+	if result && defined(hOptions)
+		assert isHash(hOptions), "2nd arg not a hash: #{OL(hOptions)}"
+		{min, max} = hOptions
+		if defined(min) && (x < min)
 			result = false
-		if defined(hOptions.max) && (x > hOptions.max)
+		if defined(max) && (x > max)
 			result = false
 	return result
 

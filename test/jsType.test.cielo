@@ -1,0 +1,77 @@
+# jsType.test.cielo
+
+import {simple, UnitTester} from '@jdeighan/unit-tester'
+import {undef, pass, jsType} from '@jdeighan/coffee-utils'
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	class MyTester extends UnitTester
+
+		transformValue: (val) ->
+
+			return jsType(val)[0]
+
+	tester = new MyTester()
+
+	tester.equal {{LINE}}, undef, undef
+	tester.equal {{LINE}}, null, undef
+
+	tester.equal {{LINE}}, 'abc', 'string'
+	tester.equal {{LINE}}, '', 'string'
+	tester.equal {{LINE}}, new String('abc'), 'string'
+
+	tester.equal {{LINE}}, 42, 'number'
+	tester.equal {{LINE}}, 0, 'number'
+	tester.equal {{LINE}}, 4.2, 'number'
+	tester.equal {{LINE}}, new Number(42), 'number'
+
+	tester.equal {{LINE}}, true, 'boolean'
+	tester.equal {{LINE}}, false, 'boolean'
+
+	tester.equal {{LINE}}, [1,2], 'array'
+	tester.equal {{LINE}}, [], 'array'
+	tester.equal {{LINE}}, new Array(2), 'array'
+
+	tester.equal {{LINE}}, {a:1}, 'hash'
+	tester.equal {{LINE}}, {}, 'hash'
+
+	tester.equal {{LINE}}, ((x) -> 2*x), 'function'
+	tester.equal {{LINE}}, ((x) => 2*x), 'function'
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	class MyTester extends UnitTester
+
+		transformValue: (val) ->
+
+			return jsType(val)
+
+	tester = new MyTester()
+
+	tester.equal {{LINE}}, 'abc', ['string', undef]
+	tester.equal {{LINE}}, '',    ['string', 'empty']
+
+	tester.equal {{LINE}}, [1,2], ['array', undef]
+	tester.equal {{LINE}}, [],    ['array', 'empty']
+
+	tester.equal {{LINE}}, {a:1}, ['hash', undef]
+	tester.equal {{LINE}}, {},    ['hash', 'empty']
+
+	tester.equal {{LINE}}, ((x) -> 2*x), ['function', 'constructor']
+	tester.equal {{LINE}}, ((x) => 2*x), ['function', undef]
+
+	class Dog
+		constructor: (@name) ->
+			pass
+
+	tester.equal {{LINE}}, Dog, ['function', 'constructor']
+
+	func = (x) ->
+		return 2*x
+
+	tester.equal {{LINE}}, func, ['function', 'constructor']
+	)()
+

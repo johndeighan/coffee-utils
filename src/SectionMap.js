@@ -41,6 +41,11 @@ import {
 } from '@jdeighan/coffee-utils/debug';
 
 import {
+  isTAML,
+  taml
+} from '@jdeighan/coffee-utils/taml';
+
+import {
   Section
 } from '@jdeighan/coffee-utils/section';
 
@@ -60,6 +65,9 @@ export var SectionMap = class SectionMap {
     this.lSectionTree = lSectionTree;
     // --- lSectionTree is a tree of section/set names
     debug("enter SectionMap()", this.lSectionTree);
+    if (isTAML(this.lSectionTree)) {
+      this.SectionTree = taml(this.lSectionTree);
+    }
     assert(isArray(this.lSectionTree), "not an array");
     // --- keys are section names, values are Section objects
     this.hSections = {};

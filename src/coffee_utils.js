@@ -38,14 +38,6 @@ export var eval_expr = function(str) {
 export var pass = function() {};
 
 // ---------------------------------------------------------------------------
-export var getClassName = function(obj) {
-  if (typeof obj !== 'object') {
-    return undef;
-  }
-  return obj.constructor.name;
-};
-
-// ---------------------------------------------------------------------------
 export var patchStr = function(bigstr, pos, str) {
   var endpos;
   endpos = pos + str.length;
@@ -66,6 +58,63 @@ export var charCount = function(str, ch) {
     pos = str.indexOf(ch, pos + 1);
   }
   return count;
+};
+
+// ---------------------------------------------------------------------------
+export var isConstructor = function(f) {
+  var err;
+  try {
+    new f();
+  } catch (error1) {
+    err = error1;
+    if (err.message.indexOf('is not a constructor') >= 0) {
+      return false;
+    }
+  }
+  return true;
+};
+
+// ---------------------------------------------------------------------------
+export var jsType = function(x) {
+  var lKeys;
+  if (notdefined(x)) {
+    return [undef, undef];
+  } else if (isString(x)) {
+    if (x.match(/^\s*$/)) {
+      return ['string', 'empty'];
+    } else {
+      return ['string', undef];
+    }
+  } else if (isNumber(x)) {
+    if (Number.isInteger(x)) {
+      return ['number', 'integer'];
+    } else {
+      return ['number', undef];
+    }
+  } else if (isBoolean(x)) {
+    return ['boolean', undef];
+  } else if (isHash(x)) {
+    lKeys = Object.keys(x);
+    if (lKeys.length === 0) {
+      return ['hash', 'empty'];
+    } else {
+      return ['hash', undef];
+    }
+  } else if (isArray(x)) {
+    if (x.length === 0) {
+      return ['array', 'empty'];
+    } else {
+      return ['array', undef];
+    }
+  } else if (isConstructor(x)) {
+    return ['function', 'constructor'];
+  } else if (isFunction(x)) {
+    return ['function', undef];
+  } else if (isObject(x)) {
+    return ['object', undef];
+  } else {
+    return croak(`Unknown type: ${OL(x)}`);
+  }
 };
 
 // ---------------------------------------------------------------------------
@@ -92,6 +141,14 @@ export var isBoolean = function(x) {
 // ---------------------------------------------------------------------------
 export var isObject = function(x) {
   return (typeof x === 'object') && !isString(x) && !isArray(x) && !isHash(x) && !isNumber(x);
+};
+
+// ---------------------------------------------------------------------------
+export var getClassName = function(obj) {
+  if (typeof obj !== 'object') {
+    return undef;
+  }
+  return obj.constructor.name;
 };
 
 // ---------------------------------------------------------------------------
@@ -220,14 +277,16 @@ export var isRegExp = function(x) {
 };
 
 // ---------------------------------------------------------------------------
-export var isNumber = function(x, hOptions = {}) {
-  var result;
+export var isNumber = function(x, hOptions = undef) {
+  var max, min, result;
   result = (typeof x === 'number') || (x instanceof Number);
-  if (result) {
-    if (defined(hOptions.min) && (x < hOptions.min)) {
+  if (result && defined(hOptions)) {
+    assert(isHash(hOptions), `2nd arg not a hash: ${OL(hOptions)}`);
+    ({min, max} = hOptions);
+    if (defined(min) && (x < min)) {
       result = false;
     }
-    if (defined(hOptions.max) && (x > hOptions.max)) {
+    if (defined(max) && (x > max)) {
       result = false;
     }
   }
