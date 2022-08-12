@@ -28,6 +28,11 @@ export var isComment = function(line) {
 };
 
 // ---------------------------------------------------------------------------
+export var isSubclassOf = function(subClass, superClass) {
+  return (subClass === superClass) || (subClass.prototype instanceof superClass);
+};
+
+// ---------------------------------------------------------------------------
 export var eval_expr = function(str) {
   str = str.replace(/\bundef\b/g, 'undefined');
   return Function('"use strict";return (' + str + ')')();

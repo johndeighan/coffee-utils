@@ -21,6 +21,13 @@ export isComment = (line) ->
 
 # ---------------------------------------------------------------------------
 
+export isSubclassOf = (subClass, superClass) ->
+
+	return (subClass == superClass) \
+		|| (subClass.prototype instanceof superClass)
+
+# ---------------------------------------------------------------------------
+
 export eval_expr = (str) ->
 
 	str = str.replace(/\bundef\b/g, 'undefined')
