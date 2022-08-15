@@ -36,6 +36,14 @@ simple.equal {{LINE}}, undented("\t\tabc", 0), "\t\tabc"
 simple.equal {{LINE}}, undented("\t\tabc", 1), "\tabc"
 simple.equal {{LINE}}, undented("\t\tabc", 2), "abc"
 
+simple.equal {{LINE}}, undented([]), []
+simple.equal {{LINE}}, undented(['abc']), ['abc']
+simple.equal {{LINE}}, undented(['\tabc']), ['abc']
+simple.equal {{LINE}}, undented(['\t\tabc']), ['abc']
+simple.equal {{LINE}}, undented(['\t\tabc'], 0), ['\t\tabc']
+simple.equal {{LINE}}, undented(['\t\tabc'], 1), ['\tabc']
+simple.equal {{LINE}}, undented(['\t\tabc'], 2), ['abc']
+
 # ---------------------------------------------------------------------------
 
 (() ->

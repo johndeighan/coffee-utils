@@ -118,7 +118,11 @@ export var undented = function(input, level = undef, oneIndent = "\t") {
   }
   lLines = toArray(input);
   if (lLines.length === 0) {
-    return '';
+    if (isString(input)) {
+      return '';
+    } else {
+      return [];
+    }
   }
   // --- determine what to remove from beginning of each line
   if (defined(level)) {
