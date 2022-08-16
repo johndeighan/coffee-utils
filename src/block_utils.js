@@ -12,6 +12,7 @@ import {
 
 import {
   undef,
+  pass,
   defined,
   isEmpty,
   isString,
@@ -40,25 +41,51 @@ export var blockToArray = function(block) {
 
 // ---------------------------------------------------------------------------
 //   toArray - split a block or array into lines w/o newlines
-export var toArray = function(item) {
-  var i, j, lLines, len1, len2, ref, str, substr;
+export var toArray = function(item, option = undef) {
+  var i, j, lLines, lNewLines, len1, len2, line, nonEmptyFound, ref, substr;
+  // --- Valid options:
+  //     'noEmptyLines'
+  //     'noLeadingEmptyLines'
   if (isString(item)) {
-    return item.split(/\r?\n/);
+    lLines = item.split(/\r?\n/);
   } else if (isArray(item)) {
-    // --- We still need to ensure that no strings contain newlines
-    lLines = [];
-    for (i = 0, len1 = item.length; i < len1; i++) {
-      str = item[i];
-      ref = toArray(str);
+    lLines = item;
+  } else {
+    croak("Not a string or array");
+  }
+  // --- We need to ensure that no strings contain newlines
+  //     and possibly remove empty lines
+  lNewLines = [];
+  nonEmptyFound = false;
+  for (i = 0, len1 = lLines.length; i < len1; i++) {
+    line = lLines[i];
+    if (isEmpty(line)) {
+      if ((option === 'noEmptyLines') || ((option === 'noLeadingEmptyLines') && !nonEmptyFound)) {
+        pass;
+      } else {
+        lNewLines.push('');
+      }
+    } else if (line.indexOf("\n") > -1) {
+      ref = toArray(line);
       for (j = 0, len2 = ref.length; j < len2; j++) {
         substr = ref[j];
-        lLines.push(substr);
+        if (isEmpty(substr)) {
+          if ((option === 'noEmptyLines') || ((option === 'noLeadingEmptyLines') && !nonEmptyFound)) {
+            pass;
+          } else {
+            lNewLines.push('');
+          }
+        } else {
+          nonEmptyFound = true;
+          lNewLines.push(substr);
+        }
       }
+    } else {
+      nonEmptyFound = true;
+      lNewLines.push(line);
     }
-    return lLines;
-  } else {
-    return croak("Not a string or array");
   }
+  return lNewLines;
 };
 
 // ---------------------------------------------------------------------------

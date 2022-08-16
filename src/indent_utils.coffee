@@ -88,6 +88,7 @@ export indented = (input, level=1, oneIndent="\t") ->
 
 # ---------------------------------------------------------------------------
 #   undented - string with 1st line indentation removed for each line
+#            - ignore leading empty lines
 #            - unless level is set, in which case exactly that
 #              indentation is removed
 #            - returns same type as text, i.e. either string or array
@@ -97,7 +98,7 @@ export undented = (input, level=undef, oneIndent="\t") ->
 	if defined(level) && (level==0)
 		return input
 
-	lLines = toArray(input)
+	lLines = toArray(input, 'noLeadingEmptyLines')
 	if (lLines.length == 0)
 		if isString(input)
 			return ''

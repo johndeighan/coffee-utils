@@ -49,6 +49,79 @@ simple.equal {{LINE}}, toArray("abc\n\n\nxyz\n"), [
 	''
 	]
 
+simple.equal {{LINE}}, toArray("abc\n \nxyz", 'noEmptyLines'), [
+	'abc'
+	'xyz'
+	]
+
+simple.equal {{LINE}}, toArray("abc\n \nxyz", 'noLeadingEmptyLines'), [
+	'abc'
+	''
+	'xyz'
+	]
+
+# ... pass in an array
+
+simple.equal {{LINE}}, toArray(["abc", "xyz"]), [
+	'abc'
+	'xyz'
+	]
+
+simple.equal {{LINE}}, toArray(["abc", "", "xyz"]), [
+	'abc'
+	''
+	'xyz'
+	]
+
+simple.equal {{LINE}}, toArray(["abc", "", "", "xyz", ""]), [
+	'abc'
+	''
+	''
+	'xyz'
+	''
+	]
+
+simple.equal {{LINE}}, toArray(["abc", "", "xyz"], 'noEmptyLines'), [
+	'abc'
+	'xyz'
+	]
+
+simple.equal {{LINE}}, toArray(["abc", " ", "xyz"], 'noLeadingEmptyLines'), [
+	'abc'
+	''
+	'xyz'
+	]
+
+# ... pass in an array, some strings have newlines
+
+simple.equal {{LINE}}, toArray(["abc\ndef", "", "xyz"], 'noEmptyLines'), [
+	'abc'
+	'def'
+	'xyz'
+	]
+
+simple.equal {{LINE}}, toArray(["abc\ndef", "", "xyz"], 'noLeadingEmptyLines'), [
+	'abc'
+	'def'
+	''
+	'xyz'
+	]
+
+simple.equal {{LINE}}, toArray(["", "abc\ndef", "", "xyz"], 'noLeadingEmptyLines'), [
+	'abc'
+	'def'
+	''
+	'xyz'
+	]
+
+simple.equal {{LINE}}, toArray(["", "", "abc\ndef", "", "xyz"], 'noLeadingEmptyLines'), [
+	'abc'
+	'def'
+	''
+	'xyz'
+	]
+
+
 # ---------------------------------------------------------------------------
 
 simple.equal {{LINE}}, toArray(['abc','xyz']), [

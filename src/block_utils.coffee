@@ -5,7 +5,7 @@ import readline from 'readline'
 
 import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	undef, defined, isEmpty, isString, isArray, nonEmpty, rtrim,
+	undef, pass, defined, isEmpty, isString, isArray, nonEmpty, rtrim,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
@@ -28,19 +28,44 @@ export blockToArray = (block) ->
 # ---------------------------------------------------------------------------
 #   toArray - split a block or array into lines w/o newlines
 
-export toArray = (item) ->
+export toArray = (item, option=undef) ->
+	# --- Valid options:
+	#     'noEmptyLines'
+	#     'noLeadingEmptyLines'
 
 	if isString(item)
-		return item.split(/\r?\n/)
+		lLines = item.split(/\r?\n/)
 	else if isArray(item)
-		# --- We still need to ensure that no strings contain newlines
-		lLines = []
-		for str in item
-			for substr in toArray(str)
-				lLines.push substr
-		return lLines
+		lLines = item
 	else
 		croak "Not a string or array"
+
+	# --- We need to ensure that no strings contain newlines
+	#     and possibly remove empty lines
+	lNewLines = []
+	nonEmptyFound = false
+	for line in lLines
+		if isEmpty(line)
+			if (option == 'noEmptyLines') \
+					|| ((option == 'noLeadingEmptyLines') && ! nonEmptyFound)
+				pass
+			else
+				lNewLines.push ''
+		else if (line.indexOf("\n") > -1)
+			for substr in toArray(line)
+				if isEmpty(substr)
+					if (option == 'noEmptyLines') \
+							|| ((option == 'noLeadingEmptyLines') && ! nonEmptyFound)
+						pass
+					else
+						lNewLines.push ''
+				else
+					nonEmptyFound = true
+					lNewLines.push substr
+		else
+			nonEmptyFound = true
+			lNewLines.push line
+	return lNewLines
 
 # ---------------------------------------------------------------------------
 #   arrayToBlock - block will have no trailing whitespace
