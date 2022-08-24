@@ -237,6 +237,21 @@ export var nonEmpty = function(x) {
 };
 
 // ---------------------------------------------------------------------------
+export var notInArray = function(lItems, item) {
+  return lItems.indexOf(item) === -1;
+};
+
+// ---------------------------------------------------------------------------
+export var pushCond = function(lItems, item, doPush = notInArray) {
+  if (doPush(lItems, item)) {
+    lItems.push(item);
+    return true;
+  } else {
+    return false;
+  }
+};
+
+// ---------------------------------------------------------------------------
 export var words = function(str) {
   return str.trim().split(/\s+/);
 };

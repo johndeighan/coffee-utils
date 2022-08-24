@@ -223,6 +223,22 @@ export nonEmpty = (x) ->
 
 # ---------------------------------------------------------------------------
 
+export notInArray = (lItems, item) ->
+
+	return (lItems.indexOf(item) == -1)
+
+# ---------------------------------------------------------------------------
+
+export pushCond = (lItems, item, doPush=notInArray) ->
+
+	if doPush(lItems, item)
+		lItems.push item
+		return true
+	else
+		return false
+
+# ---------------------------------------------------------------------------
+
 export words = (str) ->
 
 	return str.trim().split(/\s+/)
