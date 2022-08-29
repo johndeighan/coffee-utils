@@ -10,6 +10,7 @@ import {
 
 # ---------------------------------------------------------------------------
 #   blockToArray - split a block into lines
+#   DEPRECATED - use toArray()
 
 export blockToArray = (block) ->
 
@@ -68,7 +69,8 @@ export toArray = (item, option=undef) ->
 	return lNewLines
 
 # ---------------------------------------------------------------------------
-#   arrayToBlock - block will have no trailing whitespace
+#   arrayToBlock - block and lines in block will have no trailing whitespace
+#   DEPRECATED - use toBlock()
 
 export arrayToBlock = (lLines) ->
 
@@ -90,11 +92,11 @@ export toBlock = (lLines) ->
 	if (lLines == undef)
 		return undef
 	assert isArray(lLines), "lLines is not an array"
-	lLines = lLines.filter((line) => defined(line));
-	if lLines.length == 0
-		return undef
-	else
-		return lLines.join('\n')
+	lNewLines = []
+	for line in lLines
+		if defined(line)
+			lNewLines.push rtrim(line)
+	return lNewLines.join("\n")
 
 # ---------------------------------------------------------------------------
 

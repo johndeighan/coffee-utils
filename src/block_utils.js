@@ -23,6 +23,7 @@ import {
 
 // ---------------------------------------------------------------------------
 //   blockToArray - split a block into lines
+//   DEPRECATED - use toArray()
 export var blockToArray = function(block) {
   var lLines, len;
   if (isEmpty(block)) {
@@ -89,7 +90,8 @@ export var toArray = function(item, option = undef) {
 };
 
 // ---------------------------------------------------------------------------
-//   arrayToBlock - block will have no trailing whitespace
+//   arrayToBlock - block and lines in block will have no trailing whitespace
+//   DEPRECATED - use toBlock()
 export var arrayToBlock = function(lLines) {
   if (lLines === undef) {
     return undef;
@@ -109,18 +111,19 @@ export var arrayToBlock = function(lLines) {
 //   toBlock - block may have trailing whitespace
 //             but undef items are ignored
 export var toBlock = function(lLines) {
+  var i, lNewLines, len1, line;
   if (lLines === undef) {
     return undef;
   }
   assert(isArray(lLines), "lLines is not an array");
-  lLines = lLines.filter((line) => {
-    return defined(line);
-  });
-  if (lLines.length === 0) {
-    return undef;
-  } else {
-    return lLines.join('\n');
+  lNewLines = [];
+  for (i = 0, len1 = lLines.length; i < len1; i++) {
+    line = lLines[i];
+    if (defined(line)) {
+      lNewLines.push(rtrim(line));
+    }
   }
+  return lNewLines.join("\n");
 };
 
 // ---------------------------------------------------------------------------

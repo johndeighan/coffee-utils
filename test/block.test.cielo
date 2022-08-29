@@ -5,7 +5,8 @@ import assert from 'assert'
 import {simple} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'
 import {
-	blockToArray, toArray, arrayToBlock, firstLine, remainingLines,
+	blockToArray, arrayToBlock, toArray, toBlock,
+	firstLine, remainingLines,
 	normalizeBlock, truncateBlock,
 	joinBlocks, forEachLine, forEachBlock, forEachSetOfBlocks,
 	} from '@jdeighan/coffee-utils/block'
@@ -149,6 +150,16 @@ simple.equal {{LINE}}, toArray(['abc\ndef', 'ghi']), [
 	'def'
 	'ghi'
 	]
+
+# ---------------------------------------------------------------------------
+# --- test toBlock()
+
+simple.equal {{LINE}}, toBlock(undef), undef
+simple.equal {{LINE}}, toBlock([]), ""
+simple.equal {{LINE}}, toBlock([""]), ""
+simple.equal {{LINE}}, toBlock(["", ""]), "\n"
+simple.equal {{LINE}}, toBlock(['a', 'b', 'c']), "a\nb\nc"
+simple.equal {{LINE}}, toBlock(['a ', 'b ', 'c ']), "a\nb\nc"
 
 # ---------------------------------------------------------------------------
 
