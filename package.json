@@ -22,6 +22,7 @@
 		"./placeholders": "./src/placeholders.js",
 		"./section": "./src/Section.js",
 		"./sectionmap": "./src/SectionMap.js",
+		"./fsa": "./src/fsa.js",
 		"./package.json": "./package.json"
 	},
 	"engines": {

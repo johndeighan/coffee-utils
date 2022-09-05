@@ -173,7 +173,10 @@ export logItem = (label, item, pre='', itemPre=undef) ->
 		LOG "pre = #{OL(pre)}"
 		LOG "itemPre = #{OL(itemPre)}"
 
-	labelStr = if label then "#{label} = " else ""
+	if label
+		labelStr = "#{label} = "
+	else
+		labelStr = ""
 
 	if (item == undef)
 		putstr "#{pre}#{labelStr}undef"

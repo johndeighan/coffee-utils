@@ -241,7 +241,10 @@ export pushCond = (lItems, item, doPush=notInArray) ->
 
 export words = (str) ->
 
-	return str.trim().split(/\s+/)
+	str = str.trim()
+	if (str == '')
+		return []
+	return str.split(/\s+/)
 
 # ---------------------------------------------------------------------------
 

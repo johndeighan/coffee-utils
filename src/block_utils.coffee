@@ -6,6 +6,7 @@ import readline from 'readline'
 import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
 	undef, pass, defined, isEmpty, isString, isArray, nonEmpty, rtrim,
+	escapeStr,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------

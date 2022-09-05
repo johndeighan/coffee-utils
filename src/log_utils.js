@@ -198,7 +198,11 @@ export var logItem = function(label, item, pre = '', itemPre = undef) {
     LOG(`pre = ${OL(pre)}`);
     LOG(`itemPre = ${OL(itemPre)}`);
   }
-  labelStr = label ? `${label} = ` : "";
+  if (label) {
+    labelStr = `${label} = `;
+  } else {
+    labelStr = "";
+  }
   if (item === undef) {
     putstr(`${pre}${labelStr}undef`);
   } else if (item === null) {

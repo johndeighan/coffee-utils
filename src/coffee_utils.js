@@ -253,7 +253,11 @@ export var pushCond = function(lItems, item, doPush = notInArray) {
 
 // ---------------------------------------------------------------------------
 export var words = function(str) {
-  return str.trim().split(/\s+/);
+  str = str.trim();
+  if (str === '') {
+    return [];
+  }
+  return str.split(/\s+/);
 };
 
 // ---------------------------------------------------------------------------

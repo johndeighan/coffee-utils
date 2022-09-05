@@ -18,7 +18,8 @@ import {
   isString,
   isArray,
   nonEmpty,
-  rtrim
+  rtrim,
+  escapeStr
 } from '@jdeighan/coffee-utils';
 
 // ---------------------------------------------------------------------------

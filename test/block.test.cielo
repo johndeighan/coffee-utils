@@ -36,6 +36,70 @@ simple.equal {{LINE}}, toArray("abc\nxyz"), [
 	'xyz'
 	]
 
+simple.equal {{LINE}}, toArray("""
+	abc
+	xyz
+	"""), [
+	'abc'
+	'xyz'
+	]
+
+simple.equal {{LINE}}, toArray("""
+	abc
+	xyz
+	""", 'noEmptyLines'), [
+	'abc'
+	'xyz'
+	]
+
+simple.equal {{LINE}}, toArray("""
+	start   tag        start
+	start   '#if'      if1
+	start   EOF        end
+	if1     tag        start   {/if}
+	if1     '#elsif'   if1
+	if1     EOF        end     {/if}
+	if1     '#else'    if2
+	if2     tag        start   {/if}
+	if2     '#if'      if1     {/if}
+	if2     EOF        end     {/if}
+	"""), [
+	"start   tag        start"
+	"start   '#if'      if1"
+	"start   EOF        end"
+	"if1     tag        start   {/if}"
+	"if1     '#elsif'   if1"
+	"if1     EOF        end     {/if}"
+	"if1     '#else'    if2"
+	"if2     tag        start   {/if}"
+	"if2     '#if'      if1     {/if}"
+	"if2     EOF        end     {/if}"
+	]
+
+simple.equal {{LINE}}, toArray("""
+	start   tag        start
+	start   '#if'      if1
+	start   EOF        end
+	if1     tag        start   {/if}
+	if1     '#elsif'   if1
+	if1     EOF        end     {/if}
+	if1     '#else'    if2
+	if2     tag        start   {/if}
+	if2     '#if'      if1     {/if}
+	if2     EOF        end     {/if}
+	""", 'noEmptyLines'), [
+	"start   tag        start"
+	"start   '#if'      if1"
+	"start   EOF        end"
+	"if1     tag        start   {/if}"
+	"if1     '#elsif'   if1"
+	"if1     EOF        end     {/if}"
+	"if1     '#else'    if2"
+	"if2     tag        start   {/if}"
+	"if2     '#if'      if1     {/if}"
+	"if2     EOF        end     {/if}"
+	]
+
 simple.equal {{LINE}}, toArray("abc\n\nxyz"), [
 	'abc'
 	''
