@@ -66,6 +66,11 @@ export var charCount = function(str, ch) {
 };
 
 // ---------------------------------------------------------------------------
+export var oneof = function(word, ...lWords) {
+  return lWords.indexOf(word) >= 0;
+};
+
+// ---------------------------------------------------------------------------
 export var isConstructor = function(f) {
   var err;
   try {

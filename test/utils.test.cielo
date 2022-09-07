@@ -3,7 +3,7 @@
 import {simple} from '@jdeighan/unit-tester'
 import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	say, undef, warn, isString, isObject, isArray, isHash,
+	say, undef, warn, isString, isObject, isArray, isHash, oneof,
 	isEmpty, nonEmpty, getClassName, isNumber, isNonEmptyString,
 	isFunction, isInteger, rtrim, isUniqueList, isUniqueTree,
 	ltrunc, rtrunc, extractMatches, range, patchStr,
@@ -37,6 +37,14 @@ simple.falsy  {{LINE}}, isNonEmptyString(5)
 
 simple.equal  {{LINE}}, titleLine('a thing').length, 42
 simple.equal  {{LINE}}, titleLine('a thing','-',5,90).length, 90
+
+# ---------------------------------------------------------------------------
+
+simple.truthy {{LINE}}, oneof('a', 'a', 'b', 'c')
+simple.truthy {{LINE}}, oneof('b', 'a', 'b', 'c')
+simple.truthy {{LINE}}, oneof('c', 'a', 'b', 'c')
+simple.falsy  {{LINE}}, oneof('d', 'a', 'b', 'c')
+simple.falsy  {{LINE}}, oneof('x')
 
 # ---------------------------------------------------------------------------
 

@@ -61,6 +61,12 @@ export charCount = (str, ch) ->
 
 # ---------------------------------------------------------------------------
 
+export oneof = (word, lWords...) ->
+
+	return (lWords.indexOf(word) >= 0)
+
+# ---------------------------------------------------------------------------
+
 export isConstructor = (f) ->
 
 	try
