@@ -28,6 +28,34 @@ export var isComment = function(line) {
 };
 
 // ---------------------------------------------------------------------------
+export var chomp = function(str) {
+  var len, tail;
+  len = str.length;
+  if (len === 0) {
+    return '';
+  } else if (len === 1) {
+    if ((str === "\r") || (str === "\n")) {
+      return '';
+    } else {
+      return str;
+    }
+  } else {
+    // --- check the last 2 characters
+    tail = str.substring(len - 2);
+    if (tail === "\r\n") {
+      return str.substring(0, len - 2);
+    } else {
+      tail = str.substring(len - 1);
+      if (tail === "\n") {
+        return str.substring(0, len - 1);
+      } else {
+        return str;
+      }
+    }
+  }
+};
+
+// ---------------------------------------------------------------------------
 export var isSubclassOf = function(subClass, superClass) {
   return (subClass === superClass) || (subClass.prototype instanceof superClass);
 };
@@ -173,13 +201,13 @@ export var isNonEmptyArray = function(x) {
 
 // ---------------------------------------------------------------------------
 export var isHash = function(x, lKeys) {
-  var i, key, len;
+  var i, key, len1;
   if (!x || (getClassName(x) !== 'Object')) {
     return false;
   }
   if (defined(lKeys)) {
     assert(isArray(lKeys), "isHash(): lKeys not an array");
-    for (i = 0, len = lKeys.length; i < len; i++) {
+    for (i = 0, len1 = lKeys.length; i < len1; i++) {
       key = lKeys[i];
       if (!x.hasOwnProperty(key)) {
         return false;
@@ -267,11 +295,11 @@ export var words = function(str) {
 
 // ---------------------------------------------------------------------------
 export var isArrayOfHashes = function(lItems) {
-  var i, item, len;
+  var i, item, len1;
   if (!isArray(lItems)) {
     return false;
   }
-  for (i = 0, len = lItems.length; i < len; i++) {
+  for (i = 0, len1 = lItems.length; i < len1; i++) {
     item = lItems[i];
     if (!isHash(item)) {
       return false;
@@ -282,11 +310,11 @@ export var isArrayOfHashes = function(lItems) {
 
 // ---------------------------------------------------------------------------
 export var isArrayOfStrings = function(lItems) {
-  var i, item, len;
+  var i, item, len1;
   if (!isArray(lItems)) {
     return false;
   }
-  for (i = 0, len = lItems.length; i < len; i++) {
+  for (i = 0, len1 = lItems.length; i < len1; i++) {
     item = lItems[i];
     if (!isString(item)) {
       return false;
@@ -345,7 +373,7 @@ export var isInteger = function(x, hOptions = {}) {
 
 // ---------------------------------------------------------------------------
 export var isUniqueList = function(lItems, func = undef) {
-  var h, i, item, len;
+  var h, i, item, len1;
   if (lItems == null) {
     return true; // empty list is unique
   }
@@ -353,7 +381,7 @@ export var isUniqueList = function(lItems, func = undef) {
     assert(isFunction(func), `Not a function: ${OL(func)}`);
   }
   h = {};
-  for (i = 0, len = lItems.length; i < len; i++) {
+  for (i = 0, len1 = lItems.length; i < len1; i++) {
     item = lItems[i];
     if (defined(func) && !func(item)) {
       return false;
@@ -368,14 +396,14 @@ export var isUniqueList = function(lItems, func = undef) {
 
 // ---------------------------------------------------------------------------
 export var isUniqueTree = function(lItems, func = undef, hFound = {}) {
-  var i, item, len;
+  var i, item, len1;
   if (isEmpty(lItems)) {
     return true; // empty list is unique
   }
   if (defined(func)) {
     assert(isFunction(func), `Not a function: ${OL(func)}`);
   }
-  for (i = 0, len = lItems.length; i < len; i++) {
+  for (i = 0, len1 = lItems.length; i < len1; i++) {
     item = lItems[i];
     if (isArray(item)) {
       if (!isUniqueTree(item, func, hFound)) {
@@ -492,10 +520,10 @@ export var escapeStr = function(str, hEscape = hDefEsc) {
   var ch, lParts;
   assert(isString(str), "escapeStr(): not a string");
   lParts = (function() {
-    var i, len, ref, results;
+    var i, len1, ref, results;
     ref = str.split('');
     results = [];
-    for (i = 0, len = ref.length; i < len; i++) {
+    for (i = 0, len1 = ref.length; i < len1; i++) {
       ch = ref[i];
       if (hEscape[ch] != null) {
         results.push(hEscape[ch]);
@@ -539,9 +567,9 @@ export var extractMatches = function(line, regexp, convertFunc = undef) {
   var lConverted, lStrings, str;
   lStrings = [...line.matchAll(regexp)];
   lStrings = (function() {
-    var i, len, results;
+    var i, len1, results;
     results = [];
-    for (i = 0, len = lStrings.length; i < len; i++) {
+    for (i = 0, len1 = lStrings.length; i < len1; i++) {
       str = lStrings[i];
       results.push(str[0]);
     }
@@ -549,9 +577,9 @@ export var extractMatches = function(line, regexp, convertFunc = undef) {
   })();
   if (convertFunc != null) {
     lConverted = (function() {
-      var i, len, results;
+      var i, len1, results;
       results = [];
-      for (i = 0, len = lStrings.length; i < len; i++) {
+      for (i = 0, len1 = lStrings.length; i < len1; i++) {
         str = lStrings[i];
         results.push(convertFunc(str));
       }
@@ -565,14 +593,14 @@ export var extractMatches = function(line, regexp, convertFunc = undef) {
 
 // ---------------------------------------------------------------------------
 export var envVarsWithPrefix = function(prefix, hOptions = {}) {
-  var h, i, key, len, plen, ref;
+  var h, i, key, len1, plen, ref;
   // --- valid options:
   //        stripPrefix
   assert(prefix, "envVarsWithPrefix: empty prefix!");
   plen = prefix.length;
   h = {};
   ref = Object.keys(process.env);
-  for (i = 0, len = ref.length; i < len; i++) {
+  for (i = 0, len1 = ref.length; i < len1; i++) {
     key = ref[i];
     if (key.indexOf(prefix) === 0) {
       if (hOptions.stripPrefix) {
@@ -603,9 +631,9 @@ export var getDateStr = function(date = undef) {
 
 // ---------------------------------------------------------------------------
 export var strcat = function(...lItems) {
-  var i, item, len, str;
+  var i, item, len1, str;
   str = '';
-  for (i = 0, len = lItems.length; i < len; i++) {
+  for (i = 0, len1 = lItems.length; i < len1; i++) {
     item = lItems[i];
     str += item.toString();
   }

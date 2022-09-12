@@ -13,7 +13,8 @@ import {
 import {
   undef,
   oneline,
-  isString
+  isString,
+  chomp
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -82,6 +83,21 @@ export var taml = function(text) {
   return yaml.load(arrayToBlock(lLines), {
     skipInvalid: true
   });
+};
+
+// ---------------------------------------------------------------------------
+export var fromTAML = taml;
+
+// ---------------------------------------------------------------------------
+export var toTAML = function(x, useTabs = false) {
+  var str;
+  str = yaml.dump(x, {
+    indent: 3
+  });
+  if (useTabs) {
+    str = str.replace(/   /g, "\t");
+  }
+  return "---\n" + chomp(str);
 };
 
 // ---------------------------------------------------------------------------

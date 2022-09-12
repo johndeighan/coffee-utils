@@ -6,7 +6,7 @@ import {
 	say, undef, warn, isString, isObject, isArray, isHash, oneof,
 	isEmpty, nonEmpty, getClassName, isNumber, isNonEmptyString,
 	isFunction, isInteger, rtrim, isUniqueList, isUniqueTree,
-	ltrunc, rtrunc, extractMatches, range, patchStr,
+	ltrunc, rtrunc, extractMatches, range, patchStr, chomp,
 	words, escapeStr, titleLine, className, eval_expr,
 	removeCR, CWS, isArrayOfHashes, setCharsAt, charCount,
 	oneline, isRegExp, uniq, hashToStr, envVarsWithPrefix,
@@ -17,6 +17,18 @@ import {setDebugging} from '@jdeighan/coffee-utils/debug'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 
 # ---------------------------------------------------------------------------
+
+simple.equal  {{LINE}}, chomp('abc'), 'abc'
+simple.equal  {{LINE}}, chomp('abc\n'), 'abc'
+simple.equal  {{LINE}}, chomp('abc\r\n'), 'abc'
+
+simple.equal  {{LINE}}, chomp('abc\ndef'), 'abc\ndef'
+simple.equal  {{LINE}}, chomp('abc\ndef\n'), 'abc\ndef'
+simple.equal  {{LINE}}, chomp('abc\ndef\r\n'), 'abc\ndef'
+
+simple.equal  {{LINE}}, chomp('abc\r\ndef'), 'abc\r\ndef'
+simple.equal  {{LINE}}, chomp('abc\r\ndef\n'), 'abc\r\ndef'
+simple.equal  {{LINE}}, chomp('abc\r\ndef\r\n'), 'abc\r\ndef'
 
 simple.truthy {{LINE}}, isEmpty('')
 simple.truthy {{LINE}}, isEmpty('  \t\t')

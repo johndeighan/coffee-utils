@@ -21,6 +21,30 @@ export isComment = (line) ->
 
 # ---------------------------------------------------------------------------
 
+export chomp = (str) ->
+
+	len = str.length
+	if (len == 0)
+		return ''
+	else if (len == 1)
+		if (str == "\r") || (str == "\n")
+			return ''
+		else
+			return str
+	else
+		# --- check the last 2 characters
+		tail = str.substring(len-2)
+		if (tail == "\r\n")
+			return str.substring(0, len-2)
+		else
+			tail = str.substring(len-1)
+			if (tail == "\n")
+				return str.substring(0, len-1)
+			else
+				return str
+
+# ---------------------------------------------------------------------------
+
 export isSubclassOf = (subClass, superClass) ->
 
 	return (subClass == superClass) \

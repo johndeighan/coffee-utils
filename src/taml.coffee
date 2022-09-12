@@ -4,7 +4,7 @@ import yaml from 'js-yaml'
 
 import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	undef, oneline, isString,
+	undef, oneline, isString, chomp,
 	} from '@jdeighan/coffee-utils'
 import {untabify, tabify, splitLine} from '@jdeighan/coffee-utils/indent'
 import {slurp} from '@jdeighan/coffee-utils/fs'
@@ -57,6 +57,19 @@ export taml = (text) ->
 
 	debug "return from taml()"
 	return yaml.load(arrayToBlock(lLines), {skipInvalid: true})
+
+# ---------------------------------------------------------------------------
+
+export fromTAML = taml
+
+# ---------------------------------------------------------------------------
+
+export toTAML = (x, useTabs=false) ->
+
+	str = yaml.dump(x, {indent:3})
+	if useTabs
+		str = str.replace(/   /g, "\t")
+	return "---\n" + chomp(str)
 
 # ---------------------------------------------------------------------------
 #   slurpTAML - read TAML from a file
