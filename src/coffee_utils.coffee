@@ -633,3 +633,17 @@ export setCharsAt = (str, pos, str2) ->
 	else
 		return str.substring(0, pos) + str2 + str.substring(pos + str2.length)
 
+# ---------------------------------------------------------------------------
+
+export getOptions = (hOptions, hDefault={}) ->
+	# --- If hOptions is a string, break into words and set each to true
+
+	if isString(hOptions)
+		h = {}
+		for word in words(hOptions)
+			h[word] = true
+		return h
+	else if isHash(hOptions)
+		return hOptions
+	else
+		return hDefault

@@ -10,7 +10,7 @@ import {
 	words, escapeStr, titleLine, className, eval_expr,
 	removeCR, CWS, isArrayOfHashes, setCharsAt, charCount,
 	oneline, isRegExp, uniq, hashToStr, envVarsWithPrefix,
-	strcat, replaceVars, defined, notdefined, isIterable,
+	strcat, replaceVars, defined, notdefined, isIterable, getOptions,
 	} from '@jdeighan/coffee-utils'
 import {log, setLogger, resetLogger} from '@jdeighan/coffee-utils/log'
 import {setDebugging} from '@jdeighan/coffee-utils/debug'
@@ -391,3 +391,10 @@ simple.equal {{LINE}}, charCount("aaa", "a"), 3
 simple.equal {{LINE}}, charCount("axaxa", "a"), 3
 simple.equal {{LINE}}, charCount("line\nline\nline", "\n"), 2
 simple.equal {{LINE}}, charCount("abc", "\n"), 0
+
+# ---------------------------------------------------------------------------
+
+simple.equal {{LINE}}, getOptions('a b c'), {'a':true, 'b':true, 'c':true}
+simple.equal {{LINE}}, getOptions('abc'), {'abc':true}
+simple.equal {{LINE}}, getOptions({'a':true, 'b':false, 'c':42}), {'a':true, 'b':false, 'c':42}
+simple.equal {{LINE}}, getOptions(), {}

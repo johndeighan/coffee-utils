@@ -712,3 +712,22 @@ export var setCharsAt = function(str, pos, str2) {
     return str.substring(0, pos) + str2 + str.substring(pos + str2.length);
   }
 };
+
+// ---------------------------------------------------------------------------
+export var getOptions = function(hOptions, hDefault = {}) {
+  var h, i, len1, ref, word;
+  // --- If hOptions is a string, break into words and set each to true
+  if (isString(hOptions)) {
+    h = {};
+    ref = words(hOptions);
+    for (i = 0, len1 = ref.length; i < len1; i++) {
+      word = ref[i];
+      h[word] = true;
+    }
+    return h;
+  } else if (isHash(hOptions)) {
+    return hOptions;
+  } else {
+    return hDefault;
+  }
+};
