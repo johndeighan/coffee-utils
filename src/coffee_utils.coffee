@@ -647,3 +647,9 @@ export getOptions = (hOptions, hDefault={}) ->
 		return hOptions
 	else
 		return hDefault
+
+# ---------------------------------------------------------------------------
+
+export timestamp = () ->
+
+	return new Date().toLocaleTimeString("en-US")

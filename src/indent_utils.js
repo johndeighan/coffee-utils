@@ -81,7 +81,8 @@ export var isUndented = function(line) {
 };
 
 // ---------------------------------------------------------------------------
-//   indented - add indentation to each string in a block
+//   indented - add indentation to each string in a block or array
+//            - always returns a string
 export var indented = function(input, level = 1, oneIndent = "\t") {
   var lInputLines, lLines, line, toAdd;
   assert(level >= 0, "indented(): negative level");

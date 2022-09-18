@@ -5,8 +5,9 @@ import readline from 'readline'
 
 import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	undef, pass, defined, isEmpty, isString, isArray, nonEmpty, rtrim,
-	escapeStr,
+	undef, pass, defined, notdefined,
+	isEmpty, isString, isArray, nonEmpty, isArrayOfStrings,
+	escapeStr, rtrim, OL,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
@@ -90,9 +91,9 @@ export arrayToBlock = (lLines) ->
 
 export toBlock = (lLines) ->
 
-	if (lLines == undef)
+	if notdefined(lLines)
 		return undef
-	assert isArray(lLines), "lLines is not an array"
+	assert isArrayOfStrings(lLines), "lLines is not an array: #{OL(lLines)}"
 	lNewLines = []
 	for line in lLines
 		if defined(line)

@@ -14,12 +14,15 @@ import {
   undef,
   pass,
   defined,
+  notdefined,
   isEmpty,
   isString,
   isArray,
   nonEmpty,
+  isArrayOfStrings,
+  escapeStr,
   rtrim,
-  escapeStr
+  OL
 } from '@jdeighan/coffee-utils';
 
 // ---------------------------------------------------------------------------
@@ -113,10 +116,10 @@ export var arrayToBlock = function(lLines) {
 //             but undef items are ignored
 export var toBlock = function(lLines) {
   var i, lNewLines, len1, line;
-  if (lLines === undef) {
+  if (notdefined(lLines)) {
     return undef;
   }
-  assert(isArray(lLines), "lLines is not an array");
+  assert(isArrayOfStrings(lLines), `lLines is not an array: ${OL(lLines)}`);
   lNewLines = [];
   for (i = 0, len1 = lLines.length; i < len1; i++) {
     line = lLines[i];

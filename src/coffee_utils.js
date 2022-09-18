@@ -731,3 +731,8 @@ export var getOptions = function(hOptions, hDefault = {}) {
     return hDefault;
   }
 };
+
+// ---------------------------------------------------------------------------
+export var timestamp = function() {
+  return new Date().toLocaleTimeString("en-US");
+};

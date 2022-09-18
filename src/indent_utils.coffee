@@ -68,7 +68,8 @@ export isUndented = (line) ->
 	return (lMatches[0].length == 0)
 
 # ---------------------------------------------------------------------------
-#   indented - add indentation to each string in a block
+#   indented - add indentation to each string in a block or array
+#            - always returns a string
 
 export indented = (input, level=1, oneIndent="\t") ->
 
