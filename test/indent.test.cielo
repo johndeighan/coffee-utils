@@ -96,18 +96,31 @@ simple.equal {{LINE}}, indented("abc\n\ndef", 2), "\t\tabc\n\n\t\tdef"
 # --- indented also handles arrays, so test them, too
 
 # --- empty lines, indented, should just be empty lines
-simple.equal {{LINE}}, indented(['abc','','def'], 2), '\t\tabc\n\n\t\tdef'
+simple.equal {{LINE}}, indented(['abc','','def'], 2),
+		['\t\tabc','','\t\tdef']
 
 (() ->
-	lLines = ['main','\toverflow: auto','','nav','\toverflow: auto']
-	lExp   = '\tmain\n\t\toverflow: auto\n\n\tnav\n\t\toverflow: auto'
+	lLines = [
+		'main'
+		'\toverflow: auto'
+		''
+		'nav'
+		'\toverflow: auto'
+		]
+	lExp   = [
+		'\tmain'
+		'\t\toverflow: auto'
+		''
+		'\tnav'
+		'\t\toverflow: auto'
+		]
 	simple.equal {{LINE}}, indented(lLines, 1), lExp
 	)()
 
 # --- make sure ALL internal lines are indented
 
 simple.equal {{LINE}}, indented(['abc\ndef','','ghi'], 1),
-		'\tabc\n\tdef\n\n\tghi'
+		['\tabc', '\tdef', '', '\tghi']
 
 # ---------------------------------------------------------------------------
 

@@ -69,7 +69,7 @@ export isUndented = (line) ->
 
 # ---------------------------------------------------------------------------
 #   indented - add indentation to each string in a block or array
-#            - always returns a string
+#            - returns the same type as input, i.e. array or string
 
 export indented = (input, level=1, oneIndent="\t") ->
 
@@ -78,14 +78,20 @@ export indented = (input, level=1, oneIndent="\t") ->
 		return input
 
 	toAdd = indentation(level, oneIndent)
-	lInputLines = toArray(input)
 
-	lLines = for line in lInputLines
+	# --- NOTE: toArray(input) just returns input if it's an array
+	#           else it splits the string into an array of lines
+	lLines = for line in toArray(input)
 		if isEmpty(line)
 			""
 		else
 			"#{toAdd}#{line}"
-	return arrayToBlock(lLines)
+	if isArray(input)
+		return lLines
+	else if isString(input)
+		return toBlock(lLines)
+	else
+		croak "Invalid input; #{OL(input)}"
 
 # ---------------------------------------------------------------------------
 #   undented - string with 1st line indentation removed for each line

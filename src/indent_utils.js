@@ -82,20 +82,22 @@ export var isUndented = function(line) {
 
 // ---------------------------------------------------------------------------
 //   indented - add indentation to each string in a block or array
-//            - always returns a string
+//            - returns the same type as input, i.e. array or string
 export var indented = function(input, level = 1, oneIndent = "\t") {
-  var lInputLines, lLines, line, toAdd;
+  var lLines, line, toAdd;
   assert(level >= 0, "indented(): negative level");
   if (level === 0) {
     return input;
   }
   toAdd = indentation(level, oneIndent);
-  lInputLines = toArray(input);
+  // --- NOTE: toArray(input) just returns input if it's an array
+  //           else it splits the string into an array of lines
   lLines = (function() {
-    var i, len1, results;
+    var i, len1, ref, results;
+    ref = toArray(input);
     results = [];
-    for (i = 0, len1 = lInputLines.length; i < len1; i++) {
-      line = lInputLines[i];
+    for (i = 0, len1 = ref.length; i < len1; i++) {
+      line = ref[i];
       if (isEmpty(line)) {
         results.push("");
       } else {
@@ -104,7 +106,13 @@ export var indented = function(input, level = 1, oneIndent = "\t") {
     }
     return results;
   })();
-  return arrayToBlock(lLines);
+  if (isArray(input)) {
+    return lLines;
+  } else if (isString(input)) {
+    return toBlock(lLines);
+  } else {
+    return croak(`Invalid input; ${OL(input)}`);
+  }
 };
 
 // ---------------------------------------------------------------------------
