@@ -5,7 +5,6 @@ import {
 	undef, defined, OL,  escapeStr, deepCopy,
 	isArray, isBoolean,
 	} from '@jdeighan/coffee-utils'
-import {LOG} from '@jdeighan/coffee-utils/log'
 
 doDebugStack = false
 
@@ -29,7 +28,7 @@ export class CallStack
 	reset: () ->
 
 		if doDebugStack
-			LOG "RESET STACK"
+			console.log "RESET STACK"
 		@lStack = []
 		return
 
@@ -48,7 +47,7 @@ export class CallStack
 		assert isBoolean(isLogged), "missing isLogged"
 
 		if doDebugStack
-			LOG @indent() + "[--> ENTER #{funcName}]"
+			console.log @indent() + "[--> ENTER #{funcName}]"
 
 		lMatches = funcName.match(///^
 				([A-Za-z_][A-Za-z0-9_]*)
@@ -101,13 +100,13 @@ export class CallStack
 	returnFrom: (fName) ->
 
 		if @lStack.length == 0
-			LOG "ERROR: returnFrom('#{fName}') but stack is empty"
+			console.log "ERROR: returnFrom('#{fName}') but stack is empty"
 			return
 		{fullName, isLogged} = @lStack.pop()
 		if doDebugStack
-			LOG @indent() + "[<-- BACK #{fName}]"
+			console.log @indent() + "[<-- BACK #{fName}]"
 		if (fullName != fName)
-			LOG "ERROR: returnFrom('#{fName}') but TOS is #{fullName}"
+			console.log "ERROR: returnFrom('#{fName}') but TOS is #{fullName}"
 			return
 
 		return

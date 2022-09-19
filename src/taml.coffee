@@ -4,7 +4,7 @@ import yaml from 'js-yaml'
 
 import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	undef, oneline, isString, chomp,
+	undef, oneline, isString, chomp, escapeStr,
 	} from '@jdeighan/coffee-utils'
 import {untabify, tabify, splitLine} from '@jdeighan/coffee-utils/indent'
 import {slurp} from '@jdeighan/coffee-utils/fs'
@@ -64,9 +64,24 @@ export fromTAML = taml
 
 # ---------------------------------------------------------------------------
 
-export toTAML = (x, useTabs=false) ->
+escReplacer = (name, value) ->
 
-	str = yaml.dump(x, {indent:3})
+	if ! isString(value)
+		return value
+	return escapeStr(value)
+
+# ---------------------------------------------------------------------------
+
+export toTAML = (obj, hOptions={}) ->
+
+	{useTabs, sortKeys, escape} = hOptions
+	str = yaml.dump(obj, {
+		skipInvalid: true
+		indent: 3
+		sortKeys: !!sortKeys
+		lineWidth: -1
+		replacer: if !!escape then escReplacer else (name,value) -> value
+		})
 	if useTabs
 		str = str.replace(/   /g, "\t")
 	return "---\n" + chomp(str)

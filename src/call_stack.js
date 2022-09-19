@@ -17,10 +17,6 @@ import {
   isBoolean
 } from '@jdeighan/coffee-utils';
 
-import {
-  LOG
-} from '@jdeighan/coffee-utils/log';
-
 doDebugStack = false;
 
 // ---------------------------------------------------------------------------
@@ -37,7 +33,7 @@ export var CallStack = class CallStack {
   // ........................................................................
   reset() {
     if (doDebugStack) {
-      LOG("RESET STACK");
+      console.log("RESET STACK");
     }
     this.lStack = [];
   }
@@ -54,7 +50,7 @@ export var CallStack = class CallStack {
     assert(isArray(lArgs), "missing lArgs");
     assert(isBoolean(isLogged), "missing isLogged");
     if (doDebugStack) {
-      LOG(this.indent() + `[--> ENTER ${funcName}]`);
+      console.log(this.indent() + `[--> ENTER ${funcName}]`);
     }
     lMatches = funcName.match(/^([A-Za-z_][A-Za-z0-9_]*)(?:\.([A-Za-z_][A-Za-z0-9_]*))?$/);
     assert(defined(lMatches), `Bad funcName: ${OL(funcName)}`);
@@ -106,15 +102,15 @@ export var CallStack = class CallStack {
   returnFrom(fName) {
     var fullName, isLogged;
     if (this.lStack.length === 0) {
-      LOG(`ERROR: returnFrom('${fName}') but stack is empty`);
+      console.log(`ERROR: returnFrom('${fName}') but stack is empty`);
       return;
     }
     ({fullName, isLogged} = this.lStack.pop());
     if (doDebugStack) {
-      LOG(this.indent() + `[<-- BACK ${fName}]`);
+      console.log(this.indent() + `[<-- BACK ${fName}]`);
     }
     if (fullName !== fName) {
-      LOG(`ERROR: returnFrom('${fName}') but TOS is ${fullName}`);
+      console.log(`ERROR: returnFrom('${fName}') but TOS is ${fullName}`);
       return;
     }
   }

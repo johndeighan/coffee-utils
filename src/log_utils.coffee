@@ -1,7 +1,5 @@
 # log_utils.coffee
 
-import yaml from 'js-yaml'
-
 import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
 	undef, isNumber, isInteger, isString, isHash, isFunction,
@@ -11,6 +9,7 @@ import {blockToArray} from '@jdeighan/coffee-utils/block'
 import {
 	tabify, untabify, indentation, indented,
 	} from '@jdeighan/coffee-utils/indent'
+import {toTAML} from '@jdeighan/coffee-utils/taml'
 
 # --- This logger only ever gets passed a single string argument
 putstr = undef
@@ -96,38 +95,23 @@ export resetLogger = () ->
 
 # ---------------------------------------------------------------------------
 
-escReplacer = (name, value) ->
-
-	if ! isString(value)
-		return value
-	return escapeStr(value)
-
-# ---------------------------------------------------------------------------
-
 export tamlStringify = (obj, escape=false) ->
 
-	str = yaml.dump(obj, {
-		skipInvalid: true
-		indent: 1
+	return toTAML(obj, {
+		useTabs: false
 		sortKeys: false
-		lineWidth: -1
-		replacer: if escape then escReplacer else (name,value) -> value
+		escape
 		})
-	return "---\n" + str
 
 # ---------------------------------------------------------------------------
 
 export orderedStringify = (obj, escape=false) ->
 
-	str = yaml.dump(obj, {
-		skipInvalid: true
-		indent: 1
+	return toTAML(obj, {
+		useTabs: false
 		sortKeys: true
-		lineWidth: 40
-		replacer: if escape then escReplacer else (name,value) -> value
+		escape
 		})
-
-	return "---\n" + str
 
 # ---------------------------------------------------------------------------
 
