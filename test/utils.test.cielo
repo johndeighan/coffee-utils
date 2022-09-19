@@ -3,7 +3,7 @@
 import {simple} from '@jdeighan/unit-tester'
 import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
-	say, undef, warn, isString, isObject, isArray, isHash, oneof,
+	say, undef, pass, warn, isString, isObject, isArray, isHash, oneof,
 	isEmpty, nonEmpty, getClassName, isNumber, isNonEmptyString,
 	isFunction, isInteger, rtrim, isUniqueList, isUniqueTree,
 	ltrunc, rtrunc, extractMatches, range, patchStr, chomp,
@@ -130,6 +130,10 @@ simple.falsy  {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}, [1,2]])
 
 (() ->
 	class NewClass
+		constructor: (@name = 'bob') ->
+			pass
+		doIt: () ->
+			pass
 
 	h = {a:1, b:2}
 	l = [1,2,2]
@@ -167,6 +171,8 @@ simple.falsy  {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}, [1,2]])
 	simple.falsy  {{LINE}}, isObject(h)
 	simple.falsy  {{LINE}}, isObject(l)
 	simple.truthy {{LINE}}, isObject(o)
+	simple.truthy {{LINE}}, isObject(o, ['name','doIt'])
+	simple.falsy  {{LINE}}, isObject(o, ['name','doIt','missing'])
 	simple.falsy  {{LINE}}, isObject(n)
 	simple.falsy  {{LINE}}, isObject(n2)
 	simple.falsy  {{LINE}}, isObject(s)

@@ -162,13 +162,22 @@ export isBoolean = (x) ->
 
 # ---------------------------------------------------------------------------
 
-export isObject = (x) ->
+export isObject = (x, lReqKeys=undef) ->
 
-	return (typeof x == 'object') \
+	result = (typeof x == 'object') \
 			&& ! isString(x) \
 			&& ! isArray(x) \
 			&& ! isHash(x) \
 			&& ! isNumber(x)
+	if result
+		if defined(lReqKeys)
+			assert isArray(lReqKeys), "lReqKeys is not an array"
+			for key in lReqKeys
+				if ! x.hasOwnProperty(key)
+					return false
+		return true
+	else
+		return false
 
 # ---------------------------------------------------------------------------
 

@@ -177,8 +177,23 @@ export var isBoolean = function(x) {
 };
 
 // ---------------------------------------------------------------------------
-export var isObject = function(x) {
-  return (typeof x === 'object') && !isString(x) && !isArray(x) && !isHash(x) && !isNumber(x);
+export var isObject = function(x, lReqKeys = undef) {
+  var i, key, len1, result;
+  result = (typeof x === 'object') && !isString(x) && !isArray(x) && !isHash(x) && !isNumber(x);
+  if (result) {
+    if (defined(lReqKeys)) {
+      assert(isArray(lReqKeys), "lReqKeys is not an array");
+      for (i = 0, len1 = lReqKeys.length; i < len1; i++) {
+        key = lReqKeys[i];
+        if (!x.hasOwnProperty(key)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  } else {
+    return false;
+  }
 };
 
 // ---------------------------------------------------------------------------
