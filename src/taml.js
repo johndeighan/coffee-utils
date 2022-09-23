@@ -6,39 +6,34 @@ import yaml from 'js-yaml';
 
 import {
   assert,
-  error,
   croak
-} from '@jdeighan/unit-tester/utils';
+} from '@jdeighan/exceptions';
 
 import {
   undef,
   defined,
   notdefined,
-  oneline,
-  isString,
+  OL,
   chomp,
-  escapeStr
+  escapeStr,
+  isString,
+  isObject,
+  isEmpty
 } from '@jdeighan/coffee-utils';
 
 import {
-  untabify,
-  tabify,
   splitLine
 } from '@jdeighan/coffee-utils/indent';
 
 import {
+  firstLine,
+  toArray,
+  toBlock
+} from '@jdeighan/coffee-utils/block';
+
+import {
   slurp
 } from '@jdeighan/coffee-utils/fs';
-
-import {
-  debug
-} from '@jdeighan/coffee-utils/debug';
-
-import {
-  firstLine,
-  blockToArray,
-  arrayToBlock
-} from '@jdeighan/coffee-utils/block';
 
 // ---------------------------------------------------------------------------
 //   isTAML - is the string valid TAML?
@@ -47,23 +42,16 @@ export var isTAML = function(text) {
 };
 
 // ---------------------------------------------------------------------------
-squote = function(text) {
-  return "'" + text.replace(/'/g, "''") + "'";
-};
-
-// ---------------------------------------------------------------------------
 //   taml - convert valid TAML string to a JavaScript value
-export var taml = function(text) {
+export var fromTAML = function(text) {
   var _, key, lLines, lMatches, level, line, prefix, str;
-  debug(`enter taml(${oneline(text)})`);
-  if (text == null) {
-    debug("return undef from taml() - text is not defined");
+  if (notdefined(text)) {
     return undef;
   }
-  assert(isTAML(text), `taml(): string ${oneline(text)} isn't TAML`);
+  assert(isTAML(text), `string ${OL(text)} isn't TAML`);
   lLines = (function() {
     var i, len, ref, results;
-    ref = blockToArray(text);
+    ref = toArray(text);
     results = [];
     for (i = 0, len = ref.length; i < len; i++) {
       line = ref[i];
@@ -82,20 +70,18 @@ export var taml = function(text) {
     }
     return results;
   })();
-  debug("return from taml()");
-  return yaml.load(arrayToBlock(lLines), {
+  return yaml.load(toBlock(lLines), {
     skipInvalid: true
   });
 };
-
-// ---------------------------------------------------------------------------
-export var fromTAML = taml;
 
 // ---------------------------------------------------------------------------
 // --- a replacer is (key, value) -> newvalue
 myReplacer = function(name, value) {
   if (isString(value)) {
     return escapeStr(value);
+  } else if (isObject(value, ['tamlReplacer'])) {
+    return value.tamlReplacer();
   } else {
     return value;
   }
@@ -122,9 +108,14 @@ export var toTAML = function(obj, hOptions = {}) {
 };
 
 // ---------------------------------------------------------------------------
+squote = function(text) {
+  return "'" + text.replace(/'/g, "''") + "'";
+};
+
+// ---------------------------------------------------------------------------
 //   slurpTAML - read TAML from a file
 export var slurpTAML = function(filepath) {
   var contents;
   contents = slurp(filepath);
-  return taml(contents);
+  return fromTAML(contents);
 };

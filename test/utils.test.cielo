@@ -1,7 +1,7 @@
 # utils.test.cielo
 
+import {assert, croak} from '@jdeighan/exceptions'
 import {simple} from '@jdeighan/unit-tester'
-import {assert, error, croak} from '@jdeighan/unit-tester/utils'
 import {
 	say, undef, pass, warn, isString, isObject, isArray, isHash, oneof,
 	isEmpty, nonEmpty, getClassName, isNumber, isNonEmptyString,

@@ -1,6 +1,6 @@
 # Section.coffee
 
-import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {assert, croak} from '@jdeighan/exceptions'
 import {
 	pass, undef, defined, isArray, isEmpty,
 	} from '@jdeighan/coffee-utils'

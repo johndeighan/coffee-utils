@@ -1,20 +1,15 @@
-# debug_utils.coffee
+# debug.coffee
 
-import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {LOG, assert, croak} from '@jdeighan/exceptions'
 import {
-	undef, warn, defined,
-	isString, isFunction, isBoolean, patchStr,
-	OL, escapeStr, isNumber, isArray, words, pass,
+	undef, defined, notdefined,
+	isString, isFunction, isBoolean, isArray,
+	OL, words, pass,
 	} from '@jdeighan/coffee-utils'
-import {blockToArray} from '@jdeighan/coffee-utils/block'
-import {untabify} from '@jdeighan/coffee-utils/indent'
-import {slurp} from '@jdeighan/coffee-utils/fs'
 import {CallStack} from '@jdeighan/coffee-utils/stack'
+import {prefix} from '@jdeighan/coffee-utils/arrow'
 import {
-	prefix, addArrow, removeLastVbar, vbar,
-	} from '@jdeighan/coffee-utils/arrow'
-import {
-	log, logItem, logBareItem, LOG, shortEnough,
+	log, logItem, logBareItem, shortEnough,
 	} from '@jdeighan/coffee-utils/log'
 
 # --- set in resetDebugging() and setDebugging()

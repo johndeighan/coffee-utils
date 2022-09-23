@@ -1,11 +1,10 @@
-# coffee_utils.coffee
+# utils.coffee
 
-import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {LOG, assert, croak} from '@jdeighan/exceptions'
 
 export sep_dash = '-'.repeat(42)
 export sep_eq = '='.repeat(42)
 `export const undef = undefined`
-LOG = (lArgs...) -> console.log lArgs...   # synonym for console.log()
 
 # ---------------------------------------------------------------------------
 # TEMP!!!!!
@@ -258,7 +257,7 @@ export nonEmpty = (x) ->
 	if isHash(x)
 		return Object.keys(x).length > 0
 	else
-		error "isEmpty(): Invalid parameter"
+		croak "isEmpty(): Invalid parameter"
 
 # ---------------------------------------------------------------------------
 

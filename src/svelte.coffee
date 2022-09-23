@@ -1,8 +1,7 @@
-# svelte_utils.coffee
+# svelte.coffee
 
-import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {assert, croak, LOG} from '@jdeighan/exceptions'
 import {isFunction} from '@jdeighan/coffee-utils'
-import {log} from '@jdeighan/coffee-utils/log'
 
 # ---------------------------------------------------------------------------
 #   svelteSourceCodeEsc - to display source code for a *.starbucks page
@@ -33,10 +32,10 @@ export onInterval = (func, secs, doLog=false) ->
 	assert isFunction(func), "onInterval(): 1st arg not a function"
 	ms = Math.floor(1000 * secs)
 	if doLog
-		log "calling func every #{ms} ms."
+		LOG "calling func every #{ms} ms."
 	interval = setInterval(func, ms)
 
 	return () ->
 		if doLog
-			log "destroying interval timer"
+			LOG "destroying interval timer"
 		clearInterval interval

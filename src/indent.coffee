@@ -1,13 +1,11 @@
-# indent_utils.coffee
+# indent.coffee
 
-import {assert, error} from '@jdeighan/unit-tester/utils'
+import {assert, croak} from '@jdeighan/exceptions'
 import {
-	undef, escapeStr, defined,
+	undef, defined, notdefined,
 	OL, isInteger, isString, isArray, isEmpty, rtrim,
 	} from '@jdeighan/coffee-utils'
-import {
-	arrayToBlock, blockToArray, toArray, toBlock,
-	} from '@jdeighan/coffee-utils/block'
+import {toArray, toBlock} from '@jdeighan/coffee-utils/block'
 
 # ---------------------------------------------------------------------------
 
@@ -143,7 +141,7 @@ export undented = (input, level=undef, oneIndent="\t") ->
 export tabify = (str, numSpaces=undef) ->
 
 	lLines = []
-	for str in blockToArray(str)
+	for str in toArray(str)
 		[_, prefix, theRest] = str.match(/^(\s*)(.*)$/)
 		prefixLen = prefix.length
 		if prefixLen == 0
@@ -155,7 +153,7 @@ export tabify = (str, numSpaces=undef) ->
 			assert (prefixLen % numSpaces == 0), "Bad prefix"
 			level = prefixLen / numSpaces
 			lLines.push '\t'.repeat(level) + theRest
-	result = arrayToBlock(lLines)
+	result = toBlock(lLines)
 	return result
 
 # ---------------------------------------------------------------------------
@@ -170,7 +168,7 @@ export untabify = (str, numSpaces=3) ->
 
 export enclose = (text, pre, post, oneIndent="\t") ->
 
-	return arrayToBlock([
+	return toBlock([
 		pre
 		indented(text, 1, oneIndent)
 		post

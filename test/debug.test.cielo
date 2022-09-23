@@ -1,10 +1,10 @@
 # debug.test.cielo
 
-import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {LOG, assert, croak} from '@jdeighan/exceptions'
 import {UnitTester, simple} from '@jdeighan/unit-tester'
 import {undef, OL, isString} from '@jdeighan/coffee-utils'
 import {blockToArray, arrayToBlock} from '@jdeighan/coffee-utils/block'
-import {LOG, setLogger, debugLog} from '@jdeighan/coffee-utils/log'
+import {setLogger, debugLog} from '@jdeighan/coffee-utils/log'
 import {untabify} from '@jdeighan/coffee-utils/indent'
 import {
 	setDebugging, debug, getFuncList, funcMatch, interp,

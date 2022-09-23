@@ -1,6 +1,6 @@
-# call_stack.coffee
+# stack.coffee
 
-import {assert, croak} from '@jdeighan/unit-tester/utils'
+import {assert, croak} from '@jdeighan/exceptions'
 import {
 	undef, defined, OL,  escapeStr, deepCopy,
 	isArray, isBoolean,

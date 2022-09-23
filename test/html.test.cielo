@@ -1,7 +1,7 @@
 # html.test.cielo
 
+import {assert} from '@jdeighan/exceptions'
 import {simple, UnitTester} from '@jdeighan/unit-tester'
-import {assert} from '@jdeighan/unit-tester/utils'
 import {undef} from '@jdeighan/coffee-utils'
 import {
 	blockToArray, arrayToBlock, firstLine, remainingLines,

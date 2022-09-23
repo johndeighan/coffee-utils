@@ -1,6 +1,6 @@
 # placeholders.coffee
 
-import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {assert, croak} from '@jdeighan/exceptions'
 import {undef, defined} from '@jdeighan/coffee-utils'
 
 hDefOptions = {

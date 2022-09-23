@@ -1,12 +1,11 @@
-# html_utils.coffee
+# html.coffee
 
-import {assert, croak} from '@jdeighan/unit-tester/utils'
+import {assert, croak} from '@jdeighan/exceptions'
 import {
 	undef, pass, words, isEmpty, nonEmpty,
 	} from '@jdeighan/coffee-utils'
-import {indented, enclose} from '@jdeighan/coffee-utils/indent'
-import {arrayToBlock} from '@jdeighan/coffee-utils/block'
-import {debug} from '@jdeighan/coffee-utils/debug'
+import {indented} from '@jdeighan/coffee-utils/indent'
+import {toBlock} from '@jdeighan/coffee-utils/block'
 
 hNoEnd = {}
 for tagName in words('area base br col command embed hr img input' \
@@ -210,7 +209,7 @@ export elem = (tagName, hAttr=undef, text=undef, oneIndent="\t") ->
 		hAttr
 		text
 		}
-	return arrayToBlock([
+	return toBlock([
 		tag2str(hToken, 'begin')
 		indented(text, 1, oneIndent)
 		tag2str(hToken, 'end')

@@ -1,17 +1,15 @@
-# fs_utils.coffee
+# fs.coffee
 
 import pathlib from 'path'
 import urllib from 'url'
 import fs from 'fs'
 import NReadLines from 'n-readlines'
 
-import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {LOG, assert, croak} from '@jdeighan/exceptions'
 import {
 	undef, pass, defined, rtrim, isEmpty, nonEmpty,
 	isString, isArray, isHash, isRegExp, isFunction, OL,
 	} from '@jdeighan/coffee-utils'
-import {log, LOG} from '@jdeighan/coffee-utils/log'
-import {debug} from '@jdeighan/coffee-utils/debug'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 
 # ---------------------------------------------------------------------------
@@ -20,13 +18,9 @@ import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 
 export mydir = (url) ->
 
-	debug "url = #{url}"
 	path = urllib.fileURLToPath(url)
-	debug "path = #{path}"
 	dir = pathlib.dirname(path)
-	debug "dir = #{dir}"
 	final = mkpath(dir)
-	debug "final = #{final}"
 	return final
 
 # ---------------------------------------------------------------------------
@@ -35,11 +29,8 @@ export mydir = (url) ->
 
 export myfile = (url) ->
 
-	debug "url = #{url}"
 	path = urllib.fileURLToPath(url)
-	debug "path = #{path}"
 	filename = pathlib.parse(path).base
-	debug "filename = #{filename}"
 	return filename
 
 # ---------------------------------------------------------------------------
@@ -48,9 +39,7 @@ export myfile = (url) ->
 
 export myfullpath = (url) ->
 
-	debug "url = #{url}"
 	path = urllib.fileURLToPath(url)
-	debug "path = #{path}"
 	return mkpath(path)
 
 # ---------------------------------------------------------------------------
@@ -140,7 +129,6 @@ export forEachLineInFile = (filepath, func) ->
 
 export slurp = (filepath, maxLines=undef) ->
 
-	debug "enter slurp('#{filepath}')"
 	if maxLines?
 		lLines = []
 		forEachLineInFile filepath, (line, nLines) ->
@@ -150,7 +138,6 @@ export slurp = (filepath, maxLines=undef) ->
 	else
 		filepath = filepath.replace(/\//g, "\\")
 		contents = fs.readFileSync(filepath, 'utf8').toString()
-	debug "return from slurp()", contents
 	return contents
 
 # ---------------------------------------------------------------------------
@@ -158,9 +145,7 @@ export slurp = (filepath, maxLines=undef) ->
 
 export barf = (filepath, contents) ->
 
-	debug "enter barf('#{filepath}')", contents
 	if isEmpty(contents)
-		debug "return from barf(): empty contents"
 		return
 	if isArray(contents)
 		contents = arrayToBlock(contents)
@@ -168,7 +153,6 @@ export barf = (filepath, contents) ->
 		croak "barf(): Invalid contents"
 	contents = rtrim(contents) + "\n"
 	fs.writeFileSync(filepath, contents, {encoding: 'utf8'})
-	debug "return from barf()"
 	return
 
 # ---------------------------------------------------------------------------
@@ -199,10 +183,10 @@ export removeFileWithExt = (path, newExt, hOptions={}) ->
 	try
 		fs.unlinkSync fullpath
 		if hOptions.doLog
-			log "   unlink #{filename}"
+			LOG "   unlink #{filename}"
 		success = true
 	catch err
-		log "   UNLINK FAILED: #{err.message}"
+		LOG "   UNLINK FAILED: #{err.message}"
 		success = false
 	return success
 
@@ -277,7 +261,6 @@ export pathTo = (fname, searchDir, hOptions={}) ->
 	if isEmpty(relative)
 		relative = false
 
-	debug "enter pathTo()", fname, searchDir, direction
 	if ! searchDir
 		searchDir = process.cwd()
 	assert fs.existsSync(searchDir), "Dir #{searchDir} does not exist"
@@ -285,7 +268,6 @@ export pathTo = (fname, searchDir, hOptions={}) ->
 	if fs.existsSync(filepath)
 		if relative
 			filepath = "./#{fname}"
-		debug "return from pathTo() - file exists", filepath
 		return filepath
 
 	if (direction == 'down')
@@ -293,31 +275,24 @@ export pathTo = (fname, searchDir, hOptions={}) ->
 		#     getSubDirs() returns dirs sorted alphabetically
 		for subdir in getSubDirs(searchDir)
 			dirpath = mkpath(searchDir, subdir)
-			debug "check #{subdir}"
 			if defined(fpath = pathTo(fname, dirpath, hOptions))
 				if relative
 					fpath = fpath.replace('./', "./#{subdir}/")
-				debug "return from pathTo()", fpath
 				return fpath
 	else if (direction == 'up')
 		nLevels = 0
 		while defined(dirPath = getParentDir(searchDir))
 			nLevels += 1
-			debug "check #{dirPath}"
 			fpath = mkpath(dirPath, fname)
-			debug "check for #{fpath}"
 			if fs.existsSync(fpath)
 				if relative
 					fpath = "../".repeat(nLevels) + fname
-					debug "return from pathTo()", fpath
 					return fpath
 				else
-					debug "return from pathTo()", fpath
 					return fpath
 			searchDir = dirPath
 	else
-		error "pathTo(): Invalid direction '#{direction}'"
-	debug "return undef from pathTo - file not found"
+		croak "pathTo(): Invalid direction '#{direction}'"
 	return undef
 
 # ---------------------------------------------------------------------------
@@ -342,21 +317,13 @@ export allPathsTo = (fname, searchDir) ->
 
 export newerDestFileExists = (srcPath, destPath) ->
 
-	debug "enter newerDestFileExists()"
 	if ! fs.existsSync(destPath)
-		debug "return false from newerDestFileExists() - no file"
 		return false
 	srcModTime = fs.statSync(srcPath).mtimeMs
 	destModTime = fs.statSync(destPath).mtimeMs
-	debug "srcModTime = #{srcModTime}"
-	debug "destModTime = #{destModTime}"
 	if destModTime >= srcModTime
-		debug "#{destPath} is up to date"
-		debug "return true from newerDestFileExists()"
 		return true
 	else
-		debug "#{destPath} is old"
-		debug "return false from newerDestFileExists()"
 		return false
 
 # ---------------------------------------------------------------------------
@@ -386,7 +353,6 @@ export parseSource = (source) ->
 	#        }
 	# --- NOTE: source may be a file URL, e.g. import.meta.url
 
-	debug "enter parseSource()"
 	assert isString(source),\
 			"parseSource(): source not a string: #{OL(source)}"
 	if source == 'unit test'
@@ -423,7 +389,6 @@ export parseSource = (source) ->
 				([A-Za-z_]+)
 				$///)
 			hSourceInfo.purpose = lMatches[1]
-	debug "return from parseSource()", hSourceInfo
 	return hSourceInfo
 
 # ---------------------------------------------------------------------------

@@ -2,8 +2,6 @@
 // DataStores.coffee
 import pathlib from 'path';
 
-import yaml from 'js-yaml';
-
 import {
   writable,
   readable,
@@ -12,13 +10,12 @@ import {
 
 import {
   assert,
-  error
-} from '@jdeighan/unit-tester/utils';
+  croak
+} from '@jdeighan/exceptions';
 
 import {
   undef,
-  pass,
-  isEmpty
+  pass
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -33,8 +30,8 @@ import {
 } from '@jdeighan/coffee-utils/fs';
 
 import {
-  untabify
-} from '@jdeighan/coffee-utils/indent';
+  fromTAML
+} from '@jdeighan/coffee-utils/taml';
 
 // ---------------------------------------------------------------------------
 export var WritableDataStore = class WritableDataStore {
@@ -72,7 +69,7 @@ export var LocalStorageDataStore = class LocalStorageDataStore extends WritableD
   //     set() will also be called
   set(value) {
     if (value == null) {
-      error("LocalStorageStore.set(): cannont set to undef");
+      croak("LocalStorageStore.set(): cannont set to undef");
     }
     super.set(value);
     return localStore(this.masterKey, value);
@@ -93,7 +90,7 @@ export var PropsDataStore = class PropsDataStore extends LocalStorageDataStore {
 
   setProp(name, value) {
     if (name == null) {
-      error("PropStore.setProp(): empty key");
+      croak("PropStore.setProp(): empty key");
     }
     return this.update(function(hPrefs) {
       hPrefs[name] = value;
@@ -166,23 +163,13 @@ export var MousePosDataStore = class MousePosDataStore extends ReadableDataStore
 // ---------------------------------------------------------------------------
 export var TAMLDataStore = class TAMLDataStore extends WritableDataStore {
   constructor(str) {
-    super(taml(str));
+    super(fromTAML(str));
   }
 
 };
 
 // ---------------------------------------------------------------------------
 //         UTILITIES
-// ---------------------------------------------------------------------------
-export var taml = function(text) {
-  if (text == null) {
-    return undef;
-  }
-  return yaml.load(untabify(text, 1), {
-    skipInvalid: true
-  });
-};
-
 // ---------------------------------------------------------------------------
 export var brewTamlStr = function(code, stub) {
   return `import {TAMLDataStore} from '@jdeighan/starbucks/stores';

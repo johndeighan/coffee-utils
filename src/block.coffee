@@ -1,13 +1,13 @@
-# block_utils.coffee
+# block.coffee
 
 import fs from 'fs'
 import readline from 'readline'
 
-import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {assert, croak} from '@jdeighan/exceptions'
 import {
 	undef, pass, defined, notdefined,
 	isEmpty, isString, isArray, nonEmpty, isArrayOfStrings,
-	escapeStr, rtrim, OL,
+	rtrim, OL,
 	} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
@@ -208,7 +208,7 @@ export forEachBlock = (filepath, func, regexp = /^-{16,}$/) ->
 					earlyExit = true
 					return true
 				else if result?
-					error "forEachBlock() - callback returned '#{result}'"
+					croak "forEachBlock() - callback returned '#{result}'"
 			lLines = []
 			firstLineNum = lineNum+1
 		else
@@ -240,7 +240,7 @@ export forEachSetOfBlocks = (filepath, func,
 					earlyExit = true
 					return true
 				else if result?
-					error "forEachSetOfBlocks() - callback returned '#{result}'"
+					croak "forEachSetOfBlocks() - callback returned '#{result}'"
 			lBlocks = []
 			firstLineNum = lineNum+1
 		else if (line.match(block_regexp))

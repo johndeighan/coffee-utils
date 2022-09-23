@@ -5,18 +5,18 @@
 	"description": "A set of utility functions for CoffeeScript",
 	"main": "coffee_utils.js",
 	"exports": {
-		".": "./src/coffee_utils.js",
-		"./server": "./src/server_utils.js",
-		"./browser": "./src/browser_utils.js",
-		"./fs": "./src/fs_utils.js",
-		"./log": "./src/log_utils.js",
-		"./block": "./src/block_utils.js",
-		"./indent": "./src/indent_utils.js",
-		"./html": "./src/html_utils.js",
-		"./stack": "./src/call_stack.js",
-		"./debug": "./src/debug_utils.js",
+		".": "./src/utils.js",
+		"./server": "./src/server.js",
+		"./browser": "./src/browser.js",
+		"./fs": "./src/fs.js",
+		"./log": "./src/log.js",
+		"./block": "./src/block.js",
+		"./indent": "./src/indent.js",
+		"./html": "./src/html.js",
+		"./stack": "./src/stack.js",
+		"./debug": "./src/debug.js",
 		"./arrow": "./src/arrow.js",
-		"./svelte": "./src/svelte_utils.js",
+		"./svelte": "./src/svelte.js",
 		"./store": "./src/DataStores.js",
 		"./taml": "./src/taml.js",
 		"./placeholders": "./src/placeholders.js",
@@ -50,6 +50,7 @@
 	},
 	"homepage": "https://github.com/johndeighan/coffee-utils#readme",
 	"dependencies": {
+		"@jdeighan/exceptions": "^1.0.3",
 		"cross-env": "^7.0.3",
 		"js-yaml": "^4.1.0",
 		"n-readlines": "^1.0.1",
@@ -57,6 +58,6 @@
 		"svelte": "^3.50.1"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^2.0.24"
+		"@jdeighan/unit-tester": "^2.0.27"
 	}
 }

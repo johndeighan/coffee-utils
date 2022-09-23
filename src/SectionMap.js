@@ -3,10 +3,10 @@
 var isSectionName, isSetName;
 
 import {
+  LOG,
   assert,
-  error,
   croak
-} from '@jdeighan/unit-tester/utils';
+} from '@jdeighan/exceptions';
 
 import {
   pass,
@@ -25,16 +25,8 @@ import {
 } from '@jdeighan/coffee-utils';
 
 import {
-  arrayToBlock
+  toBlock
 } from '@jdeighan/coffee-utils/block';
-
-import {
-  indented
-} from '@jdeighan/coffee-utils/indent';
-
-import {
-  LOG
-} from '@jdeighan/coffee-utils/log';
 
 import {
   debug
@@ -42,7 +34,7 @@ import {
 
 import {
   isTAML,
-  taml
+  fromTAML
 } from '@jdeighan/coffee-utils/taml';
 
 import {
@@ -66,7 +58,7 @@ export var SectionMap = class SectionMap {
     // --- lSectionTree is a tree of section/set names
     debug("enter SectionMap()", this.lSectionTree);
     if (isTAML(this.lSectionTree)) {
-      this.SectionTree = taml(this.lSectionTree);
+      this.SectionTree = fromTAML(this.lSectionTree);
     }
     assert(isArray(this.lSectionTree), "not an array");
     // --- keys are section names, values are Section objects
@@ -162,7 +154,7 @@ export var SectionMap = class SectionMap {
           croak(`Bad item: ${OL(item)}`);
         }
       }
-      block = arrayToBlock(lBlocks);
+      block = toBlock(lBlocks);
       debug("block is", block);
       if (defined(setName)) {
         if (defined(proc = hReplacers[setName])) {

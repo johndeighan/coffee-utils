@@ -1,16 +1,15 @@
 # DataStores.coffee
 
 import pathlib from 'path'
-import yaml from 'js-yaml'
 import {writable, readable, get} from 'svelte/store'
 
-import {assert, error} from '@jdeighan/unit-tester/utils'
-import {undef, pass, isEmpty} from '@jdeighan/coffee-utils'
+import {assert, croak} from '@jdeighan/exceptions'
+import {undef, pass} from '@jdeighan/coffee-utils'
 import {localStore} from '@jdeighan/coffee-utils/browser'
 import {
 	withExt, slurp, barf, newerDestFileExists,
 	} from '@jdeighan/coffee-utils/fs'
-import {untabify} from '@jdeighan/coffee-utils/indent'
+import {fromTAML} from '@jdeighan/coffee-utils/taml'
 
 # ---------------------------------------------------------------------------
 
@@ -46,7 +45,7 @@ export class LocalStorageDataStore extends WritableDataStore
 
 	set: (value) ->
 		if ! value?
-			error "LocalStorageStore.set(): cannont set to undef"
+			croak "LocalStorageStore.set(): cannont set to undef"
 		super value
 		localStore @masterKey, value
 
@@ -63,7 +62,7 @@ export class PropsDataStore extends LocalStorageDataStore
 
 	setProp: (name, value) ->
 		if ! name?
-			error "PropStore.setProp(): empty key"
+			croak "PropStore.setProp(): empty key"
 		@update (hPrefs) ->
 			hPrefs[name] = value
 			return hPrefs
@@ -122,18 +121,10 @@ export class TAMLDataStore extends WritableDataStore
 
 	constructor: (str) ->
 
-		super taml(str)
+		super fromTAML(str)
 
 # ---------------------------------------------------------------------------
 #         UTILITIES
-# ---------------------------------------------------------------------------
-
-export taml = (text) ->
-
-	if ! text?
-		return undef
-	return yaml.load(untabify(text, 1), {skipInvalid: true})
-
 # ---------------------------------------------------------------------------
 
 export brewTamlStr = (code, stub) ->

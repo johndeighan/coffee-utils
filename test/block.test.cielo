@@ -1,6 +1,6 @@
 # block.test.cielo
 
-import assert from 'assert'
+import {assert} from '@jdeighan/exceptions'
 
 import {simple} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'

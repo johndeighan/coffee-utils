@@ -1,16 +1,14 @@
 # SectionMap.coffee
 
-import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {LOG, assert, croak} from '@jdeighan/exceptions'
 import {
 	pass, undef, defined, notdefined, OL, isEmpty, nonEmpty,
 	isString, isHash, isArray, isUniqueTree, isNonEmptyString,
 	isNonEmptyArray,
 	} from '@jdeighan/coffee-utils'
-import {arrayToBlock} from '@jdeighan/coffee-utils/block'
-import {indented} from '@jdeighan/coffee-utils/indent'
-import {LOG} from '@jdeighan/coffee-utils/log'
+import {toBlock} from '@jdeighan/coffee-utils/block'
 import {debug} from '@jdeighan/coffee-utils/debug'
-import {isTAML, taml} from '@jdeighan/coffee-utils/taml'
+import {isTAML, fromTAML} from '@jdeighan/coffee-utils/taml'
 import {Section} from '@jdeighan/coffee-utils/section'
 
 # ---------------------------------------------------------------------------
@@ -35,7 +33,7 @@ export class SectionMap
 		debug "enter SectionMap()", @lSectionTree
 
 		if isTAML(@lSectionTree)
-			@SectionTree = taml(@lSectionTree)
+			@SectionTree = fromTAML(@lSectionTree)
 
 		assert isArray(@lSectionTree), "not an array"
 
@@ -127,7 +125,7 @@ export class SectionMap
 				else
 					croak "Bad item: #{OL(item)}"
 
-			block = arrayToBlock(lBlocks)
+			block = toBlock(lBlocks)
 			debug "block is", block
 			if defined(setName)
 				if defined(proc = hReplacers[setName])

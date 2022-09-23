@@ -1,12 +1,11 @@
 # fsa.coffee
 
-import {assert, croak} from '@jdeighan/unit-tester/utils'
+import {LOG, assert, croak} from '@jdeighan/exceptions'
 import {
 	undef, defined, notdefined, words, isEmpty, nonEmpty,
 	isString, OL,
 	} from '@jdeighan/coffee-utils'
 import {toArray} from '@jdeighan/coffee-utils/block'
-import {LOG} from '@jdeighan/coffee-utils/log'
 import {debug} from '@jdeighan/coffee-utils/debug'
 
 # ---------------------------------------------------------------------------

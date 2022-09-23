@@ -1,4 +1,4 @@
-# browser_utils.coffee
+# browser.coffee
 
 import {undef} from '@jdeighan/coffee-utils'
 

@@ -2,7 +2,7 @@
   // arrow.coffee
 import {
   assert
-} from '@jdeighan/unit-tester/utils';
+} from '@jdeighan/exceptions';
 
 import {
   undef,

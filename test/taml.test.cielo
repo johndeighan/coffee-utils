@@ -1,19 +1,19 @@
 # taml.test.cielo
 
-import {undef} from '@jdeighan/coffee-utils'
-import {log, tamlStringify} from '@jdeighan/coffee-utils/log'
+import {assert, LOG} from '@jdeighan/exceptions'
 import {UnitTester, simple} from '@jdeighan/unit-tester'
+import {undef} from '@jdeighan/coffee-utils'
 import {untabify} from '@jdeighan/coffee-utils/indent'
-import {isTAML, fromTAML, toTAML} from '@jdeighan/coffee-utils/taml'
+import {isTAML, toTAML, fromTAML} from '@jdeighan/coffee-utils/taml'
 
 # ---------------------------------------------------------------------------
 
 simple.truthy {{LINE}}, isTAML("---\n- first\n- second")
 simple.falsy  {{LINE}}, isTAML("x---\n")
-simple.equal  {{LINE}}, fromTAML("---\n- a\n- b"), ['a','b']
-simple.equal  {{LINE}}, tamlStringify({a:1}), "---\na: 1"
-simple.equal  {{LINE}}, tamlStringify({a:1, b:2}), "---\na: 1\nb: 2"
-simple.equal  {{LINE}}, tamlStringify([1,'abc',{a:1}]), "---\n- 1\n- abc\n-\n   a: 1"
+
+simple.equal  {{LINE}}, toTAML({a:1}), "---\na: 1"
+simple.equal  {{LINE}}, toTAML({a:1, b:2}), "---\na: 1\nb: 2"
+simple.equal  {{LINE}}, toTAML([1,'abc',{a:1}]), "---\n- 1\n- abc\n-\n   a: 1"
 
 simple.equal {{LINE}}, toTAML({a:1, b:2}), """
 	---
@@ -37,25 +37,23 @@ simple.equal {{LINE}}, toTAML(['a','b', {a:1}, ['x']]), untabify("""
 		- x
 	""")
 
+simple.equal  {{LINE}}, fromTAML("---\n- a\n- b"), ['a','b']
+simple.equal  {{LINE}}, fromTAML("---\ntitle:\n\ten: Hello, she said."),
+		{
+		title:
+			en: 'Hello, she said.'
+		}
+
 __END__
 
 These should work, but currently don't:
 
-simple.equal  {{LINE}}, fromTAML("""
-		---
-		title:
-			en: "Hello", she said.
-		"""), {
-		title:
-			en: '"Hello", she said.'
-		}
-
-simple.equal  {{LINE}}, tamlStringify({a:1, b:2}), """
+simple.equal  {{LINE}}, toTAML({a:1, b:2}), """
 		---
 		a: 1
 		b: 2
 		"""
-simple.equal  {{LINE}}, tamlStringify([1,'abc',{a:1}]), """
+simple.equal  {{LINE}}, toTAML([1,'abc',{a:1}]), """
 		---
 		- 1
 		- abc

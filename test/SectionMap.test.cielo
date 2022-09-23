@@ -1,7 +1,7 @@
 # SectionMap.test.cielo
 
+import {assert} from '@jdeighan/exceptions'
 import {simple} from '@jdeighan/unit-tester'
-import {assert} from '@jdeighan/unit-tester/utils'
 import {undef} from '@jdeighan/coffee-utils'
 import {elem} from '@jdeighan/coffee-utils/html'
 import {

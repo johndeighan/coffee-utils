@@ -2,9 +2,9 @@
 
 import assert from 'assert'
 
+import {LOG} from '@jdeighan/exceptions'
 import {simple} from '@jdeighan/unit-tester'
 import {undef, escapeStr} from '@jdeighan/coffee-utils'
-import {LOG} from '@jdeighan/coffee-utils/log'
 import {FSA} from '@jdeighan/coffee-utils/fsa'
 
 # ---------------------------------------------------------------------------

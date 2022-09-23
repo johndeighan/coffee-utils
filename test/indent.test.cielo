@@ -1,6 +1,6 @@
 # indent.test.cielo
 
-import assert from 'assert'
+import {assert} from '@jdeighan/exceptions'
 
 import {UnitTesterNorm, simple} from '@jdeighan/unit-tester'
 import {isInteger} from '@jdeighan/coffee-utils'

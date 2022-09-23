@@ -1,4 +1,4 @@
-# server_utils.coffee
+# server.coffee
 
 import getline from 'readline-sync'
 import {execSync} from 'child_process'

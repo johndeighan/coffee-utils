@@ -1,11 +1,11 @@
 # log.test.cielo
 
-import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {LOG, assert, croak} from '@jdeighan/exceptions'
 import {UnitTesterNorm, UnitTester} from '@jdeighan/unit-tester'
 import {undef, escapeStr} from '@jdeighan/coffee-utils'
 import {arrayToBlock, blockToArray} from '@jdeighan/coffee-utils/block'
 import {
-	stringify, setStringifier, log, LOG, logItem, setLogger,
+	stringify, setStringifier, log, logItem, setLogger,
 	tamlStringify, orderedStringify,
 	} from '@jdeighan/coffee-utils/log'
 
@@ -354,6 +354,6 @@ simple.equal {{LINE}}, stringify({a:"word", b:"blind"}), """
 	simple.equal {{LINE}}, lItems, ['a','b','c']
 	)()
 
-simple.fails {{LINE}}, () -> error("an error message")
+simple.fails {{LINE}}, () -> croak("an error message")
 
 # ---------------------------------------------------------------------------

@@ -2,16 +2,16 @@
 
 import yaml from 'js-yaml'
 
-import {assert, error, croak} from '@jdeighan/unit-tester/utils'
+import {assert, croak} from '@jdeighan/exceptions'
 import {
-	undef, defined, notdefined, oneline, isString, chomp, escapeStr,
+	undef, defined, notdefined, OL, chomp, escapeStr,
+	isString, isObject, isEmpty,
 	} from '@jdeighan/coffee-utils'
-import {untabify, tabify, splitLine} from '@jdeighan/coffee-utils/indent'
-import {slurp} from '@jdeighan/coffee-utils/fs'
-import {debug} from '@jdeighan/coffee-utils/debug'
+import {splitLine} from '@jdeighan/coffee-utils/indent'
 import {
-	firstLine, blockToArray, arrayToBlock,
+	firstLine, toArray, toBlock,
 	} from '@jdeighan/coffee-utils/block'
+import {slurp} from '@jdeighan/coffee-utils/fs'
 
 # ---------------------------------------------------------------------------
 #   isTAML - is the string valid TAML?
@@ -21,23 +21,15 @@ export isTAML = (text) ->
 	return isString(text) && (firstLine(text).indexOf('---') == 0)
 
 # ---------------------------------------------------------------------------
-
-squote = (text) ->
-
-	return "'" + text.replace(/'/g, "''") + "'"
-
-# ---------------------------------------------------------------------------
 #   taml - convert valid TAML string to a JavaScript value
 
-export taml = (text) ->
+export fromTAML = (text) ->
 
-	debug "enter taml(#{oneline(text)})"
-	if ! text?
-		debug "return undef from taml() - text is not defined"
+	if notdefined(text)
 		return undef
-	assert isTAML(text), "taml(): string #{oneline(text)} isn't TAML"
+	assert isTAML(text), "string #{OL(text)} isn't TAML"
 
-	lLines = for line in blockToArray(text)
+	lLines = for line in toArray(text)
 		[level, str] = splitLine(line)
 		prefix = ' '.repeat(level)
 		if lMatches = line.match(///^
@@ -55,12 +47,7 @@ export taml = (text) ->
 		else
 			prefix + str
 
-	debug "return from taml()"
-	return yaml.load(arrayToBlock(lLines), {skipInvalid: true})
-
-# ---------------------------------------------------------------------------
-
-export fromTAML = taml
+	return yaml.load(toBlock(lLines), {skipInvalid: true})
 
 # ---------------------------------------------------------------------------
 # --- a replacer is (key, value) -> newvalue
@@ -69,6 +56,8 @@ myReplacer = (name, value) ->
 
 	if isString(value)
 		return escapeStr(value)
+	else if isObject(value, ['tamlReplacer'])
+		return value.tamlReplacer()
 	else
 		return value
 
@@ -91,9 +80,15 @@ export toTAML = (obj, hOptions={}) ->
 	return "---\n" + chomp(str)
 
 # ---------------------------------------------------------------------------
+
+squote = (text) ->
+
+	return "'" + text.replace(/'/g, "''") + "'"
+
+# ---------------------------------------------------------------------------
 #   slurpTAML - read TAML from a file
 
 export slurpTAML = (filepath) ->
 
 	contents = slurp(filepath)
-	return taml(contents)
+	return fromTAML(contents)
