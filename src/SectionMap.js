@@ -3,10 +3,17 @@
 var isSectionName, isSetName;
 
 import {
-  LOG,
   assert,
   croak
 } from '@jdeighan/exceptions';
+
+import {
+  LOG
+} from '@jdeighan/exceptions/log';
+
+import {
+  debug
+} from '@jdeighan/exceptions/debug';
 
 import {
   pass,
@@ -27,10 +34,6 @@ import {
 import {
   toBlock
 } from '@jdeighan/coffee-utils/block';
-
-import {
-  debug
-} from '@jdeighan/coffee-utils/debug';
 
 import {
   isTAML,

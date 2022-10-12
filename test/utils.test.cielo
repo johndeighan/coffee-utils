@@ -1,6 +1,8 @@
 # utils.test.cielo
 
 import {assert, croak} from '@jdeighan/exceptions'
+import {LOG, setLogger, resetLogger} from '@jdeighan/exceptions/log'
+import {setDebugging} from '@jdeighan/exceptions/debug'
 import {simple} from '@jdeighan/unit-tester'
 import {
 	say, undef, pass, warn, isString, isObject, isArray, isHash, oneof,
@@ -9,11 +11,9 @@ import {
 	ltrunc, rtrunc, extractMatches, range, patchStr, chomp,
 	words, escapeStr, titleLine, className, eval_expr,
 	removeCR, CWS, isArrayOfHashes, setCharsAt, charCount,
-	oneline, isRegExp, uniq, hashToStr, envVarsWithPrefix,
+	OL, isRegExp, uniq, hashToStr, envVarsWithPrefix,
 	strcat, replaceVars, defined, notdefined, isIterable, getOptions,
 	} from '@jdeighan/coffee-utils'
-import {log, setLogger, resetLogger} from '@jdeighan/coffee-utils/log'
-import {setDebugging} from '@jdeighan/coffee-utils/debug'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 
 # ---------------------------------------------------------------------------
@@ -209,9 +209,9 @@ simple.falsy  {{LINE}}, isInteger(42, {max:  0})
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, oneline(undef), "undef"
-simple.equal {{LINE}}, oneline("\t\tabc\nxyz"), "'→→abc®xyz'"
-simple.equal {{LINE}}, oneline({a:1, b:'xyz'}), '{"a":1,"b":"xyz"}'
+simple.equal {{LINE}}, OL(undef), "undef"
+simple.equal {{LINE}}, OL("\t\tabc\nxyz"), "'→→abc®xyz'"
+simple.equal {{LINE}}, OL({a:1, b:'xyz'}), '{"a":1,"b":"xyz"}'
 
 # ---------------------------------------------------------------------------
 

@@ -1,6 +1,7 @@
 # taml.test.cielo
 
-import {assert, LOG} from '@jdeighan/exceptions'
+import {assert, croak} from '@jdeighan/exceptions'
+import {LOG} from '@jdeighan/exceptions/log'
 import {UnitTester, simple} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'
 import {untabify} from '@jdeighan/coffee-utils/indent'

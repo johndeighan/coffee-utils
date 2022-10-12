@@ -10,6 +10,11 @@ import {
 } from '@jdeighan/exceptions';
 
 import {
+  blockToArray,
+  arrayToBlock
+} from '@jdeighan/exceptions/utils';
+
+import {
   undef,
   pass,
   defined,
@@ -23,29 +28,15 @@ import {
   OL
 } from '@jdeighan/coffee-utils';
 
-// ---------------------------------------------------------------------------
-//   blockToArray - split a block into lines
-//   DEPRECATED - use toArray()
-export var blockToArray = function(block) {
-  var lLines, len;
-  if (isEmpty(block)) {
-    return [];
-  } else {
-    lLines = block.split(/\r?\n/);
-    // --- remove trailing empty lines
-    len = lLines.length;
-    while ((len > 0) && isEmpty(lLines[len - 1])) {
-      lLines.pop();
-      len -= 1;
-    }
-    return lLines;
-  }
+export {
+  blockToArray,
+  arrayToBlock
 };
 
 // ---------------------------------------------------------------------------
 //   toArray - split a block or array into lines w/o newlines
 export var toArray = function(item, option = undef) {
-  var i, j, lLines, lNewLines, len1, len2, line, nonEmptyFound, ref, substr;
+  var i, j, lLines, lNewLines, len, len1, line, nonEmptyFound, ref, substr;
   // --- Valid options:
   //     'noEmptyLines'
   //     'noLeadingEmptyLines'
@@ -60,7 +51,7 @@ export var toArray = function(item, option = undef) {
   //     and possibly remove empty lines
   lNewLines = [];
   nonEmptyFound = false;
-  for (i = 0, len1 = lLines.length; i < len1; i++) {
+  for (i = 0, len = lLines.length; i < len; i++) {
     line = lLines[i];
     if (isEmpty(line)) {
       if ((option === 'noEmptyLines') || ((option === 'noLeadingEmptyLines') && !nonEmptyFound)) {
@@ -70,7 +61,7 @@ export var toArray = function(item, option = undef) {
       }
     } else if (line.indexOf("\n") > -1) {
       ref = toArray(line);
-      for (j = 0, len2 = ref.length; j < len2; j++) {
+      for (j = 0, len1 = ref.length; j < len1; j++) {
         substr = ref[j];
         if (isEmpty(substr)) {
           if ((option === 'noEmptyLines') || ((option === 'noLeadingEmptyLines') && !nonEmptyFound)) {
@@ -92,34 +83,16 @@ export var toArray = function(item, option = undef) {
 };
 
 // ---------------------------------------------------------------------------
-//   arrayToBlock - block and lines in block will have no trailing whitespace
-//   DEPRECATED - use toBlock()
-export var arrayToBlock = function(lLines) {
-  if (lLines === undef) {
-    return undef;
-  }
-  assert(isArray(lLines), "lLines is not an array");
-  lLines = lLines.filter((line) => {
-    return defined(line);
-  });
-  if (lLines.length === 0) {
-    return undef;
-  } else {
-    return rtrim(lLines.join('\n'));
-  }
-};
-
-// ---------------------------------------------------------------------------
 //   toBlock - block may have trailing whitespace
 //             but undef items are ignored
 export var toBlock = function(lLines) {
-  var i, lNewLines, len1, line;
+  var i, lNewLines, len, line;
   if (notdefined(lLines)) {
     return undef;
   }
   assert(isArrayOfStrings(lLines), `lLines is not an array: ${OL(lLines)}`);
   lNewLines = [];
-  for (i = 0, len1 = lLines.length; i < len1; i++) {
+  for (i = 0, len = lLines.length; i < len; i++) {
     line = lLines[i];
     if (defined(line)) {
       lNewLines.push(rtrim(line));
@@ -173,10 +146,10 @@ export var normalizeBlock = function(content) {
     throw new Error("normalizeBlock(): not a string");
   }
   lLines = (function() {
-    var i, len1, ref, results;
+    var i, len, ref, results;
     ref = blockToArray(content);
     results = [];
-    for (i = 0, len1 = ref.length; i < len1; i++) {
+    for (i = 0, len = ref.length; i < len; i++) {
       line = ref[i];
       line = line.trim();
       results.push(line.replace(/\s+/g, ' '));
@@ -200,10 +173,10 @@ export var truncateBlock = function(str, numLines) {
 
 // ---------------------------------------------------------------------------
 export var joinBlocks = function(...lBlocks) {
-  var block, i, lNonEmptyBlocks, len1, ref;
+  var block, i, lNonEmptyBlocks, len, ref;
   lNonEmptyBlocks = [];
   ref = lBlocks.flat(999);
-  for (i = 0, len1 = ref.length; i < len1; i++) {
+  for (i = 0, len = ref.length; i < len; i++) {
     block = ref[i];
     assert(isString(block), `joinBlocks(): ${block} is not a string`);
     if (nonEmpty(block)) {

@@ -1,5 +1,7 @@
 # getBlock.test.cielo
 
+import {assert, croak} from '@jdeighan/exceptions'
+import {LOG} from '@jdeighan/exceptions/log'
 import {simple, UnitTester} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'
 import {elem} from '@jdeighan/coffee-utils/html'

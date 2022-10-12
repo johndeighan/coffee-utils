@@ -1,15 +1,29 @@
 # utils.coffee
 
-import {LOG, assert, croak} from '@jdeighan/exceptions'
+import {assert, croak} from '@jdeighan/exceptions'
+import {LOG, sep_dash, sep_eq} from '@jdeighan/exceptions/log'
+import {
+	undef, pass, defined, notdefined,
+	deepCopy, escapeStr, unescapeStr, hasChar, quoted, OL,
+	isString, isNumber, isInteger, isHash, isArray, isBoolean,
+	isConstructor, isFunction, isRegExp, isObject, getClassName,
+	jsType,
+	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words,
+	} from '@jdeighan/exceptions/utils'
 
-export sep_dash = '-'.repeat(42)
-export sep_eq = '='.repeat(42)
-`export const undef = undefined`
+export {
+	undef, pass, defined, notdefined, sep_dash, sep_eq,
+	deepCopy, escapeStr, unescapeStr, hasChar, quoted, OL,
+	isString, isNumber, isInteger, isHash, isArray, isBoolean,
+	isConstructor, isFunction, isRegExp, isObject, getClassName,
+	jsType,
+	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words,
+	}
 
 # ---------------------------------------------------------------------------
 # TEMP!!!!!
 
-export isComment = (line) ->
+export isComment = (line) =>
 
 	lMatches = line.match(///^
 			\s*
@@ -17,30 +31,6 @@ export isComment = (line) ->
 			(\s|$)
 			///)
 	return defined(lMatches)
-
-# ---------------------------------------------------------------------------
-
-export chomp = (str) ->
-
-	len = str.length
-	if (len == 0)
-		return ''
-	else if (len == 1)
-		if (str == "\r") || (str == "\n")
-			return ''
-		else
-			return str
-	else
-		# --- check the last 2 characters
-		tail = str.substring(len-2)
-		if (tail == "\r\n")
-			return str.substring(0, len-2)
-		else
-			tail = str.substring(len-1)
-			if (tail == "\n")
-				return str.substring(0, len-1)
-			else
-				return str
 
 # ---------------------------------------------------------------------------
 
@@ -55,11 +45,6 @@ export eval_expr = (str) ->
 
 	str = str.replace(/\bundef\b/g, 'undefined')
 	return Function('"use strict";return (' + str + ')')();
-
-# ---------------------------------------------------------------------------
-#   pass - do nothing
-
-export pass = () ->
 
 # ---------------------------------------------------------------------------
 
@@ -90,61 +75,6 @@ export oneof = (word, lWords...) ->
 
 # ---------------------------------------------------------------------------
 
-export isConstructor = (f) ->
-
-	try
-		new f()
-	catch err
-		if (err.message.indexOf('is not a constructor') >= 0)
-			return false;
-	return true;
-
-# ---------------------------------------------------------------------------
-
-export jsType = (x) ->
-
-	if notdefined(x)
-		return [undef, undef]
-	else if isString(x)
-		if x.match(/^\s*$/)
-			return ['string', 'empty']
-		else
-			return ['string', undef]
-	else if isNumber(x)
-		if Number.isInteger(x)
-			return ['number', 'integer']
-		else
-			return ['number', undef]
-	else if isBoolean(x)
-		return ['boolean', undef]
-	else if isHash(x)
-		lKeys = Object.keys(x);
-		if (lKeys.length == 0)
-			return ['hash', 'empty']
-		else
-			return ['hash', undef]
-	else if isArray(x)
-		if (x.length == 0)
-			return ['array', 'empty']
-		else
-			return ['array', undef]
-	else if isConstructor(x)
-		return ['function', 'constructor']
-	else if isFunction(x)
-		return ['function', undef]
-	else if isObject(x)
-		return ['object', undef]
-	else
-		croak "Unknown type: #{OL(x)}"
-
-# ---------------------------------------------------------------------------
-
-export isString = (x) ->
-
-	return (typeof x == 'string') || (x instanceof String)
-
-# ---------------------------------------------------------------------------
-
 export isNonEmptyString = (x) ->
 
 	if typeof x != 'string' && x ! instanceof String
@@ -155,61 +85,9 @@ export isNonEmptyString = (x) ->
 
 # ---------------------------------------------------------------------------
 
-export isBoolean = (x) ->
-
-	return typeof x == 'boolean'
-
-# ---------------------------------------------------------------------------
-
-export isObject = (x, lReqKeys=undef) ->
-
-	result = (typeof x == 'object') \
-			&& ! isString(x) \
-			&& ! isArray(x) \
-			&& ! isHash(x) \
-			&& ! isNumber(x)
-	if result
-		if defined(lReqKeys)
-			assert isArray(lReqKeys), "lReqKeys is not an array"
-			for key in lReqKeys
-				if ! x.hasOwnProperty(key)
-					return false
-		return true
-	else
-		return false
-
-# ---------------------------------------------------------------------------
-
-export getClassName = (obj) ->
-
-	if (typeof obj != 'object')
-		return undef
-	return obj.constructor.name
-
-# ---------------------------------------------------------------------------
-
-export isArray = (x) ->
-
-	return Array.isArray(x)
-
-# ---------------------------------------------------------------------------
-
 export isNonEmptyArray = (x) ->
 
 	return isArray(x) && (x.length > 0)
-
-# ---------------------------------------------------------------------------
-
-export isHash = (x, lKeys) ->
-
-	if ! x || (getClassName(x) != 'Object')
-		return false
-	if defined(lKeys)
-		assert isArray(lKeys), "isHash(): lKeys not an array"
-		for key in lKeys
-			if ! x.hasOwnProperty(key)
-				return false
-	return true
 
 # ---------------------------------------------------------------------------
 
@@ -226,40 +104,6 @@ export hashHasKey = (x, key) ->
 	return x.hasOwnProperty(key)
 
 # ---------------------------------------------------------------------------
-#   isEmpty
-#      - string is whitespace, array has no elements, hash has no keys
-
-export isEmpty = (x) ->
-
-	if (x == undef) || (x == null)
-		return true
-	if isString(x)
-		return x.match(/^\s*$/)
-	if isArray(x)
-		return x.length == 0
-	if isHash(x)
-		return Object.keys(x).length == 0
-	else
-		return false
-
-# ---------------------------------------------------------------------------
-#   nonEmpty
-#      - string has non-whitespace, array has elements, hash has keys
-
-export nonEmpty = (x) ->
-
-	if ! x?
-		return false
-	if isString(x)
-		return ! x.match(/^\s*$/)
-	if isArray(x)
-		return x.length > 0
-	if isHash(x)
-		return Object.keys(x).length > 0
-	else
-		croak "isEmpty(): Invalid parameter"
-
-# ---------------------------------------------------------------------------
 
 export notInArray = (lItems, item) ->
 
@@ -274,15 +118,6 @@ export pushCond = (lItems, item, doPush=notInArray) ->
 		return true
 	else
 		return false
-
-# ---------------------------------------------------------------------------
-
-export words = (str) ->
-
-	str = str.trim()
-	if (str == '')
-		return []
-	return str.split(/\s+/)
 
 # ---------------------------------------------------------------------------
 
@@ -305,50 +140,6 @@ export isArrayOfStrings = (lItems) ->
 		if ! isString(item)
 			return false
 	return true
-
-# ---------------------------------------------------------------------------
-
-export isFunction = (x) ->
-
-	return typeof x == 'function'
-
-# ---------------------------------------------------------------------------
-
-export isRegExp = (x) ->
-
-	return x instanceof RegExp
-
-# ---------------------------------------------------------------------------
-
-export isNumber = (x, hOptions=undef) ->
-
-	result = (typeof x == 'number') || (x instanceof Number)
-	if result && defined(hOptions)
-		assert isHash(hOptions), "2nd arg not a hash: #{OL(hOptions)}"
-		{min, max} = hOptions
-		if defined(min) && (x < min)
-			result = false
-		if defined(max) && (x > max)
-			result = false
-	return result
-
-# ---------------------------------------------------------------------------
-
-export isInteger = (x, hOptions={}) ->
-
-	if (typeof x == 'number')
-		result = Number.isInteger(x)
-	else if (x instanceof Number)
-		result = Number.isInteger(x.valueOf())
-	else
-		result = false
-
-	if result
-		if defined(hOptions.min) && (x < hOptions.min)
-			result = false
-		if defined(hOptions.max) && (x > hOptions.max)
-			result = false
-	return result
 
 # ---------------------------------------------------------------------------
 
@@ -436,19 +227,6 @@ export titleLine = (title, char='=', padding=2, linelen=42) ->
 	return strLeft + strMiddle + strRight
 
 # ---------------------------------------------------------------------------
-#   rtrim - strip trailing whitespace
-
-export rtrim = (line) ->
-
-	assert isString(line), "rtrim(): line is not a string"
-	lMatches = line.match(/\s+$/)
-	if lMatches?
-		n = lMatches[0].length   # num chars to remove
-		return line.substring(0, line.length - n)
-	else
-		return line
-
-# ---------------------------------------------------------------------------
 #   rtrunc - strip nChars chars from right of a string
 
 export rtrunc = (str, nChars) ->
@@ -461,51 +239,6 @@ export rtrunc = (str, nChars) ->
 export ltrunc = (str, nChars) ->
 
 	return str.substring(nChars)
-
-# ---------------------------------------------------------------------------
-#   deepCopy - deep copy an array or object
-
-export deepCopy = (obj) ->
-
-	if (obj == undef)
-		return undef
-	objStr = JSON.stringify(obj)
-	try
-		newObj = JSON.parse(objStr)
-	catch err
-		croak "ERROR: err.message", objStr
-
-	return newObj
-
-# ---------------------------------------------------------------------------
-#   escapeStr - escape newlines, TAB chars, etc.
-
-export hDefEsc = {
-	"\n": '®'
-	"\t": '→'
-	" ": '˳'
-	}
-
-export escapeStr = (str, hEscape=hDefEsc) ->
-
-	assert isString(str), "escapeStr(): not a string"
-	lParts = for ch in str.split('')
-		if hEscape[ch]? then hEscape[ch] else ch
-	return lParts.join('')
-
-# ---------------------------------------------------------------------------
-
-export oneline = (obj) ->
-
-	if obj?
-		if isString(obj)
-			return "'#{escapeStr(obj)}'"
-		else
-			return JSON.stringify(obj)
-	else
-		return 'undef'
-
-export OL = oneline
 
 # ---------------------------------------------------------------------------
 
@@ -597,18 +330,6 @@ export replaceVars = (line, hVars={}, rx=/__(env\.)?([A-Za-z_]\w*)__/g) ->
 
 # ---------------------------------------------------------------------------
 
-export defined = (obj) ->
-
-	return (obj != undef) && (obj != null)
-
-# ---------------------------------------------------------------------------
-
-export notdefined = (obj) ->
-
-	return (obj == undef) || (obj == null)
-
-# ---------------------------------------------------------------------------
-
 export isIterable = (obj) ->
 
 	if (obj == undef) || (obj == null)
@@ -629,17 +350,6 @@ export className = (aClass) ->
 export range = (n) ->
 
 	return [0..n-1]
-
-# ---------------------------------------------------------------------------
-
-export setCharsAt = (str, pos, str2) ->
-
-	assert (pos >= 0), "negative pos #{pos} not allowed"
-	assert (pos < str.length), "pos #{pos} not in #{OL(str)}"
-	if (pos + str2.length >= str.length)
-		return str.substring(0, pos) + str2
-	else
-		return str.substring(0, pos) + str2 + str.substring(pos + str2.length)
 
 # ---------------------------------------------------------------------------
 

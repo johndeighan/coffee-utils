@@ -6,6 +6,10 @@ import {
 } from '@jdeighan/exceptions';
 
 import {
+  debug
+} from '@jdeighan/exceptions/debug';
+
+import {
   pass,
   undef,
   defined,
@@ -20,10 +24,6 @@ import {
 import {
   indented
 } from '@jdeighan/coffee-utils/indent';
-
-import {
-  debug
-} from '@jdeighan/coffee-utils/debug';
 
 // ---------------------------------------------------------------------------
 export var Section = class Section {

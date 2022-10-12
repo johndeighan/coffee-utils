@@ -5,7 +5,8 @@ import urllib from 'url'
 import fs from 'fs'
 import NReadLines from 'n-readlines'
 
-import {LOG, assert, croak} from '@jdeighan/exceptions'
+import {assert, croak} from '@jdeighan/exceptions'
+import {LOG} from '@jdeighan/exceptions/log'
 import {
 	undef, pass, defined, rtrim, isEmpty, nonEmpty,
 	isString, isArray, isHash, isRegExp, isFunction, OL,

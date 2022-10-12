@@ -6,10 +6,11 @@ import {
 	existsSync, copyFileSync, readFileSync, writeFileSync,
 	} from 'fs'
 
+import {assert, croak} from '@jdeighan/exceptions'
+import {LOG} from '@jdeighan/exceptions/log'
+import {debug} from '@jdeighan/exceptions/debug'
 import {simple} from '@jdeighan/unit-tester'
-import {LOG, assert, croak} from '@jdeighan/exceptions'
-import {say, undef} from '@jdeighan/coffee-utils'
-import {debug} from '@jdeighan/coffee-utils/debug'
+import {undef} from '@jdeighan/coffee-utils'
 import {
 	mydir, myfile, myfullpath, mkpath, isFile, isDir, isSimpleFileName,
 	getSubDirs, pathTo, getFullPath, parseSource, fileStub, fileExt,
@@ -49,7 +50,7 @@ my_path = mkpath(my_dir, my_fname)
 # ---------------------------------------------------------------------------
 
 (() ->
-	fname = 'debug.test.coffee'
+	fname = 'block.test.coffee'
 
 	simple.truthy {{LINE}}, existsSync("#{my_dir}/#{fname}")
 	simple.falsy  {{LINE}}, existsSync("#{my_dir}/nosuchfile.test.coffee")

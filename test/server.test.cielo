@@ -1,19 +1,16 @@
 # server.test.cielo
 
-import {UnitTesterNorm} from '@jdeighan/unit-tester'
-import {
-	exec,
-	} from '@jdeighan/coffee-utils/server'
-import {setLogger} from '@jdeighan/coffee-utils/log'
-import {setDebugging} from '@jdeighan/coffee-utils/debug'
-
-simple = new UnitTesterNorm()
+import {setLogger} from '@jdeighan/exceptions/log'
+import {setDebugging} from '@jdeighan/exceptions/debug'
+import {simple} from '@jdeighan/unit-tester'
+import {rtrim} from '@jdeighan/coffee-utils'
+import {exec} from '@jdeighan/coffee-utils/server'
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, exec('echo hello'), """
+simple.equal {{LINE}}, rtrim(exec('echo hello')), """
 	hello
 	"""
-simple.equal {{LINE}}, exec('echo why?'), """
+simple.equal {{LINE}}, rtrim(exec('echo why?')), """
 	why?
 	"""

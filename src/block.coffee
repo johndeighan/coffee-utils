@@ -4,29 +4,14 @@ import fs from 'fs'
 import readline from 'readline'
 
 import {assert, croak} from '@jdeighan/exceptions'
+import {blockToArray, arrayToBlock} from '@jdeighan/exceptions/utils'
 import {
 	undef, pass, defined, notdefined,
 	isEmpty, isString, isArray, nonEmpty, isArrayOfStrings,
 	rtrim, OL,
 	} from '@jdeighan/coffee-utils'
 
-# ---------------------------------------------------------------------------
-#   blockToArray - split a block into lines
-#   DEPRECATED - use toArray()
-
-export blockToArray = (block) ->
-
-	if isEmpty(block)
-		return []
-	else
-		lLines = block.split(/\r?\n/)
-
-		# --- remove trailing empty lines
-		len = lLines.length
-		while (len > 0) && isEmpty(lLines[len-1])
-			lLines.pop()
-			len -= 1
-		return lLines
+export {blockToArray, arrayToBlock}
 
 # ---------------------------------------------------------------------------
 #   toArray - split a block or array into lines w/o newlines
@@ -69,21 +54,6 @@ export toArray = (item, option=undef) ->
 			nonEmptyFound = true
 			lNewLines.push line
 	return lNewLines
-
-# ---------------------------------------------------------------------------
-#   arrayToBlock - block and lines in block will have no trailing whitespace
-#   DEPRECATED - use toBlock()
-
-export arrayToBlock = (lLines) ->
-
-	if (lLines == undef)
-		return undef
-	assert isArray(lLines), "lLines is not an array"
-	lLines = lLines.filter((line) => defined(line));
-	if lLines.length == 0
-		return undef
-	else
-		return rtrim(lLines.join('\n'))
 
 # ---------------------------------------------------------------------------
 #   toBlock - block may have trailing whitespace

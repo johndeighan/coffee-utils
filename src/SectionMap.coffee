@@ -1,13 +1,14 @@
 # SectionMap.coffee
 
-import {LOG, assert, croak} from '@jdeighan/exceptions'
+import {assert, croak} from '@jdeighan/exceptions'
+import {LOG} from '@jdeighan/exceptions/log'
+import {debug} from '@jdeighan/exceptions/debug'
 import {
 	pass, undef, defined, notdefined, OL, isEmpty, nonEmpty,
 	isString, isHash, isArray, isUniqueTree, isNonEmptyString,
 	isNonEmptyArray,
 	} from '@jdeighan/coffee-utils'
 import {toBlock} from '@jdeighan/coffee-utils/block'
-import {debug} from '@jdeighan/coffee-utils/debug'
 import {isTAML, fromTAML} from '@jdeighan/coffee-utils/taml'
 import {Section} from '@jdeighan/coffee-utils/section'
 

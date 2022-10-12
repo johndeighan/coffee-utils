@@ -2,8 +2,8 @@
 
 import test from 'ava'
 
-import {simple} from '@jdeighan/unit-tester'
 import {assert, croak} from '@jdeighan/exceptions'
+import {simple} from '@jdeighan/unit-tester'
 import {
 	undef, say, isString, isHash, isEmpty, nonEmpty,
 	} from '@jdeighan/coffee-utils'

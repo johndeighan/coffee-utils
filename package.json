@@ -50,14 +50,14 @@
 	},
 	"homepage": "https://github.com/johndeighan/coffee-utils#readme",
 	"dependencies": {
-		"@jdeighan/exceptions": "^1.0.3",
+		"@jdeighan/exceptions": "^1.0.4",
 		"cross-env": "^7.0.3",
 		"js-yaml": "^4.1.0",
 		"n-readlines": "^1.0.1",
 		"readline-sync": "^1.4.10",
-		"svelte": "^3.50.1"
+		"svelte": "^3.51.0"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^2.0.27"
+		"@jdeighan/unit-tester": "^2.0.28"
 	}
 }

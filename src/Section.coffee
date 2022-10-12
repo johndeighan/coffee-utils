@@ -1,12 +1,12 @@
 # Section.coffee
 
 import {assert, croak} from '@jdeighan/exceptions'
+import {debug} from '@jdeighan/exceptions/debug'
 import {
 	pass, undef, defined, isArray, isEmpty,
 	} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 import {indented} from '@jdeighan/coffee-utils/indent'
-import {debug} from '@jdeighan/coffee-utils/debug'
 
 # ---------------------------------------------------------------------------
 

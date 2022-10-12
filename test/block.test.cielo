@@ -1,6 +1,7 @@
 # block.test.cielo
 
 import {assert} from '@jdeighan/exceptions'
+import {LOG} from '@jdeighan/exceptions/log'
 
 import {simple} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'
@@ -335,13 +336,13 @@ simple.equal {{LINE}}, truncateBlock("""
 		]
 	code = """
 		if (x==42)
-			log "line 2 in unit test"
+			LOG "line 2 in unit test"
 		"""
 	str = joinBlocks(lImports..., code)
 	simple.equal {{LINE}}, str, """
 		import {say} from '@jdeighan/coffee-utils'
 		if (x==42)
-			log "line 2 in unit test"
+			LOG "line 2 in unit test"
 		"""
 	)()
 

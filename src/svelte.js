@@ -2,9 +2,12 @@
   // svelte.coffee
 import {
   assert,
-  croak,
-  LOG
+  croak
 } from '@jdeighan/exceptions';
+
+import {
+  LOG
+} from '@jdeighan/exceptions/log';
 
 import {
   isFunction

@@ -11,10 +11,13 @@ import fs from 'fs';
 import NReadLines from 'n-readlines';
 
 import {
-  LOG,
   assert,
   croak
 } from '@jdeighan/exceptions';
+
+import {
+  LOG
+} from '@jdeighan/exceptions/log';
 
 import {
   undef,
