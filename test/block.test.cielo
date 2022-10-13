@@ -3,7 +3,7 @@
 import {assert} from '@jdeighan/exceptions'
 import {LOG} from '@jdeighan/exceptions/log'
 
-import {simple} from '@jdeighan/unit-tester'
+import {tester} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'
 import {
 	blockToArray, arrayToBlock, toArray, toBlock,
@@ -14,17 +14,17 @@ import {
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, blockToArray("abc\nxyz\n"), [
+tester.equal {{LINE}}, blockToArray("abc\nxyz\n"), [
 	'abc'
 	'xyz'
 	]
 
-simple.equal {{LINE}}, blockToArray("abc\nxyz\n\n\n\n"), [
+tester.equal {{LINE}}, blockToArray("abc\nxyz\n\n\n\n"), [
 	'abc'
 	'xyz'
 	]
 
-simple.equal {{LINE}}, blockToArray("abc\n\nxyz\n"), [
+tester.equal {{LINE}}, blockToArray("abc\n\nxyz\n"), [
 	'abc'
 	''
 	'xyz'
@@ -32,12 +32,12 @@ simple.equal {{LINE}}, blockToArray("abc\n\nxyz\n"), [
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, toArray("abc\nxyz"), [
+tester.equal {{LINE}}, toArray("abc\nxyz"), [
 	'abc'
 	'xyz'
 	]
 
-simple.equal {{LINE}}, toArray("""
+tester.equal {{LINE}}, toArray("""
 	abc
 	xyz
 	"""), [
@@ -45,7 +45,7 @@ simple.equal {{LINE}}, toArray("""
 	'xyz'
 	]
 
-simple.equal {{LINE}}, toArray("""
+tester.equal {{LINE}}, toArray("""
 	abc
 	xyz
 	""", 'noEmptyLines'), [
@@ -53,7 +53,7 @@ simple.equal {{LINE}}, toArray("""
 	'xyz'
 	]
 
-simple.equal {{LINE}}, toArray("""
+tester.equal {{LINE}}, toArray("""
 	start   tag        start
 	start   '#if'      if1
 	start   EOF        end
@@ -77,7 +77,7 @@ simple.equal {{LINE}}, toArray("""
 	"if2     EOF        end     {/if}"
 	]
 
-simple.equal {{LINE}}, toArray("""
+tester.equal {{LINE}}, toArray("""
 	start   tag        start
 	start   '#if'      if1
 	start   EOF        end
@@ -101,13 +101,13 @@ simple.equal {{LINE}}, toArray("""
 	"if2     EOF        end     {/if}"
 	]
 
-simple.equal {{LINE}}, toArray("abc\n\nxyz"), [
+tester.equal {{LINE}}, toArray("abc\n\nxyz"), [
 	'abc'
 	''
 	'xyz'
 	]
 
-simple.equal {{LINE}}, toArray("abc\n\n\nxyz\n"), [
+tester.equal {{LINE}}, toArray("abc\n\n\nxyz\n"), [
 	'abc'
 	''
 	''
@@ -115,12 +115,12 @@ simple.equal {{LINE}}, toArray("abc\n\n\nxyz\n"), [
 	''
 	]
 
-simple.equal {{LINE}}, toArray("abc\n \nxyz", 'noEmptyLines'), [
+tester.equal {{LINE}}, toArray("abc\n \nxyz", 'noEmptyLines'), [
 	'abc'
 	'xyz'
 	]
 
-simple.equal {{LINE}}, toArray("abc\n \nxyz", 'noLeadingEmptyLines'), [
+tester.equal {{LINE}}, toArray("abc\n \nxyz", 'noLeadingEmptyLines'), [
 	'abc'
 	''
 	'xyz'
@@ -128,18 +128,18 @@ simple.equal {{LINE}}, toArray("abc\n \nxyz", 'noLeadingEmptyLines'), [
 
 # ... pass in an array
 
-simple.equal {{LINE}}, toArray(["abc", "xyz"]), [
+tester.equal {{LINE}}, toArray(["abc", "xyz"]), [
 	'abc'
 	'xyz'
 	]
 
-simple.equal {{LINE}}, toArray(["abc", "", "xyz"]), [
+tester.equal {{LINE}}, toArray(["abc", "", "xyz"]), [
 	'abc'
 	''
 	'xyz'
 	]
 
-simple.equal {{LINE}}, toArray(["abc", "", "", "xyz", ""]), [
+tester.equal {{LINE}}, toArray(["abc", "", "", "xyz", ""]), [
 	'abc'
 	''
 	''
@@ -147,12 +147,12 @@ simple.equal {{LINE}}, toArray(["abc", "", "", "xyz", ""]), [
 	''
 	]
 
-simple.equal {{LINE}}, toArray(["abc", "", "xyz"], 'noEmptyLines'), [
+tester.equal {{LINE}}, toArray(["abc", "", "xyz"], 'noEmptyLines'), [
 	'abc'
 	'xyz'
 	]
 
-simple.equal {{LINE}}, toArray(["abc", " ", "xyz"], 'noLeadingEmptyLines'), [
+tester.equal {{LINE}}, toArray(["abc", " ", "xyz"], 'noLeadingEmptyLines'), [
 	'abc'
 	''
 	'xyz'
@@ -160,27 +160,27 @@ simple.equal {{LINE}}, toArray(["abc", " ", "xyz"], 'noLeadingEmptyLines'), [
 
 # ... pass in an array, some strings have newlines
 
-simple.equal {{LINE}}, toArray(["abc\ndef", "", "xyz"], 'noEmptyLines'), [
+tester.equal {{LINE}}, toArray(["abc\ndef", "", "xyz"], 'noEmptyLines'), [
 	'abc'
 	'def'
 	'xyz'
 	]
 
-simple.equal {{LINE}}, toArray(["abc\ndef", "", "xyz"], 'noLeadingEmptyLines'), [
-	'abc'
-	'def'
-	''
-	'xyz'
-	]
-
-simple.equal {{LINE}}, toArray(["", "abc\ndef", "", "xyz"], 'noLeadingEmptyLines'), [
+tester.equal {{LINE}}, toArray(["abc\ndef", "", "xyz"], 'noLeadingEmptyLines'), [
 	'abc'
 	'def'
 	''
 	'xyz'
 	]
 
-simple.equal {{LINE}}, toArray(["", "", "abc\ndef", "", "xyz"], 'noLeadingEmptyLines'), [
+tester.equal {{LINE}}, toArray(["", "abc\ndef", "", "xyz"], 'noLeadingEmptyLines'), [
+	'abc'
+	'def'
+	''
+	'xyz'
+	]
+
+tester.equal {{LINE}}, toArray(["", "", "abc\ndef", "", "xyz"], 'noLeadingEmptyLines'), [
 	'abc'
 	'def'
 	''
@@ -190,18 +190,18 @@ simple.equal {{LINE}}, toArray(["", "", "abc\ndef", "", "xyz"], 'noLeadingEmptyL
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, toArray(['abc','xyz']), [
+tester.equal {{LINE}}, toArray(['abc','xyz']), [
 	'abc'
 	'xyz'
 	]
 
-simple.equal {{LINE}}, toArray(['abc','xyz','']), [
+tester.equal {{LINE}}, toArray(['abc','xyz','']), [
 	'abc'
 	'xyz'
 	''
 	]
 
-simple.equal {{LINE}}, toArray(['abc','','xyz']), [
+tester.equal {{LINE}}, toArray(['abc','','xyz']), [
 	'abc'
 	''
 	'xyz'
@@ -210,7 +210,7 @@ simple.equal {{LINE}}, toArray(['abc','','xyz']), [
 # ---------------------------------------------------------------------------
 # --- MUST also split internal strings
 
-simple.equal {{LINE}}, toArray(['abc\ndef', 'ghi']), [
+tester.equal {{LINE}}, toArray(['abc\ndef', 'ghi']), [
 	'abc'
 	'def'
 	'ghi'
@@ -219,22 +219,22 @@ simple.equal {{LINE}}, toArray(['abc\ndef', 'ghi']), [
 # ---------------------------------------------------------------------------
 # --- test toBlock()
 
-simple.equal {{LINE}}, toBlock(undef), undef
-simple.equal {{LINE}}, toBlock([]), ""
-simple.equal {{LINE}}, toBlock([""]), ""
-simple.equal {{LINE}}, toBlock(["", ""]), "\n"
-simple.equal {{LINE}}, toBlock(['a', 'b', 'c']), "a\nb\nc"
-simple.equal {{LINE}}, toBlock(['a ', 'b ', 'c ']), "a\nb\nc"
+tester.equal {{LINE}}, toBlock(undef), undef
+tester.equal {{LINE}}, toBlock([]), ""
+tester.equal {{LINE}}, toBlock([""]), ""
+tester.equal {{LINE}}, toBlock(["", ""]), "\n"
+tester.equal {{LINE}}, toBlock(['a', 'b', 'c']), "a\nb\nc"
+tester.equal {{LINE}}, toBlock(['a ', 'b ', 'c ']), "a\nb\nc"
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, arrayToBlock(['a','b','c']), "a\nb\nc"
-simple.equal {{LINE}}, arrayToBlock(['a',undef,'b','c']), "a\nb\nc"
-simple.equal {{LINE}}, arrayToBlock([undef,'a','b','c',undef]), "a\nb\nc"
+tester.equal {{LINE}}, arrayToBlock(['a','b','c']), "a\nb\nc"
+tester.equal {{LINE}}, arrayToBlock(['a',undef,'b','c']), "a\nb\nc"
+tester.equal {{LINE}}, arrayToBlock([undef,'a','b','c',undef]), "a\nb\nc"
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, firstLine("""
+tester.equal {{LINE}}, firstLine("""
 	#starbucks
 	do this
 	do that
@@ -242,7 +242,7 @@ simple.equal {{LINE}}, firstLine("""
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, remainingLines("""
+tester.equal {{LINE}}, remainingLines("""
 	#starbucks
 	do this
 	do that
@@ -255,21 +255,21 @@ simple.equal {{LINE}}, remainingLines("""
 
 (() ->
 	str = joinBlocks('import me', '', 'do this\ndo that')
-	simple.equal {{LINE}}, str, """
+	tester.equal {{LINE}}, str, """
 		import me
 		do this
 		do that
 		"""
 	)()
 
-simple.equal {{LINE}}, joinBlocks('a', 'b'), "a\nb"
-simple.equal {{LINE}}, joinBlocks(['a', 'b']), "a\nb"
-# simple.equal {{LINE}}, joinBlocks([['a', 'b']]), "a\nb"
-simple.equal {{LINE}}, joinBlocks(['a'], ['b']), "a\nb"
+tester.equal {{LINE}}, joinBlocks('a', 'b'), "a\nb"
+tester.equal {{LINE}}, joinBlocks(['a', 'b']), "a\nb"
+# tester.equal {{LINE}}, joinBlocks([['a', 'b']]), "a\nb"
+tester.equal {{LINE}}, joinBlocks(['a'], ['b']), "a\nb"
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, normalizeBlock("""
+tester.equal {{LINE}}, normalizeBlock("""
 	line 1
 	line 2
 	"""), """
@@ -277,7 +277,7 @@ simple.equal {{LINE}}, normalizeBlock("""
 	line 2
 	"""
 
-simple.equal {{LINE}}, normalizeBlock("""
+tester.equal {{LINE}}, normalizeBlock("""
 	line 1
 
 	line 2
@@ -286,7 +286,7 @@ simple.equal {{LINE}}, normalizeBlock("""
 	line 2
 	"""
 
-simple.equal {{LINE}}, normalizeBlock("""
+tester.equal {{LINE}}, normalizeBlock("""
 
 	line 1
 
@@ -300,7 +300,7 @@ simple.equal {{LINE}}, normalizeBlock("""
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, truncateBlock("""
+tester.equal {{LINE}}, truncateBlock("""
 	line 1
 	line 2
 	line 3
@@ -320,7 +320,7 @@ simple.equal {{LINE}}, truncateBlock("""
 		"",
 		]
 	str = joinBlocks(lBlocks...)
-	simple.equal {{LINE}}, str, """
+	tester.equal {{LINE}}, str, """
 		import {say} from '@jdeighan/coffee-utils'
 		<script>
 			x = 42
@@ -339,7 +339,7 @@ simple.equal {{LINE}}, truncateBlock("""
 			LOG "line 2 in unit test"
 		"""
 	str = joinBlocks(lImports..., code)
-	simple.equal {{LINE}}, str, """
+	tester.equal {{LINE}}, str, """
 		import {say} from '@jdeighan/coffee-utils'
 		if (x==42)
 			LOG "line 2 in unit test"
@@ -359,7 +359,7 @@ simple.equal {{LINE}}, truncateBlock("""
 	filepath = "c:/Users/johnd/coffee-utils/test/data/file2.txt"
 	await forEachLine filepath, callback
 
-	simple.equal {{LINE}}, lLines, [
+	tester.equal {{LINE}}, lLines, [
 		"abc",
 		"def",
 		"ghi",
@@ -380,7 +380,7 @@ simple.equal {{LINE}}, truncateBlock("""
 	filepath = "c:/Users/johnd/coffee-utils/test/data/file3.txt"
 	await forEachBlock filepath, callback
 
-	simple.equal {{LINE}}, lBlocks, [
+	tester.equal {{LINE}}, lBlocks, [
 		"abc\ndef",
 		"abc\ndef\nghi",
 		"abc\ndef\nghi\njkl",

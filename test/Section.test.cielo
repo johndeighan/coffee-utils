@@ -1,7 +1,7 @@
 # Section.test.cielo
 
 import {assert} from '@jdeighan/exceptions'
-import {simple} from '@jdeighan/unit-tester'
+import {tester} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'
 import {
 	blockToArray, arrayToBlock, firstLine, remainingLines,
@@ -14,20 +14,20 @@ import {Section} from '@jdeighan/coffee-utils/section'
 # ---------------------------------------------------------------------------
 
 html = new Section('html')
-simple.equal  {{LINE}}, html.length(), 0
-simple.truthy {{LINE}}, html.isEmpty()
-simple.falsy  {{LINE}}, html.nonEmpty()
+tester.equal  {{LINE}}, html.length(), 0
+tester.truthy {{LINE}}, html.isEmpty()
+tester.falsy  {{LINE}}, html.nonEmpty()
 
 html.add '<h1>title</h1>'
-simple.equal  {{LINE}}, html.length(), 1
-simple.falsy  {{LINE}}, html.isEmpty()
-simple.truthy  {{LINE}}, html.nonEmpty()
+tester.equal  {{LINE}}, html.length(), 1
+tester.falsy  {{LINE}}, html.isEmpty()
+tester.truthy  {{LINE}}, html.nonEmpty()
 
 html.add '<p>para</p>'
-simple.equal  {{LINE}}, html.length(), 2
-simple.falsy  {{LINE}}, html.isEmpty()
-simple.truthy {{LINE}}, html.nonEmpty()
+tester.equal  {{LINE}}, html.length(), 2
+tester.falsy  {{LINE}}, html.isEmpty()
+tester.truthy {{LINE}}, html.nonEmpty()
 
 html.indent(1, "\t")
 
-simple.equal {{LINE}}, html.getBlock(), "\t<h1>title</h1>\n\t<p>para</p>"
+tester.equal {{LINE}}, html.getBlock(), "\t<h1>title</h1>\n\t<p>para</p>"

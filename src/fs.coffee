@@ -5,8 +5,7 @@ import urllib from 'url'
 import fs from 'fs'
 import NReadLines from 'n-readlines'
 
-import {assert, croak} from '@jdeighan/exceptions'
-import {LOG} from '@jdeighan/exceptions/log'
+import {assert, croak, LOG, fromTAML} from '@jdeighan/exceptions'
 import {
 	undef, pass, defined, rtrim, isEmpty, nonEmpty,
 	isString, isArray, isHash, isRegExp, isFunction, OL,
@@ -411,3 +410,11 @@ export backup = (file, from, to, report=false) ->
 			LOG "MISSING #{src}"
 	else
 		fs.copyFileSync(src, dest)
+
+# ---------------------------------------------------------------------------
+#   slurpTAML - read TAML from a file
+
+export slurpTAML = (filepath) ->
+
+	contents = slurp(filepath)
+	return fromTAML(contents)

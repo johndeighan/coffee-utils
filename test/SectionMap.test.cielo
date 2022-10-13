@@ -1,7 +1,7 @@
 # SectionMap.test.cielo
 
 import {assert} from '@jdeighan/exceptions'
-import {simple} from '@jdeighan/unit-tester'
+import {tester} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'
 import {elem} from '@jdeighan/coffee-utils/html'
 import {
@@ -19,15 +19,15 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		'html'
 		'script'
 		])
-	simple.truthy {{LINE}}, map.isEmpty()
-	simple.falsy  {{LINE}}, map.nonEmpty()
+	tester.truthy {{LINE}}, map.isEmpty()
+	tester.falsy  {{LINE}}, map.nonEmpty()
 
 	map.section('script').add "x = 42"
 	map.section('html').add   "<p>para</p>"
-	simple.falsy  {{LINE}}, map.isEmpty()
-	simple.truthy {{LINE}}, map.nonEmpty()
+	tester.falsy  {{LINE}}, map.isEmpty()
+	tester.truthy {{LINE}}, map.nonEmpty()
 
-	simple.equal {{LINE}}, map.getBlock(), """
+	tester.equal {{LINE}}, map.getBlock(), """
 		<p>para</p>
 		x = 42
 		"""
@@ -43,15 +43,15 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		'# |||| ='
 		'code'
 		])
-	simple.falsy {{LINE}}, map.isEmpty()
-	simple.truthy  {{LINE}}, map.nonEmpty()
+	tester.falsy {{LINE}}, map.isEmpty()
+	tester.truthy  {{LINE}}, map.nonEmpty()
 
 	map.section('code').add      "x = 42"
 	map.section('startup').add   "n = 3"
-	simple.falsy  {{LINE}}, map.isEmpty()
-	simple.truthy {{LINE}}, map.nonEmpty()
+	tester.falsy  {{LINE}}, map.isEmpty()
+	tester.truthy {{LINE}}, map.nonEmpty()
 
-	simple.equal {{LINE}}, map.getBlock(), """
+	tester.equal {{LINE}}, map.getBlock(), """
 		n = 3
 		# |||| =
 		x = 42
@@ -72,7 +72,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 
 	toJS = (line) -> return "#{line};"
 
-	simple.equal {{LINE}}, map.getBlock(undef, {script: toJS}), """
+	tester.equal {{LINE}}, map.getBlock(undef, {script: toJS}), """
 		<p>para</p>
 		x = 42;
 		"""
@@ -97,7 +97,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		script: toJS
 		html: addSpaces
 		}
-	simple.equal {{LINE}}, map.getBlock(undef, hProc), """
+	tester.equal {{LINE}}, map.getBlock(undef, hProc), """
 		<p> para </p>
 		x = 42;
 		"""
@@ -126,7 +126,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		html: addSpaces
 		Script: (block) -> return elem('script', undef, block, "\t")
 		}
-	simple.equal {{LINE}}, map.getBlock(undef, hProc), """
+	tester.equal {{LINE}}, map.getBlock(undef, hProc), """
 		<p> para </p>
 		<script>
 			x = 42;

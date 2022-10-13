@@ -2,15 +2,15 @@
 
 import {setLogger} from '@jdeighan/exceptions/log'
 import {setDebugging} from '@jdeighan/exceptions/debug'
-import {simple} from '@jdeighan/unit-tester'
+import {tester} from '@jdeighan/unit-tester'
 import {rtrim} from '@jdeighan/coffee-utils'
 import {exec} from '@jdeighan/coffee-utils/server'
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, rtrim(exec('echo hello')), """
+tester.equal {{LINE}}, rtrim(exec('echo hello')), """
 	hello
 	"""
-simple.equal {{LINE}}, rtrim(exec('echo why?')), """
+tester.equal {{LINE}}, rtrim(exec('echo why?')), """
 	why?
 	"""

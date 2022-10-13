@@ -203,14 +203,12 @@ export tag2str = (hToken, type='begin') ->
 export elem = (tagName, hAttr=undef, text=undef, oneIndent="\t") ->
 
 	if isEmpty(text)
-		return undef
-	hToken = {
-		tagName
-		hAttr
-		text
-		}
-	return toBlock([
-		tag2str(hToken, 'begin')
-		indented(text, 1, oneIndent)
-		tag2str(hToken, 'end')
-		])
+		hToken = {tagName, hAttr}
+		return tag2str(hToken, 'begin') + tag2str(hToken, 'end')
+	else
+		hToken = {tagName, hAttr, text}
+		return toBlock([
+			tag2str(hToken, 'begin')
+			indented(text, 1, oneIndent)
+			tag2str(hToken, 'end')
+			])

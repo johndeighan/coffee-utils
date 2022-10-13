@@ -3,7 +3,7 @@
 import {assert, croak} from '@jdeighan/exceptions'
 import {LOG, setLogger, resetLogger} from '@jdeighan/exceptions/log'
 import {setDebugging} from '@jdeighan/exceptions/debug'
-import {simple} from '@jdeighan/unit-tester'
+import {tester} from '@jdeighan/unit-tester'
 import {
 	say, undef, pass, warn, isString, isObject, isArray, isHash, oneof,
 	isEmpty, nonEmpty, getClassName, isNumber, isNonEmptyString,
@@ -18,60 +18,60 @@ import {arrayToBlock} from '@jdeighan/coffee-utils/block'
 
 # ---------------------------------------------------------------------------
 
-simple.equal  {{LINE}}, chomp('abc'), 'abc'
-simple.equal  {{LINE}}, chomp('abc\n'), 'abc'
-simple.equal  {{LINE}}, chomp('abc\r\n'), 'abc'
+tester.equal  {{LINE}}, chomp('abc'), 'abc'
+tester.equal  {{LINE}}, chomp('abc\n'), 'abc'
+tester.equal  {{LINE}}, chomp('abc\r\n'), 'abc'
 
-simple.equal  {{LINE}}, chomp('abc\ndef'), 'abc\ndef'
-simple.equal  {{LINE}}, chomp('abc\ndef\n'), 'abc\ndef'
-simple.equal  {{LINE}}, chomp('abc\ndef\r\n'), 'abc\ndef'
+tester.equal  {{LINE}}, chomp('abc\ndef'), 'abc\ndef'
+tester.equal  {{LINE}}, chomp('abc\ndef\n'), 'abc\ndef'
+tester.equal  {{LINE}}, chomp('abc\ndef\r\n'), 'abc\ndef'
 
-simple.equal  {{LINE}}, chomp('abc\r\ndef'), 'abc\r\ndef'
-simple.equal  {{LINE}}, chomp('abc\r\ndef\n'), 'abc\r\ndef'
-simple.equal  {{LINE}}, chomp('abc\r\ndef\r\n'), 'abc\r\ndef'
+tester.equal  {{LINE}}, chomp('abc\r\ndef'), 'abc\r\ndef'
+tester.equal  {{LINE}}, chomp('abc\r\ndef\n'), 'abc\r\ndef'
+tester.equal  {{LINE}}, chomp('abc\r\ndef\r\n'), 'abc\r\ndef'
 
-simple.truthy {{LINE}}, isEmpty('')
-simple.truthy {{LINE}}, isEmpty('  \t\t')
-simple.truthy {{LINE}}, isEmpty([])
-simple.truthy {{LINE}}, isEmpty({})
+tester.truthy {{LINE}}, isEmpty('')
+tester.truthy {{LINE}}, isEmpty('  \t\t')
+tester.truthy {{LINE}}, isEmpty([])
+tester.truthy {{LINE}}, isEmpty({})
 
-simple.truthy {{LINE}}, nonEmpty('a')
-simple.truthy {{LINE}}, nonEmpty('.')
-simple.truthy {{LINE}}, nonEmpty([2])
-simple.truthy {{LINE}}, nonEmpty({width: 2})
+tester.truthy {{LINE}}, nonEmpty('a')
+tester.truthy {{LINE}}, nonEmpty('.')
+tester.truthy {{LINE}}, nonEmpty([2])
+tester.truthy {{LINE}}, nonEmpty({width: 2})
 
-simple.truthy {{LINE}}, isNonEmptyString('abc')
-simple.falsy  {{LINE}}, isNonEmptyString(undef)
-simple.falsy  {{LINE}}, isNonEmptyString('')
-simple.falsy  {{LINE}}, isNonEmptyString('   ')
-simple.falsy  {{LINE}}, isNonEmptyString("\t\t\t")
-simple.falsy  {{LINE}}, isNonEmptyString(5)
+tester.truthy {{LINE}}, isNonEmptyString('abc')
+tester.falsy  {{LINE}}, isNonEmptyString(undef)
+tester.falsy  {{LINE}}, isNonEmptyString('')
+tester.falsy  {{LINE}}, isNonEmptyString('   ')
+tester.falsy  {{LINE}}, isNonEmptyString("\t\t\t")
+tester.falsy  {{LINE}}, isNonEmptyString(5)
 
-simple.equal  {{LINE}}, titleLine('a thing').length, 42
-simple.equal  {{LINE}}, titleLine('a thing','-',5,90).length, 90
-
-# ---------------------------------------------------------------------------
-
-simple.truthy {{LINE}}, oneof('a', 'a', 'b', 'c')
-simple.truthy {{LINE}}, oneof('b', 'a', 'b', 'c')
-simple.truthy {{LINE}}, oneof('c', 'a', 'b', 'c')
-simple.falsy  {{LINE}}, oneof('d', 'a', 'b', 'c')
-simple.falsy  {{LINE}}, oneof('x')
+tester.equal  {{LINE}}, titleLine('a thing').length, 42
+tester.equal  {{LINE}}, titleLine('a thing','-',5,90).length, 90
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, eval_expr("2 + 2"), 4
-simple.equal {{LINE}}, eval_expr("{a:1, b:undef}"), {a:1, b:undefined}
+tester.truthy {{LINE}}, oneof('a', 'a', 'b', 'c')
+tester.truthy {{LINE}}, oneof('b', 'a', 'b', 'c')
+tester.truthy {{LINE}}, oneof('c', 'a', 'b', 'c')
+tester.falsy  {{LINE}}, oneof('d', 'a', 'b', 'c')
+tester.falsy  {{LINE}}, oneof('x')
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, uniq([1,2,2,3,3]), [1,2,3]
-simple.equal {{LINE}}, uniq(['a','b','b','c','c']),['a','b','c']
+tester.equal {{LINE}}, eval_expr("2 + 2"), 4
+tester.equal {{LINE}}, eval_expr("{a:1, b:undef}"), {a:1, b:undefined}
+
+# ---------------------------------------------------------------------------
+
+tester.equal {{LINE}}, uniq([1,2,2,3,3]), [1,2,3]
+tester.equal {{LINE}}, uniq(['a','b','b','c','c']),['a','b','c']
 
 # ---------------------------------------------------------------------------
 # CURRENTLY DOES NOT PASS
 
-# simple.equal {{LINE}}, hashToStr({c:3, b:2, a:1}), """
+# tester.equal {{LINE}}, hashToStr({c:3, b:2, a:1}), """
 # 		{
 # 		   "a": 1,
 # 		   "b": 2,
@@ -81,34 +81,34 @@ simple.equal {{LINE}}, uniq(['a','b','b','c','c']),['a','b','c']
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, rtrim("abc"), "abc"
-simple.equal {{LINE}}, rtrim("  abc"), "  abc"
-simple.equal {{LINE}}, rtrim("abc  "), "abc"
-simple.equal {{LINE}}, rtrim("  abc  "), "  abc"
+tester.equal {{LINE}}, rtrim("abc"), "abc"
+tester.equal {{LINE}}, rtrim("  abc"), "  abc"
+tester.equal {{LINE}}, rtrim("abc  "), "abc"
+tester.equal {{LINE}}, rtrim("  abc  "), "  abc"
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, words('a b c'), ['a', 'b', 'c']
-simple.equal {{LINE}}, words('  a   b   c  '), ['a', 'b', 'c']
+tester.equal {{LINE}}, words('a b c'), ['a', 'b', 'c']
+tester.equal {{LINE}}, words('  a   b   c  '), ['a', 'b', 'c']
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, escapeStr("\t\tXXX\n"), "→→XXX®"
+tester.equal {{LINE}}, escapeStr("\t\tXXX\n"), "→→XXX®"
 hEsc = {
 	"\n": "\\n"
 	"\t": "\\t"
 	"\"": "\\\""
 	}
-simple.equal {{LINE}}, escapeStr("\thas quote: \"\nnext line", hEsc), \
+tester.equal {{LINE}}, escapeStr("\thas quote: \"\nnext line", hEsc), \
 	"\\thas quote: \\\"\\nnext line"
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, rtrunc('/user/lib/.env', 5), '/user/lib'
-simple.equal {{LINE}}, ltrunc('abcdefg', 3), 'defg'
+tester.equal {{LINE}}, rtrunc('/user/lib/.env', 5), '/user/lib'
+tester.equal {{LINE}}, ltrunc('abcdefg', 3), 'defg'
 
-simple.equal {{LINE}}, removeCR("abc\r\ndef\r\n"), "abc\ndef\n"
-simple.equal {{LINE}}, CWS("""
+tester.equal {{LINE}}, removeCR("abc\r\ndef\r\n"), "abc\ndef\n"
+tester.equal {{LINE}}, CWS("""
 		abc
 		def
 				ghi
@@ -116,15 +116,15 @@ simple.equal {{LINE}}, CWS("""
 
 # ---------------------------------------------------------------------------
 
-simple.truthy {{LINE}}, isArrayOfHashes([])
-simple.truthy {{LINE}}, isArrayOfHashes([{}, {}])
-simple.truthy {{LINE}}, isArrayOfHashes([{a: 1, b:2}, {}])
-simple.truthy {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}])
+tester.truthy {{LINE}}, isArrayOfHashes([])
+tester.truthy {{LINE}}, isArrayOfHashes([{}, {}])
+tester.truthy {{LINE}}, isArrayOfHashes([{a: 1, b:2}, {}])
+tester.truthy {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}])
 
-simple.falsy  {{LINE}}, isArrayOfHashes({})
-simple.falsy  {{LINE}}, isArrayOfHashes([1,2,3])
-simple.falsy  {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, 4])
-simple.falsy  {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}, [1,2]])
+tester.falsy  {{LINE}}, isArrayOfHashes({})
+tester.falsy  {{LINE}}, isArrayOfHashes([1,2,3])
+tester.falsy  {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, 4])
+tester.falsy  {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}, [1,2]])
 
 # ---------------------------------------------------------------------------
 
@@ -140,109 +140,109 @@ simple.falsy  {{LINE}}, isArrayOfHashes([{a: 1, b:2, c: [1,2,3]}, {}, [1,2]])
 	o = new NewClass()
 	n = 42
 	n2 = new Number(42)
-	s = 'simple'
+	s = 'tester'
 	s2 = new String('abc')
 
-	simple.truthy {{LINE}}, isHash(h)
-	simple.falsy  {{LINE}}, isHash(l)
-	simple.falsy  {{LINE}}, isHash(o)
-	simple.falsy  {{LINE}}, isHash(n)
-	simple.falsy  {{LINE}}, isHash(n2)
-	simple.falsy  {{LINE}}, isHash(s)
-	simple.falsy  {{LINE}}, isHash(s2)
+	tester.truthy {{LINE}}, isHash(h)
+	tester.falsy  {{LINE}}, isHash(l)
+	tester.falsy  {{LINE}}, isHash(o)
+	tester.falsy  {{LINE}}, isHash(n)
+	tester.falsy  {{LINE}}, isHash(n2)
+	tester.falsy  {{LINE}}, isHash(s)
+	tester.falsy  {{LINE}}, isHash(s2)
 
-	simple.falsy  {{LINE}}, isArray(h)
-	simple.truthy {{LINE}}, isArray(l)
-	simple.falsy  {{LINE}}, isArray(o)
-	simple.falsy  {{LINE}}, isArray(n)
-	simple.falsy  {{LINE}}, isArray(n2)
-	simple.falsy  {{LINE}}, isArray(s)
-	simple.falsy  {{LINE}}, isArray(s2)
+	tester.falsy  {{LINE}}, isArray(h)
+	tester.truthy {{LINE}}, isArray(l)
+	tester.falsy  {{LINE}}, isArray(o)
+	tester.falsy  {{LINE}}, isArray(n)
+	tester.falsy  {{LINE}}, isArray(n2)
+	tester.falsy  {{LINE}}, isArray(s)
+	tester.falsy  {{LINE}}, isArray(s2)
 
-	simple.falsy  {{LINE}}, isString(undef)
-	simple.falsy  {{LINE}}, isString(h)
-	simple.falsy  {{LINE}}, isString(l)
-	simple.falsy  {{LINE}}, isString(o)
-	simple.falsy  {{LINE}}, isString(n)
-	simple.falsy  {{LINE}}, isString(n2)
-	simple.truthy {{LINE}}, isString(s)
-	simple.truthy {{LINE}}, isString(s2)
+	tester.falsy  {{LINE}}, isString(undef)
+	tester.falsy  {{LINE}}, isString(h)
+	tester.falsy  {{LINE}}, isString(l)
+	tester.falsy  {{LINE}}, isString(o)
+	tester.falsy  {{LINE}}, isString(n)
+	tester.falsy  {{LINE}}, isString(n2)
+	tester.truthy {{LINE}}, isString(s)
+	tester.truthy {{LINE}}, isString(s2)
 
-	simple.falsy  {{LINE}}, isObject(h)
-	simple.falsy  {{LINE}}, isObject(l)
-	simple.truthy {{LINE}}, isObject(o)
-	simple.truthy {{LINE}}, isObject(o, ['name','doIt'])
-	simple.falsy  {{LINE}}, isObject(o, ['name','doIt','missing'])
-	simple.falsy  {{LINE}}, isObject(n)
-	simple.falsy  {{LINE}}, isObject(n2)
-	simple.falsy  {{LINE}}, isObject(s)
-	simple.falsy  {{LINE}}, isObject(s2)
+	tester.falsy  {{LINE}}, isObject(h)
+	tester.falsy  {{LINE}}, isObject(l)
+	tester.truthy {{LINE}}, isObject(o)
+	tester.truthy {{LINE}}, isObject(o, ['name','doIt'])
+	tester.falsy  {{LINE}}, isObject(o, ['name','doIt','missing'])
+	tester.falsy  {{LINE}}, isObject(n)
+	tester.falsy  {{LINE}}, isObject(n2)
+	tester.falsy  {{LINE}}, isObject(s)
+	tester.falsy  {{LINE}}, isObject(s2)
 
-	simple.falsy  {{LINE}}, isNumber(h)
-	simple.falsy  {{LINE}}, isNumber(l)
-	simple.falsy  {{LINE}}, isNumber(o)
-	simple.truthy {{LINE}}, isNumber(n)
-	simple.truthy {{LINE}}, isNumber(n2)
-	simple.falsy  {{LINE}}, isNumber(s)
-	simple.falsy  {{LINE}}, isNumber(s2)
+	tester.falsy  {{LINE}}, isNumber(h)
+	tester.falsy  {{LINE}}, isNumber(l)
+	tester.falsy  {{LINE}}, isNumber(o)
+	tester.truthy {{LINE}}, isNumber(n)
+	tester.truthy {{LINE}}, isNumber(n2)
+	tester.falsy  {{LINE}}, isNumber(s)
+	tester.falsy  {{LINE}}, isNumber(s2)
 
-	simple.truthy {{LINE}}, isNumber(42.0, {min: 42.0})
-	simple.falsy  {{LINE}}, isNumber(42.0, {min: 42.1})
-	simple.truthy {{LINE}}, isNumber(42.0, {max: 42.0})
-	simple.falsy  {{LINE}}, isNumber(42.0, {max: 41.9})
+	tester.truthy {{LINE}}, isNumber(42.0, {min: 42.0})
+	tester.falsy  {{LINE}}, isNumber(42.0, {min: 42.1})
+	tester.truthy {{LINE}}, isNumber(42.0, {max: 42.0})
+	tester.falsy  {{LINE}}, isNumber(42.0, {max: 41.9})
 	)()
 
 # ---------------------------------------------------------------------------
 
-simple.truthy {{LINE}}, isFunction(() -> pass)
-simple.falsy  {{LINE}}, isFunction(23)
+tester.truthy {{LINE}}, isFunction(() -> pass)
+tester.falsy  {{LINE}}, isFunction(23)
 
-simple.truthy {{LINE}}, isInteger(42)
-simple.truthy {{LINE}}, isInteger(new Number(42))
-simple.falsy  {{LINE}}, isInteger('abc')
-simple.falsy  {{LINE}}, isInteger({})
-simple.falsy  {{LINE}}, isInteger([])
-simple.truthy {{LINE}}, isInteger(42, {min:  0})
-simple.falsy  {{LINE}}, isInteger(42, {min: 50})
-simple.truthy {{LINE}}, isInteger(42, {max: 50})
-simple.falsy  {{LINE}}, isInteger(42, {max:  0})
-
-# ---------------------------------------------------------------------------
-
-simple.equal {{LINE}}, OL(undef), "undef"
-simple.equal {{LINE}}, OL("\t\tabc\nxyz"), "'→→abc®xyz'"
-simple.equal {{LINE}}, OL({a:1, b:'xyz'}), '{"a":1,"b":"xyz"}'
+tester.truthy {{LINE}}, isInteger(42)
+tester.truthy {{LINE}}, isInteger(new Number(42))
+tester.falsy  {{LINE}}, isInteger('abc')
+tester.falsy  {{LINE}}, isInteger({})
+tester.falsy  {{LINE}}, isInteger([])
+tester.truthy {{LINE}}, isInteger(42, {min:  0})
+tester.falsy  {{LINE}}, isInteger(42, {min: 50})
+tester.truthy {{LINE}}, isInteger(42, {max: 50})
+tester.falsy  {{LINE}}, isInteger(42, {max:  0})
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, CWS("""
-		a simple
+tester.equal {{LINE}}, OL(undef), "undef"
+tester.equal {{LINE}}, OL("\t\tabc\nxyz"), "'→→abc®xyz'"
+tester.equal {{LINE}}, OL({a:1, b:'xyz'}), '{"a":1,"b":"xyz"}'
+
+# ---------------------------------------------------------------------------
+
+tester.equal {{LINE}}, CWS("""
+		a tester
 		error message
-		"""), "a simple error message"
+		"""), "a tester error message"
 
 # ---------------------------------------------------------------------------
 # test isRegExp()
 
-simple.truthy {{LINE}}, isRegExp(/^abc$/)
-simple.truthy {{LINE}}, isRegExp(///^
+tester.truthy {{LINE}}, isRegExp(/^abc$/)
+tester.truthy {{LINE}}, isRegExp(///^
 		\s*
 		where
 		\s+
 		areyou
 		$///)
-simple.falsy  {{LINE}}, isRegExp(42)
-simple.falsy  {{LINE}}, isRegExp('abc')
-simple.falsy  {{LINE}}, isRegExp([1,'a'])
-simple.falsy  {{LINE}}, isRegExp({a:1, b:'ccc'})
-simple.falsy  {{LINE}}, isRegExp(undef)
+tester.falsy  {{LINE}}, isRegExp(42)
+tester.falsy  {{LINE}}, isRegExp('abc')
+tester.falsy  {{LINE}}, isRegExp([1,'a'])
+tester.falsy  {{LINE}}, isRegExp({a:1, b:'ccc'})
+tester.falsy  {{LINE}}, isRegExp(undef)
 
-simple.truthy {{LINE}}, isRegExp(/\.coffee/)
+tester.truthy {{LINE}}, isRegExp(/\.coffee/)
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, extractMatches("..3 and 4 plus 5", /\d+/g, parseInt),
+tester.equal {{LINE}}, extractMatches("..3 and 4 plus 5", /\d+/g, parseInt),
 	[3, 4, 5]
-simple.equal {{LINE}}, extractMatches("And This Is A String", /A/g), ['A','A']
+tester.equal {{LINE}}, extractMatches("And This Is A String", /A/g), ['A','A']
 
 # ---------------------------------------------------------------------------
 
@@ -252,15 +252,15 @@ process.env["C"] = 'three'
 process.env["cielo.D"] = 'four'
 
 h = envVarsWithPrefix('cielo.')
-simple.equal {{LINE}}, h, {"cielo.B": 'two', "cielo.D": 'four'}
+tester.equal {{LINE}}, h, {"cielo.B": 'two', "cielo.D": 'four'}
 
 h = envVarsWithPrefix('cielo.', {stripPrefix: true})
-simple.equal {{LINE}}, h, {B: 'two', D: 'four'}
+tester.equal {{LINE}}, h, {B: 'two', D: 'four'}
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, strcat('a','b','c'), 'abc'
-simple.equal {{LINE}}, strcat('a',5,'c'), 'a5c'
+tester.equal {{LINE}}, strcat('a','b','c'), 'abc'
+tester.equal {{LINE}}, strcat('a',5,'c'), 'a5c'
 
 # ---------------------------------------------------------------------------
 
@@ -274,14 +274,14 @@ hVars = {
 	var3: {a:1, b:2, c:'c'}
 	}
 
-simple.equal {{LINE}}, replaceVars("My __world__", hVars), "My X"
-simple.equal {{LINE}}, replaceVars("line __LINE__", hVars), "line 3"
-simple.equal {{LINE}}, replaceVars("file __env.FILE__"), "file sample.txt"
-simple.equal {{LINE}}, replaceVars("file __FILE__, line __LINE__", hVars), "file utils.test.coffee, line 3"
+tester.equal {{LINE}}, replaceVars("My __world__", hVars), "My X"
+tester.equal {{LINE}}, replaceVars("line __LINE__", hVars), "line 3"
+tester.equal {{LINE}}, replaceVars("file __env.FILE__"), "file sample.txt"
+tester.equal {{LINE}}, replaceVars("file __FILE__, line __LINE__", hVars), "file utils.test.coffee, line 3"
 
-simple.equal {{LINE}}, replaceVars("value is __var1__", hVars), "value is __var1__"
-simple.equal {{LINE}}, replaceVars("value is __var2__", hVars), 'value is ["a","b",3]'
-simple.equal {{LINE}}, replaceVars("value is __var3__", hVars), 'value is {"a":1,"b":2,"c":"c"}'
+tester.equal {{LINE}}, replaceVars("value is __var1__", hVars), "value is __var1__"
+tester.equal {{LINE}}, replaceVars("value is __var2__", hVars), 'value is ["a","b",3]'
+tester.equal {{LINE}}, replaceVars("value is __var3__", hVars), 'value is {"a":1,"b":2,"c":"c"}'
 
 # ---------------------------------------------------------------------------
 
@@ -293,66 +293,66 @@ hVars = {
 	var3: {a:1, b:2, c:'c'}
 	}
 
-simple.equal {{LINE}}, replaceVars("value is __var1__", hVars), "value is __var1__"
+tester.equal {{LINE}}, replaceVars("value is __var1__", hVars), "value is __var1__"
 
 # ---------------------------------------------------------------------------
 
 (() ->
-	simple.truthy {{LINE}}, isUniqueList(undef)
-	simple.truthy {{LINE}}, isUniqueList([])
-	simple.truthy {{LINE}}, isUniqueList([1])
-	simple.truthy {{LINE}}, isUniqueList(['a'])
-	simple.truthy {{LINE}}, isUniqueList(['a','b','c'])
-	simple.truthy {{LINE}}, isUniqueList([1,2,3])
-	simple.falsy  {{LINE}}, isUniqueList(['a','b','a'])
-	simple.falsy  {{LINE}}, isUniqueList([1,2,1])
+	tester.truthy {{LINE}}, isUniqueList(undef)
+	tester.truthy {{LINE}}, isUniqueList([])
+	tester.truthy {{LINE}}, isUniqueList([1])
+	tester.truthy {{LINE}}, isUniqueList(['a'])
+	tester.truthy {{LINE}}, isUniqueList(['a','b','c'])
+	tester.truthy {{LINE}}, isUniqueList([1,2,3])
+	tester.falsy  {{LINE}}, isUniqueList(['a','b','a'])
+	tester.falsy  {{LINE}}, isUniqueList([1,2,1])
 
 	# --- test for single, lower-case letter
 	func = (x) ->
 		isString(x) && defined(x.match(/^[a-z]$/))
 
-	simple.truthy {{LINE}}, isUniqueList(['a','b','c'], func)
-	simple.falsy  {{LINE}}, isUniqueList(['a','b','C'], func)
-	simple.falsy  {{LINE}}, isUniqueList(['a','b',1], func)
-	simple.falsy  {{LINE}}, isUniqueList(['a','b','a'], func)
-	simple.falsy  {{LINE}}, isUniqueList(['a','b',undef], func)
-	simple.falsy  {{LINE}}, isUniqueList(['a','b',''], func)
+	tester.truthy {{LINE}}, isUniqueList(['a','b','c'], func)
+	tester.falsy  {{LINE}}, isUniqueList(['a','b','C'], func)
+	tester.falsy  {{LINE}}, isUniqueList(['a','b',1], func)
+	tester.falsy  {{LINE}}, isUniqueList(['a','b','a'], func)
+	tester.falsy  {{LINE}}, isUniqueList(['a','b',undef], func)
+	tester.falsy  {{LINE}}, isUniqueList(['a','b',''], func)
 	)()
 
 # ---------------------------------------------------------------------------
 
 (() ->
-	simple.truthy {{LINE}}, isUniqueTree(['a', ['b','c'], 'd'])
-	simple.falsy  {{LINE}}, isUniqueTree(['a', ['b','a'], 'd'])
+	tester.truthy {{LINE}}, isUniqueTree(['a', ['b','c'], 'd'])
+	tester.falsy  {{LINE}}, isUniqueTree(['a', ['b','a'], 'd'])
 
 	# --- test for single, lower-case letter
 	func = (x) ->
 		isString(x) && defined(x.match(/^[a-z]$/))
 
-	simple.falsy  {{LINE}}, isUniqueTree(['a', ['b','C'], 'd'], func)
-	simple.falsy  {{LINE}}, isUniqueTree(['a', ['b','cc'], 'd'], func)
+	tester.falsy  {{LINE}}, isUniqueTree(['a', ['b','C'], 'd'], func)
+	tester.falsy  {{LINE}}, isUniqueTree(['a', ['b','cc'], 'd'], func)
 	)()
 
 # ---------------------------------------------------------------------------
 
-simple.truthy {{LINE}}, notdefined(undef)
-simple.truthy {{LINE}}, notdefined(null)
-simple.truthy {{LINE}}, defined('')
-simple.truthy {{LINE}}, defined(5)
-simple.truthy {{LINE}}, defined([])
-simple.truthy {{LINE}}, defined({})
+tester.truthy {{LINE}}, notdefined(undef)
+tester.truthy {{LINE}}, notdefined(null)
+tester.truthy {{LINE}}, defined('')
+tester.truthy {{LINE}}, defined(5)
+tester.truthy {{LINE}}, defined([])
+tester.truthy {{LINE}}, defined({})
 
-simple.falsy {{LINE}}, defined(undef)
-simple.falsy {{LINE}}, defined(null)
-simple.falsy {{LINE}}, notdefined('')
-simple.falsy {{LINE}}, notdefined(5)
-simple.falsy {{LINE}}, notdefined([])
-simple.falsy {{LINE}}, notdefined({})
+tester.falsy {{LINE}}, defined(undef)
+tester.falsy {{LINE}}, defined(null)
+tester.falsy {{LINE}}, notdefined('')
+tester.falsy {{LINE}}, notdefined(5)
+tester.falsy {{LINE}}, notdefined([])
+tester.falsy {{LINE}}, notdefined({})
 
 # ---------------------------------------------------------------------------
 
-simple.truthy {{LINE}}, isIterable([])
-simple.truthy {{LINE}}, isIterable(['a','b'])
+tester.truthy {{LINE}}, isIterable([])
+tester.truthy {{LINE}}, isIterable(['a','b'])
 
 gen = () ->
 	yield 1
@@ -360,7 +360,7 @@ gen = () ->
 	yield 3
 	return
 
-simple.truthy {{LINE}}, isIterable(gen())
+tester.truthy {{LINE}}, isIterable(gen())
 
 # ---------------------------------------------------------------------------
 
@@ -369,38 +369,38 @@ simple.truthy {{LINE}}, isIterable(gen())
 		constructor: (str) ->
 			@mystr = str
 
-	simple.equal {{LINE}}, className(MyClass), 'MyClass'
+	tester.equal {{LINE}}, className(MyClass), 'MyClass'
 
 	)()
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, range(3), [0,1,2]
+tester.equal {{LINE}}, range(3), [0,1,2]
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, setCharsAt('abc', 1, 'x'), 'axc'
-simple.equal {{LINE}}, setCharsAt('abc', 1, 'xy'), 'axy'
-simple.equal {{LINE}}, setCharsAt('abc', 1, 'xyz'), 'axyz'
+tester.equal {{LINE}}, setCharsAt('abc', 1, 'x'), 'axc'
+tester.equal {{LINE}}, setCharsAt('abc', 1, 'xy'), 'axy'
+tester.equal {{LINE}}, setCharsAt('abc', 1, 'xyz'), 'axyz'
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, patchStr('------------', 3, 'arg 3'), '---arg 3----'
-simple.equal {{LINE}}, patchStr('------------', 3, ' arg 3 '), '--- arg 3 --'
-simple.equal {{LINE}}, patchStr('-----', 3, 'arg 3'), '---arg 3'
+tester.equal {{LINE}}, patchStr('------------', 3, 'arg 3'), '---arg 3----'
+tester.equal {{LINE}}, patchStr('------------', 3, ' arg 3 '), '--- arg 3 --'
+tester.equal {{LINE}}, patchStr('-----', 3, 'arg 3'), '---arg 3'
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, charCount("aaa", "a"), 3
-simple.equal {{LINE}}, charCount("aaa", "b"), 0
-simple.equal {{LINE}}, charCount("aaa", "a"), 3
-simple.equal {{LINE}}, charCount("axaxa", "a"), 3
-simple.equal {{LINE}}, charCount("line\nline\nline", "\n"), 2
-simple.equal {{LINE}}, charCount("abc", "\n"), 0
+tester.equal {{LINE}}, charCount("aaa", "a"), 3
+tester.equal {{LINE}}, charCount("aaa", "b"), 0
+tester.equal {{LINE}}, charCount("aaa", "a"), 3
+tester.equal {{LINE}}, charCount("axaxa", "a"), 3
+tester.equal {{LINE}}, charCount("line\nline\nline", "\n"), 2
+tester.equal {{LINE}}, charCount("abc", "\n"), 0
 
 # ---------------------------------------------------------------------------
 
-simple.equal {{LINE}}, getOptions('a b c'), {'a':true, 'b':true, 'c':true}
-simple.equal {{LINE}}, getOptions('abc'), {'abc':true}
-simple.equal {{LINE}}, getOptions({'a':true, 'b':false, 'c':42}), {'a':true, 'b':false, 'c':42}
-simple.equal {{LINE}}, getOptions(), {}
+tester.equal {{LINE}}, getOptions('a b c'), {'a':true, 'b':true, 'c':true}
+tester.equal {{LINE}}, getOptions('abc'), {'abc':true}
+tester.equal {{LINE}}, getOptions({'a':true, 'b':false, 'c':42}), {'a':true, 'b':false, 'c':42}
+tester.equal {{LINE}}, getOptions(), {}

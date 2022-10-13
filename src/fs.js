@@ -12,12 +12,10 @@ import NReadLines from 'n-readlines';
 
 import {
   assert,
-  croak
+  croak,
+  LOG,
+  fromTAML
 } from '@jdeighan/exceptions';
-
-import {
-  LOG
-} from '@jdeighan/exceptions/log';
 
 import {
   undef,
@@ -486,4 +484,12 @@ export var backup = function(file, from, to, report = false) {
   } else {
     return fs.copyFileSync(src, dest);
   }
+};
+
+// ---------------------------------------------------------------------------
+//   slurpTAML - read TAML from a file
+export var slurpTAML = function(filepath) {
+  var contents;
+  contents = slurp(filepath);
+  return fromTAML(contents);
 };

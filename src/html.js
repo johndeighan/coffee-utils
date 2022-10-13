@@ -210,8 +210,10 @@ export var tag2str = function(hToken, type = 'begin') {
 export var elem = function(tagName, hAttr = undef, text = undef, oneIndent = "\t") {
   var hToken;
   if (isEmpty(text)) {
-    return undef;
+    hToken = {tagName, hAttr};
+    return tag2str(hToken, 'begin') + tag2str(hToken, 'end');
+  } else {
+    hToken = {tagName, hAttr, text};
+    return toBlock([tag2str(hToken, 'begin'), indented(text, 1, oneIndent), tag2str(hToken, 'end')]);
   }
-  hToken = {tagName, hAttr, text};
-  return toBlock([tag2str(hToken, 'begin'), indented(text, 1, oneIndent), tag2str(hToken, 'end')]);
 };

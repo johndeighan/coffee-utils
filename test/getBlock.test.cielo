@@ -2,7 +2,7 @@
 
 import {assert, croak} from '@jdeighan/exceptions'
 import {LOG} from '@jdeighan/exceptions/log'
-import {simple, UnitTester} from '@jdeighan/unit-tester'
+import {tester, UnitTester} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'
 import {elem} from '@jdeighan/coffee-utils/html'
 import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
@@ -18,7 +18,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 	map.section('script').add "x = 42"
 	map.section('html').add   "<p> hello </p>"
 
-	simple.equal {{LINE}}, map.getBlock(), """
+	tester.equal {{LINE}}, map.getBlock(), """
 		<p> hello </p>
 		x = 42
 		"""
@@ -42,13 +42,13 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 	map.section('startup').add   "LOG 'starting'"
 	map.section('html').add      "<p> hello </p>"
 
-	simple.equal {{LINE}}, map.getBlock(), """
+	tester.equal {{LINE}}, map.getBlock(), """
 		<p> hello </p>
 		LOG 'starting'
 		x = 42
 		"""
 
-	simple.equal {{LINE}}, map.getBlock('Script'), """
+	tester.equal {{LINE}}, map.getBlock('Script'), """
 		LOG 'starting'
 		x = 42
 		"""
@@ -76,7 +76,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 	map.section('html').add      "<p> hello </p>"
 	map.section('code').add      "LOG 'Done'"
 
-	simple.equal {{LINE}}, map.getBlock(), """
+	tester.equal {{LINE}}, map.getBlock(), """
 		<h1> title </h1>
 		<p> hello </p>
 		LOG 'starting'
@@ -86,7 +86,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		LOG 'Done'
 		"""
 
-	simple.equal {{LINE}}, map.getBlock('Script'), """
+	tester.equal {{LINE}}, map.getBlock('Script'), """
 		LOG 'starting'
 		y = 4*x
 		# |||| =
@@ -123,7 +123,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 	map.section('html').add      "<p> hello </p>"
 	map.section('code').add      "LOG 'Done'"
 
-	simple.equal {{LINE}}, map.getBlock(), """
+	tester.equal {{LINE}}, map.getBlock(), """
 		<h1> title </h1>
 		<p> hello </p>
 		LOG 'starting'
@@ -136,7 +136,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		...}
 		"""
 
-	simple.equal {{LINE}}, map.getBlock('Script'), """
+	tester.equal {{LINE}}, map.getBlock('Script'), """
 		LOG 'starting'
 		y = 4*x
 		# |||| =
@@ -149,7 +149,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		style:  (block) -> return elem('style',  undef, block, "\t")
 		}
 
-	simple.equal {{LINE}}, map.getBlock('Script', hProcs), """
+	tester.equal {{LINE}}, map.getBlock('Script', hProcs), """
 		<script>
 			LOG 'starting'
 			y = 4*x
@@ -159,12 +159,12 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		</script>
 		"""
 
-	simple.equal {{LINE}}, map.getBlock('NonStartup'), """
+	tester.equal {{LINE}}, map.getBlock('NonStartup'), """
 		x = 42
 		LOG 'Done'
 		"""
 
-	simple.equal {{LINE}}, map.getBlock('style'), """
+	tester.equal {{LINE}}, map.getBlock('style'), """
 		p {
 		...color: red
 		...}
