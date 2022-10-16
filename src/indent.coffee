@@ -71,11 +71,18 @@ export isUndented = (line) ->
 
 export indented = (input, level=1, oneIndent="\t") ->
 
-	assert (level >= 0), "indented(): negative level"
-	if (level == 0)
-		return input
-
-	toAdd = indentation(level, oneIndent)
+	if isString(level)
+		# --- level can be a string
+		if (level == "")
+			return input
+		toAdd = level
+	else if isInteger(level)
+		assert (level >= 0), "indented(): negative level"
+		if (level == 0)
+			return input
+		toAdd = indentation(level, oneIndent)
+	else
+		croak "level must be a string or integer"
 
 	# --- NOTE: toArray(input) just returns input if it's an array
 	#           else it splits the string into an array of lines
