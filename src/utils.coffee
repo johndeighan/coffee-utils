@@ -21,9 +21,8 @@ export {
 	}
 
 # ---------------------------------------------------------------------------
-# TEMP!!!!!
 
-export isComment = (line) =>
+export isHashComment = (line) =>
 
 	lMatches = line.match(///^
 			\s*
@@ -72,6 +71,22 @@ export charCount = (str, ch) ->
 export oneof = (word, lWords...) ->
 
 	return (lWords.indexOf(word) >= 0)
+
+# ---------------------------------------------------------------------------
+
+export removeKeys = (h, lKeys) =>
+
+	for key in lKeys
+		delete h[key]
+	for own key,value of h
+		if defined(value)
+			if isArray(value)
+				for item in value
+					if isHash(item)
+						removeKeys(item, lKeys)
+			else if (typeof value == 'object')
+				removeKeys value, lKeys
+	return
 
 # ---------------------------------------------------------------------------
 
