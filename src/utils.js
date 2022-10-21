@@ -41,7 +41,8 @@ import {
   chomp,
   rtrim,
   setCharsAt,
-  words
+  words,
+  getOptions
 } from '@jdeighan/exceptions/utils';
 
 export {
@@ -74,7 +75,8 @@ export {
   chomp,
   rtrim,
   setCharsAt,
-  words
+  words,
+  getOptions
 };
 
 // ---------------------------------------------------------------------------
@@ -466,25 +468,6 @@ export var range = function(n) {
     for (var i = 0, ref = n - 1; 0 <= ref ? i <= ref : i >= ref; 0 <= ref ? i++ : i--){ results.push(i); }
     return results;
   }).apply(this);
-};
-
-// ---------------------------------------------------------------------------
-export var getOptions = function(hOptions, hDefault = {}) {
-  var h, i, len, ref, word;
-  // --- If hOptions is a string, break into words and set each to true
-  if (isString(hOptions)) {
-    h = {};
-    ref = words(hOptions);
-    for (i = 0, len = ref.length; i < len; i++) {
-      word = ref[i];
-      h[word] = true;
-    }
-    return h;
-  } else if (isHash(hOptions)) {
-    return hOptions;
-  } else {
-    return hDefault;
-  }
 };
 
 // ---------------------------------------------------------------------------

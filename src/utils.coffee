@@ -8,7 +8,7 @@ import {
 	isString, isNumber, isInteger, isHash, isArray, isBoolean,
 	isConstructor, isFunction, isRegExp, isObject, getClassName,
 	jsType,
-	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words,
+	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words, getOptions,
 	} from '@jdeighan/exceptions/utils'
 
 export {
@@ -17,7 +17,7 @@ export {
 	isString, isNumber, isInteger, isHash, isArray, isBoolean,
 	isConstructor, isFunction, isRegExp, isObject, getClassName,
 	jsType,
-	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words,
+	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words, getOptions,
 	}
 
 # ---------------------------------------------------------------------------
@@ -365,21 +365,6 @@ export className = (aClass) ->
 export range = (n) ->
 
 	return [0..n-1]
-
-# ---------------------------------------------------------------------------
-
-export getOptions = (hOptions, hDefault={}) ->
-	# --- If hOptions is a string, break into words and set each to true
-
-	if isString(hOptions)
-		h = {}
-		for word in words(hOptions)
-			h[word] = true
-		return h
-	else if isHash(hOptions)
-		return hOptions
-	else
-		return hDefault
 
 # ---------------------------------------------------------------------------
 
