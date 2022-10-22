@@ -160,7 +160,7 @@ export isArrayOfStrings = (lItems) ->
 
 export isUniqueList = (lItems, func=undef) ->
 
-	if ! lItems?
+	if notdefined(lItems)
 		return true     # empty list is unique
 	if defined(func)
 		assert isFunction(func), "Not a function: #{OL(func)}"
@@ -275,7 +275,7 @@ export extractMatches = (line, regexp, convertFunc=undef) ->
 	lStrings = [...line.matchAll(regexp)]
 	lStrings = for str in lStrings
 		str[0]
-	if convertFunc?
+	if defined(convertFunc)
 		lConverted = for str in lStrings
 			convertFunc(str)
 		return lConverted

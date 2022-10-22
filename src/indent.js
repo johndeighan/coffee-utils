@@ -28,6 +28,7 @@ export var splitPrefix = function(line) {
   assert(isString(line), `non-string ${OL(line)}`);
   line = rtrim(line);
   lMatches = line.match(/^(\s*)(.*)$/);
+  assert(defined(lMatches), `Failed to match: ${OL(line)}`);
   return [lMatches[1], lMatches[2]];
 };
 

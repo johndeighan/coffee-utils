@@ -226,7 +226,7 @@ export var isArrayOfStrings = function(lItems) {
 // ---------------------------------------------------------------------------
 export var isUniqueList = function(lItems, func = undef) {
   var h, i, item, len;
-  if (lItems == null) {
+  if (notdefined(lItems)) {
     return true; // empty list is unique
   }
   if (defined(func)) {
@@ -353,7 +353,7 @@ export var extractMatches = function(line, regexp, convertFunc = undef) {
     }
     return results;
   })();
-  if (convertFunc != null) {
+  if (defined(convertFunc)) {
     lConverted = (function() {
       var i, len, results;
       results = [];
