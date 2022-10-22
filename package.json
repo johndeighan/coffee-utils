@@ -32,7 +32,7 @@
 		"verbose": false
 	},
 	"scripts": {
-		"build": "cls && rm -f ./src/*.js && coffee -c ./src",
+		"build": "cls && rm -f ./*.js && coffee -c .",
 		"pretest": "cls && cielo -qfc ./test && coffee -c .",
 		"test": "npm run build && ava ./test/*.test.js && git status"
 	},
@@ -50,7 +50,7 @@
 	},
 	"homepage": "https://github.com/johndeighan/coffee-utils#readme",
 	"dependencies": {
-		"@jdeighan/exceptions": "^1.0.18",
+		"@jdeighan/exceptions": "^1.0.19",
 		"cross-env": "^7.0.3",
 		"js-yaml": "^4.1.0",
 		"n-readlines": "^1.0.1",
@@ -58,6 +58,6 @@
 		"svelte": "^3.52.0"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^2.0.42"
+		"@jdeighan/unit-tester": "^2.0.43"
 	}
 }

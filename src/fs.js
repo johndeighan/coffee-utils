@@ -24,6 +24,7 @@ import {
   rtrim,
   isEmpty,
   nonEmpty,
+  getOptions,
   isString,
   isArray,
   isHash,
@@ -48,6 +49,15 @@ export var mydir = function(url) {
 };
 
 // ---------------------------------------------------------------------------
+export var projRoot = function(url) {
+  var dir, pathToPkg;
+  dir = mydir(url);
+  return pathToPkg = pathTo('package.json', dir, {
+    direction: 'up'
+  });
+};
+
+// ---------------------------------------------------------------------------
 //    myfile() - pass argument import.meta.url and it will return
 //               the name of your file
 export var myfile = function(url) {
@@ -67,19 +77,23 @@ export var myfullpath = function(url) {
 };
 
 // ---------------------------------------------------------------------------
+export var getStats = function(fullpath) {
+  return fs.lstatSync(fullpath);
+};
+
+// ---------------------------------------------------------------------------
 export var isFile = function(fullpath) {
-  return fs.lstatSync(fullpath).isFile();
+  try {
+    return getStats(fullpath).isFile();
+  } catch (error) {
+    return false;
+  }
 };
 
 // ---------------------------------------------------------------------------
 export var isDir = function(fullpath) {
-  var obj;
   try {
-    obj = fs.lstatSync(fullpath);
-    if (obj == null) {
-      return false;
-    }
-    return obj.isDirectory();
+    return getStats(fullpath).isDirectory();
   } catch (error) {
     return false;
   }
@@ -308,25 +322,23 @@ export var forEachFile = function(dir, cb, filt = undef, level = 0) {
 };
 
 // ---------------------------------------------------------------------------
-export var pathTo = function(fname, searchDir, hOptions = {}) {
+export var pathTo = function(fname, searchDir, options = undef) {
   var dirPath, direction, dirpath, filepath, fpath, i, len, nLevels, ref, relative, subdir;
-  ({direction, relative} = hOptions);
-  if (isEmpty(direction)) {
-    direction = 'down';
-  }
-  if (isEmpty(relative)) {
-    relative = false;
-  }
+  ({direction, relative} = getOptions(options, {
+    direction: 'down',
+    relative: false
+  }));
   if (!searchDir) {
     searchDir = process.cwd();
   }
-  assert(fs.existsSync(searchDir), `Dir ${searchDir} does not exist`);
+  assert(isDir(searchDir), `Not a directory: ${OL(searchDir)}`);
   filepath = mkpath(searchDir, fname);
-  if (fs.existsSync(filepath)) {
+  if (isFile(filepath)) {
     if (relative) {
-      filepath = `./${fname}`;
+      return `./${fname}`;
+    } else {
+      return filepath;
     }
-    return filepath;
   }
   if (direction === 'down') {
     ref = getSubDirs(searchDir);
@@ -335,11 +347,12 @@ export var pathTo = function(fname, searchDir, hOptions = {}) {
     for (i = 0, len = ref.length; i < len; i++) {
       subdir = ref[i];
       dirpath = mkpath(searchDir, subdir);
-      if (defined(fpath = pathTo(fname, dirpath, hOptions))) {
+      if (defined(fpath = pathTo(fname, dirpath, options))) {
         if (relative) {
-          fpath = fpath.replace('./', `./${subdir}/`);
+          return fpath.replace('./', `./${subdir}/`);
+        } else {
+          return fpath;
         }
-        return fpath;
       }
     }
   } else if (direction === 'up') {
@@ -347,10 +360,9 @@ export var pathTo = function(fname, searchDir, hOptions = {}) {
     while (defined(dirPath = getParentDir(searchDir))) {
       nLevels += 1;
       fpath = mkpath(dirPath, fname);
-      if (fs.existsSync(fpath)) {
+      if (isFile(fpath)) {
         if (relative) {
-          fpath = "../".repeat(nLevels) + fname;
-          return fpath;
+          return "../".repeat(nLevels) + fname;
         } else {
           return fpath;
         }

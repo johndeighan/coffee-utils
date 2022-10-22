@@ -7,7 +7,7 @@ import NReadLines from 'n-readlines'
 
 import {assert, croak, LOG, fromTAML} from '@jdeighan/exceptions'
 import {
-	undef, pass, defined, rtrim, isEmpty, nonEmpty,
+	undef, pass, defined, rtrim, isEmpty, nonEmpty, getOptions,
 	isString, isArray, isHash, isRegExp, isFunction, OL,
 	} from '@jdeighan/coffee-utils'
 import {arrayToBlock} from '@jdeighan/coffee-utils/block'
@@ -22,6 +22,13 @@ export mydir = (url) ->
 	dir = pathlib.dirname(path)
 	final = mkpath(dir)
 	return final
+
+# ---------------------------------------------------------------------------
+
+export projRoot = (url) ->
+
+	dir = mydir(url)
+	pathToPkg = pathTo('package.json', dir, {direction: 'up'})
 
 # ---------------------------------------------------------------------------
 #    myfile() - pass argument import.meta.url and it will return
@@ -44,18 +51,25 @@ export myfullpath = (url) ->
 
 # ---------------------------------------------------------------------------
 
+export getStats = (fullpath) ->
+
+	return fs.lstatSync(fullpath)
+
+# ---------------------------------------------------------------------------
+
 export isFile = (fullpath) ->
 
-	return fs.lstatSync(fullpath).isFile()
+	try
+		return getStats(fullpath).isFile()
+	catch
+		return false
 
 # ---------------------------------------------------------------------------
 
 export isDir = (fullpath) ->
 
 	try
-		obj = fs.lstatSync(fullpath)
-		if !obj? then return false
-		return obj.isDirectory()
+		return getStats(fullpath).isDirectory()
 	catch
 		return false
 
@@ -253,41 +267,41 @@ export forEachFile = (dir, cb, filt=undef, level=0) ->
 
 # ---------------------------------------------------------------------------
 
-export pathTo = (fname, searchDir, hOptions={}) ->
+export pathTo = (fname, searchDir, options=undef) ->
 
-	{direction, relative} = hOptions
-	if isEmpty(direction)
-		direction = 'down'
-	if isEmpty(relative)
-		relative = false
+	{direction, relative} = getOptions(options, {
+		direction: 'down'
+		relative: false
+		})
 
 	if ! searchDir
 		searchDir = process.cwd()
-	assert fs.existsSync(searchDir), "Dir #{searchDir} does not exist"
+	assert isDir(searchDir), "Not a directory: #{OL(searchDir)}"
 	filepath = mkpath(searchDir, fname)
-	if fs.existsSync(filepath)
+	if isFile(filepath)
 		if relative
-			filepath = "./#{fname}"
-		return filepath
+			return "./#{fname}"
+		else
+			return filepath
 
 	if (direction == 'down')
 		# --- Search all directories in this directory
 		#     getSubDirs() returns dirs sorted alphabetically
 		for subdir in getSubDirs(searchDir)
 			dirpath = mkpath(searchDir, subdir)
-			if defined(fpath = pathTo(fname, dirpath, hOptions))
+			if defined(fpath = pathTo(fname, dirpath, options))
 				if relative
-					fpath = fpath.replace('./', "./#{subdir}/")
-				return fpath
+					return fpath.replace('./', "./#{subdir}/")
+				else
+					return fpath
 	else if (direction == 'up')
 		nLevels = 0
 		while defined(dirPath = getParentDir(searchDir))
 			nLevels += 1
 			fpath = mkpath(dirPath, fname)
-			if fs.existsSync(fpath)
+			if isFile(fpath)
 				if relative
-					fpath = "../".repeat(nLevels) + fname
-					return fpath
+					return "../".repeat(nLevels) + fname
 				else
 					return fpath
 			searchDir = dirPath
