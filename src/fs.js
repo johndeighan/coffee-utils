@@ -50,11 +50,11 @@ export var mydir = function(url) {
 
 // ---------------------------------------------------------------------------
 export var projRoot = function(url) {
-  var dir, pathToPkg;
+  var dir, rootDir;
   dir = mydir(url);
-  return pathToPkg = pathTo('package.json', dir, {
-    direction: 'up'
-  });
+  rootDir = pathTo('package.json', dir, 'direction=up directory');
+  assert(defined(rootDir), "No project root directory found");
+  return rootDir;
 };
 
 // ---------------------------------------------------------------------------
@@ -323,11 +323,13 @@ export var forEachFile = function(dir, cb, filt = undef, level = 0) {
 
 // ---------------------------------------------------------------------------
 export var pathTo = function(fname, searchDir, options = undef) {
-  var dirPath, direction, dirpath, filepath, fpath, i, len, nLevels, ref, relative, subdir;
-  ({direction, relative} = getOptions(options, {
+  var dirPath, direction, directory, filepath, fpath, i, len, nLevels, ref, relative, subdir;
+  ({direction, relative, directory} = getOptions(options, {
     direction: 'down',
-    relative: false
+    relative: false,
+    directory: false // return only the directory the file is in
   }));
+  assert(!(relative && directory), "relative & directory are incompatible");
   if (!searchDir) {
     searchDir = process.cwd();
   }
@@ -336,6 +338,8 @@ export var pathTo = function(fname, searchDir, options = undef) {
   if (isFile(filepath)) {
     if (relative) {
       return `./${fname}`;
+    } else if (directory) {
+      return searchDir;
     } else {
       return filepath;
     }
@@ -346,10 +350,12 @@ export var pathTo = function(fname, searchDir, options = undef) {
     //     getSubDirs() returns dirs sorted alphabetically
     for (i = 0, len = ref.length; i < len; i++) {
       subdir = ref[i];
-      dirpath = mkpath(searchDir, subdir);
-      if (defined(fpath = pathTo(fname, dirpath, options))) {
+      dirPath = mkpath(searchDir, subdir);
+      if (defined(fpath = pathTo(fname, dirPath, options))) {
         if (relative) {
           return fpath.replace('./', `./${subdir}/`);
+        } else if (directory) {
+          return dirPath;
         } else {
           return fpath;
         }
@@ -363,6 +369,8 @@ export var pathTo = function(fname, searchDir, options = undef) {
       if (isFile(fpath)) {
         if (relative) {
           return "../".repeat(nLevels) + fname;
+        } else if (directory) {
+          return dirPath;
         } else {
           return fpath;
         }

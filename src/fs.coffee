@@ -28,7 +28,9 @@ export mydir = (url) ->
 export projRoot = (url) ->
 
 	dir = mydir(url)
-	pathToPkg = pathTo('package.json', dir, {direction: 'up'})
+	rootDir = pathTo('package.json', dir, 'direction=up directory')
+	assert defined(rootDir), "No project root directory found"
+	return rootDir
 
 # ---------------------------------------------------------------------------
 #    myfile() - pass argument import.meta.url and it will return
@@ -269,11 +271,13 @@ export forEachFile = (dir, cb, filt=undef, level=0) ->
 
 export pathTo = (fname, searchDir, options=undef) ->
 
-	{direction, relative} = getOptions(options, {
+	{direction, relative, directory} = getOptions(options, {
 		direction: 'down'
 		relative: false
+		directory: false    # return only the directory the file is in
 		})
 
+	assert !(relative && directory), "relative & directory are incompatible"
 	if ! searchDir
 		searchDir = process.cwd()
 	assert isDir(searchDir), "Not a directory: #{OL(searchDir)}"
@@ -281,6 +285,8 @@ export pathTo = (fname, searchDir, options=undef) ->
 	if isFile(filepath)
 		if relative
 			return "./#{fname}"
+		else if directory
+			return searchDir
 		else
 			return filepath
 
@@ -288,10 +294,12 @@ export pathTo = (fname, searchDir, options=undef) ->
 		# --- Search all directories in this directory
 		#     getSubDirs() returns dirs sorted alphabetically
 		for subdir in getSubDirs(searchDir)
-			dirpath = mkpath(searchDir, subdir)
-			if defined(fpath = pathTo(fname, dirpath, options))
+			dirPath = mkpath(searchDir, subdir)
+			if defined(fpath = pathTo(fname, dirPath, options))
 				if relative
 					return fpath.replace('./', "./#{subdir}/")
+				else if directory
+					return dirPath
 				else
 					return fpath
 	else if (direction == 'up')
@@ -302,6 +310,8 @@ export pathTo = (fname, searchDir, options=undef) ->
 			if isFile(fpath)
 				if relative
 					return "../".repeat(nLevels) + fname
+				else if directory
+					return dirPath
 				else
 					return fpath
 			searchDir = dirPath
