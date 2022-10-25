@@ -13,6 +13,7 @@ import NReadLines from 'n-readlines';
 import {
   assert,
   croak,
+  debug,
   LOG,
   fromTAML
 } from '@jdeighan/exceptions';
@@ -446,6 +447,7 @@ export var parseSource = function(source) {
   //        purpose
   //        }
   // --- NOTE: source may be a file URL, e.g. import.meta.url
+  debug(`enter parseSource(${OL(source)})`);
   assert(isString(source), `parseSource(): source not a string: ${OL(source)}`);
   if (source === 'unit test') {
     croak("A source of 'unit test' is deprecated");
@@ -481,6 +483,7 @@ export var parseSource = function(source) {
       hSourceInfo.purpose = lMatches[1];
     }
   }
+  debug("return from parseSource()", hSourceInfo);
   return hSourceInfo;
 };
 
