@@ -50,6 +50,7 @@ export {
   pass,
   defined,
   notdefined,
+  LOG,
   sep_dash,
   sep_eq,
   deepCopy,

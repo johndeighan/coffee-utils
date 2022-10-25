@@ -12,7 +12,7 @@ import {
 	} from '@jdeighan/exceptions/utils'
 
 export {
-	undef, pass, defined, notdefined, sep_dash, sep_eq,
+	undef, pass, defined, notdefined, LOG, sep_dash, sep_eq,
 	deepCopy, escapeStr, unescapeStr, hasChar, quoted, OL,
 	isString, isNumber, isInteger, isHash, isArray, isBoolean,
 	isConstructor, isFunction, isRegExp, isObject, getClassName,
