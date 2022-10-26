@@ -2,7 +2,7 @@
 
 import {assert} from '@jdeighan/exceptions'
 
-import {UnitTesterNorm, tester} from '@jdeighan/unit-tester'
+import {UnitTesterNorm, utest} from '@jdeighan/unit-tester'
 import {isInteger} from '@jdeighan/coffee-utils'
 import {
 	indentLevel, isUndented, indentation, undented, splitLine,
@@ -11,45 +11,45 @@ import {
 
 # ---------------------------------------------------------------------------
 
-tester.equal {{LINE}}, indentLevel("abc"), 0
-tester.equal {{LINE}}, indentLevel("\tabc"), 1
-tester.equal {{LINE}}, indentLevel("\t\tabc"), 2
+utest.equal {{LINE}}, indentLevel("abc"), 0
+utest.equal {{LINE}}, indentLevel("\tabc"), 1
+utest.equal {{LINE}}, indentLevel("\t\tabc"), 2
 
 # ---------------------------------------------------------------------------
 
-tester.truthy {{LINE}}, isUndented("abc")
-tester.falsy  {{LINE}}, isUndented("\tabc")
-tester.falsy  {{LINE}}, isUndented("\t\tabc")
+utest.truthy {{LINE}}, isUndented("abc")
+utest.falsy  {{LINE}}, isUndented("\tabc")
+utest.falsy  {{LINE}}, isUndented("\t\tabc")
 
 # ---------------------------------------------------------------------------
 
-tester.equal {{LINE}}, indentation(0), ''
-tester.equal {{LINE}}, indentation(1), "\t"
-tester.equal {{LINE}}, indentation(2), "\t\t"
+utest.equal {{LINE}}, indentation(0), ''
+utest.equal {{LINE}}, indentation(1), "\t"
+utest.equal {{LINE}}, indentation(2), "\t\t"
 
 # ---------------------------------------------------------------------------
 
-tester.equal {{LINE}}, undented("abc"), "abc"
-tester.equal {{LINE}}, undented("\tabc"), "abc"
-tester.equal {{LINE}}, undented("\t\tabc"), "abc"
-tester.equal {{LINE}}, undented("\t\tabc", 0), "\t\tabc"
-tester.equal {{LINE}}, undented("\t\tabc", 1), "\tabc"
-tester.equal {{LINE}}, undented("\t\tabc", 2), "abc"
+utest.equal {{LINE}}, undented("abc"), "abc"
+utest.equal {{LINE}}, undented("\tabc"), "abc"
+utest.equal {{LINE}}, undented("\t\tabc"), "abc"
+utest.equal {{LINE}}, undented("\t\tabc", 0), "\t\tabc"
+utest.equal {{LINE}}, undented("\t\tabc", 1), "\tabc"
+utest.equal {{LINE}}, undented("\t\tabc", 2), "abc"
 
-tester.equal {{LINE}}, undented([]), []
-tester.equal {{LINE}}, undented(['abc']), ['abc']
-tester.equal {{LINE}}, undented(['\tabc']), ['abc']
-tester.equal {{LINE}}, undented(['\t\tabc']), ['abc']
-tester.equal {{LINE}}, undented(['\t\tabc'], 0), ['\t\tabc']
-tester.equal {{LINE}}, undented(['\t\tabc'], 1), ['\tabc']
-tester.equal {{LINE}}, undented(['\t\tabc'], 2), ['abc']
+utest.equal {{LINE}}, undented([]), []
+utest.equal {{LINE}}, undented(['abc']), ['abc']
+utest.equal {{LINE}}, undented(['\tabc']), ['abc']
+utest.equal {{LINE}}, undented(['\t\tabc']), ['abc']
+utest.equal {{LINE}}, undented(['\t\tabc'], 0), ['\t\tabc']
+utest.equal {{LINE}}, undented(['\t\tabc'], 1), ['\tabc']
+utest.equal {{LINE}}, undented(['\t\tabc'], 2), ['abc']
 
 # ---------------------------------------------------------------------------
 
 (() ->
 	block = "\t\tfirst\n\t\tsecond\n\t\t\tthird\n"
 	expected = "first\nsecond\n\tthird\n"
-	tester.equal {{LINE}}, undented(block), expected
+	utest.equal {{LINE}}, undented(block), expected
 	)()
 
 # ---------------------------------------------------------------------------
@@ -65,38 +65,38 @@ tester.equal {{LINE}}, undented(['\t\tabc'], 2), ['abc']
 		"second",
 		"\tthird"
 		]
-	tester.equal {{LINE}}, undented(array), expected
+	utest.equal {{LINE}}, undented(array), expected
 	)()
 
 # ---------------------------------------------------------------------------
 
-tester.equal {{LINE}}, splitLine("abc"), [0, "abc"]
-tester.equal {{LINE}}, splitLine("\tabc"), [1, "abc"]
-tester.equal {{LINE}}, splitLine("\t\tabc"), [2, "abc"]
-tester.equal {{LINE}}, splitLine(""),       [0, ""]
-tester.equal {{LINE}}, splitLine("\t\t\t"), [0, ""]
-tester.equal {{LINE}}, splitLine("\t \t"),  [0, ""]
-tester.equal {{LINE}}, splitLine("   "),    [0, ""]
+utest.equal {{LINE}}, splitLine("abc"), [0, "abc"]
+utest.equal {{LINE}}, splitLine("\tabc"), [1, "abc"]
+utest.equal {{LINE}}, splitLine("\t\tabc"), [2, "abc"]
+utest.equal {{LINE}}, splitLine(""),       [0, ""]
+utest.equal {{LINE}}, splitLine("\t\t\t"), [0, ""]
+utest.equal {{LINE}}, splitLine("\t \t"),  [0, ""]
+utest.equal {{LINE}}, splitLine("   "),    [0, ""]
 
 # ---------------------------------------------------------------------------
 
-tester.equal {{LINE}}, indented("abc", 0), "abc"
-tester.equal {{LINE}}, indented("abc", 1), "\tabc"
-tester.equal {{LINE}}, indented("abc", 2), "\t\tabc"
+utest.equal {{LINE}}, indented("abc", 0), "abc"
+utest.equal {{LINE}}, indented("abc", 1), "\tabc"
+utest.equal {{LINE}}, indented("abc", 2), "\t\tabc"
 
 # --- empty lines, indented, should just be empty lines
-tester.equal {{LINE}}, indented("abc\n\ndef", 2), "\t\tabc\n\n\t\tdef"
+utest.equal {{LINE}}, indented("abc\n\ndef", 2), "\t\tabc\n\n\t\tdef"
 
 (() ->
 	str = "main\n\toverflow: auto\n\nnav\n\toverflow: auto"
 	exp = "\tmain\n\t\toverflow: auto\n\n\tnav\n\t\toverflow: auto"
-	tester.equal 59, indented(str, 1), exp
+	utest.equal 59, indented(str, 1), exp
 	)()
 
 # --- indented also handles arrays, so test them, too
 
 # --- empty lines, indented, should just be empty lines
-tester.equal {{LINE}}, indented(['abc','','def'], 2),
+utest.equal {{LINE}}, indented(['abc','','def'], 2),
 		['\t\tabc','','\t\tdef']
 
 (() ->
@@ -114,12 +114,12 @@ tester.equal {{LINE}}, indented(['abc','','def'], 2),
 		'\tnav'
 		'\t\toverflow: auto'
 		]
-	tester.equal {{LINE}}, indented(lLines, 1), lExp
+	utest.equal {{LINE}}, indented(lLines, 1), lExp
 	)()
 
 # --- make sure ALL internal lines are indented
 
-tester.equal {{LINE}}, indented(['abc\ndef','','ghi'], 1),
+utest.equal {{LINE}}, indented(['abc\ndef','','ghi'], 1),
 		['\tabc', '\tdef', '', '\tghi']
 
 # ---------------------------------------------------------------------------
@@ -127,7 +127,7 @@ tester.equal {{LINE}}, indented(['abc\ndef','','ghi'], 1),
 (() ->
 	prefix = '   '    # 3 spaces
 
-	tester.equal {{LINE}}, tabify("""
+	utest.equal {{LINE}}, tabify("""
 		first line
 		#{prefix}second line
 		#{prefix}#{prefix}third line
@@ -144,7 +144,7 @@ tester.equal {{LINE}}, indented(['abc\ndef','','ghi'], 1),
 (() ->
 	prefix = '   '    # 3 spaces
 
-	tester.equal {{LINE}}, tabify("""
+	utest.equal {{LINE}}, tabify("""
 		first line
 		#{prefix}second line
 		#{prefix}#{prefix}third line
@@ -160,7 +160,7 @@ tester.equal {{LINE}}, indented(['abc\ndef','','ghi'], 1),
 (() ->
 	prefix = '   '    # 3 spaces
 
-	tester.equal {{LINE}}, untabify("""
+	utest.equal {{LINE}}, untabify("""
 		first line
 		\tsecond line
 		\t\tthird line
@@ -173,13 +173,13 @@ tester.equal {{LINE}}, indented(['abc\ndef','','ghi'], 1),
 
 # ---------------------------------------------------------------------------
 
-tester.equal {{LINE}}, indented("export name = undef", 1), "\texport name = undef"
-tester.equal {{LINE}}, indented("export name = undef", 2), "\t\texport name = undef"
+utest.equal {{LINE}}, indented("export name = undef", 1), "\texport name = undef"
+utest.equal {{LINE}}, indented("export name = undef", 2), "\t\texport name = undef"
 
 # ---------------------------------------------------------------------------
 # make sure indentLevel() works for blocks
 
-tester.equal {{LINE}}, indentLevel("\t\tabc\n\t\tdef\n\t\t\tghi"), 2
+utest.equal {{LINE}}, indentLevel("\t\tabc\n\t\tdef\n\t\t\tghi"), 2
 
 # ---------------------------------------------------------------------------
 
@@ -189,14 +189,14 @@ tester.equal {{LINE}}, indentLevel("\t\tabc\n\t\tdef\n\t\t\tghi"), 2
 		callme(x)
 		"""
 
-	tester.equal {{LINE}}, enclose(block, '<script>', '</script>'), """
+	utest.equal {{LINE}}, enclose(block, '<script>', '</script>'), """
 		<script>
 			x = 42
 			callme(x)
 		</script>
 		"""
 
-	tester.equal {{LINE}}, enclose(block, 'pre', 'post', '...'), """
+	utest.equal {{LINE}}, enclose(block, 'pre', 'post', '...'), """
 		pre
 		...x = 42
 		...callme(x)

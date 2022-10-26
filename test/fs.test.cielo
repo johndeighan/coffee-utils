@@ -9,7 +9,7 @@ import {
 import {assert, croak} from '@jdeighan/exceptions'
 import {LOG} from '@jdeighan/exceptions/log'
 import {debug} from '@jdeighan/exceptions/debug'
-import {tester} from '@jdeighan/unit-tester'
+import {utest} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'
 import {
 	mydir, myfile, myfullpath, mkpath, isFile, isDir, isSimpleFileName,
@@ -28,23 +28,23 @@ my_path = mkpath(my_dir, my_fname)
 (() ->
 	hOpt = {removeLeadingUnderScore: true}
 
-	tester.equal {{LINE}}, mydir(import.meta.url), "c:/Users/johnd/coffee-utils/test"
-	tester.equal {{LINE}}, myfile(import.meta.url), "fs.test.js"
-	tester.equal {{LINE}}, myfullpath(import.meta.url),  "c:/Users/johnd/coffee-utils/test/fs.test.js"
+	utest.equal {{LINE}}, mydir(import.meta.url), "c:/Users/johnd/coffee-utils/test"
+	utest.equal {{LINE}}, myfile(import.meta.url), "fs.test.js"
+	utest.equal {{LINE}}, myfullpath(import.meta.url),  "c:/Users/johnd/coffee-utils/test/fs.test.js"
 
-	tester.equal {{LINE}}, withExt('file.py', 'svelte'), 'file.svelte'
-	tester.equal {{LINE}}, withExt('file.py', 'svelte', hOpt), 'file.svelte'
-	tester.equal {{LINE}}, withExt('_file.py', 'svelte', hOpt), 'file.svelte'
+	utest.equal {{LINE}}, withExt('file.py', 'svelte'), 'file.svelte'
+	utest.equal {{LINE}}, withExt('file.py', 'svelte', hOpt), 'file.svelte'
+	utest.equal {{LINE}}, withExt('_file.py', 'svelte', hOpt), 'file.svelte'
 
-	tester.equal {{LINE}}, withExt('/bin/file.py', 'svelte'), '/bin/file.svelte'
-	tester.equal {{LINE}}, withExt('/bin/file.py', 'svelte', hOpt), '/bin/file.svelte'
-	tester.equal {{LINE}}, withExt('/bin/_file.py', 'svelte', hOpt), '/bin/file.svelte'
+	utest.equal {{LINE}}, withExt('/bin/file.py', 'svelte'), '/bin/file.svelte'
+	utest.equal {{LINE}}, withExt('/bin/file.py', 'svelte', hOpt), '/bin/file.svelte'
+	utest.equal {{LINE}}, withExt('/bin/_file.py', 'svelte', hOpt), '/bin/file.svelte'
 
-	tester.equal {{LINE}}, withUnderScore('file.py', 'svelte'), '_file.py'
-	tester.equal {{LINE}}, withUnderScore('_file.py', 'svelte'), '__file.py'
+	utest.equal {{LINE}}, withUnderScore('file.py', 'svelte'), '_file.py'
+	utest.equal {{LINE}}, withUnderScore('_file.py', 'svelte'), '__file.py'
 
-	tester.equal {{LINE}}, withUnderScore('/bin/file.py', 'svelte'), '/bin/_file.py'
-	tester.equal {{LINE}}, withUnderScore('/bin/_file.py', 'svelte'), '/bin/__file.py'
+	utest.equal {{LINE}}, withUnderScore('/bin/file.py', 'svelte'), '/bin/_file.py'
+	utest.equal {{LINE}}, withUnderScore('/bin/_file.py', 'svelte'), '/bin/__file.py'
 	)()
 
 # ---------------------------------------------------------------------------
@@ -52,47 +52,47 @@ my_path = mkpath(my_dir, my_fname)
 (() ->
 	fname = 'block.test.coffee'
 
-	tester.truthy {{LINE}}, existsSync("#{my_dir}/#{fname}")
-	tester.falsy  {{LINE}}, existsSync("#{my_dir}/nosuchfile.test.coffee")
+	utest.truthy {{LINE}}, existsSync("#{my_dir}/#{fname}")
+	utest.falsy  {{LINE}}, existsSync("#{my_dir}/nosuchfile.test.coffee")
 
-	tester.equal  {{LINE}}, pathTo("#{fname}", my_dir), mkpath(my_dir, fname)
-	tester.equal  {{LINE}}, pathTo('myfile.txt', my_dir), mkpath(my_dir, 'myfile.txt')
-	tester.equal  {{LINE}}, pathTo('test.txt', my_dir), mkpath(my_dir, 'subdirectory', 'test.txt')
-	tester.equal  {{LINE}}, pathTo('myfile2.txt', my_dir), mkpath(my_dir, 'subdirectory', 'subdir', 'myfile2.txt')
+	utest.equal  {{LINE}}, pathTo("#{fname}", my_dir), mkpath(my_dir, fname)
+	utest.equal  {{LINE}}, pathTo('myfile.txt', my_dir), mkpath(my_dir, 'myfile.txt')
+	utest.equal  {{LINE}}, pathTo('test.txt', my_dir), mkpath(my_dir, 'subdirectory', 'test.txt')
+	utest.equal  {{LINE}}, pathTo('myfile2.txt', my_dir), mkpath(my_dir, 'subdirectory', 'subdir', 'myfile2.txt')
 
 	hOpt = {relative: true}
-	tester.equal  {{LINE}}, pathTo("#{fname}", my_dir, hOpt), "./#{fname}"
-	tester.equal  {{LINE}}, pathTo('myfile.txt', my_dir, hOpt), "./myfile.txt"
-	tester.equal  {{LINE}}, pathTo('test.txt', my_dir, hOpt), "./subdirectory/test.txt"
-	tester.equal  {{LINE}}, pathTo('myfile2.txt', my_dir, hOpt), "./subdirectory/subdir/myfile2.txt"
+	utest.equal  {{LINE}}, pathTo("#{fname}", my_dir, hOpt), "./#{fname}"
+	utest.equal  {{LINE}}, pathTo('myfile.txt', my_dir, hOpt), "./myfile.txt"
+	utest.equal  {{LINE}}, pathTo('test.txt', my_dir, hOpt), "./subdirectory/test.txt"
+	utest.equal  {{LINE}}, pathTo('myfile2.txt', my_dir, hOpt), "./subdirectory/subdir/myfile2.txt"
 
 	hOpt2 = {relative: true, direction: 'up'}
-	tester.equal  {{LINE}}, pathTo('package.json', my_dir, hOpt2), "../package.json"
-	tester.equal  {{LINE}}, pathTo('.bashrc', my_dir, hOpt2), "../../.bashrc"
+	utest.equal  {{LINE}}, pathTo('package.json', my_dir, hOpt2), "../package.json"
+	utest.equal  {{LINE}}, pathTo('.bashrc', my_dir, hOpt2), "../../.bashrc"
 	)()
 
 # ---------------------------------------------------------------------------
 
 # --- dirs are returned in alphabetical order
-tester.equal {{LINE}}, getSubDirs(my_dir), ['data','markdown','subdirectory']
+utest.equal {{LINE}}, getSubDirs(my_dir), ['data','markdown','subdirectory']
 
-tester.equal {{LINE}}, pathTo('test.txt', my_dir), \
+utest.equal {{LINE}}, pathTo('test.txt', my_dir), \
 		"#{my_dir}/subdirectory/test.txt"
 
 # ---------------------------------------------------------------------------
 
-tester.equal {{LINE}}, mkpath('/usr/lib', 'johnd'), '/usr/lib/johnd'
-tester.equal {{LINE}}, mkpath('', '/usr/lib', undef, 'johnd'), '/usr/lib/johnd'
-tester.equal {{LINE}}, mkpath("c:", 'local/user'), 'c:/local/user'
-tester.equal {{LINE}}, mkpath('/usr', 'lib', 'local', 'johnd'),
+utest.equal {{LINE}}, mkpath('/usr/lib', 'johnd'), '/usr/lib/johnd'
+utest.equal {{LINE}}, mkpath('', '/usr/lib', undef, 'johnd'), '/usr/lib/johnd'
+utest.equal {{LINE}}, mkpath("c:", 'local/user'), 'c:/local/user'
+utest.equal {{LINE}}, mkpath('/usr', 'lib', 'local', 'johnd'),
 		'/usr/lib/local/johnd'
 
-tester.equal {{LINE}}, mkpath('\\usr\\lib', 'johnd'), '/usr/lib/johnd'
-tester.equal {{LINE}}, mkpath("c:", 'local\\user'), 'c:/local/user'
-tester.equal {{LINE}}, mkpath('\\usr', 'lib', 'local', 'johnd'),
+utest.equal {{LINE}}, mkpath('\\usr\\lib', 'johnd'), '/usr/lib/johnd'
+utest.equal {{LINE}}, mkpath("c:", 'local\\user'), 'c:/local/user'
+utest.equal {{LINE}}, mkpath('\\usr', 'lib', 'local', 'johnd'),
 		'/usr/lib/local/johnd'
 
-tester.equal {{LINE}}, mkpath('C:\\Users\\johnd', 'cielo'), 'c:/Users/johnd/cielo'
+utest.equal {{LINE}}, mkpath('C:\\Users\\johnd', 'cielo'), 'c:/Users/johnd/cielo'
 
 # ---------------------------------------------------------------------------
 # test getFullPath()
@@ -110,48 +110,48 @@ debug "my_path = '#{my_path}'"
 debug "rootdir = '#{rootdir}'"
 
 # --- given a full path, only change \ to /
-tester.equal {{LINE}}, getFullPath(my_path), my_path
+utest.equal {{LINE}}, getFullPath(my_path), my_path
 
-# --- given a tester file name, prepend the current working directory
-tester.equal {{LINE}}, getFullPath(my_fname), mkpath(rootdir, my_fname)
+# --- given a utest file name, prepend the current working directory
+utest.equal {{LINE}}, getFullPath(my_fname), mkpath(rootdir, my_fname)
 
 # --- leading . should be resolved
-tester.equal {{LINE}}, getFullPath("./#{my_fname}"), mkpath(rootdir, my_fname)
+utest.equal {{LINE}}, getFullPath("./#{my_fname}"), mkpath(rootdir, my_fname)
 
 # --- leading .. should be resolved
-tester.equal {{LINE}}, getFullPath("./test/../#{my_fname}"), mkpath(rootdir, my_fname)
+utest.equal {{LINE}}, getFullPath("./test/../#{my_fname}"), mkpath(rootdir, my_fname)
 
 hSourceInfo = parseSource(import.meta.url)
 
-tester.equal {{LINE}}, hSourceInfo.dir, my_dir
-tester.equal {{LINE}}, hSourceInfo.filename, my_fname
-tester.equal {{LINE}}, hSourceInfo.fullpath, my_path
-tester.equal {{LINE}}, hSourceInfo.stub, fileStub(my_fname)
-tester.equal {{LINE}}, hSourceInfo.ext, fileExt(my_fname)
+utest.equal {{LINE}}, hSourceInfo.dir, my_dir
+utest.equal {{LINE}}, hSourceInfo.filename, my_fname
+utest.equal {{LINE}}, hSourceInfo.fullpath, my_path
+utest.equal {{LINE}}, hSourceInfo.stub, fileStub(my_fname)
+utest.equal {{LINE}}, hSourceInfo.ext, fileExt(my_fname)
 
 hSourceInfo2 = parseSource(my_path)    # should be the same
 
-tester.equal {{LINE}}, hSourceInfo2.dir, my_dir
-tester.equal {{LINE}}, hSourceInfo2.filename, my_fname
-tester.equal {{LINE}}, hSourceInfo.fullpath, my_path
-tester.equal {{LINE}}, hSourceInfo2.stub, fileStub(my_fname)
-tester.equal {{LINE}}, hSourceInfo2.ext, fileExt(my_fname)
+utest.equal {{LINE}}, hSourceInfo2.dir, my_dir
+utest.equal {{LINE}}, hSourceInfo2.filename, my_fname
+utest.equal {{LINE}}, hSourceInfo.fullpath, my_path
+utest.equal {{LINE}}, hSourceInfo2.stub, fileStub(my_fname)
+utest.equal {{LINE}}, hSourceInfo2.ext, fileExt(my_fname)
 
 hSourceInfo3 = parseSource(my_dir)     # should know that it's a directory
 
-tester.equal {{LINE}}, hSourceInfo3.dir, my_dir
-tester.equal {{LINE}}, hSourceInfo3.filename, undef
-tester.equal {{LINE}}, hSourceInfo3.fullpath, my_dir
-tester.equal {{LINE}}, hSourceInfo3.stub, undef
-tester.equal {{LINE}}, hSourceInfo3.ext, undef
+utest.equal {{LINE}}, hSourceInfo3.dir, my_dir
+utest.equal {{LINE}}, hSourceInfo3.filename, undef
+utest.equal {{LINE}}, hSourceInfo3.fullpath, my_dir
+utest.equal {{LINE}}, hSourceInfo3.stub, undef
+utest.equal {{LINE}}, hSourceInfo3.ext, undef
 
-tester.equal {{LINE}}, parseSource("test.js"), {
+utest.equal {{LINE}}, parseSource("test.js"), {
 	filename: 'test.js'
 	stub: 'test'
 	ext: '.js'
 	}
 
-tester.equal {{LINE}}, parseSource(my_path), {
+utest.equal {{LINE}}, parseSource(my_path), {
 	dir: my_dir
 	fullpath: my_path
 	filename: my_fname
@@ -160,7 +160,7 @@ tester.equal {{LINE}}, parseSource(my_path), {
 	ext: '.js'
 	}
 
-tester.equal {{LINE}}, parseSource("c:\\Users\\johnd\\oz\\src\\test.js"), {
+utest.equal {{LINE}}, parseSource("c:\\Users\\johnd\\oz\\src\\test.js"), {
 	dir: 'c:/Users/johnd/oz/src'
 	fullpath: 'c:/Users/johnd/oz/src/test.js'
 	filename: 'test.js'
@@ -169,39 +169,39 @@ tester.equal {{LINE}}, parseSource("c:\\Users\\johnd\\oz\\src\\test.js"), {
 	}
 
 if process.platform == 'win32'
-	tester.truthy {{LINE}}, isDir('c:/Users')
-	tester.truthy {{LINE}}, isDir('c:/Program Files')
-	tester.falsy  {{LINE}}, isFile('c:/Users')
-	tester.falsy  {{LINE}}, isFile('c:/Program Files')
+	utest.truthy {{LINE}}, isDir('c:/Users')
+	utest.truthy {{LINE}}, isDir('c:/Program Files')
+	utest.falsy  {{LINE}}, isFile('c:/Users')
+	utest.falsy  {{LINE}}, isFile('c:/Program Files')
 
-	tester.falsy  {{LINE}}, isDir('c:/Windows/notepad.exe')
-	tester.falsy  {{LINE}}, isDir(
+	utest.falsy  {{LINE}}, isDir('c:/Windows/notepad.exe')
+	utest.falsy  {{LINE}}, isDir(
 		'c:/Program Files/Windows Media Player/wmplayer.exe'
 		)
-	tester.truthy {{LINE}}, isFile('c:/Windows/notepad.exe')
-	tester.truthy {{LINE}}, isFile(
-		'c:/Program Files/Windows Media Player/wmplayer.exe'
-		)
-
-	tester.truthy {{LINE}}, isSimpleFileName('notepad.exe')
-	tester.falsy  {{LINE}}, isSimpleFileName(
+	utest.truthy {{LINE}}, isFile('c:/Windows/notepad.exe')
+	utest.truthy {{LINE}}, isFile(
 		'c:/Program Files/Windows Media Player/wmplayer.exe'
 		)
 
-tester.equal {{LINE}}, fileExt('file.txt'), '.txt'
-tester.equal {{LINE}}, fileExt('file.'), ''
-tester.equal {{LINE}}, fileExt('file.99'), '.99'
-tester.equal {{LINE}}, fileExt('file._txt'), '._txt'
+	utest.truthy {{LINE}}, isSimpleFileName('notepad.exe')
+	utest.falsy  {{LINE}}, isSimpleFileName(
+		'c:/Program Files/Windows Media Player/wmplayer.exe'
+		)
+
+utest.equal {{LINE}}, fileExt('file.txt'), '.txt'
+utest.equal {{LINE}}, fileExt('file.'), ''
+utest.equal {{LINE}}, fileExt('file.99'), '.99'
+utest.equal {{LINE}}, fileExt('file._txt'), '._txt'
 
 filepath = pathTo('readline.txt', my_dir)
-tester.equal {{LINE}}, filepath, "c:/Users/johnd/coffee-utils/test/readline.txt"
+utest.equal {{LINE}}, filepath, "c:/Users/johnd/coffee-utils/test/readline.txt"
 
 (() ->
 	lLines = []
 	await forEachLineInFile filepath, (line, lineNum) ->
 		lLines.push line
 		return
-	tester.equal {{LINE}}, lLines, [
+	utest.equal {{LINE}}, lLines, [
 		'abc'
 		'def'
 		'ghi'
@@ -214,27 +214,27 @@ tester.equal {{LINE}}, filepath, "c:/Users/johnd/coffee-utils/test/readline.txt"
 	await forEachLineInFile filepath, (line, lineNum) ->
 		lLines.push line
 		return if lineNum==3 then 'EOF' else undef
-	tester.equal {{LINE}}, lLines, [
+	utest.equal {{LINE}}, lLines, [
 		'abc'
 		'def'
 		'ghi'
 		]
 	)()
 (() ->
-	tester.equal {{LINE}}, slurp(filepath, 2), """
+	utest.equal {{LINE}}, slurp(filepath, 2), """
 		abc
 		def
 		"""
 	)()
 (() ->
-	tester.equal {{LINE}}, slurp(filepath, 3), """
+	utest.equal {{LINE}}, slurp(filepath, 3), """
 		abc
 		def
 		ghi
 		"""
 	)()
 (() ->
-	tester.equal {{LINE}}, slurp(filepath, 1000), """
+	utest.equal {{LINE}}, slurp(filepath, 1000), """
 		abc
 		def
 		ghi

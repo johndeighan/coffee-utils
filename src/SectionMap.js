@@ -108,31 +108,39 @@ export var SectionMap = class SectionMap {
     debug("return from build()", this.hSections, this.hSets);
   }
 
-  // ..........................................................
-  // --- hProc should be <name> -> <function>
-  //     <name> can be a section name or a set name
-  //     <function> should be <block> -> <block>
-  // --- desc can be:
-  //        an array, which may begin with a set name
-  //        a section name
-  //        a set name
-  //        undef (equivalent to being set to @SectionTree)
   getBlock(desc = undef, hReplacers = {}) {
     var block, i, item, lBlocks, len, proc, setName, subBlock;
+    // ..........................................................
+    // --- hReplacers are callbacks that are called
+    //        when a set or section is processed
+    //        should be <name> -> <function>
+    //     <name> can be a section name or a set name
+    //     <function> should be <block> -> <block>
+    // --- desc can be:
+    //        undef - same as the array @lSectionTree
+    //        a section name
+    //        a set name
+    //        an array, which may begin with a set name
     debug("enter SectionMap.getBlock()", desc, hReplacers);
     // --- desc can only be a string or an array
-    //     so, if it's a hash, then it's really the hReplacers
-    //     and the real desc is undef
-    if (isHash(desc)) {
-      debug("arg 1 is hReplacers, no desc");
-      assert(isEmpty(hReplacers), "invalid parms");
-      hReplacers = desc;
-      desc = this.lSectionTree;
-    } else if (notdefined(desc)) {
+    assert(!isHash(desc), "hash as 1st parameter is deprecated");
+    if (notdefined(desc)) {
       debug("desc is entire tree");
       desc = this.lSectionTree;
     }
-    if (isArray(desc)) {
+    if (isSectionName(desc)) {
+      debug("item is a section name");
+      block = this.section(desc).getBlock();
+      if (defined(proc = hReplacers[desc])) {
+        debug(`REPLACE ${desc}`);
+        block = proc(block);
+      } else {
+        debug(`NO REPLACER for ${desc}`);
+      }
+    } else if (isSetName(desc)) {
+      debug("item is a set name");
+      block = this.getBlock(this.hSets[desc], hReplacers);
+    } else if (isArray(desc)) {
       debug("item is an array");
       lBlocks = [];
       setName = undef;
@@ -167,18 +175,6 @@ export var SectionMap = class SectionMap {
           debug(`NO REPLACER for ${setName}`);
         }
       }
-    } else if (isSectionName(desc)) {
-      debug("item is a section name");
-      block = this.section(desc).getBlock();
-      if (defined(proc = hReplacers[desc])) {
-        debug(`REPLACE ${desc}`);
-        block = proc(block);
-      } else {
-        debug(`NO REPLACER for ${desc}`);
-      }
-    } else if (isSetName(desc)) {
-      debug("item is a set name");
-      block = this.getBlock(this.hSets[desc], hReplacers);
     } else {
       croak(`Bad 1st arg: ${OL(desc)}`);
     }
@@ -187,7 +183,25 @@ export var SectionMap = class SectionMap {
   }
 
   // ..........................................................
-  isEmpty() {
+  * allSections(desc = undef) {
+    var i, item, len;
+    if (notdefined(desc)) {
+      desc = this.lSectionTree;
+    }
+    if (isSectionName(desc)) {
+      yield this.section(desc);
+    } else if (isSetName(desc)) {
+      yield* this.allSections(this.hSets[desc]);
+    } else if (isArray(desc)) {
+      for (i = 0, len = desc.length; i < len; i++) {
+        item = desc[i];
+        yield* this.allSections(item);
+      }
+    }
+  }
+
+  // ..........................................................
+  isEmpty(desc = undef) {
     var name, ref, sect;
     ref = this.hSections;
     for (name in ref) {

@@ -77,34 +77,41 @@ export class SectionMap
 		debug "return from build()", @hSections, @hSets
 		return
 
-	# ..........................................................
-	# --- hProc should be <name> -> <function>
-	#     <name> can be a section name or a set name
-	#     <function> should be <block> -> <block>
-	# --- desc can be:
-	#        an array, which may begin with a set name
-	#        a section name
-	#        a set name
-	#        undef (equivalent to being set to @SectionTree)
-
 	getBlock: (desc=undef, hReplacers={}) ->
+		# ..........................................................
+		# --- hReplacers are callbacks that are called
+		#        when a set or section is processed
+		#        should be <name> -> <function>
+		#     <name> can be a section name or a set name
+		#     <function> should be <block> -> <block>
+		# --- desc can be:
+		#        undef - same as the array @lSectionTree
+		#        a section name
+		#        a set name
+		#        an array, which may begin with a set name
+
 
 		debug "enter SectionMap.getBlock()", desc, hReplacers
 
 		# --- desc can only be a string or an array
-		#     so, if it's a hash, then it's really the hReplacers
-		#     and the real desc is undef
+		assert ! isHash(desc), "hash as 1st parameter is deprecated"
 
-		if isHash(desc)
-			debug "arg 1 is hReplacers, no desc"
-			assert isEmpty(hReplacers), "invalid parms"
-			hReplacers = desc
-			desc = @lSectionTree
-		else if notdefined(desc)
+		if notdefined(desc)
 			debug "desc is entire tree"
 			desc = @lSectionTree
 
-		if isArray(desc)
+		if isSectionName(desc)
+			debug "item is a section name"
+			block = @section(desc).getBlock()
+			if defined(proc = hReplacers[desc])
+				debug "REPLACE #{desc}"
+				block = proc(block)
+			else
+				debug "NO REPLACER for #{desc}"
+		else if isSetName(desc)
+			debug "item is a set name"
+			block = @getBlock(@hSets[desc], hReplacers)
+		else if isArray(desc)
 			debug "item is an array"
 			lBlocks = []
 			setName = undef
@@ -134,17 +141,6 @@ export class SectionMap
 					debug "REPLACE #{setName} with", block
 				else
 					debug "NO REPLACER for #{setName}"
-		else if isSectionName(desc)
-			debug "item is a section name"
-			block = @section(desc).getBlock()
-			if defined(proc = hReplacers[desc])
-				debug "REPLACE #{desc}"
-				block = proc(block)
-			else
-				debug "NO REPLACER for #{desc}"
-		else if isSetName(desc)
-			debug "item is a set name"
-			block = @getBlock(@hSets[desc], hReplacers)
 		else
 			croak "Bad 1st arg: #{OL(desc)}"
 		debug "return from SectionMap.getBlock()", block
@@ -152,7 +148,22 @@ export class SectionMap
 
 	# ..........................................................
 
-	isEmpty: () ->
+	allSections: (desc=undef) ->
+
+		if notdefined(desc)
+			desc = @lSectionTree
+		if isSectionName(desc)
+			yield @section(desc)
+		else if isSetName(desc)
+			yield from @allSections(@hSets[desc])
+		else if isArray(desc)
+			for item in desc
+				yield from @allSections(item)
+		return
+
+	# ..........................................................
+
+	isEmpty: (desc=undef) ->
 
 		for name,sect of @hSections
 			if sect.nonEmpty()

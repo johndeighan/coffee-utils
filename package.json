@@ -19,7 +19,6 @@
 		"./svelte": "./src/svelte.js",
 		"./store": "./src/DataStores.js",
 		"./taml": "./src/taml.js",
-		"./placeholders": "./src/placeholders.js",
 		"./section": "./src/Section.js",
 		"./sectionmap": "./src/SectionMap.js",
 		"./fsa": "./src/fsa.js",
@@ -32,8 +31,7 @@
 		"verbose": false
 	},
 	"scripts": {
-		"build": "cls && rm -f ./*.js && coffee -c .",
-		"pretest": "cls && cielo -qfc ./test && coffee -c .",
+		"build": "cls && cielo -qfc ./test && coffee -c .",
 		"test": "npm run build && ava ./test/*.test.js && git status"
 	},
 	"repository": {
@@ -58,6 +56,6 @@
 		"svelte": "^3.52.0"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^2.0.49"
+		"@jdeighan/unit-tester": "^2.0.50"
 	}
 }

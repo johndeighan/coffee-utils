@@ -1,7 +1,7 @@
 # SectionMap.test.cielo
 
 import {assert} from '@jdeighan/exceptions'
-import {tester} from '@jdeighan/unit-tester'
+import {utest} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'
 import {elem} from '@jdeighan/coffee-utils/html'
 import {
@@ -19,15 +19,15 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		'html'
 		'script'
 		])
-	tester.truthy {{LINE}}, map.isEmpty()
-	tester.falsy  {{LINE}}, map.nonEmpty()
+	utest.truthy {{LINE}}, map.isEmpty()
+	utest.falsy  {{LINE}}, map.nonEmpty()
 
 	map.section('script').add "x = 42"
 	map.section('html').add   "<p>para</p>"
-	tester.falsy  {{LINE}}, map.isEmpty()
-	tester.truthy {{LINE}}, map.nonEmpty()
+	utest.falsy  {{LINE}}, map.isEmpty()
+	utest.truthy {{LINE}}, map.nonEmpty()
 
-	tester.equal {{LINE}}, map.getBlock(), """
+	utest.equal {{LINE}}, map.getBlock(), """
 		<p>para</p>
 		x = 42
 		"""
@@ -43,15 +43,15 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		'# |||| ='
 		'code'
 		])
-	tester.falsy {{LINE}}, map.isEmpty()
-	tester.truthy  {{LINE}}, map.nonEmpty()
+	utest.falsy {{LINE}}, map.isEmpty()
+	utest.truthy  {{LINE}}, map.nonEmpty()
 
 	map.section('code').add      "x = 42"
 	map.section('startup').add   "n = 3"
-	tester.falsy  {{LINE}}, map.isEmpty()
-	tester.truthy {{LINE}}, map.nonEmpty()
+	utest.falsy  {{LINE}}, map.isEmpty()
+	utest.truthy {{LINE}}, map.nonEmpty()
 
-	tester.equal {{LINE}}, map.getBlock(), """
+	utest.equal {{LINE}}, map.getBlock(), """
 		n = 3
 		# |||| =
 		x = 42
@@ -72,7 +72,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 
 	toJS = (line) -> return "#{line};"
 
-	tester.equal {{LINE}}, map.getBlock(undef, {script: toJS}), """
+	utest.equal {{LINE}}, map.getBlock(undef, {script: toJS}), """
 		<p>para</p>
 		x = 42;
 		"""
@@ -97,7 +97,7 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		script: toJS
 		html: addSpaces
 		}
-	tester.equal {{LINE}}, map.getBlock(undef, hProc), """
+	utest.equal {{LINE}}, map.getBlock(undef, hProc), """
 		<p> para </p>
 		x = 42;
 		"""
@@ -126,11 +126,176 @@ import {SectionMap} from '@jdeighan/coffee-utils/sectionmap'
 		html: addSpaces
 		Script: (block) -> return elem('script', undef, block, "\t")
 		}
-	tester.equal {{LINE}}, map.getBlock(undef, hProc), """
+	utest.equal {{LINE}}, map.getBlock(undef, hProc), """
 		<p> para </p>
 		<script>
 			x = 42;
 		</script>
+		"""
+
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+	map = new SectionMap([
+		'html'
+		'script'
+		])
+
+	map.section('script').add "x = 42"
+	map.section('html').add   "<p> hello </p>"
+
+	utest.equal {{LINE}}, map.getBlock(), """
+		<p> hello </p>
+		x = 42
+		"""
+
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+
+	map = new SectionMap([
+		'html'
+		[
+			'Script'
+			'startup'
+			'code'
+			]
+		])
+
+	map.section('code').add      "x = 42"
+	map.section('startup').add   "LOG 'starting'"
+	map.section('html').add      "<p> hello </p>"
+
+	utest.equal {{LINE}}, map.getBlock(), """
+		<p> hello </p>
+		LOG 'starting'
+		x = 42
+		"""
+
+	utest.equal {{LINE}}, map.getBlock('Script'), """
+		LOG 'starting'
+		x = 42
+		"""
+
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+
+	map = new SectionMap([
+		'html'
+		[
+			'Script'
+			'startup'
+			'# |||| ='
+			'code'
+			]
+		])
+
+	map.section('code').add      "x = 42"
+	map.section('startup').add   "LOG 'starting'"
+	map.section('html').add      "<h1> title </h1>"
+	map.section('startup').add   "y = 4*x"
+	map.section('html').add      "<p> hello </p>"
+	map.section('code').add      "LOG 'Done'"
+
+	utest.equal {{LINE}}, map.getBlock(), """
+		<h1> title </h1>
+		<p> hello </p>
+		LOG 'starting'
+		y = 4*x
+		# |||| =
+		x = 42
+		LOG 'Done'
+		"""
+
+	utest.equal {{LINE}}, map.getBlock('Script'), """
+		LOG 'starting'
+		y = 4*x
+		# |||| =
+		x = 42
+		LOG 'Done'
+		"""
+
+	)()
+
+# ---------------------------------------------------------------------------
+
+(() ->
+
+	map = new SectionMap([
+		'html'
+		[
+			'Script'
+			'startup'
+			'# |||| ='
+			[
+				'NonStartup'
+				'imports'
+				'code'
+				]
+			]
+		'style'
+		])
+
+	map.section('style').add     ["p {", "...color: red", "...}"]
+	map.section('code').add      "x = 42"
+	map.section('startup').add   "LOG 'starting'"
+	map.section('html').add      "<h1> title </h1>"
+	map.section('startup').add   "y = 4*x"
+	map.section('html').add      "<p> hello </p>"
+	map.section('code').add      "LOG 'Done'"
+
+	utest.equal {{LINE}}, map.getBlock(), """
+		<h1> title </h1>
+		<p> hello </p>
+		LOG 'starting'
+		y = 4*x
+		# |||| =
+		x = 42
+		LOG 'Done'
+		p {
+		...color: red
+		...}
+		"""
+
+	utest.equal {{LINE}}, map.getBlock('Script'), """
+		LOG 'starting'
+		y = 4*x
+		# |||| =
+		x = 42
+		LOG 'Done'
+		"""
+
+	hProcs = {
+		Script: (block) -> return elem('script', undef, block, "\t")
+		style:  (block) -> return elem('style',  undef, block, "\t")
+		}
+
+	utest.equal {{LINE}}, map.getBlock('Script', hProcs), """
+		<script>
+			LOG 'starting'
+			y = 4*x
+			# |||| =
+			x = 42
+			LOG 'Done'
+		</script>
+		"""
+
+	utest.equal {{LINE}}, map.getBlock('NonStartup'), """
+		x = 42
+		LOG 'Done'
+		"""
+
+	utest.equal {{LINE}}, map.getBlock('style'), """
+		p {
+		...color: red
+		...}
 		"""
 
 	)()

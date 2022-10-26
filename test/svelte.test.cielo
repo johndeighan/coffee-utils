@@ -1,0 +1,12 @@
+# svelte.test.cielo
+
+import {assert} from '@jdeighan/exceptions'
+import {utest} from '@jdeighan/unit-tester'
+import {
+	svelteSourceCodeEsc, svelteHtmlEsc,
+	} from '@jdeighan/coffee-utils/svelte'
+
+# ---------------------------------------------------------------------------
+
+utest.equal 11, svelteSourceCodeEsc('<abc>'), '&lt;abc&gt;'
+utest.equal 12, svelteHtmlEsc('{abc}'), '&lbrace;abc&rbrace;'

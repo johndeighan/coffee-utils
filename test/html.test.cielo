@@ -1,7 +1,7 @@
 # html.test.cielo
 
 import {assert} from '@jdeighan/exceptions'
-import {UnitTester, tester} from '@jdeighan/unit-tester'
+import {UnitTester, utest} from '@jdeighan/unit-tester'
 import {undef} from '@jdeighan/coffee-utils'
 import {
 	blockToArray, arrayToBlock, firstLine, remainingLines,
@@ -236,7 +236,7 @@ htmlTester.like {{LINE}}, 'svelte:head', {
 
 # --- Test elem()
 html = elem('script', undef, 'x = 42', "\t")
-tester.equal {{LINE}}, html, """
+utest.equal {{LINE}}, html, """
 	<script>
 		x = 42
 	</script>
