@@ -1,9 +1,0 @@
-# browser.test.cielo
-
-import {assert} from '@jdeighan/exceptions'
-import {utest} from '@jdeighan/unit-tester'
-import {beep, localStore} from '@jdeighan/coffee-utils/browser'
-
-# ---------------------------------------------------------------------------
-
-utest.equal {{LINE}}, localStore('dummy'), undef

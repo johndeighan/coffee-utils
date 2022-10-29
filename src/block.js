@@ -90,7 +90,7 @@ export var toBlock = function(lLines) {
   if (notdefined(lLines)) {
     return undef;
   }
-  assert(isArrayOfStrings(lLines), `lLines is not an array: ${OL(lLines)}`);
+  assert(isArrayOfStrings(lLines), `lLines is not an array of strings: ${OL(lLines)}`);
   lNewLines = [];
   for (i = 0, len = lLines.length; i < len; i++) {
     line = lLines[i];

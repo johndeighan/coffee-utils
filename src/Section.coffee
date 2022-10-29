@@ -3,36 +3,20 @@
 import {assert, croak} from '@jdeighan/exceptions'
 import {debug} from '@jdeighan/exceptions/debug'
 import {
-	pass, undef, defined, isArray, isEmpty,
+	pass, undef, defined, isArray, isEmpty, isFunction,
 	} from '@jdeighan/coffee-utils'
-import {arrayToBlock} from '@jdeighan/coffee-utils/block'
-import {indented} from '@jdeighan/coffee-utils/indent'
+import {toBlock} from '@jdeighan/coffee-utils/block'
 
 # ---------------------------------------------------------------------------
 
 export class Section
 
-	constructor: (@name, content=undef) ->
+	constructor: (@name, @replacer=undef) ->
 		# --- name can be undef or empty
 
 		@lParts = []
-		if defined(content)
-			@lParts.push content
-
-	# ..........................................................
-
-	length: () ->
-
-		return @lParts.length
-
-	# ..........................................................
-
-	indent: (level=1, oneIndent="\t") ->
-
-		lNewLines = for line in @lParts
-			indented(line, level, oneIndent)
-		@lParts = lNewLines
-		return
+		if defined(@replacer)
+			assert isFunction(@replacer), "bad replacer"
 
 	# ..........................................................
 
@@ -81,7 +65,8 @@ export class Section
 		if (@lParts.length == 0)
 			debug "return undef from Section.getBlock()"
 			return undef
-		else
-			result = arrayToBlock(@lParts)
-			debug "return from Section.getBlock()", result
-			return result
+		block = toBlock(@lParts)
+		if defined(@replacer)
+			block = @replacer block
+		debug "return from Section.getBlock()", block
+		return block

@@ -11,8 +11,11 @@ import {
 	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words, getOptions,
 	} from '@jdeighan/exceptions/utils'
 
+def = defined
+notdef = notdefined
+
 export {
-	undef, pass, defined, notdefined, LOG, sep_dash, sep_eq,
+	undef, pass, def, defined, notdef, notdefined, LOG, sep_dash, sep_eq,
 	deepCopy, escapeStr, unescapeStr, hasChar, quoted, OL,
 	isString, isNumber, isInteger, isHash, isArray, isBoolean,
 	isConstructor, isFunction, isRegExp, isObject, getClassName,
@@ -137,22 +140,24 @@ export pushCond = (lItems, item, doPush=notInArray) ->
 # ---------------------------------------------------------------------------
 
 export isArrayOfHashes = (lItems) ->
+	# --- undefined items are allowed
 
 	if ! isArray(lItems)
 		return false
 	for item in lItems
-		if ! isHash(item)
+		if defined(item) && ! isHash(item)
 			return false
 	return true
 
 # ---------------------------------------------------------------------------
 
 export isArrayOfStrings = (lItems) ->
+	# --- undefined items are allowed
 
 	if ! isArray(lItems)
 		return false
 	for item in lItems
-		if ! isString(item)
+		if defined(item) && ! isString(item)
 			return false
 	return true
 

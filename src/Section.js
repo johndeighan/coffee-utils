@@ -14,47 +14,24 @@ import {
   undef,
   defined,
   isArray,
-  isEmpty
+  isEmpty,
+  isFunction
 } from '@jdeighan/coffee-utils';
 
 import {
-  arrayToBlock
+  toBlock
 } from '@jdeighan/coffee-utils/block';
-
-import {
-  indented
-} from '@jdeighan/coffee-utils/indent';
 
 // ---------------------------------------------------------------------------
 export var Section = class Section {
-  constructor(name, content = undef) {
+  constructor(name, replacer = undef) {
     this.name = name;
+    this.replacer = replacer;
     // --- name can be undef or empty
     this.lParts = [];
-    if (defined(content)) {
-      this.lParts.push(content);
+    if (defined(this.replacer)) {
+      assert(isFunction(this.replacer), "bad replacer");
     }
-  }
-
-  // ..........................................................
-  length() {
-    return this.lParts.length;
-  }
-
-  // ..........................................................
-  indent(level = 1, oneIndent = "\t") {
-    var lNewLines, line;
-    lNewLines = (function() {
-      var i, len, ref, results;
-      ref = this.lParts;
-      results = [];
-      for (i = 0, len = ref.length; i < len; i++) {
-        line = ref[i];
-        results.push(indented(line, level, oneIndent));
-      }
-      return results;
-    }).call(this);
-    this.lParts = lNewLines;
   }
 
   // ..........................................................
@@ -96,16 +73,18 @@ export var Section = class Section {
 
   // ..........................................................
   getBlock() {
-    var result;
+    var block;
     debug("enter Section.getBlock()");
     if (this.lParts.length === 0) {
       debug("return undef from Section.getBlock()");
       return undef;
-    } else {
-      result = arrayToBlock(this.lParts);
-      debug("return from Section.getBlock()", result);
-      return result;
     }
+    block = toBlock(this.lParts);
+    if (defined(this.replacer)) {
+      block = this.replacer(block);
+    }
+    debug("return from Section.getBlock()", block);
+    return block;
   }
 
 };

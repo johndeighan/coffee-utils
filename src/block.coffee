@@ -63,7 +63,8 @@ export toBlock = (lLines) ->
 
 	if notdefined(lLines)
 		return undef
-	assert isArrayOfStrings(lLines), "lLines is not an array: #{OL(lLines)}"
+	assert isArrayOfStrings(lLines),
+		"lLines is not an array of strings: #{OL(lLines)}"
 	lNewLines = []
 	for line in lLines
 		if defined(line)
