@@ -3,16 +3,13 @@
 import {assert, croak} from '@jdeighan/exceptions'
 import {LOG, sep_dash, sep_eq} from '@jdeighan/exceptions/log'
 import {
-	undef, pass, defined, notdefined,
+	undef, pass, def, defined, notdef, notdefined,
 	deepCopy, escapeStr, unescapeStr, hasChar, quoted, OL,
 	isString, isNumber, isInteger, isHash, isArray, isBoolean,
 	isConstructor, isFunction, isRegExp, isObject, getClassName,
 	jsType,
 	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words, getOptions,
 	} from '@jdeighan/exceptions/utils'
-
-def = defined
-notdef = notdefined
 
 export {
 	undef, pass, def, defined, notdef, notdefined, LOG, sep_dash, sep_eq,
