@@ -10,7 +10,9 @@ import {
 } from '@jdeighan/exceptions/log';
 
 import {
-  debug
+  dbg,
+  dbgEnter,
+  dbgReturn
 } from '@jdeighan/exceptions/debug';
 
 import {
@@ -32,14 +34,14 @@ import {
 export var FSA = class FSA {
   constructor(block) {
     var bState, eState, hTrans, i, j, lLines, lWords, len, line, output, token;
-    debug("enter FSA()");
+    dbgEnter("FSA", block);
     assert(isString(block), "block not a string");
     this.hTransitions = {};
     lLines = toArray(block, 'noEmptyLines');
-    debug('lLines', lLines);
+    dbg('lLines', lLines);
     for (i = j = 0, len = lLines.length; j < len; i = ++j) {
       line = lLines[i];
-      debug(`LINE ${i}`, line);
+      dbg(`LINE ${i}`, line);
       lWords = words(line);
       if (lWords.length === 3) {
         [bState, token, eState] = lWords;
@@ -49,7 +51,7 @@ export var FSA = class FSA {
       } else {
         croak(`Invalid desc: ${OL(line)}`);
       }
-      debug(`LINE ${i}: ${OL(bState)} ${OL(token)} ${OL(eState)} ${OL(output)}`);
+      dbg(`LINE ${i}: ${OL(bState)} ${OL(token)} ${OL(eState)} ${OL(output)}`);
       assert(nonEmpty(eState), `Invalid FSA description ${i}`);
       // --- tokens may be quoted (but may not contain whitespace),
       //     but the quotes are stripped
@@ -57,7 +59,7 @@ export var FSA = class FSA {
         assert(bState === 'start', `Invalid FSA description ${i}`);
       }
       token = this.fixToken(token);
-      debug('token', token);
+      dbg('token', token);
       if (isEmpty(output)) {
         output = undef;
       }
@@ -68,9 +70,9 @@ export var FSA = class FSA {
       assert(notdefined(hTrans[token]), "Duplicate transition");
       hTrans[token] = [eState, output];
     }
-    debug('hTransitions', this.hTransitions);
+    dbg('hTransitions', this.hTransitions);
     this.curState = 'start';
-    debug("return from FSA()");
+    dbgReturn("FSA");
   }
 
   // ..........................................................

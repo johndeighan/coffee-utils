@@ -8,16 +8,23 @@ import {
   LOG,
   LOGVALUE,
   LOGTAML,
-  debug,
   isTAML,
   fromTAML
 } from '@jdeighan/exceptions';
 
 import {
+  dbg,
+  dbgEnter,
+  dbgReturn,
+  dbgYield,
+  dbgResume
+} from '@jdeighan/exceptions/debug';
+
+import {
   pass,
   undef,
-  def,
-  notdef,
+  defined,
+  notdefined,
   OL,
   isEmpty,
   nonEmpty,
@@ -61,7 +68,7 @@ export var SectionMap = class SectionMap {
     //        should be <name> -> <function>
     //     <name> can be a section name or a set name
     //     <function> should be <block> -> <block>
-    debug("enter SectionMap()", tree, this.hReplacers);
+    dbgEnter("SectionMap", tree, this.hReplacers);
     this.checkTree(tree);
     this.checkReplacers(this.hReplacers);
     this.hSections = {}; // --- {section name: Section Object}
@@ -69,49 +76,49 @@ export var SectionMap = class SectionMap {
       ALL: this.lFullTree // --- {set name: array of parts}
     };
     this.init(this.lFullTree);
-    debug('hSections', this.hSections);
-    debug('hSets', this.hSets);
-    debug("return from SectionMap()");
+    dbg('hSections', this.hSections);
+    dbg('hSets', this.hSets);
+    dbgReturn("SectionMap");
   }
 
   // ..........................................................
   init(lTree) {
     var firstItem, i, item, len;
-    debug("enter init()", lTree);
+    dbgEnter("init", lTree);
     assert(isArray(lTree), "not an array");
     assert(nonEmpty(lTree), "empty array");
     firstItem = lTree[0];
     if (isSetName(firstItem)) {
-      debug(`found set name ${OL(firstItem)}`);
+      dbg(`found set name ${OL(firstItem)}`);
       lTree = lTree.slice(1);
       this.mkSet(firstItem, lTree);
     }
     for (i = 0, len = lTree.length; i < len; i++) {
       item = lTree[i];
       if (isArray(item)) {
-        debug("init subtree");
+        dbg("init subtree");
         this.init(item);
       } else if (isSectionName(item)) {
-        debug(`mkSection ${OL(item)}`);
+        dbg(`mkSection ${OL(item)}`);
         this.mkSection(item);
       } else {
         assert(isString(item), `Bad item in tree: ${OL(item)}`);
       }
     }
-    debug("return from init()");
+    dbgReturn("init");
   }
 
   // ..........................................................
   mkSet(name, lTree) {
     assert(isArray(lTree), "tree is not an array");
     assert(nonEmpty(lTree), "set without sections");
-    assert(notdef(this.hSets[name]), `set ${OL(name)} already exists`);
+    assert(notdefined(this.hSets[name]), `set ${OL(name)} already exists`);
     this.hSets[name] = lTree;
   }
 
   // ..........................................................
   mkSection(name) {
-    assert(notdef(this.hSections[name]), "duplicate section name");
+    assert(notdefined(this.hSections[name]), "duplicate section name");
     this.hSections[name] = new Section(name, this.hReplacers[name]);
   }
 
@@ -124,19 +131,17 @@ export var SectionMap = class SectionMap {
     //        a set name
     //        an array of section or set names or literal strings
     //     i.e. it should NOT contain sub-arrays
-    if (isString(desc)) {
-      debug(`enter SectionMap.getBlock(${OL(desc)})`);
-    } else if (isArrayOfStrings(desc)) {
-      debug("enter SectionMap.getBlock()", desc);
+    if (isString(desc) || isArrayOfStrings(desc)) {
+      dbgEnter("SectionMap.getBlock", desc);
     } else {
       croak(`Bad desc: ${OL(desc)}`);
     }
     if (isSectionName(desc)) {
-      debug("item is a section name");
+      dbg("item is a section name");
       // --- a section's getBlock() applies any replacer
       block = this.section(desc).getBlock();
     } else if (isSetName(desc)) {
-      debug("item is a set name");
+      dbg("item is a set name");
       lBlocks = (function() {
         var i, len, ref, results;
         ref = this.hSets[desc];
@@ -155,16 +160,16 @@ export var SectionMap = class SectionMap {
       }).call(this);
       block = toBlock(lBlocks);
       replacer = this.hReplacers[desc];
-      debug(`replacer for is ${OL(replacer)}`);
-      if (def(replacer)) {
+      dbg(`replacer for is ${OL(replacer)}`);
+      if (defined(replacer)) {
         block = replacer(block);
       }
     } else if (isString(desc)) {
-      debug("item is a literal string");
+      dbg("item is a literal string");
       // --- a literal string
       block = desc;
     } else if (isArray(desc)) {
-      debug("item is an array");
+      dbg("item is an array");
       lBlocks = (function() {
         var i, len, results;
         results = [];
@@ -178,7 +183,7 @@ export var SectionMap = class SectionMap {
     } else {
       croak(`Bad arg: ${OL(desc)}`);
     }
-    debug("return from SectionMap.getBlock()", block);
+    dbgReturn("SectionMap.getBlock", block);
     return block;
   }
 
@@ -187,28 +192,34 @@ export var SectionMap = class SectionMap {
   //     so only useful for isEmpty() and nonEmpty()
   * allSections(desc = undef) {
     var i, item, j, len, len1, name, ref;
-    debug("enter allSections()", desc);
-    if (notdef(desc)) {
+    dbgEnter("allSections", desc);
+    if (notdefined(desc)) {
       desc = this.lFullTree;
     }
     if (isSectionName(desc)) {
-      debug("is section name");
+      dbg("is section name");
+      dbgYield("allSections", this.section(desc));
       yield this.section(desc);
+      dbgResume("allSections");
     } else if (isSetName(desc)) {
-      debug("is set name");
+      dbg("is set name");
       ref = this.hSets[desc];
       for (i = 0, len = ref.length; i < len; i++) {
         name = ref[i];
+        dbgYield("allSections");
         yield* this.allSections(name);
+        dbgResume("allSections");
       }
     } else if (isArray(desc)) {
-      debug("is array");
+      dbg("is array");
       for (j = 0, len1 = desc.length; j < len1; j++) {
         item = desc[j];
+        dbgYield("allSections");
         yield* this.allSections(item);
+        dbgResume("allSections");
       }
     }
-    debug("return from allSections()");
+    dbgReturn("allSections");
   }
 
   // ..........................................................
@@ -239,7 +250,7 @@ export var SectionMap = class SectionMap {
   section(name) {
     var sect;
     sect = this.hSections[name];
-    assert(def(sect), `No section named ${OL(name)}`);
+    assert(defined(sect), `No section named ${OL(name)}`);
     return sect;
   }
 
@@ -248,7 +259,7 @@ export var SectionMap = class SectionMap {
     var lSubTree;
     assert(isSetName(name), `bad set name ${OL(name)}`);
     lSubTree = this.hSets[name];
-    assert(def(lSubTree), `no such set ${OL(name)}`);
+    assert(defined(lSubTree), `no such set ${OL(name)}`);
     return this.section(lSubTree[0]);
   }
 
@@ -257,15 +268,15 @@ export var SectionMap = class SectionMap {
     var lSubTree;
     assert(isSetName(name), `bad set name ${OL(name)}`);
     lSubTree = this.hSets[name];
-    assert(def(lSubTree), `no such set ${OL(name)}`);
+    assert(defined(lSubTree), `no such set ${OL(name)}`);
     return this.section(lSubTree[lSubTree.length - 1]);
   }
 
   // ..........................................................
   checkTree(tree) {
-    debug("enter checkTree()");
+    dbgEnter("checkTree");
     if (isString(tree)) {
-      debug("tree is a string");
+      dbg("tree is a string");
       assert(isTAML(tree), "not TAML");
       this.lFullTree = fromTAML(tree);
     } else {
@@ -277,7 +288,7 @@ export var SectionMap = class SectionMap {
       LOGTAML('lFullTree', this.lFullTree);
       croak("tree cannot begin with a set name");
     }
-    debug("return from checkTree()");
+    dbgReturn("checkTree");
   }
 
   // ..........................................................

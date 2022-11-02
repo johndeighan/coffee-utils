@@ -3,20 +3,20 @@
 import {assert, croak} from '@jdeighan/exceptions'
 import {LOG, sep_dash, sep_eq} from '@jdeighan/exceptions/log'
 import {
-	undef, pass, def, defined, notdef, notdefined,
+	undef, pass, defined, notdefined,
 	deepCopy, escapeStr, unescapeStr, hasChar, quoted, OL,
 	isString, isNumber, isInteger, isHash, isArray, isBoolean,
 	isConstructor, isFunction, isRegExp, isObject, getClassName,
-	jsType,
+	jsType, oneof,
 	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words, getOptions,
 	} from '@jdeighan/exceptions/utils'
 
 export {
-	undef, pass, def, defined, notdef, notdefined, LOG, sep_dash, sep_eq,
+	undef, pass, defined, notdefined, LOG, sep_dash, sep_eq,
 	deepCopy, escapeStr, unescapeStr, hasChar, quoted, OL,
 	isString, isNumber, isInteger, isHash, isArray, isBoolean,
 	isConstructor, isFunction, isRegExp, isObject, getClassName,
-	jsType,
+	jsType, oneof,
 	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words, getOptions,
 	}
 
@@ -65,12 +65,6 @@ export charCount = (str, ch) ->
 		count += 1
 		pos = str.indexOf(ch, pos+1)
 	return count
-
-# ---------------------------------------------------------------------------
-
-export oneof = (word, lWords...) ->
-
-	return (lWords.indexOf(word) >= 0)
 
 # ---------------------------------------------------------------------------
 

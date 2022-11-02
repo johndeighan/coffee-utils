@@ -6,7 +6,9 @@ import {
 } from '@jdeighan/exceptions';
 
 import {
-  debug
+  dbg,
+  dbgEnter,
+  dbgReturn
 } from '@jdeighan/exceptions/debug';
 
 import {
@@ -74,16 +76,16 @@ export var Section = class Section {
   // ..........................................................
   getBlock() {
     var block;
-    debug("enter Section.getBlock()");
+    dbgEnter("Section.getBlock");
     if (this.lParts.length === 0) {
-      debug("return undef from Section.getBlock()");
+      dbgReturn("Section.getBlock", undef);
       return undef;
     }
     block = toBlock(this.lParts);
     if (defined(this.replacer)) {
       block = this.replacer(block);
     }
-    debug("return from Section.getBlock()", block);
+    dbgReturn("Section.getBlock", block);
     return block;
   }
 

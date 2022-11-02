@@ -1,7 +1,7 @@
 # Section.coffee
 
 import {assert, croak} from '@jdeighan/exceptions'
-import {debug} from '@jdeighan/exceptions/debug'
+import {dbg, dbgEnter, dbgReturn} from '@jdeighan/exceptions/debug'
 import {
 	pass, undef, defined, isArray, isEmpty, isFunction,
 	} from '@jdeighan/coffee-utils'
@@ -61,12 +61,12 @@ export class Section
 
 	getBlock: () ->
 
-		debug "enter Section.getBlock()"
+		dbgEnter "Section.getBlock"
 		if (@lParts.length == 0)
-			debug "return undef from Section.getBlock()"
+			dbgReturn "Section.getBlock", undef
 			return undef
 		block = toBlock(@lParts)
 		if defined(@replacer)
 			block = @replacer block
-		debug "return from Section.getBlock()", block
+		dbgReturn "Section.getBlock", block
 		return block

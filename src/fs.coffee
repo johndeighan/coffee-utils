@@ -5,7 +5,8 @@ import urllib from 'url'
 import fs from 'fs'
 import NReadLines from 'n-readlines'
 
-import {assert, croak, debug, LOG, fromTAML} from '@jdeighan/exceptions'
+import {assert, croak, LOG, fromTAML} from '@jdeighan/exceptions'
+import {dbg, dbgEnter, dbgReturn} from '@jdeighan/exceptions/debug'
 import {
 	undef, pass, defined, rtrim, isEmpty, nonEmpty, getOptions,
 	isString, isArray, isHash, isRegExp, isFunction, OL,
@@ -377,7 +378,7 @@ export parseSource = (source) ->
 	#        }
 	# --- NOTE: source may be a file URL, e.g. import.meta.url
 
-	debug "enter parseSource(#{OL(source)})"
+	dbgEnter "parseSource", source
 	assert isString(source),\
 			"parseSource(): source not a string: #{OL(source)}"
 	if source == 'unit test'
@@ -414,7 +415,7 @@ export parseSource = (source) ->
 				([A-Za-z_]+)
 				$///)
 			hSourceInfo.purpose = lMatches[1]
-	debug "return from parseSource()", hSourceInfo
+	dbgReturn "parseSource", hSourceInfo
 	return hSourceInfo
 
 # ---------------------------------------------------------------------------

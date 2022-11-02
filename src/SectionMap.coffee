@@ -1,10 +1,13 @@
 # SectionMap.coffee
 
 import {
-	assert, croak, LOG, LOGVALUE, LOGTAML, debug, isTAML, fromTAML,
+	assert, croak, LOG, LOGVALUE, LOGTAML, isTAML, fromTAML,
 	} from '@jdeighan/exceptions'
 import {
-	pass, undef, def, notdef, OL, isEmpty, nonEmpty,
+	dbg, dbgEnter, dbgReturn, dbgYield, dbgResume,
+	} from '@jdeighan/exceptions/debug'
+import {
+	pass, undef, defined, notdefined, OL, isEmpty, nonEmpty,
 	isString, isHash, isArray, isUniqueTree, isNonEmptyString,
 	isNonEmptyArray, isFunction, jsType, isArrayOfStrings,
 	} from '@jdeighan/coffee-utils'
@@ -36,7 +39,7 @@ export class SectionMap
 		#     <name> can be a section name or a set name
 		#     <function> should be <block> -> <block>
 
-		debug "enter SectionMap()", tree, @hReplacers
+		dbgEnter "SectionMap", tree, @hReplacers
 
 		@checkTree tree
 		@checkReplacers @hReplacers
@@ -46,34 +49,34 @@ export class SectionMap
 
 		@init @lFullTree
 
-		debug 'hSections', @hSections
-		debug 'hSets', @hSets
-		debug "return from SectionMap()"
+		dbg 'hSections', @hSections
+		dbg 'hSets', @hSets
+		dbgReturn "SectionMap"
 
 	# ..........................................................
 
 	init: (lTree) ->
 
-		debug "enter init()", lTree
+		dbgEnter "init", lTree
 		assert isArray(lTree), "not an array"
 		assert nonEmpty(lTree), "empty array"
 
 		firstItem = lTree[0]
 		if isSetName(firstItem)
-			debug "found set name #{OL(firstItem)}"
+			dbg "found set name #{OL(firstItem)}"
 			lTree = lTree.slice(1)
 			@mkSet firstItem, lTree
 
 		for item in lTree
 			if isArray(item)
-				debug "init subtree"
+				dbg "init subtree"
 				@init item
 			else if isSectionName(item)
-				debug "mkSection #{OL(item)}"
+				dbg "mkSection #{OL(item)}"
 				@mkSection item
 			else
 				assert isString(item), "Bad item in tree: #{OL(item)}"
-		debug "return from init()"
+		dbgReturn "init"
 		return
 
 	# ..........................................................
@@ -82,7 +85,7 @@ export class SectionMap
 
 		assert isArray(lTree), "tree is not an array"
 		assert nonEmpty(lTree), "set without sections"
-		assert notdef(@hSets[name]), "set #{OL(name)} already exists"
+		assert notdefined(@hSets[name]), "set #{OL(name)} already exists"
 		@hSets[name] = lTree
 		return
 
@@ -90,7 +93,7 @@ export class SectionMap
 
 	mkSection: (name) ->
 
-		assert notdef(@hSections[name]), "duplicate section name"
+		assert notdefined(@hSections[name]), "duplicate section name"
 		@hSections[name] = new Section(name, @hReplacers[name])
 		return
 
@@ -104,19 +107,17 @@ export class SectionMap
 		#        an array of section or set names or literal strings
 		#     i.e. it should NOT contain sub-arrays
 
-		if isString(desc)
-			debug "enter SectionMap.getBlock(#{OL(desc)})"
-		else if isArrayOfStrings(desc)
-			debug "enter SectionMap.getBlock()", desc
+		if isString(desc) || isArrayOfStrings(desc)
+			dbgEnter "SectionMap.getBlock", desc
 		else
 			croak "Bad desc: #{OL(desc)}"
 
 		if isSectionName(desc)
-			debug "item is a section name"
+			dbg "item is a section name"
 			# --- a section's getBlock() applies any replacer
 			block = @section(desc).getBlock()
 		else if isSetName(desc)
-			debug "item is a set name"
+			dbg "item is a set name"
 			lBlocks = for item in @hSets[desc]
 				if isArray(item)
 					@getBlock item[0]
@@ -126,22 +127,22 @@ export class SectionMap
 					croak "Item in set #{desc} is not a string or array"
 			block = toBlock(lBlocks)
 			replacer = @hReplacers[desc]
-			debug "replacer for is #{OL(replacer)}"
-			if def(replacer)
+			dbg "replacer for is #{OL(replacer)}"
+			if defined(replacer)
 				block = replacer(block)
 		else if isString(desc)
-			debug "item is a literal string"
+			dbg "item is a literal string"
 			# --- a literal string
 			block = desc
 		else if isArray(desc)
-			debug "item is an array"
+			dbg "item is an array"
 			lBlocks = for item in desc
 				@getBlock(item)
 			block = toBlock(lBlocks)
 		else
 			croak "Bad arg: #{OL(desc)}"
 
-		debug "return from SectionMap.getBlock()", block
+		dbgReturn "SectionMap.getBlock", block
 		return block
 
 	# ..........................................................
@@ -150,22 +151,28 @@ export class SectionMap
 
 	allSections: (desc=undef) ->
 
-		debug "enter allSections()", desc
-		if notdef(desc)
+		dbgEnter "allSections", desc
+		if notdefined(desc)
 			desc = @lFullTree
 
 		if isSectionName(desc)
-			debug "is section name"
+			dbg "is section name"
+			dbgYield "allSections", @section(desc)
 			yield @section(desc)
+			dbgResume "allSections"
 		else if isSetName(desc)
-			debug "is set name"
+			dbg "is set name"
 			for name in @hSets[desc]
+				dbgYield "allSections"
 				yield from @allSections(name)
+				dbgResume "allSections"
 		else if isArray(desc)
-			debug "is array"
+			dbg "is array"
 			for item in desc
+				dbgYield "allSections"
 				yield from @allSections(item)
-		debug "return from allSections()"
+				dbgResume "allSections"
+		dbgReturn "allSections"
 		return
 
 	# ..........................................................
@@ -191,7 +198,7 @@ export class SectionMap
 	section: (name) ->
 
 		sect = @hSections[name]
-		assert def(sect), "No section named #{OL(name)}"
+		assert defined(sect), "No section named #{OL(name)}"
 		return sect
 
 	# ..........................................................
@@ -200,7 +207,7 @@ export class SectionMap
 
 		assert isSetName(name), "bad set name #{OL(name)}"
 		lSubTree = @hSets[name]
-		assert def(lSubTree), "no such set #{OL(name)}"
+		assert defined(lSubTree), "no such set #{OL(name)}"
 		return @section(lSubTree[0])
 
 	# ..........................................................
@@ -209,16 +216,16 @@ export class SectionMap
 
 		assert isSetName(name), "bad set name #{OL(name)}"
 		lSubTree = @hSets[name]
-		assert def(lSubTree), "no such set #{OL(name)}"
+		assert defined(lSubTree), "no such set #{OL(name)}"
 		return @section(lSubTree[lSubTree.length - 1])
 
 	# ..........................................................
 
 	checkTree: (tree) ->
 
-		debug "enter checkTree()"
+		dbgEnter "checkTree"
 		if isString(tree)
-			debug "tree is a string"
+			dbg "tree is a string"
 			assert isTAML(tree), "not TAML"
 			@lFullTree = fromTAML(tree)
 		else
@@ -229,7 +236,7 @@ export class SectionMap
 		if isSetName(@lFullTree[0])
 			LOGTAML 'lFullTree', @lFullTree
 			croak "tree cannot begin with a set name"
-		debug "return from checkTree()"
+		dbgReturn "checkTree"
 		return
 
 	# ..........................................................

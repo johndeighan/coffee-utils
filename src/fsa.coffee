@@ -2,7 +2,7 @@
 
 import {assert, croak} from '@jdeighan/exceptions'
 import {LOG} from '@jdeighan/exceptions/log'
-import {debug} from '@jdeighan/exceptions/debug'
+import {dbg, dbgEnter, dbgReturn} from '@jdeighan/exceptions/debug'
 import {
 	undef, defined, notdefined, words, isEmpty, nonEmpty,
 	isString, OL,
@@ -15,13 +15,13 @@ export class FSA
 
 	constructor: (block) ->
 
-		debug "enter FSA()"
+		dbgEnter "FSA", block
 		assert isString(block), "block not a string"
 		@hTransitions = {}
 		lLines = toArray(block, 'noEmptyLines')
-		debug 'lLines', lLines
+		dbg 'lLines', lLines
 		for line,i in lLines
-			debug "LINE #{i}", line
+			dbg "LINE #{i}", line
 			lWords = words(line)
 			if (lWords.length == 3)
 				[bState, token, eState] = lWords
@@ -30,7 +30,7 @@ export class FSA
 				[bState, token, eState, output] = lWords
 			else
 				croak "Invalid desc: #{OL(line)}"
-			debug "LINE #{i}: #{OL(bState)} #{OL(token)} #{OL(eState)} #{OL(output)}"
+			dbg "LINE #{i}: #{OL(bState)} #{OL(token)} #{OL(eState)} #{OL(output)}"
 			assert nonEmpty(eState), "Invalid FSA description #{i}"
 
 			# --- tokens may be quoted (but may not contain whitespace),
@@ -38,7 +38,7 @@ export class FSA
 			if (i == 0)
 				assert (bState == 'start'), "Invalid FSA description #{i}"
 			token = @fixToken(token)
-			debug 'token', token
+			dbg 'token', token
 			if isEmpty(output)
 				output = undef
 			hTrans = @hTransitions[bState]
@@ -46,9 +46,9 @@ export class FSA
 				hTrans = @hTransitions[bState] = {}
 			assert notdefined(hTrans[token]), "Duplicate transition"
 			hTrans[token] = [eState, output]
-		debug 'hTransitions', @hTransitions
+		dbg 'hTransitions', @hTransitions
 		@curState = 'start'
-		debug "return from FSA()"
+		dbgReturn "FSA"
 
 	# ..........................................................
 

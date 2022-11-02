@@ -16,9 +16,7 @@ import {
 import {
   undef,
   pass,
-  def,
   defined,
-  notdef,
   notdefined,
   deepCopy,
   escapeStr,
@@ -38,6 +36,7 @@ import {
   isObject,
   getClassName,
   jsType,
+  oneof,
   isEmpty,
   nonEmpty,
   chomp,
@@ -50,9 +49,7 @@ import {
 export {
   undef,
   pass,
-  def,
   defined,
-  notdef,
   notdefined,
   LOG,
   sep_dash,
@@ -75,6 +72,7 @@ export {
   isObject,
   getClassName,
   jsType,
+  oneof,
   isEmpty,
   nonEmpty,
   chomp,
@@ -123,11 +121,6 @@ export var charCount = function(str, ch) {
     pos = str.indexOf(ch, pos + 1);
   }
   return count;
-};
-
-// ---------------------------------------------------------------------------
-export var oneof = function(word, ...lWords) {
-  return lWords.indexOf(word) >= 0;
 };
 
 // ---------------------------------------------------------------------------
