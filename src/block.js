@@ -7,12 +7,12 @@ import readline from 'readline';
 import {
   assert,
   croak
-} from '@jdeighan/exceptions';
+} from '@jdeighan/base-utils';
 
 import {
   blockToArray,
   arrayToBlock
-} from '@jdeighan/exceptions/utils';
+} from '@jdeighan/base-utils/utils';
 
 import {
   undef,

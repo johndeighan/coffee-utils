@@ -1,6 +1,6 @@
 # indent.coffee
 
-import {assert, croak} from '@jdeighan/exceptions'
+import {assert, croak} from '@jdeighan/base-utils'
 import {
 	undef, defined, notdefined,
 	OL, isInteger, isString, isArray, isEmpty, rtrim,

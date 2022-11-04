@@ -1,7 +1,7 @@
 # svelte.coffee
 
-import {assert, croak} from '@jdeighan/exceptions'
-import {LOG} from '@jdeighan/exceptions/log'
+import {assert, croak} from '@jdeighan/base-utils'
+import {LOG} from '@jdeighan/base-utils/log'
 import {isFunction} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------

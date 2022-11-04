@@ -1,6 +1,6 @@
 # html.coffee
 
-import {assert, croak} from '@jdeighan/exceptions'
+import {assert, croak} from '@jdeighan/base-utils'
 import {
 	undef, pass, words, isEmpty, nonEmpty,
 	} from '@jdeighan/coffee-utils'

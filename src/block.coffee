@@ -3,8 +3,8 @@
 import fs from 'fs'
 import readline from 'readline'
 
-import {assert, croak} from '@jdeighan/exceptions'
-import {blockToArray, arrayToBlock} from '@jdeighan/exceptions/utils'
+import {assert, croak} from '@jdeighan/base-utils'
+import {blockToArray, arrayToBlock} from '@jdeighan/base-utils/utils'
 import {
 	undef, pass, defined, notdefined,
 	isEmpty, isString, isArray, nonEmpty, isArrayOfStrings,

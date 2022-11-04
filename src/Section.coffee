@@ -1,7 +1,7 @@
 # Section.coffee
 
-import {assert, croak} from '@jdeighan/exceptions'
-import {dbg, dbgEnter, dbgReturn} from '@jdeighan/exceptions/debug'
+import {assert, croak} from '@jdeighan/base-utils'
+import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
 import {
 	pass, undef, defined, isArray, isEmpty, isFunction,
 	} from '@jdeighan/coffee-utils'

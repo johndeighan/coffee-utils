@@ -5,8 +5,8 @@ import urllib from 'url'
 import fs from 'fs'
 import NReadLines from 'n-readlines'
 
-import {assert, croak, LOG, fromTAML} from '@jdeighan/exceptions'
-import {dbg, dbgEnter, dbgReturn} from '@jdeighan/exceptions/debug'
+import {assert, croak, LOG, fromTAML} from '@jdeighan/base-utils'
+import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
 import {
 	undef, pass, defined, rtrim, isEmpty, nonEmpty, getOptions,
 	isString, isArray, isHash, isRegExp, isFunction, OL,

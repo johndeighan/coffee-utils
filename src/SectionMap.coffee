@@ -2,10 +2,10 @@
 
 import {
 	assert, croak, LOG, LOGVALUE, LOGTAML, isTAML, fromTAML,
-	} from '@jdeighan/exceptions'
+	} from '@jdeighan/base-utils'
 import {
 	dbg, dbgEnter, dbgReturn, dbgYield, dbgResume,
-	} from '@jdeighan/exceptions/debug'
+	} from '@jdeighan/base-utils/debug'
 import {
 	pass, undef, defined, notdefined, OL, isEmpty, nonEmpty,
 	isString, isHash, isArray, isUniqueTree, isNonEmptyString,

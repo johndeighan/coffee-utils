@@ -15,13 +15,13 @@ import {
   croak,
   LOG,
   fromTAML
-} from '@jdeighan/exceptions';
+} from '@jdeighan/base-utils';
 
 import {
   dbg,
   dbgEnter,
   dbgReturn
-} from '@jdeighan/exceptions/debug';
+} from '@jdeighan/base-utils/debug';
 
 import {
   undef,

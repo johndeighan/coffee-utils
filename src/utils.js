@@ -5,13 +5,13 @@ var hasProp = {}.hasOwnProperty;
 import {
   assert,
   croak
-} from '@jdeighan/exceptions';
+} from '@jdeighan/base-utils';
 
 import {
   LOG,
   sep_dash,
   sep_eq
-} from '@jdeighan/exceptions/log';
+} from '@jdeighan/base-utils/log';
 
 import {
   undef,
@@ -44,7 +44,7 @@ import {
   setCharsAt,
   words,
   getOptions
-} from '@jdeighan/exceptions/utils';
+} from '@jdeighan/base-utils/utils';
 
 export {
   undef,

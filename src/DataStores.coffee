@@ -3,7 +3,7 @@
 import pathlib from 'path'
 import {writable, readable, get} from 'svelte/store'
 
-import {assert, croak} from '@jdeighan/exceptions'
+import {assert, croak} from '@jdeighan/base-utils'
 import {undef, pass} from '@jdeighan/coffee-utils'
 import {localStore} from '@jdeighan/coffee-utils/browser'
 import {

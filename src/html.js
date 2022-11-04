@@ -5,7 +5,7 @@ var hNoEnd, i, len, ref, tagName;
 import {
   assert,
   croak
-} from '@jdeighan/exceptions';
+} from '@jdeighan/base-utils';
 
 import {
   undef,

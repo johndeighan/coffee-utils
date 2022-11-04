@@ -10,7 +10,7 @@ import {
   LOGTAML,
   isTAML,
   fromTAML
-} from '@jdeighan/exceptions';
+} from '@jdeighan/base-utils';
 
 import {
   dbg,
@@ -18,7 +18,7 @@ import {
   dbgReturn,
   dbgYield,
   dbgResume
-} from '@jdeighan/exceptions/debug';
+} from '@jdeighan/base-utils/debug';
 
 import {
   pass,

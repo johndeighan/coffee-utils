@@ -2,7 +2,7 @@
 
 import yaml from 'js-yaml'
 
-import {assert, croak, isTAML, fromTAML, toTAML} from '@jdeighan/exceptions'
+import {assert, croak, isTAML, fromTAML, toTAML} from '@jdeighan/base-utils'
 import {
 	undef, defined, notdefined, OL, chomp, escapeStr,
 	isString, isObject, isEmpty,

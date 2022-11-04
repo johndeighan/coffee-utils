@@ -8,7 +8,7 @@ import {
   isTAML,
   fromTAML,
   toTAML
-} from '@jdeighan/exceptions';
+} from '@jdeighan/base-utils';
 
 import {
   undef,

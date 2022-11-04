@@ -3,11 +3,11 @@
 import {
   assert,
   croak
-} from '@jdeighan/exceptions';
+} from '@jdeighan/base-utils';
 
 import {
   LOG
-} from '@jdeighan/exceptions/log';
+} from '@jdeighan/base-utils/log';
 
 import {
   isFunction

@@ -1,8 +1,8 @@
 # fsa.coffee
 
-import {assert, croak} from '@jdeighan/exceptions'
-import {LOG} from '@jdeighan/exceptions/log'
-import {dbg, dbgEnter, dbgReturn} from '@jdeighan/exceptions/debug'
+import {assert, croak} from '@jdeighan/base-utils'
+import {LOG} from '@jdeighan/base-utils/log'
+import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
 import {
 	undef, defined, notdefined, words, isEmpty, nonEmpty,
 	isString, OL,
