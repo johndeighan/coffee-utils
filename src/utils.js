@@ -9,9 +9,19 @@ import {
 
 import {
   LOG,
+  LOGVALUE,
   sep_dash,
   sep_eq
 } from '@jdeighan/base-utils/log';
+
+import {
+  dbgEnter,
+  dbgReturn,
+  dbgYield,
+  dbgResume,
+  dbg,
+  setDebugging
+} from '@jdeighan/base-utils/debug';
 
 import {
   undef,
@@ -47,13 +57,22 @@ import {
 } from '@jdeighan/base-utils/utils';
 
 export {
+  assert,
+  croak,
+  LOG,
+  LOGVALUE,
+  sep_dash,
+  sep_eq,
+  dbgEnter,
+  dbgReturn,
+  dbgYield,
+  dbgResume,
+  dbg,
+  setDebugging,
   undef,
   pass,
   defined,
   notdefined,
-  LOG,
-  sep_dash,
-  sep_eq,
   deepCopy,
   escapeStr,
   unescapeStr,

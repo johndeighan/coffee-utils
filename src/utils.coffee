@@ -1,7 +1,10 @@
 # utils.coffee
 
 import {assert, croak} from '@jdeighan/base-utils'
-import {LOG, sep_dash, sep_eq} from '@jdeighan/base-utils/log'
+import {LOG, LOGVALUE, sep_dash, sep_eq} from '@jdeighan/base-utils/log'
+import {
+	dbgEnter, dbgReturn, dbgYield, dbgResume, dbg, setDebugging,
+	} from '@jdeighan/base-utils/debug'
 import {
 	undef, pass, defined, notdefined,
 	deepCopy, escapeStr, unescapeStr, hasChar, quoted, OL,
@@ -12,7 +15,10 @@ import {
 	} from '@jdeighan/base-utils/utils'
 
 export {
-	undef, pass, defined, notdefined, LOG, sep_dash, sep_eq,
+	assert, croak,
+	LOG, LOGVALUE, sep_dash, sep_eq,
+	dbgEnter, dbgReturn, dbgYield, dbgResume, dbg, setDebugging,
+	undef, pass, defined, notdefined,
 	deepCopy, escapeStr, unescapeStr, hasChar, quoted, OL,
 	isString, isNumber, isInteger, isHash, isArray, isBoolean,
 	isConstructor, isFunction, isRegExp, isObject, getClassName,

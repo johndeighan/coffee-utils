@@ -131,9 +131,8 @@ export var SectionMap = class SectionMap {
     //        a set name
     //        an array of section or set names or literal strings
     //     i.e. it should NOT contain sub-arrays
-    if (isString(desc) || isArrayOfStrings(desc)) {
-      dbgEnter("SectionMap.getBlock", desc);
-    } else {
+    dbgEnter("SectionMap.getBlock", desc);
+    if (!isString(desc) && !isArrayOfStrings(desc)) {
       croak(`Bad desc: ${OL(desc)}`);
     }
     if (isSectionName(desc)) {
