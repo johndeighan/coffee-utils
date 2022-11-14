@@ -3,6 +3,7 @@
 import pathlib from 'path'
 import urllib from 'url'
 import fs from 'fs'
+import readline from 'readline'
 import NReadLines from 'n-readlines'
 
 import {assert, croak, LOG, fromTAML} from '@jdeighan/base-utils'
@@ -128,17 +129,81 @@ export getFullPath = (filepath) ->
 
 # ---------------------------------------------------------------------------
 
-export forEachLineInFile = (filepath, func) ->
+export forEachLine = (filepath, func) ->
 
 	reader = new NReadLines(filepath)
 	nLines = 0
 
 	while (buffer = reader.next())
 		nLines += 1
-		# --- text is split on \n chars, we also need to remove \r chars
+		# --- text is split on \n chars,
+		#     we also need to remove \r chars
 		line = buffer.toString().replace(/\r/g, '')
-		if func(line, nLines) == 'EOF'
+		if func(line, nLines)
 			reader.close()   # allow premature termination
+	return
+
+# ---------------------------------------------------------------------------
+
+export forEachBlock = (filepath, func, regexp = /^-{16,}$/) ->
+
+	lLines = []
+	firstLineNum = 1
+	earlyExit = false
+
+	callback = (line, lineNum) ->
+		if (line.match(regexp))
+			if result = func(lLines.join('\n'), firstLineNum, line)
+				if (result == true)
+					earlyExit = true
+					return true
+				else if defined(result)
+					croak "forEachBlock() - callback returned '#{result}'"
+			lLines = []
+			firstLineNum = lineNum+1
+		else
+			lLines.push line
+		return
+
+	forEachLine filepath, callback
+	if ! earlyExit
+		func(lLines.join('\n'), firstLineNum)
+	return
+
+# ---------------------------------------------------------------------------
+
+export forEachSetOfBlocks = (filepath, func,
+		block_regexp = /^-{16,}$/,
+		set_regexp   = /^={16,}$/) ->
+
+	lBlocks = []
+	lLines = []
+	firstLineNum = 1
+	earlyExit = false
+
+	callback = (line, lineNum) ->
+		if (line.match(set_regexp))
+			lBlocks.push(lLines.join('\n'))
+			lLines = []
+			if result = func(lBlocks, firstLineNum, line)
+				if (result == true)
+					earlyExit = true
+					return true
+				else if result?
+					croak "forEachSetOfBlocks() - callback returned '#{result}'"
+			lBlocks = []
+			firstLineNum = lineNum+1
+		else if (line.match(block_regexp))
+			lBlocks.push(lLines.join('\n'))
+			lLines = []
+		else
+			lLines.push line
+		return
+
+	forEachLine filepath, callback
+	if ! earlyExit
+		lBlocks.push(lLines.join('\n'))
+		func(lBlocks, firstLineNum)
 	return
 
 # ---------------------------------------------------------------------------
@@ -146,12 +211,12 @@ export forEachLineInFile = (filepath, func) ->
 
 export slurp = (filepath, maxLines=undef) ->
 
-	if maxLines?
+	if defined(maxLines)
 		lLines = []
-		forEachLineInFile filepath, (line, nLines) ->
+		forEachLine filepath, (line, nLines) ->
 			lLines.push line
-			return if nLines >= maxLines then 'EOF' else undef
-		contents = lLines.join("\n")
+			return (nLines >= maxLines)
+		contents = arrayToBlock(lLines)
 	else
 		filepath = filepath.replace(/\//g, "\\")
 		contents = fs.readFileSync(filepath, 'utf8').toString()
@@ -417,26 +482,6 @@ export parseSource = (source) ->
 			hSourceInfo.purpose = lMatches[1]
 	dbgReturn "parseSource", hSourceInfo
 	return hSourceInfo
-
-# ---------------------------------------------------------------------------
-#   backup - back up a file
-
-# --- If report is true, missing source files are not an error
-#     but both missing source files and successful copies
-#     are reported via LOG
-
-export backup = (file, from, to, report=false) ->
-	src = mkpath(from, file)
-	dest = mkpath(to, file)
-
-	if report
-		if fs.existsSync(src)
-			LOG "OK #{file}"
-			fs.copyFileSync(src, dest)
-		else
-			LOG "MISSING #{src}"
-	else
-		fs.copyFileSync(src, dest)
 
 # ---------------------------------------------------------------------------
 #   slurpTAML - read TAML from a file

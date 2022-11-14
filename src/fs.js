@@ -8,6 +8,8 @@ import urllib from 'url';
 
 import fs from 'fs';
 
+import readline from 'readline';
+
 import NReadLines from 'n-readlines';
 
 import {
@@ -160,17 +162,83 @@ export var getFullPath = function(filepath) {
 };
 
 // ---------------------------------------------------------------------------
-export var forEachLineInFile = function(filepath, func) {
+export var forEachLine = function(filepath, func) {
   var buffer, line, nLines, reader;
   reader = new NReadLines(filepath);
   nLines = 0;
   while ((buffer = reader.next())) {
     nLines += 1;
-    // --- text is split on \n chars, we also need to remove \r chars
+    // --- text is split on \n chars,
+    //     we also need to remove \r chars
     line = buffer.toString().replace(/\r/g, '');
-    if (func(line, nLines) === 'EOF') {
+    if (func(line, nLines)) {
       reader.close(); // allow premature termination
     }
+  }
+};
+
+// ---------------------------------------------------------------------------
+export var forEachBlock = function(filepath, func, regexp = /^-{16,}$/) {
+  var callback, earlyExit, firstLineNum, lLines;
+  lLines = [];
+  firstLineNum = 1;
+  earlyExit = false;
+  callback = function(line, lineNum) {
+    var result;
+    if (line.match(regexp)) {
+      if (result = func(lLines.join('\n'), firstLineNum, line)) {
+        if (result === true) {
+          earlyExit = true;
+          return true;
+        } else if (defined(result)) {
+          croak(`forEachBlock() - callback returned '${result}'`);
+        }
+      }
+      lLines = [];
+      firstLineNum = lineNum + 1;
+    } else {
+      lLines.push(line);
+    }
+  };
+  forEachLine(filepath, callback);
+  if (!earlyExit) {
+    func(lLines.join('\n'), firstLineNum);
+  }
+};
+
+// ---------------------------------------------------------------------------
+export var forEachSetOfBlocks = function(filepath, func, block_regexp = /^-{16,}$/, set_regexp = /^={16,}$/) {
+  var callback, earlyExit, firstLineNum, lBlocks, lLines;
+  lBlocks = [];
+  lLines = [];
+  firstLineNum = 1;
+  earlyExit = false;
+  callback = function(line, lineNum) {
+    var result;
+    if (line.match(set_regexp)) {
+      lBlocks.push(lLines.join('\n'));
+      lLines = [];
+      if (result = func(lBlocks, firstLineNum, line)) {
+        if (result === true) {
+          earlyExit = true;
+          return true;
+        } else if (result != null) {
+          croak(`forEachSetOfBlocks() - callback returned '${result}'`);
+        }
+      }
+      lBlocks = [];
+      firstLineNum = lineNum + 1;
+    } else if (line.match(block_regexp)) {
+      lBlocks.push(lLines.join('\n'));
+      lLines = [];
+    } else {
+      lLines.push(line);
+    }
+  };
+  forEachLine(filepath, callback);
+  if (!earlyExit) {
+    lBlocks.push(lLines.join('\n'));
+    func(lBlocks, firstLineNum);
   }
 };
 
@@ -178,17 +246,13 @@ export var forEachLineInFile = function(filepath, func) {
 //   slurp - read an entire file into a string
 export var slurp = function(filepath, maxLines = undef) {
   var contents, lLines;
-  if (maxLines != null) {
+  if (defined(maxLines)) {
     lLines = [];
-    forEachLineInFile(filepath, function(line, nLines) {
+    forEachLine(filepath, function(line, nLines) {
       lLines.push(line);
-      if (nLines >= maxLines) {
-        return 'EOF';
-      } else {
-        return undef;
-      }
+      return nLines >= maxLines;
     });
-    contents = lLines.join("\n");
+    contents = arrayToBlock(lLines);
   } else {
     filepath = filepath.replace(/\//g, "\\");
     contents = fs.readFileSync(filepath, 'utf8').toString();
@@ -490,28 +554,6 @@ export var parseSource = function(source) {
   }
   dbgReturn("parseSource", hSourceInfo);
   return hSourceInfo;
-};
-
-// ---------------------------------------------------------------------------
-//   backup - back up a file
-
-// --- If report is true, missing source files are not an error
-//     but both missing source files and successful copies
-//     are reported via LOG
-export var backup = function(file, from, to, report = false) {
-  var dest, src;
-  src = mkpath(from, file);
-  dest = mkpath(to, file);
-  if (report) {
-    if (fs.existsSync(src)) {
-      LOG(`OK ${file}`);
-      return fs.copyFileSync(src, dest);
-    } else {
-      return LOG(`MISSING ${src}`);
-    }
-  } else {
-    return fs.copyFileSync(src, dest);
-  }
 };
 
 // ---------------------------------------------------------------------------
