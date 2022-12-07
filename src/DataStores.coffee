@@ -10,6 +10,7 @@ import {
 	withExt, slurp, barf, newerDestFileExists,
 	} from '@jdeighan/coffee-utils/fs'
 import {fromTAML} from '@jdeighan/coffee-utils/taml'
+import {createDraft, finishDraft, produce} from 'immer'
 
 # ---------------------------------------------------------------------------
 
@@ -18,14 +19,99 @@ export class WritableDataStore
 	constructor: (value=undef) ->
 		@store = writable value
 
-	subscribe: (callback) ->
-		return @store.subscribe(callback)
+	subscribe: (func) ->
+		return @store.subscribe(func)
 
 	set: (value) ->
 		@store.set(value)
 
 	update: (func) ->
 		@store.update(func)
+
+# ---------------------------------------------------------------------------
+
+export class BaseDataStore
+
+	constructor: (@value=undef) ->
+		@lSubscribers = []
+
+	subscribe: (func) ->
+		func @value
+		@lSubscribers.push func
+		return () ->
+			pos = @lSubscribers.indexOf func
+			@lSubscribers.splice pos, 1
+
+	set: (val) ->
+		@value = val
+		@alertSubscribers()
+		return
+
+	update: (func) ->
+		@value = func(@value)
+		@alertSubscribers()
+		return
+
+	alertSubscribers: () ->
+		for func in @lSubscribers
+			func @value
+		return
+
+# ---------------------------------------------------------------------------
+
+export class ImmerDataStore extends BaseDataStore
+
+	constructor: () ->
+		super []    # initialize with an empty array
+
+	getNewState: () ->
+
+		return produce state, draft =>
+			@addGift draft, description, image
+		return
+
+	addGift: (draft, description, image) ->
+		draft.push {
+			id: 1
+			description
+			image
+			}
+
+# ---------------------------------------------------------------------------
+
+export class ToDoDataStore
+	# --- implemented with immer
+
+	constructor: () ->
+		@lToDos = []
+		@lSubscribers = []
+
+	subscribe: (func) ->
+		func(@lToDos)
+		@lSubscribers.push func
+		return () ->
+			index = @lSubscribers.indexOf func
+			@lSubscribers.splice index, 1
+
+	alertSubscribers: () ->
+		for func in @lSubscribers
+			func(@lToDos)
+		return
+
+	set: (value) ->
+		# --- Set new value
+		@alertSubscribers()
+
+	update: (func) ->
+		# --- Update value
+		@alertSubscribers()
+
+	add: (name) ->
+		@lToDos.push {
+			text: name
+			done: false
+			}
+		return
 
 # ---------------------------------------------------------------------------
 

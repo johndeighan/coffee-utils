@@ -33,14 +33,20 @@ import {
   fromTAML
 } from '@jdeighan/coffee-utils/taml';
 
+import {
+  createDraft,
+  finishDraft,
+  produce
+} from 'immer';
+
 // ---------------------------------------------------------------------------
 export var WritableDataStore = class WritableDataStore {
   constructor(value = undef) {
     this.store = writable(value);
   }
 
-  subscribe(callback) {
-    return this.store.subscribe(callback);
+  subscribe(func) {
+    return this.store.subscribe(func);
   }
 
   set(value) {
@@ -49,6 +55,112 @@ export var WritableDataStore = class WritableDataStore {
 
   update(func) {
     return this.store.update(func);
+  }
+
+};
+
+// ---------------------------------------------------------------------------
+export var BaseDataStore = class BaseDataStore {
+  constructor(value1 = undef) {
+    this.value = value1;
+    this.lSubscribers = [];
+  }
+
+  subscribe(func) {
+    func(this.value);
+    this.lSubscribers.push(func);
+    return function() {
+      var pos;
+      pos = this.lSubscribers.indexOf(func);
+      return this.lSubscribers.splice(pos, 1);
+    };
+  }
+
+  set(val) {
+    this.value = val;
+    this.alertSubscribers();
+  }
+
+  update(func) {
+    this.value = func(this.value);
+    this.alertSubscribers();
+  }
+
+  alertSubscribers() {
+    var func, i, len, ref;
+    ref = this.lSubscribers;
+    for (i = 0, len = ref.length; i < len; i++) {
+      func = ref[i];
+      func(this.value);
+    }
+  }
+
+};
+
+// ---------------------------------------------------------------------------
+export var ImmerDataStore = class ImmerDataStore extends BaseDataStore {
+  constructor() {
+    super([]); // initialize with an empty array
+  }
+
+  getNewState() {
+    return produce(state, draft(() => {
+      return this.addGift(draft, description, image);
+    }));
+  }
+
+  addGift(draft, description, image) {
+    return draft.push({
+      id: 1,
+      description,
+      image
+    });
+  }
+
+};
+
+// ---------------------------------------------------------------------------
+export var ToDoDataStore = class ToDoDataStore {
+  // --- implemented with immer
+  constructor() {
+    this.lToDos = [];
+    this.lSubscribers = [];
+  }
+
+  subscribe(func) {
+    func(this.lToDos);
+    this.lSubscribers.push(func);
+    return function() {
+      var index;
+      index = this.lSubscribers.indexOf(func);
+      return this.lSubscribers.splice(index, 1);
+    };
+  }
+
+  alertSubscribers() {
+    var func, i, len, ref;
+    ref = this.lSubscribers;
+    for (i = 0, len = ref.length; i < len; i++) {
+      func = ref[i];
+      func(this.lToDos);
+    }
+  }
+
+  set(value) {
+    // --- Set new value
+    return this.alertSubscribers();
+  }
+
+  update(func) {
+    // --- Update value
+    return this.alertSubscribers();
+  }
+
+  add(name) {
+    this.lToDos.push({
+      text: name,
+      done: false
+    });
   }
 
 };
