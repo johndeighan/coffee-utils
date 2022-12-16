@@ -56,7 +56,7 @@
 		"js-yaml": "^4.1.0",
 		"n-readlines": "^1.0.1",
 		"readline-sync": "^1.4.10",
-		"svelte": "^3.54.0"
+		"svelte": "^3.55.0"
 	},
 	"devDependencies": {
 		"@jdeighan/unit-tester": "^3.0.0"
