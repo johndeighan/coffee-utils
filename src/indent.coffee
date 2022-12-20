@@ -38,22 +38,30 @@ export indentation = (level, oneIndent="\t") ->
 #   indentLevel - determine indent level of a string
 #                 it's OK if the string is ONLY indentation
 
-export indentLevel = (line, oneIndent="\t") ->
+export indentLevel = (line, oneIndent=undef) ->
 
-	len = oneIndent.length
+	assert isString(line), "not a string"
 
-	# --- This will always match
+	# --- This will always match, and it's greedy
 	if lMatches = line.match(/^(\s*)/)
 		prefix = lMatches[1]
 		prefixLen = prefix.length
 
-	remain = prefixLen % len
-	if (remain != 0)
-		throw new Error("prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}")
+	if (prefixLen == 0)
+		return 0
+
+	if defined(oneIndent)
+		len = oneIndent.length
+	else
+		oneIndent = "\t"
+		len = 1
+
+	if (prefixLen % len != 0)
+		croak "prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}"
 
 	level = prefixLen / len
 	if (prefix != oneIndent.repeat(level))
-		throw new Error("prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}")
+		croak "prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}"
 
 	return level
 
