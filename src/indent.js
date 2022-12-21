@@ -23,18 +23,29 @@ import {
 } from '@jdeighan/coffee-utils/block';
 
 // ---------------------------------------------------------------------------
+export var getOneIndent = function(str) {
+  var lMatches;
+  if ((lMatches = str.match(/^\t+(?:\S|$)/))) {
+    return "\t";
+  } else if ((lMatches = str.match(/^(\x20+)(?:\S|$)/))) { // space char
+    return lMatches[1];
+  }
+  assert(notdefined(str.match(/^\s/)), "Mixed indentation types");
+  return undef;
+};
+
+// ---------------------------------------------------------------------------
 export var splitPrefix = function(line) {
   var lMatches;
   assert(isString(line), `non-string ${OL(line)}`);
   line = rtrim(line);
   lMatches = line.match(/^(\s*)(.*)$/);
-  assert(defined(lMatches), `Failed to match: ${OL(line)}`);
   return [lMatches[1], lMatches[2]];
 };
 
 // ---------------------------------------------------------------------------
 //   splitLine - separate a line into [level, line]
-export var splitLine = function(line, oneIndent = "\t") {
+export var splitLine = function(line, oneIndent = undef) {
   var prefix, str;
   [prefix, str] = splitPrefix(line);
   return [indentLevel(prefix, oneIndent), str];

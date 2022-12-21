@@ -9,18 +9,28 @@ import {toArray, toBlock} from '@jdeighan/coffee-utils/block'
 
 # ---------------------------------------------------------------------------
 
+export getOneIndent = (str) ->
+
+	if (lMatches = str.match(/^\t+(?:\S|$)/))
+		return "\t"
+	else if (lMatches = str.match(/^(\x20+)(?:\S|$)/))   # space char
+		return lMatches[1]
+	assert notdefined(str.match(/^\s/)), "Mixed indentation types"
+	return undef
+
+# ---------------------------------------------------------------------------
+
 export splitPrefix = (line) ->
 
 	assert isString(line), "non-string #{OL(line)}"
 	line = rtrim(line)
 	lMatches = line.match(/^(\s*)(.*)$/)
-	assert defined(lMatches), "Failed to match: #{OL(line)}"
 	return [lMatches[1], lMatches[2]]
 
 # ---------------------------------------------------------------------------
 #   splitLine - separate a line into [level, line]
 
-export splitLine = (line, oneIndent="\t") ->
+export splitLine = (line, oneIndent=undef) ->
 
 	[prefix, str] = splitPrefix(line)
 	return [indentLevel(prefix, oneIndent), str]
