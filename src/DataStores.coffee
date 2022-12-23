@@ -13,6 +13,24 @@ import {
 
 # ---------------------------------------------------------------------------
 
+export class StaticDataStore
+
+	constructor: (value) ->
+		@value = value
+
+	subscribe: (cbFunc) ->
+		cbFunc @value
+		return () ->
+			pass()
+
+	set: (val) ->
+		croak "Can't set() a StaticDataStore"
+
+	update: (func) ->
+		croak "Can't update() a StaticDataStore"
+
+# ---------------------------------------------------------------------------
+
 export class WritableDataStore
 
 	constructor: (value=undef) ->
@@ -26,84 +44,6 @@ export class WritableDataStore
 
 	update: (func) ->
 		@store.update(func)
-
-# ---------------------------------------------------------------------------
-
-export class BaseDataStore
-
-	constructor: (@value=undef) ->
-		@lSubscribers = []
-
-	subscribe: (func) ->
-		func @value
-		@lSubscribers.push func
-		return () ->
-			pos = @lSubscribers.indexOf func
-			@lSubscribers.splice pos, 1
-
-	set: (val) ->
-		@value = val
-		@alertSubscribers()
-		return
-
-	update: (func) ->
-		@value = func(@value)
-		@alertSubscribers()
-		return
-
-	alertSubscribers: () ->
-		for func in @lSubscribers
-			func @value
-		return
-
-# ---------------------------------------------------------------------------
-
-export class ToDoDataStore
-	# --- implement without using svelte's readable or writable
-
-	constructor: () ->
-		@lToDos = []
-		@lSubscribers = []  # --- array of callback functions
-
-	subscribe: (cbFunc) ->
-		cbFunc(@lToDos)
-		@lSubscribers.push cbFunc
-		return () ->
-			index = @lSubscribers.indexOf cbFunc
-			@lSubscribers.splice index, 1
-
-	alertSubscribers: () ->
-		for cbFunc in @lSubscribers
-			cbFunc(@lToDos)
-		return
-
-	find: (name) ->
-		# --- returns index
-		for index in range(@lToDos.length)
-			if (@lToDos[index].text == name)
-				return index
-		return undef
-
-	clear: () ->
-		# --- Set new value
-		@lToDos = []
-		@alertSubscribers()
-		return
-
-	add: (name) ->
-		if defined(@find(name))
-			croak "Attempt to add duplicate #{name} todo"
-		@lToDos.push {
-			text: name
-			done: false
-			}
-		@alertSubscribers()
-		return
-
-	remove: (name) ->
-		index = @find(name)
-		@lToDos.splice index, 1
-		return
 
 # ---------------------------------------------------------------------------
 
@@ -200,6 +140,79 @@ export class TAMLDataStore extends WritableDataStore
 	constructor: (str) ->
 
 		super fromTAML(str)
+
+# ---------------------------------------------------------------------------
+# --- Mainly for better understanding, I've implemented data stores
+#     without using svelte's readable or writable data stores
+
+export class BaseDataStore
+
+	constructor: (@value=undef) ->
+		@lSubscribers = []
+
+	subscribe: (cbFunc) ->
+		cbFunc @value
+		@lSubscribers.push cbFunc
+		return () ->
+			index = @lSubscribers.indexOf cbFunc
+			@lSubscribers.splice index, 1
+
+	set: (val) ->
+		@value = val
+		return
+
+	update: (func) ->
+		@value = func(@value)
+		@alertSubscribers()
+		return
+
+	alertSubscribers: () ->
+		for cbFunc in @lSubscribers
+			cbFunc @value
+		return
+
+# ---------------------------------------------------------------------------
+
+export class ToDoDataStore extends BaseDataStore
+
+	constructor: () ->
+		lToDos = []   # save local reference to make code easier to grok
+		super lToDos
+		@lToDos = lToDos   # can't do this before calling super
+
+	set: (val) ->
+		croak "Don't use set()"
+
+	update: (func) ->
+		croak "Don't use update()"
+
+	find: (name) ->
+		# --- returns index
+		for index in range(@lToDos.length)
+			if (@lToDos[index].text == name)
+				return index
+		return undef
+
+	clear: () ->
+		# --- Don't set a new array. That would break our reference
+		@lToDos.splice 0, @lToDos.length
+		return
+
+	add: (name) ->
+		if defined(@find(name))
+			croak "Attempt to add duplicate #{name} todo"
+		@lToDos.push {
+			text: name
+			done: false
+			}
+		@alertSubscribers()
+		return
+
+	remove: (name) ->
+		index = @find(name)
+		@lToDos.splice index, 1
+		@alertSubscribers()
+		return
 
 # ---------------------------------------------------------------------------
 #         UTILITIES

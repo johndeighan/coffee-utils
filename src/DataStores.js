@@ -35,6 +35,29 @@ import {
 } from '@jdeighan/coffee-utils/fs';
 
 // ---------------------------------------------------------------------------
+export var StaticDataStore = class StaticDataStore {
+  constructor(value) {
+    this.value = value;
+  }
+
+  subscribe(cbFunc) {
+    cbFunc(this.value);
+    return function() {
+      return pass();
+    };
+  }
+
+  set(val) {
+    return croak("Can't set() a StaticDataStore");
+  }
+
+  update(func) {
+    return croak("Can't update() a StaticDataStore");
+  }
+
+};
+
+// ---------------------------------------------------------------------------
 export var WritableDataStore = class WritableDataStore {
   constructor(value = undef) {
     this.store = writable(value);
@@ -50,109 +73,6 @@ export var WritableDataStore = class WritableDataStore {
 
   update(func) {
     return this.store.update(func);
-  }
-
-};
-
-// ---------------------------------------------------------------------------
-export var BaseDataStore = class BaseDataStore {
-  constructor(value1 = undef) {
-    this.value = value1;
-    this.lSubscribers = [];
-  }
-
-  subscribe(func) {
-    func(this.value);
-    this.lSubscribers.push(func);
-    return function() {
-      var pos;
-      pos = this.lSubscribers.indexOf(func);
-      return this.lSubscribers.splice(pos, 1);
-    };
-  }
-
-  set(val) {
-    this.value = val;
-    this.alertSubscribers();
-  }
-
-  update(func) {
-    this.value = func(this.value);
-    this.alertSubscribers();
-  }
-
-  alertSubscribers() {
-    var func, i, len, ref;
-    ref = this.lSubscribers;
-    for (i = 0, len = ref.length; i < len; i++) {
-      func = ref[i];
-      func(this.value);
-    }
-  }
-
-};
-
-// ---------------------------------------------------------------------------
-export var ToDoDataStore = class ToDoDataStore {
-  // --- implement without using svelte's readable or writable
-  constructor() {
-    this.lToDos = [];
-    this.lSubscribers = []; // --- array of callback functions
-  }
-
-  subscribe(cbFunc) {
-    cbFunc(this.lToDos);
-    this.lSubscribers.push(cbFunc);
-    return function() {
-      var index;
-      index = this.lSubscribers.indexOf(cbFunc);
-      return this.lSubscribers.splice(index, 1);
-    };
-  }
-
-  alertSubscribers() {
-    var cbFunc, i, len, ref;
-    ref = this.lSubscribers;
-    for (i = 0, len = ref.length; i < len; i++) {
-      cbFunc = ref[i];
-      cbFunc(this.lToDos);
-    }
-  }
-
-  find(name) {
-    var i, index, len, ref;
-    ref = range(this.lToDos.length);
-    // --- returns index
-    for (i = 0, len = ref.length; i < len; i++) {
-      index = ref[i];
-      if (this.lToDos[index].text === name) {
-        return index;
-      }
-    }
-    return undef;
-  }
-
-  clear() {
-    // --- Set new value
-    this.lToDos = [];
-    this.alertSubscribers();
-  }
-
-  add(name) {
-    if (defined(this.find(name))) {
-      croak(`Attempt to add duplicate ${name} todo`);
-    }
-    this.lToDos.push({
-      text: name,
-      done: false
-    });
-    this.alertSubscribers();
-  }
-
-  remove(name) {
-    var index;
-    index = this.find(name);
-    this.lToDos.splice(index, 1);
   }
 
 };
@@ -268,6 +188,100 @@ export var MousePosDataStore = class MousePosDataStore extends ReadableDataStore
 export var TAMLDataStore = class TAMLDataStore extends WritableDataStore {
   constructor(str) {
     super(fromTAML(str));
+  }
+
+};
+
+// ---------------------------------------------------------------------------
+// --- Mainly for better understanding, I've implemented data stores
+//     without using svelte's readable or writable data stores
+export var BaseDataStore = class BaseDataStore {
+  constructor(value1 = undef) {
+    this.value = value1;
+    this.lSubscribers = [];
+  }
+
+  subscribe(cbFunc) {
+    cbFunc(this.value);
+    this.lSubscribers.push(cbFunc);
+    return function() {
+      var index;
+      index = this.lSubscribers.indexOf(cbFunc);
+      return this.lSubscribers.splice(index, 1);
+    };
+  }
+
+  set(val) {
+    this.value = val;
+  }
+
+  update(func) {
+    this.value = func(this.value);
+    this.alertSubscribers();
+  }
+
+  alertSubscribers() {
+    var cbFunc, i, len, ref;
+    ref = this.lSubscribers;
+    for (i = 0, len = ref.length; i < len; i++) {
+      cbFunc = ref[i];
+      cbFunc(this.value);
+    }
+  }
+
+};
+
+// ---------------------------------------------------------------------------
+export var ToDoDataStore = class ToDoDataStore extends BaseDataStore {
+  constructor() {
+    var lToDos;
+    lToDos = []; // save local reference to make code easier to grok
+    super(lToDos);
+    this.lToDos = lToDos; // can't do this before calling super
+  }
+
+  set(val) {
+    return croak("Don't use set()");
+  }
+
+  update(func) {
+    return croak("Don't use update()");
+  }
+
+  find(name) {
+    var i, index, len, ref;
+    ref = range(this.lToDos.length);
+    // --- returns index
+    for (i = 0, len = ref.length; i < len; i++) {
+      index = ref[i];
+      if (this.lToDos[index].text === name) {
+        return index;
+      }
+    }
+    return undef;
+  }
+
+  clear() {
+    // --- Don't set a new array. That would break our reference
+    this.lToDos.splice(0, this.lToDos.length);
+  }
+
+  add(name) {
+    if (defined(this.find(name))) {
+      croak(`Attempt to add duplicate ${name} todo`);
+    }
+    this.lToDos.push({
+      text: name,
+      done: false
+    });
+    this.alertSubscribers();
+  }
+
+  remove(name) {
+    var index;
+    index = this.find(name);
+    this.lToDos.splice(index, 1);
+    this.alertSubscribers();
   }
 
 };
