@@ -14,8 +14,13 @@ import {
 } from '@jdeighan/base-utils';
 
 import {
+  fromTAML
+} from '@jdeighan/base-utils/taml';
+
+import {
   undef,
-  pass
+  pass,
+  range
 } from '@jdeighan/coffee-utils';
 
 import {
@@ -28,16 +33,6 @@ import {
   barf,
   newerDestFileExists
 } from '@jdeighan/coffee-utils/fs';
-
-import {
-  fromTAML
-} from '@jdeighan/coffee-utils/taml';
-
-import {
-  createDraft,
-  finishDraft,
-  produce
-} from 'immer';
 
 // ---------------------------------------------------------------------------
 export var WritableDataStore = class WritableDataStore {
@@ -98,69 +93,66 @@ export var BaseDataStore = class BaseDataStore {
 };
 
 // ---------------------------------------------------------------------------
-export var ImmerDataStore = class ImmerDataStore extends BaseDataStore {
-  constructor() {
-    super([]); // initialize with an empty array
-  }
-
-  getNewState() {
-    return produce(state, draft(() => {
-      return this.addGift(draft, description, image);
-    }));
-  }
-
-  addGift(draft, description, image) {
-    return draft.push({
-      id: 1,
-      description,
-      image
-    });
-  }
-
-};
-
-// ---------------------------------------------------------------------------
 export var ToDoDataStore = class ToDoDataStore {
-  // --- implemented with immer
+  // --- implement without using svelte's readable or writable
   constructor() {
     this.lToDos = [];
-    this.lSubscribers = [];
+    this.lSubscribers = []; // --- array of callback functions
   }
 
-  subscribe(func) {
-    func(this.lToDos);
-    this.lSubscribers.push(func);
+  subscribe(cbFunc) {
+    cbFunc(this.lToDos);
+    this.lSubscribers.push(cbFunc);
     return function() {
       var index;
-      index = this.lSubscribers.indexOf(func);
+      index = this.lSubscribers.indexOf(cbFunc);
       return this.lSubscribers.splice(index, 1);
     };
   }
 
   alertSubscribers() {
-    var func, i, len, ref;
+    var cbFunc, i, len, ref;
     ref = this.lSubscribers;
     for (i = 0, len = ref.length; i < len; i++) {
-      func = ref[i];
-      func(this.lToDos);
+      cbFunc = ref[i];
+      cbFunc(this.lToDos);
     }
   }
 
-  set(value) {
-    // --- Set new value
-    return this.alertSubscribers();
+  find(name) {
+    var i, index, len, ref;
+    ref = range(this.lToDos.length);
+    // --- returns index
+    for (i = 0, len = ref.length; i < len; i++) {
+      index = ref[i];
+      if (this.lToDos[index].text === name) {
+        return index;
+      }
+    }
+    return undef;
   }
 
-  update(func) {
-    // --- Update value
-    return this.alertSubscribers();
+  clear() {
+    // --- Set new value
+    this.lToDos = [];
+    this.alertSubscribers();
   }
 
   add(name) {
+    if (defined(this.find(name))) {
+      croak(`Attempt to add duplicate ${name} todo`);
+    }
     this.lToDos.push({
       text: name,
       done: false
     });
+    this.alertSubscribers();
+  }
+
+  remove(name) {
+    var index;
+    index = this.find(name);
+    this.lToDos.splice(index, 1);
   }
 
 };

@@ -4,13 +4,12 @@ import pathlib from 'path'
 import {writable, readable, get} from 'svelte/store'
 
 import {assert, croak} from '@jdeighan/base-utils'
-import {undef, pass} from '@jdeighan/coffee-utils'
+import {fromTAML} from '@jdeighan/base-utils/taml'
+import {undef, pass, range} from '@jdeighan/coffee-utils'
 import {localStore} from '@jdeighan/coffee-utils/browser'
 import {
 	withExt, slurp, barf, newerDestFileExists,
 	} from '@jdeighan/coffee-utils/fs'
-import {fromTAML} from '@jdeighan/coffee-utils/taml'
-import {createDraft, finishDraft, produce} from 'immer'
 
 # ---------------------------------------------------------------------------
 
@@ -59,58 +58,51 @@ export class BaseDataStore
 
 # ---------------------------------------------------------------------------
 
-export class ImmerDataStore extends BaseDataStore
-
-	constructor: () ->
-		super []    # initialize with an empty array
-
-	getNewState: () ->
-
-		return produce state, draft =>
-			@addGift draft, description, image
-		return
-
-	addGift: (draft, description, image) ->
-		draft.push {
-			id: 1
-			description
-			image
-			}
-
-# ---------------------------------------------------------------------------
-
 export class ToDoDataStore
-	# --- implemented with immer
+	# --- implement without using svelte's readable or writable
 
 	constructor: () ->
 		@lToDos = []
-		@lSubscribers = []
+		@lSubscribers = []  # --- array of callback functions
 
-	subscribe: (func) ->
-		func(@lToDos)
-		@lSubscribers.push func
+	subscribe: (cbFunc) ->
+		cbFunc(@lToDos)
+		@lSubscribers.push cbFunc
 		return () ->
-			index = @lSubscribers.indexOf func
+			index = @lSubscribers.indexOf cbFunc
 			@lSubscribers.splice index, 1
 
 	alertSubscribers: () ->
-		for func in @lSubscribers
-			func(@lToDos)
+		for cbFunc in @lSubscribers
+			cbFunc(@lToDos)
 		return
 
-	set: (value) ->
-		# --- Set new value
-		@alertSubscribers()
+	find: (name) ->
+		# --- returns index
+		for index in range(@lToDos.length)
+			if (@lToDos[index].text == name)
+				return index
+		return undef
 
-	update: (func) ->
-		# --- Update value
+	clear: () ->
+		# --- Set new value
+		@lToDos = []
 		@alertSubscribers()
+		return
 
 	add: (name) ->
+		if defined(@find(name))
+			croak "Attempt to add duplicate #{name} todo"
 		@lToDos.push {
 			text: name
 			done: false
 			}
+		@alertSubscribers()
+		return
+
+	remove: (name) ->
+		index = @find(name)
+		@lToDos.splice index, 1
 		return
 
 # ---------------------------------------------------------------------------

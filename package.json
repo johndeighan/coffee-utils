@@ -52,8 +52,6 @@
 	"dependencies": {
 		"@jdeighan/base-utils": "^2.0.8",
 		"cross-env": "^7.0.3",
-		"immer": "^9.0.16",
-		"js-yaml": "^4.1.0",
 		"n-readlines": "^1.0.1",
 		"readline-sync": "^1.4.10",
 		"svelte": "^3.55.0"
