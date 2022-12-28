@@ -102,45 +102,41 @@ export var isUndented = function(line) {
 //   indented - add indentation to each string in a block or array
 //            - returns the same type as input, i.e. array or string
 export var indented = function(input, level = 1, oneIndent = "\t") {
-  var lLines, line, toAdd;
+  var i, lLines, len1, line, ref, toAdd;
+  // --- level can be a string, in which case it is
+  //     pre-pended to each line of input
   if (isString(level)) {
-    // --- level can be a string
-    if (level === "") {
+    if (level === '') {
       return input;
     }
     toAdd = level;
   } else if (isInteger(level)) {
-    assert(level >= 0, "indented(): negative level");
     if (level === 0) {
       return input;
     }
+    assert(level > 0, `Invalid level ${OL(level)}`);
     toAdd = indentation(level, oneIndent);
   } else {
-    croak("level must be a string or integer");
+    croak(`Invalid level ${OL(level)}`);
   }
   // --- NOTE: toArray(input) just returns input if it's an array
   //           else it splits the string into an array of lines
-  lLines = (function() {
-    var i, len1, ref, results;
-    ref = toArray(input);
-    results = [];
-    for (i = 0, len1 = ref.length; i < len1; i++) {
-      line = ref[i];
-      if (isEmpty(line)) {
-        results.push("");
-      } else {
-        results.push(`${toAdd}${line}`);
-      }
+  lLines = [];
+  ref = toArray(input);
+  for (i = 0, len1 = ref.length; i < len1; i++) {
+    line = ref[i];
+    if (isEmpty(line)) {
+      lLines.push('');
+    } else {
+      lLines.push(`${toAdd}${line}`);
     }
-    return results;
-  })();
+  }
   if (isArray(input)) {
     return lLines;
   } else if (isString(input)) {
     return toBlock(lLines);
-  } else {
-    return croak(`Invalid input; ${OL(input)}`);
   }
+  return croak(`Invalid input; ${OL(input)}`);
 };
 
 // ---------------------------------------------------------------------------

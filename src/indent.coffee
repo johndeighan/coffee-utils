@@ -90,32 +90,34 @@ export isUndented = (line) ->
 
 export indented = (input, level=1, oneIndent="\t") ->
 
+	# --- level can be a string, in which case it is
+	#     pre-pended to each line of input
 	if isString(level)
-		# --- level can be a string
-		if (level == "")
+		if (level == '')
 			return input
 		toAdd = level
 	else if isInteger(level)
-		assert (level >= 0), "indented(): negative level"
 		if (level == 0)
 			return input
+		assert (level > 0), "Invalid level #{OL(level)}"
 		toAdd = indentation(level, oneIndent)
 	else
-		croak "level must be a string or integer"
+		croak "Invalid level #{OL(level)}"
 
 	# --- NOTE: toArray(input) just returns input if it's an array
 	#           else it splits the string into an array of lines
-	lLines = for line in toArray(input)
+	lLines = []
+	for line in toArray(input)
 		if isEmpty(line)
-			""
+			lLines.push ''
 		else
-			"#{toAdd}#{line}"
+			lLines.push "#{toAdd}#{line}"
+
 	if isArray(input)
 		return lLines
 	else if isString(input)
 		return toBlock(lLines)
-	else
-		croak "Invalid input; #{OL(input)}"
+	croak "Invalid input; #{OL(input)}"
 
 # ---------------------------------------------------------------------------
 #   undented - string with 1st line indentation removed for each line
