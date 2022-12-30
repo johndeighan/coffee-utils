@@ -11,7 +11,9 @@ import {
 
 import {
   blockToArray,
-  arrayToBlock
+  arrayToBlock,
+  toArray,
+  toBlock
 } from '@jdeighan/base-utils/utils';
 
 import {
@@ -30,75 +32,9 @@ import {
 
 export {
   blockToArray,
-  arrayToBlock
-};
-
-// ---------------------------------------------------------------------------
-//   toArray - split a block or array into lines w/o newlines
-export var toArray = function(item, option = undef) {
-  var i, j, lLines, lNewLines, len, len1, line, nonEmptyFound, ref, substr;
-  // --- Valid options:
-  //     'noEmptyLines'
-  //     'noLeadingEmptyLines'
-  if (isString(item)) {
-    lLines = item.split(/\r?\n/);
-  } else if (isArray(item)) {
-    lLines = item;
-  } else {
-    croak("Not a string or array");
-  }
-  // --- We need to ensure that no strings contain newlines
-  //     and possibly remove empty lines
-  lNewLines = [];
-  nonEmptyFound = false;
-  for (i = 0, len = lLines.length; i < len; i++) {
-    line = lLines[i];
-    if (isEmpty(line)) {
-      if ((option === 'noEmptyLines') || ((option === 'noLeadingEmptyLines') && !nonEmptyFound)) {
-        pass;
-      } else {
-        lNewLines.push('');
-      }
-    } else if (line.indexOf("\n") > -1) {
-      ref = toArray(line);
-      for (j = 0, len1 = ref.length; j < len1; j++) {
-        substr = ref[j];
-        if (isEmpty(substr)) {
-          if ((option === 'noEmptyLines') || ((option === 'noLeadingEmptyLines') && !nonEmptyFound)) {
-            pass;
-          } else {
-            lNewLines.push('');
-          }
-        } else {
-          nonEmptyFound = true;
-          lNewLines.push(substr);
-        }
-      }
-    } else {
-      nonEmptyFound = true;
-      lNewLines.push(line);
-    }
-  }
-  return lNewLines;
-};
-
-// ---------------------------------------------------------------------------
-//   toBlock - block may have trailing whitespace
-//             but undef items are ignored
-export var toBlock = function(lLines) {
-  var i, lNewLines, len, line;
-  if (notdefined(lLines)) {
-    return undef;
-  }
-  assert(isArrayOfStrings(lLines), `lLines is not an array of strings: ${OL(lLines)}`);
-  lNewLines = [];
-  for (i = 0, len = lLines.length; i < len; i++) {
-    line = lLines[i];
-    if (defined(line)) {
-      lNewLines.push(rtrim(line));
-    }
-  }
-  return lNewLines.join("\n");
+  arrayToBlock,
+  toArray,
+  toBlock
 };
 
 // ---------------------------------------------------------------------------

@@ -4,72 +4,16 @@ import fs from 'fs'
 import readline from 'readline'
 
 import {assert, croak} from '@jdeighan/base-utils'
-import {blockToArray, arrayToBlock} from '@jdeighan/base-utils/utils'
+import {
+	blockToArray, arrayToBlock, toArray, toBlock,
+	} from '@jdeighan/base-utils/utils'
 import {
 	undef, pass, defined, notdefined,
 	isEmpty, isString, isArray, nonEmpty, isArrayOfStrings,
 	rtrim, OL,
 	} from '@jdeighan/coffee-utils'
 
-export {blockToArray, arrayToBlock}
-
-# ---------------------------------------------------------------------------
-#   toArray - split a block or array into lines w/o newlines
-
-export toArray = (item, option=undef) ->
-	# --- Valid options:
-	#     'noEmptyLines'
-	#     'noLeadingEmptyLines'
-
-	if isString(item)
-		lLines = item.split(/\r?\n/)
-	else if isArray(item)
-		lLines = item
-	else
-		croak "Not a string or array"
-
-	# --- We need to ensure that no strings contain newlines
-	#     and possibly remove empty lines
-	lNewLines = []
-	nonEmptyFound = false
-	for line in lLines
-		if isEmpty(line)
-			if (option == 'noEmptyLines') \
-					|| ((option == 'noLeadingEmptyLines') && ! nonEmptyFound)
-				pass
-			else
-				lNewLines.push ''
-		else if (line.indexOf("\n") > -1)
-			for substr in toArray(line)
-				if isEmpty(substr)
-					if (option == 'noEmptyLines') \
-							|| ((option == 'noLeadingEmptyLines') && ! nonEmptyFound)
-						pass
-					else
-						lNewLines.push ''
-				else
-					nonEmptyFound = true
-					lNewLines.push substr
-		else
-			nonEmptyFound = true
-			lNewLines.push line
-	return lNewLines
-
-# ---------------------------------------------------------------------------
-#   toBlock - block may have trailing whitespace
-#             but undef items are ignored
-
-export toBlock = (lLines) ->
-
-	if notdefined(lLines)
-		return undef
-	assert isArrayOfStrings(lLines),
-		"lLines is not an array of strings: #{OL(lLines)}"
-	lNewLines = []
-	for line in lLines
-		if defined(line)
-			lNewLines.push rtrim(line)
-	return lNewLines.join("\n")
+export {blockToArray, arrayToBlock, toArray, toBlock}
 
 # ---------------------------------------------------------------------------
 
