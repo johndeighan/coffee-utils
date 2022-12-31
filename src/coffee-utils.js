@@ -3,27 +3,6 @@
 var hasProp = {}.hasOwnProperty;
 
 import {
-  assert,
-  croak
-} from '@jdeighan/base-utils/exceptions';
-
-import {
-  LOG,
-  LOGVALUE,
-  sep_dash,
-  sep_eq
-} from '@jdeighan/base-utils/log';
-
-import {
-  dbgEnter,
-  dbgReturn,
-  dbgYield,
-  dbgResume,
-  dbg,
-  setDebugging
-} from '@jdeighan/base-utils/debug';
-
-import {
   undef,
   pass,
   defined,
@@ -56,6 +35,27 @@ import {
   words,
   getOptions
 } from '@jdeighan/base-utils';
+
+import {
+  assert,
+  croak
+} from '@jdeighan/base-utils/exceptions';
+
+import {
+  LOG,
+  LOGVALUE,
+  sep_dash,
+  sep_eq
+} from '@jdeighan/base-utils/log';
+
+import {
+  dbgEnter,
+  dbgReturn,
+  dbgYield,
+  dbgResume,
+  dbg,
+  setDebugging
+} from '@jdeighan/base-utils/debug';
 
 // ---------------------------------------------------------------------------
 export var isHashComment = (line) => {

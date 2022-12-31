@@ -1,12 +1,5 @@
 # coffee-utils.coffee
 
-import {assert, croak} from '@jdeighan/base-utils/exceptions'
-import {
-	LOG, LOGVALUE, sep_dash, sep_eq,
-	} from '@jdeighan/base-utils/log'
-import {
-	dbgEnter, dbgReturn, dbgYield, dbgResume, dbg, setDebugging,
-	} from '@jdeighan/base-utils/debug'
 import {
 	undef, pass, defined, notdefined,
 	deepCopy, escapeStr, unescapeStr, hasChar, quoted, OL,
@@ -15,6 +8,13 @@ import {
 	jsType, oneof, isIterable,
 	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words, getOptions,
 	} from '@jdeighan/base-utils'
+import {assert, croak} from '@jdeighan/base-utils/exceptions'
+import {
+	LOG, LOGVALUE, sep_dash, sep_eq,
+	} from '@jdeighan/base-utils/log'
+import {
+	dbgEnter, dbgReturn, dbgYield, dbgResume, dbg, setDebugging,
+	} from '@jdeighan/base-utils/debug'
 
 # ---------------------------------------------------------------------------
 
