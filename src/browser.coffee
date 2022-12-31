@@ -1,6 +1,6 @@
 # browser.coffee
 
-import {undef} from '@jdeighan/coffee-utils'
+import {undef} from '@jdeighan/base-utils'
 
 audio = undef   # audio context - create only when needed, then keep
 

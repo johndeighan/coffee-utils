@@ -1,11 +1,10 @@
 # indent.coffee
 
-import {assert, croak} from '@jdeighan/base-utils'
+import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {
-	undef, defined, notdefined,
+	undef, defined, notdefined, toArray, toBlock,
 	OL, isInteger, isString, isArray, isEmpty, rtrim,
-	} from '@jdeighan/coffee-utils'
-import {toArray, toBlock} from '@jdeighan/coffee-utils/block'
+	} from '@jdeighan/base-utils'
 
 # ---------------------------------------------------------------------------
 

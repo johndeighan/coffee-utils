@@ -3,7 +3,7 @@
 import {
   assert,
   croak
-} from '@jdeighan/base-utils';
+} from '@jdeighan/base-utils/exceptions';
 
 import {
   LOG
@@ -23,12 +23,9 @@ import {
   isEmpty,
   nonEmpty,
   isString,
-  OL
-} from '@jdeighan/coffee-utils';
-
-import {
+  OL,
   toArray
-} from '@jdeighan/coffee-utils/block';
+} from '@jdeighan/base-utils';
 
 // ---------------------------------------------------------------------------
 export var FSA = class FSA {

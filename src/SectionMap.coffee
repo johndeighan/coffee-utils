@@ -1,17 +1,19 @@
 # SectionMap.coffee
 
-import {
-	assert, croak, LOG, LOGVALUE, LOGTAML, isTAML, fromTAML,
-	} from '@jdeighan/base-utils'
+import {assert, croak} from '@jdeighan/base-utils/exceptions'
+import {LOG, LOGVALUE, LOGTAML} from '@jdeighan/base-utils/log'
+import {isTAML, fromTAML} from '@jdeighan/base-utils/taml'
 import {
 	dbg, dbgEnter, dbgReturn, dbgYield, dbgResume,
 	} from '@jdeighan/base-utils/debug'
 import {
 	pass, undef, defined, notdefined, OL, isEmpty, nonEmpty,
-	isString, isHash, isArray, isUniqueTree, isNonEmptyString,
-	isNonEmptyArray, isFunction, jsType, isArrayOfStrings,
+	isString, isHash, isArray, isNonEmptyString,
+	isFunction, jsType, toBlock,
+	} from '@jdeighan/base-utils'
+import {
+	isArrayOfStrings, isNonEmptyArray, isUniqueTree,
 	} from '@jdeighan/coffee-utils'
-import {toBlock} from '@jdeighan/coffee-utils/block'
 import {Section} from '@jdeighan/coffee-utils/section'
 
 # ---------------------------------------------------------------------------

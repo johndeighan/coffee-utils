@@ -1,14 +1,16 @@
 # KeyedSet.coffee
 
-import {assert, croak, LOG, LOGVALUE} from '@jdeighan/base-utils'
+import {
+	undef, defined, notdefined, OL, deepCopy,
+	isString, isNonEmptyString, isArray, isHash,
+	isEmpty, nonEmpty,
+	} from '@jdeighan/base-utils'
+import {assert, croak} from '@jdeighan/base-utils/exceptions'
+import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
 import {
 	dbgEnter, dbgReturn, dbg,
 	} from '@jdeighan/base-utils/debug'
-import {
-	undef, defined, notdefined, OL, deepCopy,
-	isString, isNonEmptyString, isArray, isHash, isArrayOfStrings,
-	isEmpty, nonEmpty,
-	} from '@jdeighan/coffee-utils'
+import {isArrayOfStrings} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
 

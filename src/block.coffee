@@ -3,17 +3,12 @@
 import fs from 'fs'
 import readline from 'readline'
 
-import {assert, croak} from '@jdeighan/base-utils'
+import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {
-	blockToArray, arrayToBlock, toArray, toBlock,
-	} from '@jdeighan/base-utils/utils'
-import {
-	undef, pass, defined, notdefined,
-	isEmpty, isString, isArray, nonEmpty, isArrayOfStrings,
-	rtrim, OL,
-	} from '@jdeighan/coffee-utils'
-
-export {blockToArray, arrayToBlock, toArray, toBlock}
+	undef, pass, defined, notdefined, rtrim, OL,
+	isEmpty, isString, isArray, nonEmpty, toArray, toBlock,
+	} from '@jdeighan/base-utils'
+import {isArrayOfStrings} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
 
@@ -57,7 +52,7 @@ export normalizeBlock = (content) ->
 
 	if typeof content != 'string'
 		throw new Error("normalizeBlock(): not a string")
-	lLines = for line in blockToArray(content)
+	lLines = for line in toArray(content)
 		line = line.trim()
 		line.replace(/\s+/g, ' ')
 	lLines = lLines.filter (line) -> line != ''
@@ -68,9 +63,9 @@ export normalizeBlock = (content) ->
 
 export truncateBlock = (str, numLines) ->
 
-	lLines = blockToArray str
+	lLines = toArray str
 	lLines.length = numLines
-	return arrayToBlock lLines
+	return toBlock lLines
 
 # ---------------------------------------------------------------------------
 

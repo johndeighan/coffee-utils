@@ -4,13 +4,19 @@ var isSectionName, isSetName;
 
 import {
   assert,
-  croak,
+  croak
+} from '@jdeighan/base-utils/exceptions';
+
+import {
   LOG,
   LOGVALUE,
-  LOGTAML,
+  LOGTAML
+} from '@jdeighan/base-utils/log';
+
+import {
   isTAML,
   fromTAML
-} from '@jdeighan/base-utils';
+} from '@jdeighan/base-utils/taml';
 
 import {
   dbg,
@@ -31,17 +37,17 @@ import {
   isString,
   isHash,
   isArray,
-  isUniqueTree,
   isNonEmptyString,
-  isNonEmptyArray,
   isFunction,
   jsType,
-  isArrayOfStrings
-} from '@jdeighan/coffee-utils';
+  toBlock
+} from '@jdeighan/base-utils';
 
 import {
-  toBlock
-} from '@jdeighan/coffee-utils/block';
+  isArrayOfStrings,
+  isNonEmptyArray,
+  isUniqueTree
+} from '@jdeighan/coffee-utils';
 
 import {
   Section

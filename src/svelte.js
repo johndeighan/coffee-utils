@@ -3,7 +3,7 @@
 import {
   assert,
   croak
-} from '@jdeighan/base-utils';
+} from '@jdeighan/base-utils/exceptions';
 
 import {
   LOG
@@ -11,7 +11,7 @@ import {
 
 import {
   isFunction
-} from '@jdeighan/coffee-utils';
+} from '@jdeighan/base-utils';
 
 // ---------------------------------------------------------------------------
 //   svelteSourceCodeEsc - to display source code for a *.starbucks page

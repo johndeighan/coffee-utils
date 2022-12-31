@@ -7,35 +7,26 @@ import readline from 'readline';
 import {
   assert,
   croak
-} from '@jdeighan/base-utils';
-
-import {
-  blockToArray,
-  arrayToBlock,
-  toArray,
-  toBlock
-} from '@jdeighan/base-utils/utils';
+} from '@jdeighan/base-utils/exceptions';
 
 import {
   undef,
   pass,
   defined,
   notdefined,
+  rtrim,
+  OL,
   isEmpty,
   isString,
   isArray,
   nonEmpty,
-  isArrayOfStrings,
-  rtrim,
-  OL
-} from '@jdeighan/coffee-utils';
-
-export {
-  blockToArray,
-  arrayToBlock,
   toArray,
   toBlock
-};
+} from '@jdeighan/base-utils';
+
+import {
+  isArrayOfStrings
+} from '@jdeighan/coffee-utils';
 
 // ---------------------------------------------------------------------------
 export var splitBlock = function(block) {
@@ -83,7 +74,7 @@ export var normalizeBlock = function(content) {
   }
   lLines = (function() {
     var i, len, ref, results;
-    ref = blockToArray(content);
+    ref = toArray(content);
     results = [];
     for (i = 0, len = ref.length; i < len; i++) {
       line = ref[i];
@@ -102,9 +93,9 @@ export var normalizeBlock = function(content) {
 // truncateBlock - limit block to a certain number of lines
 export var truncateBlock = function(str, numLines) {
   var lLines;
-  lLines = blockToArray(str);
+  lLines = toArray(str);
   lLines.length = numLines;
-  return arrayToBlock(lLines);
+  return toBlock(lLines);
 };
 
 // ---------------------------------------------------------------------------

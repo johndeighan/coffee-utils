@@ -6,13 +6,14 @@ import fs from 'fs'
 import readline from 'readline'
 import NReadLines from 'n-readlines'
 
-import {assert, croak, LOG, fromTAML} from '@jdeighan/base-utils'
-import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
 import {
 	undef, pass, defined, rtrim, isEmpty, nonEmpty, getOptions,
-	isString, isArray, isHash, isRegExp, isFunction, OL,
-	} from '@jdeighan/coffee-utils'
-import {arrayToBlock} from '@jdeighan/coffee-utils/block'
+	isString, isArray, isHash, isRegExp, isFunction, OL, toBlock,
+	} from '@jdeighan/base-utils'
+import {assert, croak} from '@jdeighan/base-utils/exceptions'
+import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
+import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
+import {fromTAML} from '@jdeighan/base-utils/taml'
 
 # ---------------------------------------------------------------------------
 #    mydir() - pass argument import.meta.url and it will return
@@ -216,7 +217,7 @@ export slurp = (filepath, maxLines=undef) ->
 		forEachLine filepath, (line, nLines) ->
 			lLines.push line
 			return (nLines >= maxLines)
-		contents = arrayToBlock(lLines)
+		contents = toBlock(lLines)
 	else
 		filepath = filepath.replace(/\//g, "\\")
 		contents = fs.readFileSync(filepath, 'utf8').toString()
@@ -230,7 +231,7 @@ export barf = (filepath, contents) ->
 	if isEmpty(contents)
 		return
 	if isArray(contents)
-		contents = arrayToBlock(contents)
+		contents = toBlock(contents)
 	else if ! isString(contents)
 		croak "barf(): Invalid contents"
 	contents = rtrim(contents) + "\n"

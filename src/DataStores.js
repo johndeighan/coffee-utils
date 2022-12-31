@@ -9,19 +9,19 @@ import {
 } from 'svelte/store';
 
 import {
+  undef,
+  pass,
+  range
+} from '@jdeighan/base-utils';
+
+import {
   assert,
   croak
-} from '@jdeighan/base-utils';
+} from '@jdeighan/base-utils/exceptions';
 
 import {
   fromTAML
 } from '@jdeighan/base-utils/taml';
-
-import {
-  undef,
-  pass,
-  range
-} from '@jdeighan/coffee-utils';
 
 import {
   localStore

@@ -1,8 +1,8 @@
 # svelte.coffee
 
-import {assert, croak} from '@jdeighan/base-utils'
+import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG} from '@jdeighan/base-utils/log'
-import {isFunction} from '@jdeighan/coffee-utils'
+import {isFunction} from '@jdeighan/base-utils'
 
 # ---------------------------------------------------------------------------
 #   svelteSourceCodeEsc - to display source code for a *.starbucks page

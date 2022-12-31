@@ -1,7 +1,9 @@
-# utils.coffee
+# coffee-utils.coffee
 
-import {assert, croak} from '@jdeighan/base-utils'
-import {LOG, LOGVALUE, sep_dash, sep_eq} from '@jdeighan/base-utils/log'
+import {assert, croak} from '@jdeighan/base-utils/exceptions'
+import {
+	LOG, LOGVALUE, sep_dash, sep_eq,
+	} from '@jdeighan/base-utils/log'
 import {
 	dbgEnter, dbgReturn, dbgYield, dbgResume, dbg, setDebugging,
 	} from '@jdeighan/base-utils/debug'
@@ -10,21 +12,9 @@ import {
 	deepCopy, escapeStr, unescapeStr, hasChar, quoted, OL,
 	isString, isNumber, isInteger, isHash, isArray, isBoolean,
 	isConstructor, isFunction, isRegExp, isObject, getClassName,
-	jsType, oneof,
+	jsType, oneof, isIterable,
 	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words, getOptions,
-	} from '@jdeighan/base-utils/utils'
-
-export {
-	assert, croak,
-	LOG, LOGVALUE, sep_dash, sep_eq,
-	dbgEnter, dbgReturn, dbgYield, dbgResume, dbg, setDebugging,
-	undef, pass, defined, notdefined,
-	deepCopy, escapeStr, unescapeStr, hasChar, quoted, OL,
-	isString, isNumber, isInteger, isHash, isArray, isBoolean,
-	isConstructor, isFunction, isRegExp, isObject, getClassName,
-	jsType, oneof,
-	isEmpty, nonEmpty, chomp, rtrim, setCharsAt, words, getOptions,
-	}
+	} from '@jdeighan/base-utils'
 
 # ---------------------------------------------------------------------------
 
@@ -347,26 +337,12 @@ export replaceVars = (line, hVars={}, rx=/__(env\.)?([A-Za-z_]\w*)__/g) ->
 
 # ---------------------------------------------------------------------------
 
-export isIterable = (obj) ->
-
-	if (obj == undef) || (obj == null)
-		return false
-	return typeof obj[Symbol.iterator] == 'function'
-
-# ---------------------------------------------------------------------------
-
 export className = (aClass) ->
 
 	if lMatches = aClass.toString().match(/class\s+(\w+)/)
 		return lMatches[1]
 	else
 		croak "className(): Bad input class"
-
-# ---------------------------------------------------------------------------
-
-export range = (n) ->
-
-	return [0..n-1]
 
 # ---------------------------------------------------------------------------
 

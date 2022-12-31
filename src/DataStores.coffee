@@ -3,9 +3,9 @@
 import pathlib from 'path'
 import {writable, readable, get} from 'svelte/store'
 
-import {assert, croak} from '@jdeighan/base-utils'
+import {undef, pass, range} from '@jdeighan/base-utils'
+import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {fromTAML} from '@jdeighan/base-utils/taml'
-import {undef, pass, range} from '@jdeighan/coffee-utils'
 import {localStore} from '@jdeighan/coffee-utils/browser'
 import {
 	withExt, slurp, barf, newerDestFileExists,

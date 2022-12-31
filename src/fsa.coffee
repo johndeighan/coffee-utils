@@ -1,13 +1,12 @@
 # fsa.coffee
 
-import {assert, croak} from '@jdeighan/base-utils'
+import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG} from '@jdeighan/base-utils/log'
 import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
 import {
 	undef, defined, notdefined, words, isEmpty, nonEmpty,
-	isString, OL,
-	} from '@jdeighan/coffee-utils'
-import {toArray} from '@jdeighan/coffee-utils/block'
+	isString, OL, toArray,
+	} from '@jdeighan/base-utils'
 
 # ---------------------------------------------------------------------------
 

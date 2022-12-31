@@ -5,23 +5,20 @@ var hNoEnd, i, len, ref, tagName;
 import {
   assert,
   croak
-} from '@jdeighan/base-utils';
+} from '@jdeighan/base-utils/exceptions';
 
 import {
   undef,
   pass,
   words,
   isEmpty,
-  nonEmpty
-} from '@jdeighan/coffee-utils';
+  nonEmpty,
+  toBlock
+} from '@jdeighan/base-utils';
 
 import {
   indented
 } from '@jdeighan/coffee-utils/indent';
-
-import {
-  toBlock
-} from '@jdeighan/coffee-utils/block';
 
 hNoEnd = {};
 

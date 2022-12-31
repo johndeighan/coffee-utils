@@ -5,7 +5,7 @@
 	"description": "A set of utility functions for CoffeeScript",
 	"main": "coffee_utils.js",
 	"exports": {
-		".": "./src/utils.js",
+		".": "./src/coffee-utils.js",
 		"./server": "./src/server.js",
 		"./browser": "./src/browser.js",
 		"./fs": "./src/fs.js",
@@ -50,13 +50,13 @@
 	},
 	"homepage": "https://github.com/johndeighan/coffee-utils#readme",
 	"dependencies": {
-		"@jdeighan/base-utils": "^2.0.12",
+		"@jdeighan/base-utils": "^3.0.2",
 		"cross-env": "^7.0.3",
 		"n-readlines": "^1.0.1",
 		"readline-sync": "^1.4.10",
 		"svelte": "^3.55.0"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^3.0.12"
+		"@jdeighan/unit-tester": "^3.0.15"
 	}
 }
