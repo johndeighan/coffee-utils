@@ -184,40 +184,6 @@ export var undented = function(input, level = undef, oneIndent = "\t") {
 };
 
 // ---------------------------------------------------------------------------
-//    tabify - convert leading spaces to TAB characters
-//             if numSpaces is not defined, then the first line
-//             that contains at least one space sets it
-export var tabify = function(str, numSpaces = undef) {
-  var _, i, lLines, len1, level, prefix, prefixLen, ref, result, theRest;
-  lLines = [];
-  ref = toArray(str);
-  for (i = 0, len1 = ref.length; i < len1; i++) {
-    str = ref[i];
-    [_, prefix, theRest] = str.match(/^(\s*)(.*)$/);
-    prefixLen = prefix.length;
-    if (prefixLen === 0) {
-      lLines.push(theRest);
-    } else {
-      assert(prefix.indexOf('\t') === -1, "found TAB");
-      if (numSpaces === undef) {
-        numSpaces = prefixLen;
-      }
-      assert(prefixLen % numSpaces === 0, "Bad prefix");
-      level = prefixLen / numSpaces;
-      lLines.push('\t'.repeat(level) + theRest);
-    }
-  }
-  result = toBlock(lLines);
-  return result;
-};
-
-// ---------------------------------------------------------------------------
-//    untabify - convert ALL TABs to spaces
-export var untabify = function(str, numSpaces = 3) {
-  return str.replace(/\t/g, ' '.repeat(numSpaces));
-};
-
-// ---------------------------------------------------------------------------
 //    enclose - indent text, surround with pre and post
 export var enclose = function(text, pre, post, oneIndent = "\t") {
   return toBlock([pre, indented(text, 1, oneIndent), post]);
