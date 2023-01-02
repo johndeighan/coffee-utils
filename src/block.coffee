@@ -5,10 +5,9 @@ import readline from 'readline'
 
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {
-	undef, pass, defined, notdefined, rtrim, OL,
+	undef, pass, defined, notdefined, rtrim, OL, isArrayOfStrings,
 	isEmpty, isString, isArray, nonEmpty, toArray, toBlock,
 	} from '@jdeighan/base-utils'
-import {isArrayOfStrings} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
 

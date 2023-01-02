@@ -16,6 +16,7 @@ import {
   notdefined,
   rtrim,
   OL,
+  isArrayOfStrings,
   isEmpty,
   isString,
   isArray,
@@ -23,10 +24,6 @@ import {
   toArray,
   toBlock
 } from '@jdeighan/base-utils';
-
-import {
-  isArrayOfStrings
-} from '@jdeighan/coffee-utils';
 
 // ---------------------------------------------------------------------------
 export var splitBlock = function(block) {

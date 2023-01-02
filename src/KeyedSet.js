@@ -11,7 +11,8 @@ import {
   isArray,
   isHash,
   isEmpty,
-  nonEmpty
+  nonEmpty,
+  isArrayOfStrings
 } from '@jdeighan/base-utils';
 
 import {
@@ -29,10 +30,6 @@ import {
   dbgReturn,
   dbg
 } from '@jdeighan/base-utils/debug';
-
-import {
-  isArrayOfStrings
-} from '@jdeighan/coffee-utils';
 
 // ---------------------------------------------------------------------------
 export var KeyedSet = class KeyedSet extends Map {

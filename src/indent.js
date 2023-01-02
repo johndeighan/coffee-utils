@@ -171,7 +171,7 @@ export var undented = function(input, level = undef, oneIndent = "\t") {
       lNewLines.push('');
     } else {
       if (line.indexOf(toRemove) !== 0) {
-        throw new Error(`remove ${OL(toRemove)} from ${OL(text)}`);
+        throw new Error(`remove ${OL(toRemove)} from ${OL(line)}`);
       }
       lNewLines.push(line.substr(nToRemove));
     }

@@ -3,30 +3,6 @@
 var isSectionName, isSetName;
 
 import {
-  assert,
-  croak
-} from '@jdeighan/base-utils/exceptions';
-
-import {
-  LOG,
-  LOGVALUE,
-  LOGTAML
-} from '@jdeighan/base-utils/log';
-
-import {
-  isTAML,
-  fromTAML
-} from '@jdeighan/base-utils/taml';
-
-import {
-  dbg,
-  dbgEnter,
-  dbgReturn,
-  dbgYield,
-  dbgResume
-} from '@jdeighan/base-utils/debug';
-
-import {
   pass,
   undef,
   defined,
@@ -40,14 +16,34 @@ import {
   isNonEmptyString,
   isFunction,
   jsType,
-  toBlock
+  toBlock,
+  isArrayOfStrings,
+  isNonEmptyArray
 } from '@jdeighan/base-utils';
 
 import {
-  isArrayOfStrings,
-  isNonEmptyArray,
-  isUniqueTree
-} from '@jdeighan/coffee-utils';
+  assert,
+  croak
+} from '@jdeighan/base-utils/exceptions';
+
+import {
+  LOG,
+  LOGVALUE,
+  LOGTAML
+} from '@jdeighan/base-utils/log';
+
+import {
+  dbg,
+  dbgEnter,
+  dbgReturn,
+  dbgYield,
+  dbgResume
+} from '@jdeighan/base-utils/debug';
+
+import {
+  isTAML,
+  fromTAML
+} from '@jdeighan/base-utils/taml';
 
 import {
   Section

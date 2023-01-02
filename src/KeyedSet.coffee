@@ -3,14 +3,13 @@
 import {
 	undef, defined, notdefined, OL, deepCopy,
 	isString, isNonEmptyString, isArray, isHash,
-	isEmpty, nonEmpty,
+	isEmpty, nonEmpty, isArrayOfStrings,
 	} from '@jdeighan/base-utils'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
 import {
 	dbgEnter, dbgReturn, dbg,
 	} from '@jdeighan/base-utils/debug'
-import {isArrayOfStrings} from '@jdeighan/coffee-utils'
 
 # ---------------------------------------------------------------------------
 
