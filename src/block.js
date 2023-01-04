@@ -26,7 +26,7 @@ import {
 } from '@jdeighan/base-utils';
 
 // ---------------------------------------------------------------------------
-export var splitBlock = function(block) {
+export var splitBlock = (block) => {
   var pos;
   assert(isString(block), "not a string");
   pos = block.indexOf('\n');
@@ -38,7 +38,7 @@ export var splitBlock = function(block) {
 };
 
 // ---------------------------------------------------------------------------
-export var firstLine = function(block) {
+export var firstLine = (block) => {
   var pos;
   assert(isString(block), "not a string");
   pos = block.indexOf('\n');
@@ -50,7 +50,7 @@ export var firstLine = function(block) {
 };
 
 // ---------------------------------------------------------------------------
-export var remainingLines = function(block) {
+export var remainingLines = (block) => {
   var pos;
   assert(isString(block), "not a string");
   pos = block.indexOf('\n');
@@ -64,7 +64,7 @@ export var remainingLines = function(block) {
 // ---------------------------------------------------------------------------
 //   normalizeBlock - remove blank lines, trim each line
 //                  - collapse internal whitespace to ' '
-export var normalizeBlock = function(content) {
+export var normalizeBlock = (content) => {
   var lLines, line;
   if (typeof content !== 'string') {
     throw new Error("normalizeBlock(): not a string");
@@ -88,7 +88,7 @@ export var normalizeBlock = function(content) {
 
 // ---------------------------------------------------------------------------
 // truncateBlock - limit block to a certain number of lines
-export var truncateBlock = function(str, numLines) {
+export var truncateBlock = (str, numLines) => {
   var lLines;
   lLines = toArray(str);
   lLines.length = numLines;
@@ -96,7 +96,7 @@ export var truncateBlock = function(str, numLines) {
 };
 
 // ---------------------------------------------------------------------------
-export var joinBlocks = function(...lBlocks) {
+export var joinBlocks = (...lBlocks) => {
   var block, i, lNonEmptyBlocks, len, ref;
   lNonEmptyBlocks = [];
   ref = lBlocks.flat(999);

@@ -11,7 +11,7 @@ audio = undef; // audio context - create only when needed, then keep
 
 // ---------------------------------------------------------------------------
 //   beep - play a sound
-export var beep = function(volume = 100, freq = 520, duration = 200) {
+export var beep = (volume = 100, freq = 520, duration = 200) => {
   var u, v;
   if (audio === undef) {
     audio = new AudioContext();
@@ -28,7 +28,7 @@ export var beep = function(volume = 100, freq = 520, duration = 200) {
 };
 
 // ---------------------------------------------------------------------------
-export var localStore = function(key, value = undef) {
+export var localStore = (key, value = undef) => {
   // --- if value is undef, returns the current value
   if (typeof localStorage === 'undefined') {
     return;

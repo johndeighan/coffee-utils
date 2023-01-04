@@ -29,7 +29,7 @@ for (i = 0, len = ref.length; i < len; i++) {
 }
 
 // ---------------------------------------------------------------------------
-export var parsetag = function(line) {
+export var parsetag = (line) => {
   var _, all, attrName, br_val, className, dq_val, hAttr, hToken, ident, j, lClasses, lMatches, len1, modifiers, prefix, quote, ref1, rest, sq_val, subtype, uq_val, value, varName;
   if (lMatches = line.match(/^(?:([A-Za-z][A-Za-z0-9_]*)\s*=\s*)?([A-Za-z][A-Za-z0-9_]*)(?:\:([a-z]+))?(\S*)\s*(.*)$/)) { // variable name
     // variable is optional
@@ -155,7 +155,7 @@ export var parsetag = function(line) {
 
 // ---------------------------------------------------------------------------
 // --- export only for unit testing
-export var attrStr = function(hAttr) {
+export var attrStr = (hAttr) => {
   var attrName, bquote, equote, j, len1, quote, ref1, shorthand, str, value;
   if (!hAttr) {
     return '';
@@ -181,7 +181,7 @@ export var attrStr = function(hAttr) {
 };
 
 // ---------------------------------------------------------------------------
-export var tag2str = function(hToken, type = 'begin') {
+export var tag2str = (hToken, type = 'begin') => {
   var hAttr, str;
   ({tagName, hAttr} = hToken);
   if (type === 'begin') {
@@ -204,7 +204,7 @@ export var tag2str = function(hToken, type = 'begin') {
 
 // ---------------------------------------------------------------------------
 //    elem - indent text, surround with HTML tags
-export var elem = function(tagName, hAttr = undef, text = undef, oneIndent = "\t") {
+export var elem = (tagName, hAttr = undef, text = undef, oneIndent = "\t") => {
   var hToken;
   if (isEmpty(text)) {
     hToken = {tagName, hAttr};

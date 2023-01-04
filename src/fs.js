@@ -52,7 +52,7 @@ import {
 // ---------------------------------------------------------------------------
 //    mydir() - pass argument import.meta.url and it will return
 //              the directory your file is in
-export var mydir = function(url) {
+export var mydir = (url) => {
   var dir, final, path;
   path = urllib.fileURLToPath(url);
   dir = pathlib.dirname(path);
@@ -61,7 +61,7 @@ export var mydir = function(url) {
 };
 
 // ---------------------------------------------------------------------------
-export var projRoot = function(url) {
+export var projRoot = (url) => {
   var dir, rootDir;
   dir = mydir(url);
   rootDir = pathTo('package.json', dir, 'direction=up directory');
@@ -72,7 +72,7 @@ export var projRoot = function(url) {
 // ---------------------------------------------------------------------------
 //    myfile() - pass argument import.meta.url and it will return
 //               the name of your file
-export var myfile = function(url) {
+export var myfile = (url) => {
   var filename, path;
   path = urllib.fileURLToPath(url);
   filename = pathlib.parse(path).base;
@@ -82,19 +82,19 @@ export var myfile = function(url) {
 // ---------------------------------------------------------------------------
 //    myfullpath() - pass argument import.meta.url and it will return
 //                   the full path to your file
-export var myfullpath = function(url) {
+export var myfullpath = (url) => {
   var path;
   path = urllib.fileURLToPath(url);
   return mkpath(path);
 };
 
 // ---------------------------------------------------------------------------
-export var getStats = function(fullpath) {
+export var getStats = (fullpath) => {
   return fs.lstatSync(fullpath);
 };
 
 // ---------------------------------------------------------------------------
-export var isFile = function(fullpath) {
+export var isFile = (fullpath) => {
   try {
     return getStats(fullpath).isFile();
   } catch (error) {
@@ -103,7 +103,7 @@ export var isFile = function(fullpath) {
 };
 
 // ---------------------------------------------------------------------------
-export var isDir = function(fullpath) {
+export var isDir = (fullpath) => {
   try {
     return getStats(fullpath).isDirectory();
   } catch (error) {
@@ -112,14 +112,14 @@ export var isDir = function(fullpath) {
 };
 
 // ---------------------------------------------------------------------------
-export var isSimpleFileName = function(path) {
+export var isSimpleFileName = (path) => {
   var h;
   h = pathlib.parse(path);
   return !h.root && !h.dir && h.base;
 };
 
 // ---------------------------------------------------------------------------
-export var fileStub = function(path) {
+export var fileStub = (path) => {
   var lMatches;
   assert(isString(path), "fileExt(): path not a string");
   if (lMatches = path.match(/^(.*)\.[A-Za-z0-9_]+$/)) {
@@ -130,7 +130,7 @@ export var fileStub = function(path) {
 };
 
 // ---------------------------------------------------------------------------
-export var fileExt = function(path) {
+export var fileExt = (path) => {
   var lMatches;
   assert(isString(path), "fileExt(): path not a string");
   if (lMatches = path.match(/\.[A-Za-z0-9_]+$/)) {
@@ -141,7 +141,7 @@ export var fileExt = function(path) {
 };
 
 // ---------------------------------------------------------------------------
-export var mkpath = function(...lParts) {
+export var mkpath = (...lParts) => {
   var _, drive, i, lMatches, lNewParts, len, newPath, part, rest;
   // --- Ignore empty parts
   lNewParts = [];
@@ -161,12 +161,12 @@ export var mkpath = function(...lParts) {
 };
 
 // ---------------------------------------------------------------------------
-export var getFullPath = function(filepath) {
+export var getFullPath = (filepath) => {
   return mkpath(pathlib.resolve(filepath));
 };
 
 // ---------------------------------------------------------------------------
-export var forEachLine = function(filepath, func) {
+export var forEachLine = (filepath, func) => {
   var buffer, line, nLines, reader;
   reader = new NReadLines(filepath);
   nLines = 0;
@@ -182,7 +182,7 @@ export var forEachLine = function(filepath, func) {
 };
 
 // ---------------------------------------------------------------------------
-export var forEachBlock = function(filepath, func, regexp = /^-{16,}$/) {
+export var forEachBlock = (filepath, func, regexp = /^-{16,}$/) => {
   var callback, earlyExit, firstLineNum, lLines;
   lLines = [];
   firstLineNum = 1;
@@ -211,7 +211,7 @@ export var forEachBlock = function(filepath, func, regexp = /^-{16,}$/) {
 };
 
 // ---------------------------------------------------------------------------
-export var forEachSetOfBlocks = function(filepath, func, block_regexp = /^-{16,}$/, set_regexp = /^={16,}$/) {
+export var forEachSetOfBlocks = (filepath, func, block_regexp = /^-{16,}$/, set_regexp = /^={16,}$/) => {
   var callback, earlyExit, firstLineNum, lBlocks, lLines;
   lBlocks = [];
   lLines = [];
@@ -248,7 +248,7 @@ export var forEachSetOfBlocks = function(filepath, func, block_regexp = /^-{16,}
 
 // ---------------------------------------------------------------------------
 //   slurp - read an entire file into a string
-export var slurp = function(filepath, maxLines = undef) {
+export var slurp = (filepath, maxLines = undef) => {
   var contents, lLines;
   if (defined(maxLines)) {
     lLines = [];
@@ -266,7 +266,7 @@ export var slurp = function(filepath, maxLines = undef) {
 
 // ---------------------------------------------------------------------------
 //   barf - write a string to a file
-export var barf = function(filepath, contents) {
+export var barf = (filepath, contents) => {
   if (isEmpty(contents)) {
     return;
   }
@@ -283,7 +283,7 @@ export var barf = function(filepath, contents) {
 
 // ---------------------------------------------------------------------------
 //   withExt - change file extention in a file name
-export var withExt = function(path, newExt, hOptions = {}) {
+export var withExt = (path, newExt, hOptions = {}) => {
   var dir, ext, name;
   // --- Valid options:
   //        removeLeadingUnderScore - boolean
@@ -300,7 +300,7 @@ export var withExt = function(path, newExt, hOptions = {}) {
 
 // ---------------------------------------------------------------------------
 //   removeFileWithExt - remove file with different ext
-export var removeFileWithExt = function(path, newExt, hOptions = {}) {
+export var removeFileWithExt = (path, newExt, hOptions = {}) => {
   var err, fullpath, success;
   // --- Valid options:
   //        doLog
@@ -322,7 +322,7 @@ export var removeFileWithExt = function(path, newExt, hOptions = {}) {
 
 // ---------------------------------------------------------------------------
 //   withUnderScore - add '_' to file name
-export var withUnderScore = function(path) {
+export var withUnderScore = (path) => {
   var base, dir;
   ({dir, base} = pathlib.parse(path));
   return mkpath(dir, `_${base}`);
@@ -335,7 +335,7 @@ isSystemDir = function(dir) {
 
 // ---------------------------------------------------------------------------
 //    Get all subdirectories of a directory
-export var getSubDirs = function(dir) {
+export var getSubDirs = (dir) => {
   return fs.readdirSync(dir, {
     withFileTypes: true
   }).filter(function(d) {
@@ -347,7 +347,7 @@ export var getSubDirs = function(dir) {
 
 // ---------------------------------------------------------------------------
 //    Get path to parent directory of a directory
-export var getParentDir = function(dir) {
+export var getParentDir = (dir) => {
   var hParts;
   hParts = pathlib.parse(dir);
   if (hParts.dir === hParts.root) {
@@ -357,7 +357,7 @@ export var getParentDir = function(dir) {
 };
 
 // ---------------------------------------------------------------------------
-export var forEachFile = function(dir, cb, filt = undef, level = 0) {
+export var forEachFile = (dir, cb, filt = undef, level = 0) => {
   var ent, i, j, lSubDirectories, len, len1, ref, ref1, subdir;
   // --- filt can be a regular expression or a function that gets:
   //        (filename, dir, level)
@@ -396,7 +396,7 @@ export var forEachFile = function(dir, cb, filt = undef, level = 0) {
 };
 
 // ---------------------------------------------------------------------------
-export var pathTo = function(fname, searchDir, options = undef) {
+export var pathTo = (fname, searchDir, options = undef) => {
   var dirPath, direction, directory, filepath, fpath, i, len, nLevels, ref, relative, subdir;
   ({direction, relative, directory} = getOptions(options, {
     direction: 'down',
@@ -458,7 +458,7 @@ export var pathTo = function(fname, searchDir, options = undef) {
 };
 
 // ---------------------------------------------------------------------------
-export var allPathsTo = function(fname, searchDir) {
+export var allPathsTo = (fname, searchDir) => {
   var h, lPaths, path;
   if (!searchDir) {
     searchDir = process.cwd();
@@ -481,7 +481,7 @@ export var allPathsTo = function(fname, searchDir) {
 };
 
 // ---------------------------------------------------------------------------
-export var newerDestFileExists = function(srcPath, destPath) {
+export var newerDestFileExists = (srcPath, destPath) => {
   var destModTime, srcModTime;
   if (!fs.existsSync(destPath)) {
     return false;
@@ -496,7 +496,7 @@ export var newerDestFileExists = function(srcPath, destPath) {
 };
 
 // ---------------------------------------------------------------------------
-export var shortenPath = function(path) {
+export var shortenPath = (path) => {
   var _, lMatches, str, tail;
   // --- Replace user's home dir with '~'
   str = mkpath(path);
@@ -509,7 +509,7 @@ export var shortenPath = function(path) {
 };
 
 // ---------------------------------------------------------------------------
-export var parseSource = function(source) {
+export var parseSource = (source) => {
   var dir, hInfo, hSourceInfo, lMatches;
   // --- returns {
   //        dir
@@ -562,7 +562,7 @@ export var parseSource = function(source) {
 
 // ---------------------------------------------------------------------------
 //   slurpTAML - read TAML from a file
-export var slurpTAML = function(filepath) {
+export var slurpTAML = (filepath) => {
   var contents;
   contents = slurp(filepath);
   return fromTAML(contents);

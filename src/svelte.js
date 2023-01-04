@@ -15,18 +15,18 @@ import {
 
 // ---------------------------------------------------------------------------
 //   svelteSourceCodeEsc - to display source code for a *.starbucks page
-export var svelteSourceCodeEsc = function(str) {
+export var svelteSourceCodeEsc = (str) => {
   return str.replace(/\</g, '&lt;').replace(/\>/g, '&gt;').replace(/\{/g, '&lbrace;').replace(/\}/g, '&rbrace;').replace(/\$/g, '&dollar;');
 };
 
 // ---------------------------------------------------------------------------
 //   svelteHtmlEsc - after converting markdown
-export var svelteHtmlEsc = function(str) {
+export var svelteHtmlEsc = (str) => {
   return str.replace(/\{/g, '&lbrace;').replace(/\}/g, '&rbrace;').replace(/\$/g, '&dollar;');
 };
 
 // ---------------------------------------------------------------------------
-export var onInterval = function(func, secs, doLog = false) {
+export var onInterval = (func, secs, doLog = false) => {
   var interval, ms;
   assert(isFunction(func), "onInterval(): 1st arg not a function");
   ms = Math.floor(1000 * secs);

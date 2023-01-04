@@ -19,7 +19,7 @@ import {fromTAML} from '@jdeighan/base-utils/taml'
 #    mydir() - pass argument import.meta.url and it will return
 #              the directory your file is in
 
-export mydir = (url) ->
+export mydir = (url) =>
 
 	path = urllib.fileURLToPath(url)
 	dir = pathlib.dirname(path)
@@ -28,7 +28,7 @@ export mydir = (url) ->
 
 # ---------------------------------------------------------------------------
 
-export projRoot = (url) ->
+export projRoot = (url) =>
 
 	dir = mydir(url)
 	rootDir = pathTo('package.json', dir, 'direction=up directory')
@@ -39,7 +39,7 @@ export projRoot = (url) ->
 #    myfile() - pass argument import.meta.url and it will return
 #               the name of your file
 
-export myfile = (url) ->
+export myfile = (url) =>
 
 	path = urllib.fileURLToPath(url)
 	filename = pathlib.parse(path).base
@@ -49,20 +49,20 @@ export myfile = (url) ->
 #    myfullpath() - pass argument import.meta.url and it will return
 #                   the full path to your file
 
-export myfullpath = (url) ->
+export myfullpath = (url) =>
 
 	path = urllib.fileURLToPath(url)
 	return mkpath(path)
 
 # ---------------------------------------------------------------------------
 
-export getStats = (fullpath) ->
+export getStats = (fullpath) =>
 
 	return fs.lstatSync(fullpath)
 
 # ---------------------------------------------------------------------------
 
-export isFile = (fullpath) ->
+export isFile = (fullpath) =>
 
 	try
 		return getStats(fullpath).isFile()
@@ -71,7 +71,7 @@ export isFile = (fullpath) ->
 
 # ---------------------------------------------------------------------------
 
-export isDir = (fullpath) ->
+export isDir = (fullpath) =>
 
 	try
 		return getStats(fullpath).isDirectory()
@@ -80,14 +80,14 @@ export isDir = (fullpath) ->
 
 # ---------------------------------------------------------------------------
 
-export isSimpleFileName = (path) ->
+export isSimpleFileName = (path) =>
 
 	h = pathlib.parse(path)
 	return ! h.root && ! h.dir && h.base
 
 # ---------------------------------------------------------------------------
 
-export fileStub = (path) ->
+export fileStub = (path) =>
 
 	assert isString(path), "fileExt(): path not a string"
 	if lMatches = path.match(/^(.*)\.[A-Za-z0-9_]+$/)
@@ -97,7 +97,7 @@ export fileStub = (path) ->
 
 # ---------------------------------------------------------------------------
 
-export fileExt = (path) ->
+export fileExt = (path) =>
 
 	assert isString(path), "fileExt(): path not a string"
 	if lMatches = path.match(/\.[A-Za-z0-9_]+$/)
@@ -107,7 +107,7 @@ export fileExt = (path) ->
 
 # ---------------------------------------------------------------------------
 
-export mkpath = (lParts...) ->
+export mkpath = (lParts...) =>
 
 	# --- Ignore empty parts
 	lNewParts = []
@@ -124,13 +124,13 @@ export mkpath = (lParts...) ->
 
 # ---------------------------------------------------------------------------
 
-export getFullPath = (filepath) ->
+export getFullPath = (filepath) =>
 
 	return mkpath(pathlib.resolve(filepath))
 
 # ---------------------------------------------------------------------------
 
-export forEachLine = (filepath, func) ->
+export forEachLine = (filepath, func) =>
 
 	reader = new NReadLines(filepath)
 	nLines = 0
@@ -146,7 +146,7 @@ export forEachLine = (filepath, func) ->
 
 # ---------------------------------------------------------------------------
 
-export forEachBlock = (filepath, func, regexp = /^-{16,}$/) ->
+export forEachBlock = (filepath, func, regexp = /^-{16,}$/) =>
 
 	lLines = []
 	firstLineNum = 1
@@ -175,7 +175,7 @@ export forEachBlock = (filepath, func, regexp = /^-{16,}$/) ->
 
 export forEachSetOfBlocks = (filepath, func,
 		block_regexp = /^-{16,}$/,
-		set_regexp   = /^={16,}$/) ->
+		set_regexp   = /^={16,}$/) =>
 
 	lBlocks = []
 	lLines = []
@@ -210,7 +210,7 @@ export forEachSetOfBlocks = (filepath, func,
 # ---------------------------------------------------------------------------
 #   slurp - read an entire file into a string
 
-export slurp = (filepath, maxLines=undef) ->
+export slurp = (filepath, maxLines=undef) =>
 
 	if defined(maxLines)
 		lLines = []
@@ -226,7 +226,7 @@ export slurp = (filepath, maxLines=undef) ->
 # ---------------------------------------------------------------------------
 #   barf - write a string to a file
 
-export barf = (filepath, contents) ->
+export barf = (filepath, contents) =>
 
 	if isEmpty(contents)
 		return
@@ -241,7 +241,7 @@ export barf = (filepath, contents) ->
 # ---------------------------------------------------------------------------
 #   withExt - change file extention in a file name
 
-export withExt = (path, newExt, hOptions={}) ->
+export withExt = (path, newExt, hOptions={}) =>
 	# --- Valid options:
 	#        removeLeadingUnderScore - boolean
 
@@ -257,7 +257,7 @@ export withExt = (path, newExt, hOptions={}) ->
 # ---------------------------------------------------------------------------
 #   removeFileWithExt - remove file with different ext
 
-export removeFileWithExt = (path, newExt, hOptions={}) ->
+export removeFileWithExt = (path, newExt, hOptions={}) =>
 	# --- Valid options:
 	#        doLog
 	#        removeLeadingUnderScore
@@ -276,7 +276,7 @@ export removeFileWithExt = (path, newExt, hOptions={}) ->
 # ---------------------------------------------------------------------------
 #   withUnderScore - add '_' to file name
 
-export withUnderScore = (path) ->
+export withUnderScore = (path) =>
 
 	{dir, base} = pathlib.parse(path)
 	return mkpath(dir, "_#{base}")
@@ -290,7 +290,7 @@ isSystemDir = (dir) ->
 # ---------------------------------------------------------------------------
 #    Get all subdirectories of a directory
 
-export getSubDirs = (dir) ->
+export getSubDirs = (dir) =>
 
 	return fs.readdirSync(dir, {withFileTypes: true}) \
 		.filter((d) -> d.isDirectory() && !isSystemDir(d.name)) \
@@ -300,7 +300,7 @@ export getSubDirs = (dir) ->
 # ---------------------------------------------------------------------------
 #    Get path to parent directory of a directory
 
-export getParentDir = (dir) ->
+export getParentDir = (dir) =>
 
 	hParts = pathlib.parse(dir)
 	if (hParts.dir == hParts.root)
@@ -309,7 +309,7 @@ export getParentDir = (dir) ->
 
 # ---------------------------------------------------------------------------
 
-export forEachFile = (dir, cb, filt=undef, level=0) ->
+export forEachFile = (dir, cb, filt=undef, level=0) =>
 	# --- filt can be a regular expression or a function that gets:
 	#        (filename, dir, level)
 	#     callback will get parms (filename, dir, level)
@@ -336,7 +336,7 @@ export forEachFile = (dir, cb, filt=undef, level=0) ->
 
 # ---------------------------------------------------------------------------
 
-export pathTo = (fname, searchDir, options=undef) ->
+export pathTo = (fname, searchDir, options=undef) =>
 
 	{direction, relative, directory} = getOptions(options, {
 		direction: 'down'
@@ -388,7 +388,7 @@ export pathTo = (fname, searchDir, options=undef) ->
 
 # ---------------------------------------------------------------------------
 
-export allPathsTo = (fname, searchDir) ->
+export allPathsTo = (fname, searchDir) =>
 	# --- Only searches upward
 
 	if ! searchDir
@@ -406,7 +406,7 @@ export allPathsTo = (fname, searchDir) ->
 
 # ---------------------------------------------------------------------------
 
-export newerDestFileExists = (srcPath, destPath) ->
+export newerDestFileExists = (srcPath, destPath) =>
 
 	if ! fs.existsSync(destPath)
 		return false
@@ -419,7 +419,7 @@ export newerDestFileExists = (srcPath, destPath) ->
 
 # ---------------------------------------------------------------------------
 
-export shortenPath = (path) ->
+export shortenPath = (path) =>
 	# --- Replace user's home dir with '~'
 
 	str = mkpath(path)
@@ -433,7 +433,7 @@ export shortenPath = (path) ->
 
 # ---------------------------------------------------------------------------
 
-export parseSource = (source) ->
+export parseSource = (source) =>
 	# --- returns {
 	#        dir
 	#        filename
@@ -487,7 +487,7 @@ export parseSource = (source) ->
 # ---------------------------------------------------------------------------
 #   slurpTAML - read TAML from a file
 
-export slurpTAML = (filepath) ->
+export slurpTAML = (filepath) =>
 
 	contents = slurp(filepath)
 	return fromTAML(contents)

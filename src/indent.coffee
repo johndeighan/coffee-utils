@@ -8,7 +8,7 @@ import {
 
 # ---------------------------------------------------------------------------
 
-export getOneIndent = (str) ->
+export getOneIndent = (str) =>
 
 	if (lMatches = str.match(/^\t+(?:\S|$)/))
 		return "\t"
@@ -19,7 +19,7 @@ export getOneIndent = (str) ->
 
 # ---------------------------------------------------------------------------
 
-export splitPrefix = (line) ->
+export splitPrefix = (line) =>
 
 	assert isString(line), "non-string #{OL(line)}"
 	line = rtrim(line)
@@ -29,7 +29,7 @@ export splitPrefix = (line) ->
 # ---------------------------------------------------------------------------
 #   splitLine - separate a line into [level, line]
 
-export splitLine = (line, oneIndent=undef) ->
+export splitLine = (line, oneIndent=undef) =>
 
 	[prefix, str] = splitPrefix(line)
 	return [indentLevel(prefix, oneIndent), str]
@@ -38,7 +38,7 @@ export splitLine = (line, oneIndent=undef) ->
 #   indentation - return appropriate indentation string for given level
 #   export only to allow unit testing
 
-export indentation = (level, oneIndent="\t") ->
+export indentation = (level, oneIndent="\t") =>
 
 	assert (level >= 0), "indentation(): negative level"
 	return oneIndent.repeat(level)
@@ -47,7 +47,7 @@ export indentation = (level, oneIndent="\t") ->
 #   indentLevel - determine indent level of a string
 #                 it's OK if the string is ONLY indentation
 
-export indentLevel = (line, oneIndent=undef) ->
+export indentLevel = (line, oneIndent=undef) =>
 
 	assert isString(line), "not a string"
 
@@ -84,7 +84,7 @@ export indentLevel = (line, oneIndent=undef) ->
 # ---------------------------------------------------------------------------
 #   isUndented - true iff indentLevel(line) == 0
 
-export isUndented = (line) ->
+export isUndented = (line) =>
 
 	assert isString(line), "non-string #{OL(line)}"
 	return notdefined(line.match(/^\s/))
@@ -93,7 +93,7 @@ export isUndented = (line) ->
 #   indented - add indentation to each string in a block or array
 #            - returns the same type as input, i.e. array or string
 
-export indented = (input, level=1, oneIndent="\t") ->
+export indented = (input, level=1, oneIndent="\t") =>
 
 	# --- level can be a string, in which case it is
 	#     pre-pended to each line of input
@@ -131,7 +131,7 @@ export indented = (input, level=1, oneIndent="\t") ->
 #              indentation is removed
 #            - returns same type as text, i.e. either string or array
 
-export undented = (input, level=undef, oneIndent="\t") ->
+export undented = (input, level=undef, oneIndent="\t") =>
 
 	if defined(level) && (level==0)
 		return input
@@ -169,7 +169,7 @@ export undented = (input, level=undef, oneIndent="\t") ->
 # ---------------------------------------------------------------------------
 #    enclose - indent text, surround with pre and post
 
-export enclose = (text, pre, post, oneIndent="\t") ->
+export enclose = (text, pre, post, oneIndent="\t") =>
 
 	return toBlock([
 		pre

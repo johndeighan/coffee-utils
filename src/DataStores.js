@@ -289,14 +289,14 @@ export var ToDoDataStore = class ToDoDataStore extends BaseDataStore {
 // ---------------------------------------------------------------------------
 //         UTILITIES
 // ---------------------------------------------------------------------------
-export var brewTamlStr = function(code, stub) {
+export var brewTamlStr = (code, stub) => {
   return `import {TAMLDataStore} from '@jdeighan/starbucks/stores';
 
 export let ${stub} = new TAMLDataStore(\`${code}\`);`;
 };
 
 // ---------------------------------------------------------------------------
-export var brewTamlFile = function(srcPath, destPath = undef, hOptions = {}) {
+export var brewTamlFile = (srcPath, destPath = undef, hOptions = {}) => {
   var hInfo, jsCode, stub, tamlCode;
   if (destPath == null) {
     destPath = withExt(srcPath, '.js', {

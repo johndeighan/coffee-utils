@@ -11,7 +11,7 @@ import {
 
 # ---------------------------------------------------------------------------
 
-export splitBlock = (block) ->
+export splitBlock = (block) =>
 
 	assert isString(block), "not a string"
 	pos = block.indexOf('\n')
@@ -23,7 +23,7 @@ export splitBlock = (block) ->
 
 # ---------------------------------------------------------------------------
 
-export firstLine = (block) ->
+export firstLine = (block) =>
 
 	assert isString(block), "not a string"
 	pos = block.indexOf('\n')
@@ -34,7 +34,7 @@ export firstLine = (block) ->
 
 # ---------------------------------------------------------------------------
 
-export remainingLines = (block) ->
+export remainingLines = (block) =>
 
 	assert isString(block), "not a string"
 	pos = block.indexOf('\n')
@@ -47,7 +47,7 @@ export remainingLines = (block) ->
 #   normalizeBlock - remove blank lines, trim each line
 #                  - collapse internal whitespace to ' '
 
-export normalizeBlock = (content) ->
+export normalizeBlock = (content) =>
 
 	if typeof content != 'string'
 		throw new Error("normalizeBlock(): not a string")
@@ -60,7 +60,7 @@ export normalizeBlock = (content) ->
 # ---------------------------------------------------------------------------
 # truncateBlock - limit block to a certain number of lines
 
-export truncateBlock = (str, numLines) ->
+export truncateBlock = (str, numLines) =>
 
 	lLines = toArray str
 	lLines.length = numLines
@@ -68,7 +68,7 @@ export truncateBlock = (str, numLines) ->
 
 # ---------------------------------------------------------------------------
 
-export joinBlocks = (lBlocks...) ->
+export joinBlocks = (lBlocks...) =>
 
 	lNonEmptyBlocks = []
 	for block in lBlocks.flat(999)

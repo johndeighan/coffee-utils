@@ -16,13 +16,13 @@ import {Section} from '@jdeighan/coffee-utils/section'
 
 # ---------------------------------------------------------------------------
 
-isSectionName = (name) ->
+isSectionName = (name) =>
 
 	return isString(name) && name.match(/^[a-z][a-z0-9_]*/)
 
 # ---------------------------------------------------------------------------
 
-isSetName = (name) ->
+isSetName = (name) =>
 
 	return isString(name) && name.match(/^[A-Z][a-z0-9_]*/)
 

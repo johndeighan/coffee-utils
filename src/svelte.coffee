@@ -7,7 +7,7 @@ import {isFunction} from '@jdeighan/base-utils'
 # ---------------------------------------------------------------------------
 #   svelteSourceCodeEsc - to display source code for a *.starbucks page
 
-export svelteSourceCodeEsc = (str) ->
+export svelteSourceCodeEsc = (str) =>
 
 	return str \
 		.replace(/\</g, '&lt;') \
@@ -19,7 +19,7 @@ export svelteSourceCodeEsc = (str) ->
 # ---------------------------------------------------------------------------
 #   svelteHtmlEsc - after converting markdown
 
-export svelteHtmlEsc = (str) ->
+export svelteHtmlEsc = (str) =>
 
 	return str \
 		.replace(/\{/g, '&lbrace;') \
@@ -28,7 +28,7 @@ export svelteHtmlEsc = (str) ->
 
 # ---------------------------------------------------------------------------
 
-export onInterval = (func, secs, doLog=false) ->
+export onInterval = (func, secs, doLog=false) =>
 
 	assert isFunction(func), "onInterval(): 1st arg not a function"
 	ms = Math.floor(1000 * secs)

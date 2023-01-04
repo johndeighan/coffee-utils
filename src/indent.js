@@ -20,7 +20,7 @@ import {
 } from '@jdeighan/base-utils';
 
 // ---------------------------------------------------------------------------
-export var getOneIndent = function(str) {
+export var getOneIndent = (str) => {
   var lMatches;
   if ((lMatches = str.match(/^\t+(?:\S|$)/))) {
     return "\t";
@@ -32,7 +32,7 @@ export var getOneIndent = function(str) {
 };
 
 // ---------------------------------------------------------------------------
-export var splitPrefix = function(line) {
+export var splitPrefix = (line) => {
   var lMatches;
   assert(isString(line), `non-string ${OL(line)}`);
   line = rtrim(line);
@@ -42,7 +42,7 @@ export var splitPrefix = function(line) {
 
 // ---------------------------------------------------------------------------
 //   splitLine - separate a line into [level, line]
-export var splitLine = function(line, oneIndent = undef) {
+export var splitLine = (line, oneIndent = undef) => {
   var prefix, str;
   [prefix, str] = splitPrefix(line);
   return [indentLevel(prefix, oneIndent), str];
@@ -51,7 +51,7 @@ export var splitLine = function(line, oneIndent = undef) {
 // ---------------------------------------------------------------------------
 //   indentation - return appropriate indentation string for given level
 //   export only to allow unit testing
-export var indentation = function(level, oneIndent = "\t") {
+export var indentation = (level, oneIndent = "\t") => {
   assert(level >= 0, "indentation(): negative level");
   return oneIndent.repeat(level);
 };
@@ -59,7 +59,7 @@ export var indentation = function(level, oneIndent = "\t") {
 // ---------------------------------------------------------------------------
 //   indentLevel - determine indent level of a string
 //                 it's OK if the string is ONLY indentation
-export var indentLevel = function(line, oneIndent = undef) {
+export var indentLevel = (line, oneIndent = undef) => {
   var ch, lMatches, len, level, prefix, prefixLen;
   assert(isString(line), "not a string");
   // --- This will always match, and it's greedy
@@ -93,7 +93,7 @@ export var indentLevel = function(line, oneIndent = undef) {
 
 // ---------------------------------------------------------------------------
 //   isUndented - true iff indentLevel(line) == 0
-export var isUndented = function(line) {
+export var isUndented = (line) => {
   assert(isString(line), `non-string ${OL(line)}`);
   return notdefined(line.match(/^\s/));
 };
@@ -101,7 +101,7 @@ export var isUndented = function(line) {
 // ---------------------------------------------------------------------------
 //   indented - add indentation to each string in a block or array
 //            - returns the same type as input, i.e. array or string
-export var indented = function(input, level = 1, oneIndent = "\t") {
+export var indented = (input, level = 1, oneIndent = "\t") => {
   var i, lLines, len1, line, ref, toAdd;
   // --- level can be a string, in which case it is
   //     pre-pended to each line of input
@@ -145,7 +145,7 @@ export var indented = function(input, level = 1, oneIndent = "\t") {
 //            - unless level is set, in which case exactly that
 //              indentation is removed
 //            - returns same type as text, i.e. either string or array
-export var undented = function(input, level = undef, oneIndent = "\t") {
+export var undented = (input, level = undef, oneIndent = "\t") => {
   var i, lLines, lMatches, lNewLines, len1, line, nToRemove, toRemove;
   if (defined(level) && (level === 0)) {
     return input;
@@ -188,6 +188,6 @@ export var undented = function(input, level = undef, oneIndent = "\t") {
 
 // ---------------------------------------------------------------------------
 //    enclose - indent text, surround with pre and post
-export var enclose = function(text, pre, post, oneIndent = "\t") {
+export var enclose = (text, pre, post, oneIndent = "\t") => {
   return toBlock([pre, indented(text, 1, oneIndent), post]);
 };

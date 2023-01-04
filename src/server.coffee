@@ -6,7 +6,7 @@ import {execSync} from 'child_process'
 # ---------------------------------------------------------------------------
 #   exec - run external commands
 
-export exec = (cmd) ->
+export exec = (cmd) =>
 
 	buffer = execSync cmd, {
 		windowsHide: true
@@ -17,7 +17,7 @@ export exec = (cmd) ->
 #   ask - ask a question
 #         later, on a web page, prompt the user for answer to question
 
-export ask = (prompt) ->
+export ask = (prompt) =>
 
 	answer = getline.question("{prompt}? ")
 	return answer

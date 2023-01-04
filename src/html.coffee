@@ -13,7 +13,7 @@ for tagName in words('area base br col command embed hr img input' \
 
 # ---------------------------------------------------------------------------
 
-export parsetag = (line) ->
+export parsetag = (line) =>
 
 	if lMatches = line.match(///^
 			(?:
@@ -159,7 +159,7 @@ export parsetag = (line) ->
 # ---------------------------------------------------------------------------
 # --- export only for unit testing
 
-export attrStr = (hAttr) ->
+export attrStr = (hAttr) =>
 
 	if ! hAttr
 		return ''
@@ -179,7 +179,7 @@ export attrStr = (hAttr) ->
 
 # ---------------------------------------------------------------------------
 
-export tag2str = (hToken, type='begin') ->
+export tag2str = (hToken, type='begin') =>
 
 	{tagName, hAttr} = hToken
 	if (type == 'begin')
@@ -199,7 +199,7 @@ export tag2str = (hToken, type='begin') ->
 # ---------------------------------------------------------------------------
 #    elem - indent text, surround with HTML tags
 
-export elem = (tagName, hAttr=undef, text=undef, oneIndent="\t") ->
+export elem = (tagName, hAttr=undef, text=undef, oneIndent="\t") =>
 
 	if isEmpty(text)
 		hToken = {tagName, hAttr}

@@ -7,7 +7,7 @@ audio = undef   # audio context - create only when needed, then keep
 # ---------------------------------------------------------------------------
 #   beep - play a sound
 
-export beep = (volume=100, freq=520, duration=200) ->
+export beep = (volume=100, freq=520, duration=200) =>
 
 	if audio == undef
 		audio = new AudioContext()
@@ -24,7 +24,7 @@ export beep = (volume=100, freq=520, duration=200) ->
 
 # ---------------------------------------------------------------------------
 
-export localStore = (key, value=undef) ->
+export localStore = (key, value=undef) =>
 	# --- if value is undef, returns the current value
 
 	if typeof localStorage == 'undefined'

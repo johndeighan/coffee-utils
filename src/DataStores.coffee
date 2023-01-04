@@ -218,7 +218,7 @@ export class ToDoDataStore extends BaseDataStore
 #         UTILITIES
 # ---------------------------------------------------------------------------
 
-export brewTamlStr = (code, stub) ->
+export brewTamlStr = (code, stub) =>
 
 	return """
 			import {TAMLDataStore} from '@jdeighan/starbucks/stores';
@@ -228,7 +228,7 @@ export brewTamlStr = (code, stub) ->
 
 # ---------------------------------------------------------------------------
 
-export brewTamlFile = (srcPath, destPath=undef, hOptions={}) ->
+export brewTamlFile = (srcPath, destPath=undef, hOptions={}) =>
 	# --- taml => js
 	#     Valid Options:
 	#        force

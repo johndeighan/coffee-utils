@@ -8,7 +8,7 @@ import {
 
 // ---------------------------------------------------------------------------
 //   exec - run external commands
-export var exec = function(cmd) {
+export var exec = (cmd) => {
   var buffer;
   buffer = execSync(cmd, {
     windowsHide: true
@@ -19,7 +19,7 @@ export var exec = function(cmd) {
 // ---------------------------------------------------------------------------
 //   ask - ask a question
 //         later, on a web page, prompt the user for answer to question
-export var ask = function(prompt) {
+export var ask = (prompt) => {
   var answer;
   answer = getline.question("{prompt}? ");
   return answer;
