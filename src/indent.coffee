@@ -52,26 +52,33 @@ export indentLevel = (line, oneIndent=undef) ->
 	assert isString(line), "not a string"
 
 	# --- This will always match, and it's greedy
-	if lMatches = line.match(/^(\s*)/)
-		prefix = lMatches[1]
+	if lMatches = line.match(/^\s*/)
+		prefix = lMatches[0]
 		prefixLen = prefix.length
 
 	if (prefixLen == 0)
 		return 0
 
 	if defined(oneIndent)
+		# --- prefix must be some multiple of oneIndent
 		len = oneIndent.length
+		assert (prefixLen % len == 0),
+			"prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}"
+
+		level = prefixLen / len
 	else
-		oneIndent = "\t"
-		len = 1
+		ch = prefix.substring(0, 1)
+		if (ch == "\t")
+			oneIndent = "\t"
+			level = prefixLen
+		else if (ch == ' ')
+			oneIndent = ' '.repeat(prefixLen)
+			level = 1
+		else
+			croak "Bad Indentation in #{OL(line)}"
 
-	if (prefixLen % len != 0)
-		croak "prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}"
-
-	level = prefixLen / len
-	if (prefix != oneIndent.repeat(level))
-		croak "prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}"
-
+	assert (prefix == oneIndent.repeat(level)),
+		"prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}"
 	return level
 
 # ---------------------------------------------------------------------------
@@ -80,8 +87,7 @@ export indentLevel = (line, oneIndent=undef) ->
 export isUndented = (line) ->
 
 	assert isString(line), "non-string #{OL(line)}"
-	lMatches = line.match(/^\s*/)
-	return (lMatches[0].length == 0)
+	return notdefined(line.match(/^\s/))
 
 # ---------------------------------------------------------------------------
 #   indented - add indentation to each string in a block or array
