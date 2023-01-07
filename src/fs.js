@@ -284,32 +284,27 @@ export var barf = (filepath, contents) => {
 
 // ---------------------------------------------------------------------------
 //   withExt - change file extention in a file name
-export var withExt = (path, newExt, hOptions = {}) => {
+export var withExt = (path, newExt) => {
   var dir, ext, name;
-  // --- Valid options:
-  //        removeLeadingUnderScore - boolean
   assert(newExt, "withExt(): No newExt provided");
   if (newExt.indexOf('.') !== 0) {
     newExt = '.' + newExt;
   }
   ({dir, name, ext} = pathlib.parse(path));
-  if (hOptions.removeLeadingUnderScore && (name.indexOf('_') === 0)) {
-    name = name.substr(1);
-  }
   return mkpath(dir, `${name}${newExt}`);
 };
 
 // ---------------------------------------------------------------------------
 //   removeFileWithExt - remove file with different ext
 export var removeFileWithExt = (path, newExt, hOptions = {}) => {
-  var err, fullpath, success;
+  var doLog, err, fullpath, success;
   // --- Valid options:
   //        doLog
-  //        removeLeadingUnderScore
-  fullpath = withExt(path, newExt, hOptions);
+  ({doLog} = getOptions(hOptions));
+  fullpath = withExt(path, newExt);
   try {
     fs.unlinkSync(fullpath);
-    if (hOptions.doLog) {
+    if (doLog) {
       LOG(`   unlink ${filename}`);
     }
     success = true;
