@@ -3,7 +3,9 @@
 var audio;
 
 import {
-  undef
+  undef,
+  defined,
+  notdefined
 } from '@jdeighan/base-utils';
 
 audio = undef; // audio context - create only when needed, then keep
@@ -30,17 +32,15 @@ export var beep = (volume = 100, freq = 520, duration = 200) => {
 // ---------------------------------------------------------------------------
 export var localStore = (key, value = undef) => {
   // --- if value is undef, returns the current value
-  if (typeof localStorage === 'undefined') {
-    return;
-  }
-  if (value != null) {
-    localStorage.setItem(key, JSON.stringify(value));
-  } else {
-    value = localStorage.getItem(key);
-    if (value != null) {
-      return JSON.parse(localStorage.getItem(key));
+  if (typeof localStorage !== 'undefined') {
+    if (defined(value)) {
+      localStorage.setItem(key, JSON.stringify(value));
     } else {
-      return undef;
+      value = localStorage.getItem(key);
+      if (defined(value)) {
+        return JSON.parse(localStorage.getItem(key));
+      }
     }
   }
+  return undef;
 };

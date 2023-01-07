@@ -1,6 +1,6 @@
 # browser.coffee
 
-import {undef} from '@jdeighan/base-utils'
+import {undef, defined, notdefined} from '@jdeighan/base-utils'
 
 audio = undef   # audio context - create only when needed, then keep
 
@@ -27,15 +27,11 @@ export beep = (volume=100, freq=520, duration=200) =>
 export localStore = (key, value=undef) =>
 	# --- if value is undef, returns the current value
 
-	if typeof localStorage == 'undefined'
-		return
-	if value?
-		localStorage.setItem key, JSON.stringify(value)
-		return
-	else
-		value = localStorage.getItem(key)
-		if value?
-			return JSON.parse(localStorage.getItem(key))
+	if (typeof localStorage != 'undefined')
+		if defined(value)
+			localStorage.setItem key, JSON.stringify(value)
 		else
-			return undef
-
+			value = localStorage.getItem(key)
+			if defined(value)
+				return JSON.parse(localStorage.getItem(key))
+	return undef

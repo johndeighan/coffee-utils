@@ -10,8 +10,11 @@ import {
 
 import {
   undef,
+  defined,
+  notdefined,
   pass,
-  range
+  range,
+  getOptions
 } from '@jdeighan/base-utils';
 
 import {
@@ -68,11 +71,11 @@ export var WritableDataStore = class WritableDataStore {
   }
 
   set(value) {
-    return this.store.set(value);
+    this.store.set(value);
   }
 
   update(func) {
-    return this.store.update(func);
+    this.store.update(func);
   }
 
 };
@@ -84,7 +87,7 @@ export var LocalStorageDataStore = class LocalStorageDataStore extends WritableD
     super(defValue);
     this.masterKey = masterKey1;
     value = localStore(this.masterKey);
-    if (value != null) {
+    if (defined(value)) {
       this.set(value);
     }
   }
@@ -92,16 +95,14 @@ export var LocalStorageDataStore = class LocalStorageDataStore extends WritableD
   // --- I'm assuming that when update() is called,
   //     set() will also be called
   set(value) {
-    if (value == null) {
-      croak("LocalStorageStore.set(): cannont set to undef");
-    }
+    assert(defined(value), "set(): cannot set to undef");
     super.set(value);
-    return localStore(this.masterKey, value);
+    localStore(this.masterKey, value);
   }
 
   update(func) {
     super.update(func);
-    return localStore(this.masterKey, get(this.store));
+    localStore(this.masterKey, get(this.store));
   }
 
 };
@@ -113,10 +114,8 @@ export var PropsDataStore = class PropsDataStore extends LocalStorageDataStore {
   }
 
   setProp(name, value) {
-    if (name == null) {
-      croak("PropStore.setProp(): empty key");
-    }
-    return this.update(function(hPrefs) {
+    assert(defined(name), "PropStore.setProp(): empty key");
+    this.update(function(hPrefs) {
       hPrefs[name] = value;
       return hPrefs;
     });
@@ -140,13 +139,9 @@ export var ReadableDataStore = class ReadableDataStore {
     return this.store.subscribe(callback);
   }
 
-  start() {
-    return pass;
-  }
+  start() {}
 
-  stop() {
-    return pass;
-  }
+  stop() {}
 
 };
 
@@ -154,13 +149,13 @@ export var ReadableDataStore = class ReadableDataStore {
 export var DateTimeDataStore = class DateTimeDataStore extends ReadableDataStore {
   start() {
     // --- We need to store this interval for use in stop() later
-    return this.interval = setInterval(function() {
+    this.interval = setInterval(function() {
       return this.setter(new Date(), 1000);
     });
   }
 
   stop() {
-    return clearInterval(this.interval);
+    clearInterval(this.interval);
   }
 
 };
@@ -175,11 +170,11 @@ export var MousePosDataStore = class MousePosDataStore extends ReadableDataStore
         y: e.clientY
       });
     };
-    return document.body.addEventListener('mousemove', this.mouseMoveHandler);
+    document.body.addEventListener('mousemove', this.mouseMoveHandler);
   }
 
   stop() {
-    return document.body.removeEventListener('mousemove', this.mouseMoveHandler);
+    document.body.removeEventListener('mousemove', this.mouseMoveHandler);
   }
 
 };
@@ -267,9 +262,7 @@ export var ToDoDataStore = class ToDoDataStore extends BaseDataStore {
   }
 
   add(name) {
-    if (defined(this.find(name))) {
-      croak(`Attempt to add duplicate ${name} todo`);
-    }
+    assert(notdefined(this.find(name)), `Todo ${name} already exists`);
     this.lToDos.push({
       text: name,
       done: false
@@ -297,13 +290,15 @@ export let ${stub} = new TAMLDataStore(\`${code}\`);`;
 
 // ---------------------------------------------------------------------------
 export var brewTamlFile = (srcPath, destPath = undef, hOptions = {}) => {
-  var hInfo, jsCode, stub, tamlCode;
-  if (destPath == null) {
-    destPath = withExt(srcPath, '.js', {
-      removeLeadingUnderScore: true
-    });
+  var force, hInfo, jsCode, stub, tamlCode;
+  // --- taml => js
+  //     Valid Options:
+  //        force
+  if (notdefined(destPath)) {
+    destPath = withExt(srcPath, '.js');
   }
-  if (hOptions.force || !newerDestFileExists(srcPath, destPath)) {
+  ({force} = getOptions(hOptions));
+  if (force || !newerDestFileExists(srcPath, destPath)) {
     hInfo = pathlib.parse(destPath);
     stub = hInfo.name;
     tamlCode = slurp(srcPath);

@@ -3,7 +3,9 @@
 import pathlib from 'path'
 import {writable, readable, get} from 'svelte/store'
 
-import {undef, pass, range} from '@jdeighan/base-utils'
+import {
+	undef, defined, notdefined, pass, range, getOptions,
+	} from '@jdeighan/base-utils'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {fromTAML} from '@jdeighan/base-utils/taml'
 import {localStore} from '@jdeighan/coffee-utils/browser'
@@ -41,9 +43,11 @@ export class WritableDataStore
 
 	set: (value) ->
 		@store.set(value)
+		return
 
 	update: (func) ->
 		@store.update(func)
+		return
 
 # ---------------------------------------------------------------------------
 
@@ -55,21 +59,22 @@ export class LocalStorageDataStore extends WritableDataStore
 		#     so we can't get the localStorage value first
 		super defValue
 		value = localStore(@masterKey)
-		if value?
+		if defined(value)
 			@set value
 
 	# --- I'm assuming that when update() is called,
 	#     set() will also be called
 
 	set: (value) ->
-		if ! value?
-			croak "LocalStorageStore.set(): cannont set to undef"
+		assert defined(value), "set(): cannot set to undef"
 		super value
 		localStore @masterKey, value
+		return
 
 	update: (func) ->
 		super func
 		localStore @masterKey, get(@store)
+		return
 
 # ---------------------------------------------------------------------------
 
@@ -79,11 +84,12 @@ export class PropsDataStore extends LocalStorageDataStore
 		super masterKey, {}
 
 	setProp: (name, value) ->
-		if ! name?
-			croak "PropStore.setProp(): empty key"
+
+		assert defined(name), "PropStore.setProp(): empty key"
 		@update (hPrefs) ->
 			hPrefs[name] = value
 			return hPrefs
+		return
 
 # ---------------------------------------------------------------------------
 
@@ -99,10 +105,10 @@ export class ReadableDataStore
 		return @store.subscribe(callback)
 
 	start: () ->
-		pass
+		return
 
 	stop: () ->
-		pass
+		return
 
 # ---------------------------------------------------------------------------
 
@@ -113,9 +119,11 @@ export class DateTimeDataStore extends ReadableDataStore
 		@interval = setInterval(() ->
 			@setter new Date()
 			, 1000)
+		return
 
 	stop: () ->
 		clearInterval @interval
+		return
 
 # ---------------------------------------------------------------------------
 
@@ -129,9 +137,11 @@ export class MousePosDataStore extends ReadableDataStore
 				y: e.clientY,
 				}
 		document.body.addEventListener('mousemove', @mouseMoveHandler)
+		return
 
 	stop: () ->
 		document.body.removeEventListener('mousemove', @mouseMoveHandler)
+		return
 
 # ---------------------------------------------------------------------------
 
@@ -199,8 +209,7 @@ export class ToDoDataStore extends BaseDataStore
 		return
 
 	add: (name) ->
-		if defined(@find(name))
-			croak "Attempt to add duplicate #{name} todo"
+		assert notdefined(@find(name)), "Todo #{name} already exists"
 		@lToDos.push {
 			text: name
 			done: false
@@ -233,9 +242,10 @@ export brewTamlFile = (srcPath, destPath=undef, hOptions={}) =>
 	#     Valid Options:
 	#        force
 
-	if ! destPath?
-		destPath = withExt(srcPath, '.js', {removeLeadingUnderScore:true})
-	if hOptions.force || ! newerDestFileExists(srcPath, destPath)
+	if notdefined(destPath)
+		destPath = withExt(srcPath, '.js')
+	{force} = getOptions(hOptions)
+	if force || ! newerDestFileExists(srcPath, destPath)
 		hInfo = pathlib.parse(destPath)
 		stub = hInfo.name
 

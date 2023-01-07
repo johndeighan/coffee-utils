@@ -7,8 +7,9 @@ import readline from 'readline'
 import NReadLines from 'n-readlines'
 
 import {
-	undef, pass, defined, rtrim, isEmpty, nonEmpty, getOptions,
-	isString, isArray, isHash, isRegExp, isFunction, OL, toBlock,
+	undef, pass, defined, notdefined, rtrim, isEmpty, nonEmpty,
+	isString, isArray, isHash, isRegExp, isFunction,
+	OL, toBlock, getOptions,
 	} from '@jdeighan/base-utils'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
@@ -190,7 +191,7 @@ export forEachSetOfBlocks = (filepath, func,
 				if (result == true)
 					earlyExit = true
 					return true
-				else if result?
+				else if defined(result)
 					croak "forEachSetOfBlocks() - callback returned '#{result}'"
 			lBlocks = []
 			firstLineNum = lineNum+1
@@ -319,7 +320,7 @@ export forEachFile = (dir, cb, filt=undef, level=0) =>
 		if ent.isDirectory()
 			lSubDirectories.push ent
 		else if ent.isFile()
-			if ! filt?
+			if notdefined(filt)
 				cb(ent.name, dir, level)
 			else if isRegExp(filt)
 				if ent.name.match(filt)
@@ -394,7 +395,7 @@ export allPathsTo = (fname, searchDir) =>
 	if ! searchDir
 		searchDir = process.cwd()
 	path = pathTo(fname, searchDir, {direction: "up"})
-	if path?
+	if defined(path)
 		lPaths = [path]    # --- build an array of paths
 		# --- search upward for files, but return ordered top down
 		while (h = pathlib.parse(path)) \

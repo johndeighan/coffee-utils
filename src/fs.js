@@ -16,17 +16,18 @@ import {
   undef,
   pass,
   defined,
+  notdefined,
   rtrim,
   isEmpty,
   nonEmpty,
-  getOptions,
   isString,
   isArray,
   isHash,
   isRegExp,
   isFunction,
   OL,
-  toBlock
+  toBlock,
+  getOptions
 } from '@jdeighan/base-utils';
 
 import {
@@ -226,7 +227,7 @@ export var forEachSetOfBlocks = (filepath, func, block_regexp = /^-{16,}$/, set_
         if (result === true) {
           earlyExit = true;
           return true;
-        } else if (result != null) {
+        } else if (defined(result)) {
           croak(`forEachSetOfBlocks() - callback returned '${result}'`);
         }
       }
@@ -371,7 +372,7 @@ export var forEachFile = (dir, cb, filt = undef, level = 0) => {
     if (ent.isDirectory()) {
       lSubDirectories.push(ent);
     } else if (ent.isFile()) {
-      if (filt == null) {
+      if (notdefined(filt)) {
         cb(ent.name, dir, level);
       } else if (isRegExp(filt)) {
         if (ent.name.match(filt)) {
@@ -466,7 +467,7 @@ export var allPathsTo = (fname, searchDir) => {
   path = pathTo(fname, searchDir, {
     direction: "up"
   });
-  if (path != null) {
+  if (defined(path)) {
     lPaths = [path]; // --- build an array of paths
     // --- search upward for files, but return ordered top down
     while ((h = pathlib.parse(path)) && (path = pathTo(fname, pathlib.resolve(h.dir, '..'), {
