@@ -35,3 +35,17 @@ export localStore = (key, value=undef) =>
 			if defined(value)
 				return JSON.parse(localStorage.getItem(key))
 	return undef
+
+# ---------------------------------------------------------------------------
+
+storeKey = 'hPrefs'
+export hPrefs = localStore(storeKey) || {}
+
+# ---------------------------------------------------------------------------
+
+export setPref = (key, value) =>
+
+	hPrefs[key] = value
+	localStore storeKey, hPrefs
+
+# ---------------------------------------------------------------------------

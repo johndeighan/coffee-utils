@@ -271,14 +271,6 @@ export removeFileWithExt = (path, newExt, hOptions={}) =>
 	return success
 
 # ---------------------------------------------------------------------------
-#   withUnderScore - add '_' to file name
-
-export withUnderScore = (path) =>
-
-	{dir, base} = pathlib.parse(path)
-	return mkpath(dir, "_#{base}")
-
-# ---------------------------------------------------------------------------
 
 isSystemDir = (dir) ->
 

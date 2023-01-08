@@ -317,14 +317,6 @@ export var removeFileWithExt = (path, newExt, hOptions = {}) => {
 };
 
 // ---------------------------------------------------------------------------
-//   withUnderScore - add '_' to file name
-export var withUnderScore = (path) => {
-  var base, dir;
-  ({dir, base} = pathlib.parse(path));
-  return mkpath(dir, `_${base}`);
-};
-
-// ---------------------------------------------------------------------------
 isSystemDir = function(dir) {
   return dir === '$Recycle.Bin' || dir === '$WinREAgent';
 };
