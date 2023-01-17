@@ -136,7 +136,18 @@ export undented = (input, level=undef, oneIndent="\t") =>
 	if defined(level) && (level==0)
 		return input
 
-	lLines = toArray(input, 'noLeadingEmptyLines')
+	# --- Remove any leading blank lines, set lLines
+	if isString(input)
+		if lMatches = input.match(///^ [\r\n]+ (.*) $///s)
+			input = lMatches[1]
+		lLines = toArray(input)
+	else if isArray(input)
+		lLines = input
+		while (lLines.length > 0) && isEmpty(lLines[0])
+			lLines.shift()
+	else
+		croak "input not a string or array"
+
 	if (lLines.length == 0)
 		if isString(input)
 			return ''
