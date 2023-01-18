@@ -25,6 +25,7 @@ import {
   isHash,
   isRegExp,
   isFunction,
+  isBoolean,
   OL,
   toBlock,
   getOptions
@@ -167,8 +168,8 @@ export var getFullPath = (filepath) => {
 };
 
 // ---------------------------------------------------------------------------
-export var forEachLine = (filepath, func) => {
-  var buffer, line, nLines, reader;
+export var forEachLineInFile = (filepath, func) => {
+  var buffer, line, nLines, reader, result;
   reader = new NReadLines(filepath);
   nLines = 0;
   while ((buffer = reader.next())) {
@@ -176,10 +177,32 @@ export var forEachLine = (filepath, func) => {
     // --- text is split on \n chars,
     //     we also need to remove \r chars
     line = buffer.toString().replace(/\r/g, '');
-    if (func(line, nLines)) {
+    result = func(line, nLines);
+    assert(isBoolean(result));
+    if (result) {
       reader.close(); // allow premature termination
+      return;
     }
   }
+};
+
+// ---------------------------------------------------------------------------
+export var mapEachLineInFile = (filepath, func) => {
+  var buffer, lLines, line, nLines, reader, result;
+  reader = new NReadLines(filepath);
+  nLines = 0;
+  lLines = [];
+  while ((buffer = reader.next())) {
+    nLines += 1;
+    // --- text is split on \n chars,
+    //     we also need to remove \r chars
+    line = buffer.toString().replace(/\r/g, '');
+    result = func(line, nLines);
+    if (defined(result)) {
+      lLines.push(result);
+    }
+  }
+  return lLines;
 };
 
 // ---------------------------------------------------------------------------
@@ -204,8 +227,9 @@ export var forEachBlock = (filepath, func, regexp = /^-{16,}$/) => {
     } else {
       lLines.push(line);
     }
+    return false;
   };
-  forEachLine(filepath, callback);
+  forEachLineInFile(filepath, callback);
   if (!earlyExit) {
     func(lLines.join('\n'), firstLineNum);
   }
@@ -239,8 +263,9 @@ export var forEachSetOfBlocks = (filepath, func, block_regexp = /^-{16,}$/, set_
     } else {
       lLines.push(line);
     }
+    return false;
   };
-  forEachLine(filepath, callback);
+  forEachLineInFile(filepath, callback);
   if (!earlyExit) {
     lBlocks.push(lLines.join('\n'));
     func(lBlocks, firstLineNum);
@@ -253,7 +278,7 @@ export var slurp = (filepath, maxLines = undef) => {
   var contents, lLines;
   if (defined(maxLines)) {
     lLines = [];
-    forEachLine(filepath, function(line, nLines) {
+    forEachLineInFile(filepath, function(line, nLines) {
       lLines.push(line);
       return nLines >= maxLines;
     });

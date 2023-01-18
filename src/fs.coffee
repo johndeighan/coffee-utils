@@ -8,7 +8,7 @@ import NReadLines from 'n-readlines'
 
 import {
 	undef, pass, defined, notdefined, rtrim, isEmpty, nonEmpty,
-	isString, isArray, isHash, isRegExp, isFunction,
+	isString, isArray, isHash, isRegExp, isFunction, isBoolean,
 	OL, toBlock, getOptions,
 	} from '@jdeighan/base-utils'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
@@ -131,7 +131,7 @@ export getFullPath = (filepath) =>
 
 # ---------------------------------------------------------------------------
 
-export forEachLine = (filepath, func) =>
+export forEachLineInFile = (filepath, func) =>
 
 	reader = new NReadLines(filepath)
 	nLines = 0
@@ -141,9 +141,30 @@ export forEachLine = (filepath, func) =>
 		# --- text is split on \n chars,
 		#     we also need to remove \r chars
 		line = buffer.toString().replace(/\r/g, '')
-		if func(line, nLines)
+		result = func(line, nLines)
+		assert isBoolean(result)
+		if result
 			reader.close()   # allow premature termination
+			return
 	return
+
+# ---------------------------------------------------------------------------
+
+export mapEachLineInFile = (filepath, func) =>
+
+	reader = new NReadLines(filepath)
+	nLines = 0
+
+	lLines = []
+	while (buffer = reader.next())
+		nLines += 1
+		# --- text is split on \n chars,
+		#     we also need to remove \r chars
+		line = buffer.toString().replace(/\r/g, '')
+		result = func(line, nLines)
+		if defined(result)
+			lLines.push result
+	return lLines
 
 # ---------------------------------------------------------------------------
 
@@ -165,9 +186,9 @@ export forEachBlock = (filepath, func, regexp = /^-{16,}$/) =>
 			firstLineNum = lineNum+1
 		else
 			lLines.push line
-		return
+		return false
 
-	forEachLine filepath, callback
+	forEachLineInFile filepath, callback
 	if ! earlyExit
 		func(lLines.join('\n'), firstLineNum)
 	return
@@ -200,9 +221,9 @@ export forEachSetOfBlocks = (filepath, func,
 			lLines = []
 		else
 			lLines.push line
-		return
+		return false
 
-	forEachLine filepath, callback
+	forEachLineInFile filepath, callback
 	if ! earlyExit
 		lBlocks.push(lLines.join('\n'))
 		func(lBlocks, firstLineNum)
@@ -215,7 +236,7 @@ export slurp = (filepath, maxLines=undef) =>
 
 	if defined(maxLines)
 		lLines = []
-		forEachLine filepath, (line, nLines) ->
+		forEachLineInFile filepath, (line, nLines) ->
 			lLines.push line
 			return (nLines >= maxLines)
 		contents = toBlock(lLines)
