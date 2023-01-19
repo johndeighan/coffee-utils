@@ -10,6 +10,12 @@ import {
 } from '@jdeighan/base-utils/exceptions';
 
 import {
+  dbgEnter,
+  dbgReturn,
+  dbg
+} from '@jdeighan/base-utils/debug';
+
+import {
   undef,
   pass,
   defined,
@@ -40,13 +46,14 @@ export var splitBlock = (block) => {
 // ---------------------------------------------------------------------------
 export var firstLine = (block) => {
   var pos;
+  dbgEnter('firstLine', block);
   assert(isString(block), "not a string");
   pos = block.indexOf('\n');
-  if (pos === -1) {
-    return block;
-  } else {
-    return block.substring(0, pos);
+  if (pos >= 0) {
+    block = block.substring(0, pos);
   }
+  dbgReturn('firstLine', block);
+  return block;
 };
 
 // ---------------------------------------------------------------------------

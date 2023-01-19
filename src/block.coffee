@@ -4,6 +4,7 @@ import fs from 'fs'
 import readline from 'readline'
 
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
+import {dbgEnter, dbgReturn, dbg} from '@jdeighan/base-utils/debug'
 import {
 	undef, pass, defined, notdefined, rtrim, OL, isArrayOfStrings,
 	isEmpty, isString, isArray, nonEmpty, toArray, toBlock,
@@ -25,12 +26,13 @@ export splitBlock = (block) =>
 
 export firstLine = (block) =>
 
+	dbgEnter 'firstLine', block
 	assert isString(block), "not a string"
 	pos = block.indexOf('\n')
-	if (pos == -1)
-		return block
-	else
-		return block.substring(0, pos)
+	if (pos >= 0)
+		block = block.substring(0, pos)
+	dbgReturn 'firstLine', block
+	return block
 
 # ---------------------------------------------------------------------------
 
