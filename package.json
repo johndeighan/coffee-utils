@@ -56,6 +56,6 @@
 		"svelte": "^3.55.1"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^3.0.34"
+		"@jdeighan/unit-tester": "^3.0.35"
 	}
 }
