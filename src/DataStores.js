@@ -109,7 +109,7 @@ export var LocalStorageDataStore = class LocalStorageDataStore extends WritableD
 
 // ---------------------------------------------------------------------------
 export var PropsDataStore = class PropsDataStore extends LocalStorageDataStore {
-  constructor(masterKey) {
+  constructor(masterKey, defValue = undef) {
     super(masterKey, {});
   }
 

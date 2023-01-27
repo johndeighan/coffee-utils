@@ -80,7 +80,7 @@ export class LocalStorageDataStore extends WritableDataStore
 
 export class PropsDataStore extends LocalStorageDataStore
 
-	constructor: (masterKey) ->
+	constructor: (masterKey, defValue=undef) ->
 		super masterKey, {}
 
 	setProp: (name, value) ->
