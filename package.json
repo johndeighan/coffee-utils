@@ -29,7 +29,7 @@
 	},
 	"scripts": {
 		"build": "cls && coffee -c .",
-		"test": "npm run build && ava ./test/*.test.js && git status"
+		"test": "npm run build && npx ava ./test/*.test.js && git status"
 	},
 	"repository": {
 		"type": "git",
@@ -52,6 +52,7 @@
 		"svelte": "^3.55.1"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^3.0.39"
+		"@jdeighan/unit-tester": "^3.0.39",
+		"ava": "^5.1.1"
 	}
 }
