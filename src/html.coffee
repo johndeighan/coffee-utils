@@ -2,8 +2,9 @@
 
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {
-	undef, pass, words, isEmpty, nonEmpty, toBlock,
+	undef, pass, words, isEmpty, nonEmpty, toBlock, OL, getOptions,
 	} from '@jdeighan/base-utils'
+import {dbgEnter, dbgReturn, dbg} from '@jdeighan/base-utils/debug'
 import {indented} from '@jdeighan/coffee-utils/indent'
 
 hNoEnd = {}
@@ -211,3 +212,58 @@ export elem = (tagName, hAttr=undef, text=undef, oneIndent="\t") =>
 			indented(text, 1, oneIndent)
 			tag2str(hToken, 'end')
 			])
+
+# ---------------------------------------------------------------------------
+
+export formatHTML = (html, hOptions={}) =>
+
+	dbgEnter 'formatHTML', html, hOptions
+	{oneIndent} = getOptions(hOptions, {
+		oneIndent: '   '
+		})
+
+	html = html.trim()    # remove any leading/trailing whitespace
+	assert html.charAt(0) == '<', "Bad HTML, no < at start"
+	assert html.charAt(html.length-1) == '>', "Bad HTML, no > at end"
+
+	# --- Remove leading '<' and trailing '>'
+	html = html.substring(1, html.length-1)
+
+	hNoEndTag = {}
+	for tag in words("""
+			br hr img input link base
+			meta param area embed
+			col track source
+			""")
+		hNoEndTag[tag] = true
+
+	lParts = []
+	level = 0
+
+	for elem in html.split(/>\s*</)
+		dbg "ELEM: #{OL(elem)}"
+		[_, endMarker, tagName, rest] = elem.match(///^
+			(\/)?                     # possible end tag
+			([A-Za-z][A-Za-z0-9-]*)   # tag name
+			(.*)                      # everything else
+			$///)
+		if endMarker
+			dbg "   TAG: #{OL(tagName)} - END MARKER"
+		else
+			dbg "   TAG: #{OL(tagName)} - NO END MARKER"
+
+		if endMarker && (level > 0)
+			# --- If end tag, reduce level
+			dbg "   reduce level #{level} to #{level-1}"
+			level -= 1
+
+		dbg "   ADD #{OL(elem)} at level #{level}"
+		lParts.push oneIndent.repeat(level), "<#{elem}>\n"
+
+		if ! endMarker && ! hNoEndTag[tagName] && !rest.endsWith('/'+tagName)
+			dbg "   inc level #{level} to #{level+1}"
+			level += 1
+
+	result = lParts.join('').trim()
+	dbgReturn 'formatHTML', result
+	return result

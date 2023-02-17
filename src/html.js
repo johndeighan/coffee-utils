@@ -13,8 +13,16 @@ import {
   words,
   isEmpty,
   nonEmpty,
-  toBlock
+  toBlock,
+  OL,
+  getOptions
 } from '@jdeighan/base-utils';
+
+import {
+  dbgEnter,
+  dbgReturn,
+  dbg
+} from '@jdeighan/base-utils/debug';
 
 import {
   indented
@@ -213,4 +221,55 @@ export var elem = (tagName, hAttr = undef, text = undef, oneIndent = "\t") => {
     hToken = {tagName, hAttr, text};
     return toBlock([tag2str(hToken, 'begin'), indented(text, 1, oneIndent), tag2str(hToken, 'end')]);
   }
+};
+
+// ---------------------------------------------------------------------------
+export var formatHTML = (html, hOptions = {}) => {
+  var _, endMarker, hNoEndTag, j, k, lParts, len1, len2, level, oneIndent, ref1, ref2, rest, result, tag;
+  dbgEnter('formatHTML', html, hOptions);
+  ({oneIndent} = getOptions(hOptions, {
+    oneIndent: '   '
+  }));
+  html = html.trim(); // remove any leading/trailing whitespace
+  assert(html.charAt(0) === '<', "Bad HTML, no < at start");
+  assert(html.charAt(html.length - 1) === '>', "Bad HTML, no > at end");
+  // --- Remove leading '<' and trailing '>'
+  html = html.substring(1, html.length - 1);
+  hNoEndTag = {};
+  ref1 = words(`br hr img input link base
+meta param area embed
+col track source`);
+  for (j = 0, len1 = ref1.length; j < len1; j++) {
+    tag = ref1[j];
+    hNoEndTag[tag] = true;
+  }
+  lParts = [];
+  level = 0;
+  ref2 = html.split(/>\s*</);
+  for (k = 0, len2 = ref2.length; k < len2; k++) {
+    elem = ref2[k];
+    dbg(`ELEM: ${OL(elem)}`);
+    [_, endMarker, tagName, rest] = elem.match(/^(\/)?([A-Za-z][A-Za-z0-9-]*)(.*)$/); // possible end tag
+    // tag name
+    // everything else
+    if (endMarker) {
+      dbg(`   TAG: ${OL(tagName)} - END MARKER`);
+    } else {
+      dbg(`   TAG: ${OL(tagName)} - NO END MARKER`);
+    }
+    if (endMarker && (level > 0)) {
+      // --- If end tag, reduce level
+      dbg(`   reduce level ${level} to ${level - 1}`);
+      level -= 1;
+    }
+    dbg(`   ADD ${OL(elem)} at level ${level}`);
+    lParts.push(oneIndent.repeat(level), `<${elem}>\n`);
+    if (!endMarker && !hNoEndTag[tagName] && !rest.endsWith('/' + tagName)) {
+      dbg(`   inc level ${level} to ${level + 1}`);
+      level += 1;
+    }
+  }
+  result = lParts.join('').trim();
+  dbgReturn('formatHTML', result);
+  return result;
 };
