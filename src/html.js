@@ -9,7 +9,8 @@ import {
 
 import {
   undef,
-  pass,
+  defined,
+  notdefined,
   words,
   isEmpty,
   nonEmpty,
@@ -230,7 +231,15 @@ export var formatHTML = (html, hOptions = {}) => {
   ({oneIndent} = getOptions(hOptions, {
     oneIndent: '   '
   }));
+  if (notdefined(html)) {
+    dbgReturn('formatHTML', '');
+    return '';
+  }
   html = html.trim(); // remove any leading/trailing whitespace
+  if (html === '') {
+    dbgReturn('formatHTML', '');
+    return '';
+  }
   assert(html.charAt(0) === '<', "Bad HTML, no < at start");
   assert(html.charAt(html.length - 1) === '>', "Bad HTML, no > at end");
   // --- Remove leading '<' and trailing '>'

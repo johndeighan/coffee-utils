@@ -2,7 +2,8 @@
 
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {
-	undef, pass, words, isEmpty, nonEmpty, toBlock, OL, getOptions,
+	undef, defined, notdefined, words, isEmpty, nonEmpty,
+	toBlock, OL, getOptions,
 	} from '@jdeighan/base-utils'
 import {dbgEnter, dbgReturn, dbg} from '@jdeighan/base-utils/debug'
 import {indented} from '@jdeighan/coffee-utils/indent'
@@ -222,7 +223,14 @@ export formatHTML = (html, hOptions={}) =>
 		oneIndent: '   '
 		})
 
+	if (notdefined(html))
+		dbgReturn 'formatHTML', ''
+		return ''
 	html = html.trim()    # remove any leading/trailing whitespace
+	if (html == '')
+		dbgReturn 'formatHTML', ''
+		return ''
+
 	assert html.charAt(0) == '<', "Bad HTML, no < at start"
 	assert html.charAt(html.length-1) == '>', "Bad HTML, no > at end"
 
