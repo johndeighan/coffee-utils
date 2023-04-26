@@ -3,6 +3,10 @@
 import pathlib from 'path'
 import urllib from 'url'
 import fs from 'fs'
+import {
+	readFile, readFileSync, writeFile, writeFileSync, rm,
+	} from 'node:fs/promises'
+import {execSync} from 'node:child_process'
 import readline from 'readline'
 import NReadLines from 'n-readlines'
 
@@ -15,6 +19,102 @@ import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
 import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
 import {fromTAML} from '@jdeighan/base-utils/taml'
+
+# ---------------------------------------------------------------------------
+
+export mkpath = (lParts...) =>
+
+	# --- Ignore empty parts
+	lNewParts = []
+	for part in lParts
+		if nonEmpty(part)
+			lNewParts.push part
+
+	newPath = lNewParts.join('/').replace(/\\/g, '/')
+	if lMatches = newPath.match(/^([A-Z])\:(.*)$/)
+		[_, drive, rest] = lMatches
+		return "#{drive.toLowerCase()}:#{rest}"
+	else
+		return newPath
+
+# ---------------------------------------------------------------------------
+
+export mkdir = (dirpath) =>
+
+	try
+		fs.mkdirSync dirpath
+	catch err
+		if (err.code == 'EEXIST')
+			console.log 'Directory exists. Please choose another name'
+		else
+			console.log err
+		process.exit 1
+	return
+
+# ---------------------------------------------------------------------------
+
+export mkfile = (filepath, contents='') =>
+
+	await writeFile filepath, contents
+	return
+
+# ---------------------------------------------------------------------------
+
+export rmdir = (dirpath) =>
+
+	await rm dirpath, {recursive: true}
+	return
+
+# ---------------------------------------------------------------------------
+
+export rmfile = (filepath) =>
+
+	await rm filepath
+	return
+
+# ---------------------------------------------------------------------------
+
+export cdTo = (dirpath) =>
+
+	process.chdir dirpath
+	return process.cwd()
+
+# ---------------------------------------------------------------------------
+
+export cdToUserDir = (lSubDirs...) =>
+
+	return cd(mkpath('~', lSubDirs...))
+
+# --------------------------------------------------------------------------
+
+export execCmd = (cmdLine) =>
+
+	execSync cmdLine, {}, (error, stdout, stderr) =>
+		if (error)
+			LOG "ERROR in #{cmdLine}: #{error.code}"
+			process.exit 1
+	return stdout
+
+# ---------------------------------------------------------------------------
+
+export cloneRepo = (user, repo, dir) =>
+
+	git_repo = "https://github.com/#{user}/#{repo}.git"
+	return execCmd "git clone #{git_repo} #{dir}"
+
+# ---------------------------------------------------------------------------
+
+export getPkgJson = (filepath) =>
+
+	jsonTxt = readFileSync(filepath, {encoding: 'utf8'})
+	hJson = JSON.parse jsonTxt
+	return
+
+# ---------------------------------------------------------------------------
+
+export putPkgJson = (filepath, hJson) =>
+
+	return
 
 # ---------------------------------------------------------------------------
 #    mydir() - pass argument import.meta.url and it will return
@@ -105,23 +205,6 @@ export fileExt = (path) =>
 		return lMatches[0]
 	else
 		return ''
-
-# ---------------------------------------------------------------------------
-
-export mkpath = (lParts...) =>
-
-	# --- Ignore empty parts
-	lNewParts = []
-	for part in lParts
-		if nonEmpty(part)
-			lNewParts.push part
-
-	newPath = lNewParts.join('/').replace(/\\/g, '/')
-	if lMatches = newPath.match(/^([A-Z])\:(.*)$/)
-		[_, drive, rest] = lMatches
-		return "#{drive.toLowerCase()}:#{rest}"
-	else
-		return newPath
 
 # ---------------------------------------------------------------------------
 
@@ -230,10 +313,11 @@ export forEachSetOfBlocks = (filepath, func,
 	return
 
 # ---------------------------------------------------------------------------
-#   slurp - read an entire file into a string
+#   slurp - read a file into a string
 
-export slurp = (filepath, maxLines=undef) =>
+export slurp = (filepath, hOptions={}) =>
 
+	{maxLines, format} = getOptions(hOptions)
 	if defined(maxLines)
 		lLines = []
 		forEachLineInFile filepath, (line, nLines) ->
@@ -243,20 +327,33 @@ export slurp = (filepath, maxLines=undef) =>
 	else
 		filepath = filepath.replace(/\//g, "\\")
 		contents = fs.readFileSync(filepath, 'utf8').toString()
-	return contents
+	switch format
+		when 'TAML'
+			return fromTAML(contents)
+		when 'JSON'
+			return JSON.parse(contents)
+		else
+			assert notdefined(format), "Unknown format: #{format}"
+			return contents
 
 # ---------------------------------------------------------------------------
 #   barf - write a string to a file
 
-export barf = (filepath, contents) =>
+export barf = (filepath, contents='', hOptions={}) =>
 
-	if isEmpty(contents)
-		return
-	if isArray(contents)
-		contents = toBlock(contents)
-	else if ! isString(contents)
-		croak "barf(): Invalid contents"
-	contents = rtrim(contents) + "\n"
+	{format} = getOptions(hOptions)
+	switch format
+		when 'TAML'
+			contents = toTAML(contents)
+		when 'JSON'
+			contents = JSON.stringify(contents, null, 3)
+		else
+			assert notdefined(format), "Unknown format: #{format}"
+			if isArray(contents)
+				contents = toBlock(contents)
+			else if ! isString(contents)
+				croak "barf(): Invalid contents"
+			contents = rtrim(contents) + "\n"
 	fs.writeFileSync(filepath, contents, {encoding: 'utf8'})
 	return
 
@@ -499,5 +596,4 @@ export parseSource = (source) =>
 
 export slurpTAML = (filepath) =>
 
-	contents = slurp(filepath)
-	return fromTAML(contents)
+	return slurp(filepath, {format: 'TAML'})
