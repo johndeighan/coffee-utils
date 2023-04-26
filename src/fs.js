@@ -8,6 +8,16 @@ import urllib from 'url';
 
 import fs from 'fs';
 
+import {
+  readFile,
+  writeFile,
+  rm
+} from 'node:fs/promises';
+
+import {
+  execSync
+} from 'node:child_process';
+
 import readline from 'readline';
 
 import NReadLines from 'n-readlines';
@@ -50,6 +60,100 @@ import {
 import {
   fromTAML
 } from '@jdeighan/base-utils/taml';
+
+// ---------------------------------------------------------------------------
+export var mkpath = (...lParts) => {
+  var _, drive, i, lMatches, lNewParts, len, newPath, part, rest;
+  // --- Ignore empty parts
+  lNewParts = [];
+  for (i = 0, len = lParts.length; i < len; i++) {
+    part = lParts[i];
+    if (nonEmpty(part)) {
+      lNewParts.push(part);
+    }
+  }
+  newPath = lNewParts.join('/').replace(/\\/g, '/');
+  if (lMatches = newPath.match(/^([A-Z])\:(.*)$/)) {
+    [_, drive, rest] = lMatches;
+    return `${drive.toLowerCase()}:${rest}`;
+  } else {
+    return newPath;
+  }
+};
+
+// ---------------------------------------------------------------------------
+export var mkdir = (dirpath) => {
+  var err;
+  try {
+    fs.mkdirSync(dirpath);
+  } catch (error1) {
+    err = error1;
+    if (err.code === 'EEXIST') {
+      console.log('Directory exists. Please choose another name');
+    } else {
+      console.log(err);
+    }
+    process.exit(1);
+  }
+};
+
+// ---------------------------------------------------------------------------
+export var mkfile = async(filepath, contents = '') => {
+  await writeFile(filepath, contents);
+};
+
+// ---------------------------------------------------------------------------
+export var rmdir = async(dirpath) => {
+  await rm(dirpath, {
+    recursive: true
+  });
+};
+
+// ---------------------------------------------------------------------------
+export var rmfile = async(filepath) => {
+  await rm(filepath);
+};
+
+// ---------------------------------------------------------------------------
+export var cdTo = (dirpath) => {
+  process.chdir(dirpath);
+  return process.cwd();
+};
+
+// ---------------------------------------------------------------------------
+export var cdToUserDir = (...lSubDirs) => {
+  return cd(mkpath('~', ...lSubDirs));
+};
+
+// --------------------------------------------------------------------------
+export var execCmd = (cmdLine) => {
+  execSync(cmdLine, {}, (error, stdout, stderr) => {
+    if (error) {
+      LOG(`ERROR in ${cmdLine}: ${error.code}`);
+      return process.exit(1);
+    }
+  });
+  return stdout;
+};
+
+// ---------------------------------------------------------------------------
+export var cloneRepo = (user, repo, dir) => {
+  var git_repo;
+  git_repo = `https://github.com/${user}/${repo}.git`;
+  return execCmd(`git clone ${git_repo} ${dir}`);
+};
+
+// ---------------------------------------------------------------------------
+export var getPkgJson = (filepath) => {
+  var hJson, jsonTxt;
+  jsonTxt = fs.readFileSync(filepath, {
+    encoding: 'utf8'
+  });
+  hJson = JSON.parse(jsonTxt);
+};
+
+// ---------------------------------------------------------------------------
+export var putPkgJson = (filepath, hJson) => {};
 
 // ---------------------------------------------------------------------------
 //    mydir() - pass argument import.meta.url and it will return
@@ -99,7 +203,7 @@ export var getStats = (fullpath) => {
 export var isFile = (fullpath) => {
   try {
     return getStats(fullpath).isFile();
-  } catch (error) {
+  } catch (error1) {
     return false;
   }
 };
@@ -108,7 +212,7 @@ export var isFile = (fullpath) => {
 export var isDir = (fullpath) => {
   try {
     return getStats(fullpath).isDirectory();
-  } catch (error) {
+  } catch (error1) {
     return false;
   }
 };
@@ -139,26 +243,6 @@ export var fileExt = (path) => {
     return lMatches[0];
   } else {
     return '';
-  }
-};
-
-// ---------------------------------------------------------------------------
-export var mkpath = (...lParts) => {
-  var _, drive, i, lMatches, lNewParts, len, newPath, part, rest;
-  // --- Ignore empty parts
-  lNewParts = [];
-  for (i = 0, len = lParts.length; i < len; i++) {
-    part = lParts[i];
-    if (nonEmpty(part)) {
-      lNewParts.push(part);
-    }
-  }
-  newPath = lNewParts.join('/').replace(/\\/g, '/');
-  if (lMatches = newPath.match(/^([A-Z])\:(.*)$/)) {
-    [_, drive, rest] = lMatches;
-    return `${drive.toLowerCase()}:${rest}`;
-  } else {
-    return newPath;
   }
 };
 
@@ -273,9 +357,10 @@ export var forEachSetOfBlocks = (filepath, func, block_regexp = /^-{16,}$/, set_
 };
 
 // ---------------------------------------------------------------------------
-//   slurp - read an entire file into a string
-export var slurp = (filepath, maxLines = undef) => {
-  var contents, lLines;
+//   slurp - read a file into a string
+export var slurp = (filepath, hOptions = {}) => {
+  var contents, format, lLines, maxLines;
+  ({maxLines, format} = getOptions(hOptions));
   if (defined(maxLines)) {
     lLines = [];
     forEachLineInFile(filepath, function(line, nLines) {
@@ -287,21 +372,38 @@ export var slurp = (filepath, maxLines = undef) => {
     filepath = filepath.replace(/\//g, "\\");
     contents = fs.readFileSync(filepath, 'utf8').toString();
   }
-  return contents;
+  switch (format) {
+    case 'TAML':
+      return fromTAML(contents);
+    case 'JSON':
+      return JSON.parse(contents);
+    default:
+      assert(notdefined(format), `Unknown format: ${format}`);
+      return contents;
+  }
 };
 
 // ---------------------------------------------------------------------------
 //   barf - write a string to a file
-export var barf = (filepath, contents) => {
-  if (isEmpty(contents)) {
-    return;
+export var barf = (filepath, contents = '', hOptions = {}) => {
+  var format;
+  ({format} = getOptions(hOptions));
+  switch (format) {
+    case 'TAML':
+      contents = toTAML(contents);
+      break;
+    case 'JSON':
+      contents = JSON.stringify(contents, null, 3);
+      break;
+    default:
+      assert(notdefined(format), `Unknown format: ${format}`);
+      if (isArray(contents)) {
+        contents = toBlock(contents);
+      } else if (!isString(contents)) {
+        croak("barf(): Invalid contents");
+      }
+      contents = rtrim(contents) + "\n";
   }
-  if (isArray(contents)) {
-    contents = toBlock(contents);
-  } else if (!isString(contents)) {
-    croak("barf(): Invalid contents");
-  }
-  contents = rtrim(contents) + "\n";
   fs.writeFileSync(filepath, contents, {
     encoding: 'utf8'
   });
@@ -333,8 +435,8 @@ export var removeFileWithExt = (path, newExt, hOptions = {}) => {
       LOG(`   unlink ${filename}`);
     }
     success = true;
-  } catch (error) {
-    err = error;
+  } catch (error1) {
+    err = error1;
     LOG(`   UNLINK FAILED: ${err.message}`);
     success = false;
   }
@@ -576,7 +678,7 @@ export var parseSource = (source) => {
 // ---------------------------------------------------------------------------
 //   slurpTAML - read TAML from a file
 export var slurpTAML = (filepath) => {
-  var contents;
-  contents = slurp(filepath);
-  return fromTAML(contents);
+  return slurp(filepath, {
+    format: 'TAML'
+  });
 };

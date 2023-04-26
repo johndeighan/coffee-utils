@@ -4,7 +4,7 @@ import pathlib from 'path'
 import urllib from 'url'
 import fs from 'fs'
 import {
-	readFile, readFileSync, writeFile, writeFileSync, rm,
+	readFile, writeFile, rm,
 	} from 'node:fs/promises'
 import {execSync} from 'node:child_process'
 import readline from 'readline'
@@ -106,7 +106,7 @@ export cloneRepo = (user, repo, dir) =>
 
 export getPkgJson = (filepath) =>
 
-	jsonTxt = readFileSync(filepath, {encoding: 'utf8'})
+	jsonTxt = fs.readFileSync(filepath, {encoding: 'utf8'})
 	hJson = JSON.parse jsonTxt
 	return
 
