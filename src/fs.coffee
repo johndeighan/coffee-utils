@@ -5,7 +5,7 @@ import pathlib from 'path'
 import urllib from 'url'
 import fs from 'fs'
 import {
-	readFile, writeFile, rm,
+	readFile, writeFile, rm, rmdir,   #  rmSync, rmdirSync,
 	} from 'node:fs/promises'
 import {execSync} from 'node:child_process'
 import readline from 'readline'
@@ -20,6 +20,15 @@ import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
 import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
 import {fromTAML} from '@jdeighan/base-utils/taml'
+
+fix = true
+
+# ---------------------------------------------------------------------------
+
+export doFixOutput = (flag=true) =>
+
+	fix = flag
+	return
 
 # ---------------------------------------------------------------------------
 
@@ -40,7 +49,7 @@ export mkpath = (lParts...) =>
 
 # ---------------------------------------------------------------------------
 
-export mkdir = (dirpath) =>
+export mkdirSync = (dirpath) =>
 
 	try
 		fs.mkdirSync dirpath
@@ -54,21 +63,88 @@ export mkdir = (dirpath) =>
 
 # ---------------------------------------------------------------------------
 
-export rmdir = (dirpath) =>
+export rmDir = (dirpath) =>
 
-	await rm dirpath, {recursive: true}
+	await rmdir dirpath, {recursive: true}
 	return
 
 # ---------------------------------------------------------------------------
 
-export rmfile = (filepath) =>
+export rmDirSync = (dirpath) =>
+
+	fs.rmdirSync dirpath, {recursive: true}
+	return
+
+# ---------------------------------------------------------------------------
+
+export rmFile = (filepath) =>
 
 	await rm filepath
 	return
 
+# ---------------------------------------------------------------------------
+
+export rmFileSync = (filepath) =>
+
+	fs.rmSync filepath
+	return
+
 # --------------------------------------------------------------------------
 
-export execCmd = (cmdLine) =>
+export fixOutput = (contents) =>
+
+	if fix
+		return rtrim(contents) + "\n"
+	else
+		return contents
+
+# --------------------------------------------------------------------------
+
+export fixFile = (filepath, func) =>
+
+	contents = await readFile(filepath, {encoding: 'utf8'})
+	output = func(contents) # returns modified contents
+	output = fixOutput(output)
+	await writeFile(filepath, output, {encoding: 'utf8'})
+	return
+
+# --------------------------------------------------------------------------
+
+export fixJson = (filepath, func) =>
+
+	contents = await readFile(filepath, {encoding: 'utf8'})
+	hJson = JSON.parse(contents)
+	func(hJson)   # modify in place
+	output = JSON.stringify(hJson, null, 3)
+	output = fixOutput(output)
+	await writeFile(filepath, output, {encoding: 'utf8'})
+	return
+
+# --------------------------------------------------------------------------
+
+export fixFileSync = (filepath, func) =>
+
+	contents = fs.readFileSync(filepath, {encoding: 'utf8'})
+	output = func(contents) # returns modified contents
+	output = fixOutput(output)
+	fs.writeFileSync(filepath, output, {encoding: 'utf8'})
+	return
+
+# --------------------------------------------------------------------------
+
+export fixJsonSync = (filepath, func) =>
+
+	contents = fs.readFileSync(filepath, {encoding: 'utf8'})
+	hJson = JSON.parse(contents)
+	func(hJson)   # modify in place
+	output = JSON.stringify(hJson, null, 3)
+	output = fixOutput(output)
+	fs.writeFileSync(filepath, output, {encoding: 'utf8'})
+	return
+
+# --------------------------------------------------------------------------
+
+export execCmdSync = (cmdLine) =>
 
 	execSync cmdLine, {}, (error, stdout, stderr) =>
 		if (error)
@@ -326,7 +402,7 @@ export barf = (filepath, contents='', hOptions={}) =>
 				contents = toBlock(contents)
 			else if ! isString(contents)
 				croak "barf(): Invalid contents"
-			contents = rtrim(contents) + "\n"
+			contents = fixOutput(contents)
 	fs.writeFileSync(filepath, contents, {encoding: 'utf8'})
 	return
 
