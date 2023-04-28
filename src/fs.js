@@ -2,6 +2,8 @@
 // fs.coffee
 var isSystemDir;
 
+import os from 'os';
+
 import pathlib from 'path';
 
 import urllib from 'url';
@@ -72,7 +74,7 @@ export var mkpath = (...lParts) => {
       lNewParts.push(part);
     }
   }
-  newPath = lNewParts.join('/').replace(/\\/g, '/');
+  newPath = lNewParts.join('/').replaceAll('\\', '/');
   if (lMatches = newPath.match(/^([A-Z])\:(.*)$/)) {
     [_, drive, rest] = lMatches;
     return `${drive.toLowerCase()}:${rest}`;
@@ -98,11 +100,6 @@ export var mkdir = (dirpath) => {
 };
 
 // ---------------------------------------------------------------------------
-export var mkfile = async(filepath, contents = '') => {
-  await writeFile(filepath, contents);
-};
-
-// ---------------------------------------------------------------------------
 export var rmdir = async(dirpath) => {
   await rm(dirpath, {
     recursive: true
@@ -112,17 +109,6 @@ export var rmdir = async(dirpath) => {
 // ---------------------------------------------------------------------------
 export var rmfile = async(filepath) => {
   await rm(filepath);
-};
-
-// ---------------------------------------------------------------------------
-export var cdTo = (dirpath) => {
-  process.chdir(dirpath);
-  return process.cwd();
-};
-
-// ---------------------------------------------------------------------------
-export var cdToUserDir = (...lSubDirs) => {
-  return cd(mkpath('~', ...lSubDirs));
 };
 
 // --------------------------------------------------------------------------
@@ -144,18 +130,6 @@ export var cloneRepo = (user, repo, dir) => {
 };
 
 // ---------------------------------------------------------------------------
-export var getPkgJson = (filepath) => {
-  var hJson, jsonTxt;
-  jsonTxt = fs.readFileSync(filepath, {
-    encoding: 'utf8'
-  });
-  hJson = JSON.parse(jsonTxt);
-};
-
-// ---------------------------------------------------------------------------
-export var putPkgJson = (filepath, hJson) => {};
-
-// ---------------------------------------------------------------------------
 //    mydir() - pass argument import.meta.url and it will return
 //              the directory your file is in
 export var mydir = (url) => {
@@ -164,6 +138,11 @@ export var mydir = (url) => {
   dir = pathlib.dirname(path);
   final = mkpath(dir);
   return final;
+};
+
+// ---------------------------------------------------------------------------
+export var homeDir = () => {
+  return mkpath(os.homedir());
 };
 
 // ---------------------------------------------------------------------------

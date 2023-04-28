@@ -1,5 +1,6 @@
 # fs.coffee
 
+import os from 'os'
 import pathlib from 'path'
 import urllib from 'url'
 import fs from 'fs'
@@ -30,7 +31,7 @@ export mkpath = (lParts...) =>
 		if nonEmpty(part)
 			lNewParts.push part
 
-	newPath = lNewParts.join('/').replace(/\\/g, '/')
+	newPath = lNewParts.join('/').replaceAll('\\', '/')
 	if lMatches = newPath.match(/^([A-Z])\:(.*)$/)
 		[_, drive, rest] = lMatches
 		return "#{drive.toLowerCase()}:#{rest}"
@@ -53,13 +54,6 @@ export mkdir = (dirpath) =>
 
 # ---------------------------------------------------------------------------
 
-export mkfile = (filepath, contents='') =>
-
-	await writeFile filepath, contents
-	return
-
-# ---------------------------------------------------------------------------
-
 export rmdir = (dirpath) =>
 
 	await rm dirpath, {recursive: true}
@@ -71,19 +65,6 @@ export rmfile = (filepath) =>
 
 	await rm filepath
 	return
-
-# ---------------------------------------------------------------------------
-
-export cdTo = (dirpath) =>
-
-	process.chdir dirpath
-	return process.cwd()
-
-# ---------------------------------------------------------------------------
-
-export cdToUserDir = (lSubDirs...) =>
-
-	return cd(mkpath('~', lSubDirs...))
 
 # --------------------------------------------------------------------------
 
@@ -103,20 +84,6 @@ export cloneRepo = (user, repo, dir) =>
 	return execCmd "git clone #{git_repo} #{dir}"
 
 # ---------------------------------------------------------------------------
-
-export getPkgJson = (filepath) =>
-
-	jsonTxt = fs.readFileSync(filepath, {encoding: 'utf8'})
-	hJson = JSON.parse jsonTxt
-	return
-
-# ---------------------------------------------------------------------------
-
-export putPkgJson = (filepath, hJson) =>
-
-	return
-
-# ---------------------------------------------------------------------------
 #    mydir() - pass argument import.meta.url and it will return
 #              the directory your file is in
 
@@ -126,6 +93,12 @@ export mydir = (url) =>
 	dir = pathlib.dirname(path)
 	final = mkpath(dir)
 	return final
+
+# ---------------------------------------------------------------------------
+
+export homeDir = () =>
+
+	return mkpath(os.homedir())
 
 # ---------------------------------------------------------------------------
 
