@@ -49,18 +49,10 @@ export var splitLine = (line, oneIndent = undef) => {
 };
 
 // ---------------------------------------------------------------------------
-//   indentation - return appropriate indentation string for given level
-//   export only to allow unit testing
-export var indentation = (level, oneIndent = "\t") => {
-  assert(level >= 0, "indentation(): negative level");
-  return oneIndent.repeat(level);
-};
-
-// ---------------------------------------------------------------------------
 //   indentLevel - determine indent level of a string
 //                 it's OK if the string is ONLY indentation
 export var indentLevel = (line, oneIndent = undef) => {
-  var ch, lMatches, len, level, prefix, prefixLen;
+  var i, lMatches, len, level, nSpaces, nTabs, prefix, prefixLen, ref, str;
   assert(isString(line), "not a string");
   // --- This will always match, and it's greedy
   if (lMatches = line.match(/^\s*/)) {
@@ -70,25 +62,57 @@ export var indentLevel = (line, oneIndent = undef) => {
   if (prefixLen === 0) {
     return 0;
   }
-  if (defined(oneIndent)) {
-    // --- prefix must be some multiple of oneIndent
-    len = oneIndent.length;
-    assert(prefixLen % len === 0, `prefix ${OL(prefix)} not a mult of ${OL(oneIndent)}`);
-    level = prefixLen / len;
+  // --- Match \t* followed by \x20* (error if no match)
+  if (lMatches = prefix.match(/(\t*)(\x20*)/)) {
+    nTabs = lMatches[1].length;
+    nSpaces = lMatches[2].length;
   } else {
-    ch = prefix.substring(0, 1);
-    if (ch === "\t") {
-      oneIndent = "\t";
-      level = prefixLen;
-    } else if (ch === ' ') {
-      oneIndent = ' '.repeat(prefixLen);
-      level = 1;
-    } else {
-      croak(`Bad Indentation in ${OL(line)}`);
+    croak("Invalid mix of TABs and spaces");
+  }
+  // --- oneIndent must be one of:
+  //        undef
+  //        a single TAB character
+  //        some number of space characters
+  switch (oneIndent) {
+    case undef:
+      if (nTabs > 0) {
+        level = nTabs; // there may also be spaces, but we ignore them
+        oneIndent = "\t"; // may be used at end
+      } else {
+        assert(nSpaces > 0, "There must be TABS or spaces");
+        level = 1;
+        oneIndent = ' '.repeat(nSpaces); // may be used at end
+      }
+      break;
+    case "\t":
+      assert(nTabs > 0, "Expecting TAB indentation, found spaces");
+      // --- NOTE: there may be spaces, but they're not indentation
+      level = nTabs;
+      break;
+    default:
+      // --- oneIndent must be all space chars
+      assert(nTabs === 0, `Indentation has TABs but oneIndent = ${OL(oneIndent)}`);
+      assert(nSpaces % oneIndent.length === 0, `prefix ${OL(prefix)} not a mult of ${OL(oneIndent)}`);
+      level = nSpaces / oneIndent.length;
+  }
+  // --- If a block, i.e. multi-line string, then all lines must be
+  //     at least at this level
+  if (line.indexOf("\n") >= 0) {
+    ref = toArray(line);
+    for (i = 0, len = ref.length; i < len; i++) {
+      str = ref[i];
+      assert(indentLevel(str, oneIndent) >= level, `indentLevel of ${OL(line)} can't be found`);
     }
   }
-  assert(prefix === oneIndent.repeat(level), `prefix ${OL(prefix)} not a mult of ${OL(oneIndent)}`);
   return level;
+};
+
+// ---------------------------------------------------------------------------
+//   indentation - return appropriate indentation string for given level
+//   export only to allow unit testing
+export var indentation = (level, oneIndent = "\t") => {
+  assert(level >= 0, "indentation(): negative level");
+  return oneIndent.repeat(level);
 };
 
 // ---------------------------------------------------------------------------
@@ -102,7 +126,7 @@ export var isUndented = (line) => {
 //   indented - add indentation to each string in a block or array
 //            - returns the same type as input, i.e. array or string
 export var indented = (input, level = 1, oneIndent = "\t") => {
-  var i, lLines, len1, line, ref, toAdd;
+  var i, lLines, len, line, ref, toAdd;
   // --- level can be a string, in which case it is
   //     pre-pended to each line of input
   if (isString(level)) {
@@ -123,7 +147,7 @@ export var indented = (input, level = 1, oneIndent = "\t") => {
   //           else it splits the string into an array of lines
   lLines = [];
   ref = toArray(input);
-  for (i = 0, len1 = ref.length; i < len1; i++) {
+  for (i = 0, len = ref.length; i < len; i++) {
     line = ref[i];
     if (isEmpty(line)) {
       lLines.push('');
@@ -146,7 +170,7 @@ export var indented = (input, level = 1, oneIndent = "\t") => {
 //              indentation is removed
 //            - returns same type as text, i.e. either string or array
 export var undented = (input, level = undef, oneIndent = "\t") => {
-  var i, lLines, lMatches, lNewLines, len1, line, nToRemove, toRemove;
+  var i, lLines, lMatches, lNewLines, len, line, nToRemove, toRemove;
   if (defined(level) && (level === 0)) {
     return input;
   }
@@ -181,7 +205,7 @@ export var undented = (input, level = undef, oneIndent = "\t") => {
   }
   nToRemove = indentLevel(toRemove);
   lNewLines = [];
-  for (i = 0, len1 = lLines.length; i < len1; i++) {
+  for (i = 0, len = lLines.length; i < len; i++) {
     line = lLines[i];
     if (isEmpty(line)) {
       lNewLines.push('');

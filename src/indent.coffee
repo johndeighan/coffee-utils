@@ -35,15 +35,6 @@ export splitLine = (line, oneIndent=undef) =>
 	return [indentLevel(prefix, oneIndent), str]
 
 # ---------------------------------------------------------------------------
-#   indentation - return appropriate indentation string for given level
-#   export only to allow unit testing
-
-export indentation = (level, oneIndent="\t") =>
-
-	assert (level >= 0), "indentation(): negative level"
-	return oneIndent.repeat(level)
-
-# ---------------------------------------------------------------------------
 #   indentLevel - determine indent level of a string
 #                 it's OK if the string is ONLY indentation
 
@@ -59,27 +50,55 @@ export indentLevel = (line, oneIndent=undef) =>
 	if (prefixLen == 0)
 		return 0
 
-	if defined(oneIndent)
-		# --- prefix must be some multiple of oneIndent
-		len = oneIndent.length
-		assert (prefixLen % len == 0),
-			"prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}"
-
-		level = prefixLen / len
+	# --- Match \t* followed by \x20* (error if no match)
+	if lMatches = prefix.match(/(\t*)(\x20*)/)
+		nTabs = lMatches[1].length
+		nSpaces = lMatches[2].length
 	else
-		ch = prefix.substring(0, 1)
-		if (ch == "\t")
-			oneIndent = "\t"
-			level = prefixLen
-		else if (ch == ' ')
-			oneIndent = ' '.repeat(prefixLen)
-			level = 1
-		else
-			croak "Bad Indentation in #{OL(line)}"
+		croak "Invalid mix of TABs and spaces"
 
-	assert (prefix == oneIndent.repeat(level)),
-		"prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}"
+	# --- oneIndent must be one of:
+	#        undef
+	#        a single TAB character
+	#        some number of space characters
+
+	switch oneIndent
+		when undef
+			if (nTabs > 0)
+				level = nTabs     # there may also be spaces, but we ignore them
+				oneIndent = "\t"  # may be used at end
+			else
+				assert (nSpaces > 0), "There must be TABS or spaces"
+				level = 1
+				oneIndent = ' '.repeat(nSpaces) # may be used at end
+		when "\t"
+			assert (nTabs > 0), "Expecting TAB indentation, found spaces"
+			# --- NOTE: there may be spaces, but they're not indentation
+			level = nTabs
+		else
+			# --- oneIndent must be all space chars
+			assert (nTabs == 0),
+					"Indentation has TABs but oneIndent = #{OL(oneIndent)}"
+			assert (nSpaces % oneIndent.length == 0),
+				"prefix #{OL(prefix)} not a mult of #{OL(oneIndent)}"
+			level = nSpaces / oneIndent.length
+
+	# --- If a block, i.e. multi-line string, then all lines must be
+	#     at least at this level
+	if (line.indexOf("\n") >= 0)
+		for str in toArray(line)
+			assert (indentLevel(str, oneIndent) >= level),
+					"indentLevel of #{OL(line)} can't be found"
 	return level
+
+# ---------------------------------------------------------------------------
+#   indentation - return appropriate indentation string for given level
+#   export only to allow unit testing
+
+export indentation = (level, oneIndent="\t") =>
+
+	assert (level >= 0), "indentation(): negative level"
+	return oneIndent.repeat(level)
 
 # ---------------------------------------------------------------------------
 #   isUndented - true iff indentLevel(line) == 0
