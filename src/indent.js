@@ -166,27 +166,20 @@ export var indented = (input, level = 1, oneIndent = "\t") => {
 // ---------------------------------------------------------------------------
 //   undented - string with 1st line indentation removed for each line
 //            - ignore leading empty lines
-//            - unless level is set, in which case exactly that
-//              indentation is removed
 //            - returns same type as text, i.e. either string or array
-export var undented = (input, level = undef, oneIndent = "\t") => {
-  var i, lLines, lMatches, lNewLines, len, line, nToRemove, toRemove;
-  if (defined(level) && (level === 0)) {
-    return input;
-  }
-  // --- Remove any leading blank lines, set lLines
+export var undented = (input) => {
+  var lLines, lMatches, nToRemove, toRemove;
+  // --- If a string, convert to an array
   if (isString(input)) {
-    if (lMatches = input.match(/^[\r\n]+(.*)$/s)) {
-      input = lMatches[1];
-    }
     lLines = toArray(input);
   } else if (isArray(input)) {
     lLines = input;
-    while ((lLines.length > 0) && isEmpty(lLines[0])) {
-      lLines.shift();
-    }
   } else {
     croak("input not a string or array");
+  }
+  // --- Remove leading blank lines
+  while ((lLines.length > 0) && isEmpty(lLines[0])) {
+    lLines.shift(); // remove
   }
   if (lLines.length === 0) {
     if (isString(input)) {
@@ -196,30 +189,23 @@ export var undented = (input, level = undef, oneIndent = "\t") => {
     }
   }
   // --- determine what to remove from beginning of each line
-  if (defined(level)) {
-    assert(isInteger(level), "level must be an integer");
-    toRemove = indentation(level, oneIndent);
-  } else {
-    lMatches = lLines[0].match(/^\s*/);
-    toRemove = lMatches[0];
-  }
-  nToRemove = indentLevel(toRemove);
-  lNewLines = [];
-  for (i = 0, len = lLines.length; i < len; i++) {
-    line = lLines[i];
-    if (isEmpty(line)) {
-      lNewLines.push('');
-    } else {
-      if (line.indexOf(toRemove) !== 0) {
-        throw new Error(`remove ${OL(toRemove)} from ${OL(line)}`);
+  lMatches = lLines[0].match(/^\s*/);
+  toRemove = lMatches[0];
+  nToRemove = toRemove.length;
+  if (nToRemove > 0) {
+    lLines = lLines.map((line) => {
+      if (isEmpty(line)) {
+        return '';
+      } else {
+        assert(line.indexOf(toRemove) === 0, `can't remove ${OL(toRemove)} from ${OL(line)}`);
+        return line.substr(nToRemove);
       }
-      lNewLines.push(line.substr(nToRemove));
-    }
+    });
   }
   if (isString(input)) {
-    return toBlock(lNewLines);
+    return toBlock(lLines);
   } else {
-    return lNewLines;
+    return lLines;
   }
 };
 
