@@ -14,7 +14,7 @@ import NReadLines from 'n-readlines'
 import {
 	undef, pass, defined, notdefined, rtrim, isEmpty, nonEmpty,
 	isString, isArray, isHash, isRegExp, isFunction, isBoolean,
-	OL, toBlock, getOptions,
+	OL, toBlock, getOptions, isArrayOfStrings,
 	} from '@jdeighan/base-utils'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
@@ -93,7 +93,7 @@ export rmFileSync = (filepath) =>
 
 export fixOutput = (contents) =>
 
-	if fix
+	if fix && isString(contents)
 		return rtrim(contents) + "\n"
 	else
 		return contents
@@ -398,12 +398,11 @@ export barf = (filepath, contents='', hOptions={}) =>
 			contents = JSON.stringify(contents, null, 3)
 		else
 			assert notdefined(format), "Unknown format: #{format}"
-			if isArray(contents)
-				contents = toBlock(contents)
-			else if ! isString(contents)
-				croak "barf(): Invalid contents"
-			contents = fixOutput(contents)
-	fs.writeFileSync(filepath, contents, {encoding: 'utf8'})
+			if isArrayOfStrings(contents)
+				contents = fixOutput(toBlock(contents))
+			else if isString(contents)
+				contents = fixOutput(contents)
+	fs.writeFileSync(filepath, contents)
 	return
 
 # ---------------------------------------------------------------------------

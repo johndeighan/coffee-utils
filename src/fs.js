@@ -41,7 +41,8 @@ import {
   isBoolean,
   OL,
   toBlock,
-  getOptions
+  getOptions,
+  isArrayOfStrings
 } from '@jdeighan/base-utils';
 
 import {
@@ -133,7 +134,7 @@ export var rmFileSync = (filepath) => {
 
 // --------------------------------------------------------------------------
 export var fixOutput = (contents) => {
-  if (fix) {
+  if (fix && isString(contents)) {
     return rtrim(contents) + "\n";
   } else {
     return contents;
@@ -461,16 +462,13 @@ export var barf = (filepath, contents = '', hOptions = {}) => {
       break;
     default:
       assert(notdefined(format), `Unknown format: ${format}`);
-      if (isArray(contents)) {
-        contents = toBlock(contents);
-      } else if (!isString(contents)) {
-        croak("barf(): Invalid contents");
+      if (isArrayOfStrings(contents)) {
+        contents = fixOutput(toBlock(contents));
+      } else if (isString(contents)) {
+        contents = fixOutput(contents);
       }
-      contents = fixOutput(contents);
   }
-  fs.writeFileSync(filepath, contents, {
-    encoding: 'utf8'
-  });
+  fs.writeFileSync(filepath, contents);
 };
 
 // ---------------------------------------------------------------------------
