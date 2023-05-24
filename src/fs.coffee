@@ -239,7 +239,7 @@ export isSimpleFileName = (path) =>
 
 export fileStub = (path) =>
 
-	assert isString(path), "fileExt(): path not a string"
+	assert isString(path), "fileStub(): path not a string"
 	if lMatches = path.match(/^(.*)\.[A-Za-z0-9_]+$/)
 		return lMatches[1]
 	else
