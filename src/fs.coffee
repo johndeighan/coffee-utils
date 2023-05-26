@@ -16,10 +16,15 @@ import {
 	isString, isArray, isHash, isRegExp, isFunction, isBoolean,
 	OL, toBlock, getOptions, isArrayOfStrings,
 	} from '@jdeighan/base-utils'
+import {
+	mkpath, isFile, isDir, mkdirSync,
+	} from '@jdeighan/base-utils/fs'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
 import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
 import {fromTAML} from '@jdeighan/base-utils/taml'
+
+export {mkpath, isFile, isDir, mkdirSync}
 
 fix = true
 
@@ -28,37 +33,6 @@ fix = true
 export doFixOutput = (flag=true) =>
 
 	fix = flag
-	return
-
-# ---------------------------------------------------------------------------
-
-export mkpath = (lParts...) =>
-
-	# --- Ignore empty parts
-	lNewParts = []
-	for part in lParts
-		if nonEmpty(part)
-			lNewParts.push part
-
-	newPath = lNewParts.join('/').replaceAll('\\', '/')
-	if lMatches = newPath.match(/^([A-Z])\:(.*)$/)
-		[_, drive, rest] = lMatches
-		return "#{drive.toLowerCase()}:#{rest}"
-	else
-		return newPath
-
-# ---------------------------------------------------------------------------
-
-export mkdirSync = (dirpath) =>
-
-	try
-		fs.mkdirSync dirpath
-	catch err
-		if (err.code == 'EEXIST')
-			console.log 'Directory exists. Please choose another name'
-		else
-			console.log err
-		process.exit 1
 	return
 
 # ---------------------------------------------------------------------------
@@ -209,24 +183,6 @@ export myfullpath = (url) =>
 export getStats = (fullpath) =>
 
 	return fs.lstatSync(fullpath)
-
-# ---------------------------------------------------------------------------
-
-export isFile = (fullpath) =>
-
-	try
-		return getStats(fullpath).isFile()
-	catch
-		return false
-
-# ---------------------------------------------------------------------------
-
-export isDir = (fullpath) =>
-
-	try
-		return getStats(fullpath).isDirectory()
-	catch
-		return false
 
 # ---------------------------------------------------------------------------
 

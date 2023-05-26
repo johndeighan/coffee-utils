@@ -46,6 +46,13 @@ import {
 } from '@jdeighan/base-utils';
 
 import {
+  mkpath,
+  isFile,
+  isDir,
+  mkdirSync
+} from '@jdeighan/base-utils/fs';
+
+import {
   assert,
   croak
 } from '@jdeighan/base-utils/exceptions';
@@ -65,47 +72,18 @@ import {
   fromTAML
 } from '@jdeighan/base-utils/taml';
 
+export {
+  mkpath,
+  isFile,
+  isDir,
+  mkdirSync
+};
+
 fix = true;
 
 // ---------------------------------------------------------------------------
 export var doFixOutput = (flag = true) => {
   fix = flag;
-};
-
-// ---------------------------------------------------------------------------
-export var mkpath = (...lParts) => {
-  var _, drive, i, lMatches, lNewParts, len, newPath, part, rest;
-  // --- Ignore empty parts
-  lNewParts = [];
-  for (i = 0, len = lParts.length; i < len; i++) {
-    part = lParts[i];
-    if (nonEmpty(part)) {
-      lNewParts.push(part);
-    }
-  }
-  newPath = lNewParts.join('/').replaceAll('\\', '/');
-  if (lMatches = newPath.match(/^([A-Z])\:(.*)$/)) {
-    [_, drive, rest] = lMatches;
-    return `${drive.toLowerCase()}:${rest}`;
-  } else {
-    return newPath;
-  }
-};
-
-// ---------------------------------------------------------------------------
-export var mkdirSync = (dirpath) => {
-  var err;
-  try {
-    fs.mkdirSync(dirpath);
-  } catch (error1) {
-    err = error1;
-    if (err.code === 'EEXIST') {
-      console.log('Directory exists. Please choose another name');
-    } else {
-      console.log(err);
-    }
-    process.exit(1);
-  }
 };
 
 // ---------------------------------------------------------------------------
@@ -262,24 +240,6 @@ export var myfullpath = (url) => {
 // ---------------------------------------------------------------------------
 export var getStats = (fullpath) => {
   return fs.lstatSync(fullpath);
-};
-
-// ---------------------------------------------------------------------------
-export var isFile = (fullpath) => {
-  try {
-    return getStats(fullpath).isFile();
-  } catch (error1) {
-    return false;
-  }
-};
-
-// ---------------------------------------------------------------------------
-export var isDir = (fullpath) => {
-  try {
-    return getStats(fullpath).isDirectory();
-  } catch (error1) {
-    return false;
-  }
 };
 
 // ---------------------------------------------------------------------------
