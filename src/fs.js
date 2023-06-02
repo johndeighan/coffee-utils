@@ -49,6 +49,7 @@ import {
   mkpath,
   isFile,
   isDir,
+  rmFileSync,
   mkdirSync
 } from '@jdeighan/base-utils/fs';
 
@@ -76,6 +77,7 @@ export {
   mkpath,
   isFile,
   isDir,
+  rmFileSync,
   mkdirSync
 };
 
@@ -103,11 +105,6 @@ export var rmDirSync = (dirpath) => {
 // ---------------------------------------------------------------------------
 export var rmFile = async(filepath) => {
   await rm(filepath);
-};
-
-// ---------------------------------------------------------------------------
-export var rmFileSync = (filepath) => {
-  fs.rmSync(filepath);
 };
 
 // --------------------------------------------------------------------------
@@ -382,56 +379,6 @@ export var forEachSetOfBlocks = (filepath, func, block_regexp = /^-{16,}$/, set_
 };
 
 // ---------------------------------------------------------------------------
-//   slurp - read a file into a string
-export var slurp = (filepath, hOptions = {}) => {
-  var contents, format, lLines, maxLines;
-  ({maxLines, format} = getOptions(hOptions));
-  if (defined(maxLines)) {
-    lLines = [];
-    forEachLineInFile(filepath, function(line, nLines) {
-      lLines.push(line);
-      return nLines >= maxLines;
-    });
-    contents = toBlock(lLines);
-  } else {
-    filepath = filepath.replace(/\//g, "\\");
-    contents = fs.readFileSync(filepath, 'utf8').toString();
-  }
-  switch (format) {
-    case 'TAML':
-      return fromTAML(contents);
-    case 'JSON':
-      return JSON.parse(contents);
-    default:
-      assert(notdefined(format), `Unknown format: ${format}`);
-      return contents;
-  }
-};
-
-// ---------------------------------------------------------------------------
-//   barf - write a string to a file
-export var barf = (filepath, contents = '', hOptions = {}) => {
-  var format;
-  ({format} = getOptions(hOptions));
-  switch (format) {
-    case 'TAML':
-      contents = toTAML(contents);
-      break;
-    case 'JSON':
-      contents = JSON.stringify(contents, null, 3);
-      break;
-    default:
-      assert(notdefined(format), `Unknown format: ${format}`);
-      if (isArrayOfStrings(contents)) {
-        contents = fixOutput(toBlock(contents));
-      } else if (isString(contents)) {
-        contents = fixOutput(contents);
-      }
-  }
-  fs.writeFileSync(filepath, contents);
-};
-
-// ---------------------------------------------------------------------------
 //   withExt - change file extention in a file name
 export var withExt = (path, newExt) => {
   var dir, ext, name;
@@ -695,12 +642,4 @@ export var parseSource = (source) => {
   }
   dbgReturn("parseSource", hSourceInfo);
   return hSourceInfo;
-};
-
-// ---------------------------------------------------------------------------
-//   slurpTAML - read TAML from a file
-export var slurpTAML = (filepath) => {
-  return slurp(filepath, {
-    format: 'TAML'
-  });
 };

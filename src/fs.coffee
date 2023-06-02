@@ -17,14 +17,14 @@ import {
 	OL, toBlock, getOptions, isArrayOfStrings,
 	} from '@jdeighan/base-utils'
 import {
-	mkpath, isFile, isDir, mkdirSync,
+	mkpath, isFile, isDir, rmFileSync, mkdirSync,
 	} from '@jdeighan/base-utils/fs'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
 import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
 import {fromTAML} from '@jdeighan/base-utils/taml'
 
-export {mkpath, isFile, isDir, mkdirSync}
+export {mkpath, isFile, isDir, rmFileSync, mkdirSync}
 
 fix = true
 
@@ -54,13 +54,6 @@ export rmDirSync = (dirpath) =>
 export rmFile = (filepath) =>
 
 	await rm filepath
-	return
-
-# ---------------------------------------------------------------------------
-
-export rmFileSync = (filepath) =>
-
-	fs.rmSync filepath
 	return
 
 # --------------------------------------------------------------------------
@@ -318,50 +311,6 @@ export forEachSetOfBlocks = (filepath, func,
 	return
 
 # ---------------------------------------------------------------------------
-#   slurp - read a file into a string
-
-export slurp = (filepath, hOptions={}) =>
-
-	{maxLines, format} = getOptions(hOptions)
-	if defined(maxLines)
-		lLines = []
-		forEachLineInFile filepath, (line, nLines) ->
-			lLines.push line
-			return (nLines >= maxLines)
-		contents = toBlock(lLines)
-	else
-		filepath = filepath.replace(/\//g, "\\")
-		contents = fs.readFileSync(filepath, 'utf8').toString()
-	switch format
-		when 'TAML'
-			return fromTAML(contents)
-		when 'JSON'
-			return JSON.parse(contents)
-		else
-			assert notdefined(format), "Unknown format: #{format}"
-			return contents
-
-# ---------------------------------------------------------------------------
-#   barf - write a string to a file
-
-export barf = (filepath, contents='', hOptions={}) =>
-
-	{format} = getOptions(hOptions)
-	switch format
-		when 'TAML'
-			contents = toTAML(contents)
-		when 'JSON'
-			contents = JSON.stringify(contents, null, 3)
-		else
-			assert notdefined(format), "Unknown format: #{format}"
-			if isArrayOfStrings(contents)
-				contents = fixOutput(toBlock(contents))
-			else if isString(contents)
-				contents = fixOutput(contents)
-	fs.writeFileSync(filepath, contents)
-	return
-
-# ---------------------------------------------------------------------------
 #   withExt - change file extention in a file name
 
 export withExt = (path, newExt) =>
@@ -594,10 +543,3 @@ export parseSource = (source) =>
 			hSourceInfo.purpose = lMatches[1]
 	dbgReturn "parseSource", hSourceInfo
 	return hSourceInfo
-
-# ---------------------------------------------------------------------------
-#   slurpTAML - read TAML from a file
-
-export slurpTAML = (filepath) =>
-
-	return slurp(filepath, {format: 'TAML'})
