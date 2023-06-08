@@ -5,20 +5,20 @@
 	"description": "A set of utility functions for CoffeeScript",
 	"main": "coffee_utils.js",
 	"exports": {
-		"./server": "./src/server.js",
-		"./browser": "./src/browser.js",
-		"./fs": "./src/fs.js",
-		"./log": "./src/log.js",
-		"./block": "./src/block.js",
-		"./indent": "./src/indent.js",
-		"./html": "./src/html.js",
-		"./stack": "./src/stack.js",
-		"./taml": "./src/taml.js",
-		"./section": "./src/Section.js",
-		"./sectionmap": "./src/SectionMap.js",
-		"./fsa": "./src/fsa.js",
-		"./giftset": "./src/GiftSet.js",
-		"./keyedset": "./src/KeyedSet.js",
+		"./server": "./src/lib/server.js",
+		"./browser": "./src/lib/browser.js",
+		"./fs": "./src/lib/fs.js",
+		"./log": "./src/lib/log.js",
+		"./block": "./src/lib/block.js",
+		"./indent": "./src/lib/indent.js",
+		"./html": "./src/lib/html.js",
+		"./stack": "./src/lib/stack.js",
+		"./taml": "./src/lib/taml.js",
+		"./section": "./src/lib/Section.js",
+		"./sectionmap": "./src/lib/SectionMap.js",
+		"./fsa": "./src/lib/fsa.js",
+		"./giftset": "./src/lib/GiftSet.js",
+		"./keyedset": "./src/lib/KeyedSet.js",
 		"./package.json": "./package.json"
 	},
 	"engines": {
@@ -45,14 +45,14 @@
 	},
 	"homepage": "https://github.com/johndeighan/coffee-utils#readme",
 	"dependencies": {
-		"@jdeighan/base-utils": "^6.0.1",
+		"@jdeighan/base-utils": "^6.0.3",
 		"cross-env": "^7.0.3",
 		"n-readlines": "^1.0.1",
 		"readline-sync": "^1.4.10",
 		"svelte": "^3.59.1"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^3.0.53",
+		"@jdeighan/unit-tester": "^3.0.55",
 		"ava": "^5.3.0"
 	}
 }
