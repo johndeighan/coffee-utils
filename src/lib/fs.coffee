@@ -384,9 +384,9 @@ export forEachFile = (dir, cb, filt=undef, level=0) =>
 			else if isRegExp(filt)
 				if ent.name.match(filt)
 					cb(ent.name, dir, level)
-				else if isFunction(filt)
-					if filt(ent.name, dir, level)
-						cb(ent.name, dir, level)
+			else if isFunction(filt)
+				if filt(ent.name, dir, level)
+					cb(ent.name, dir, level)
 			else
 				croak "forEachFile(): bad filter", 'filter', filt
 	if nonEmpty(lSubDirectories)
