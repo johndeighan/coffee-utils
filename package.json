@@ -49,7 +49,7 @@
 		"cross-env": "^7.0.3",
 		"n-readlines": "^1.0.1",
 		"readline-sync": "^1.4.10",
-		"svelte": "^4.0.0"
+		"svelte": "^4.0.5"
 	},
 	"devDependencies": {
 		"@jdeighan/unit-tester": "^3.0.56",
