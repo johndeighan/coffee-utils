@@ -276,6 +276,7 @@ export var getFullPath = (filepath) => {
 // ---------------------------------------------------------------------------
 export var forEachLineInFile = (filepath, func) => {
   var buffer, line, nLines, reader, result;
+  // --- func gets (line, lineNum, filepath) - lineNum starts at 1
   reader = new NReadLines(filepath);
   nLines = 0;
   while ((buffer = reader.next())) {
@@ -283,7 +284,7 @@ export var forEachLineInFile = (filepath, func) => {
     // --- text is split on \n chars,
     //     we also need to remove \r chars
     line = buffer.toString().replace(/\r/g, '');
-    result = func(line, nLines);
+    result = func(line, nLines, filepath);
     assert(isBoolean(result));
     if (result) {
       reader.close(); // allow premature termination

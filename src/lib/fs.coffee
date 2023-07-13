@@ -213,6 +213,7 @@ export getFullPath = (filepath) =>
 # ---------------------------------------------------------------------------
 
 export forEachLineInFile = (filepath, func) =>
+	# --- func gets (line, lineNum, filepath) - lineNum starts at 1
 
 	reader = new NReadLines(filepath)
 	nLines = 0
@@ -222,7 +223,7 @@ export forEachLineInFile = (filepath, func) =>
 		# --- text is split on \n chars,
 		#     we also need to remove \r chars
 		line = buffer.toString().replace(/\r/g, '')
-		result = func(line, nLines)
+		result = func(line, nLines, filepath)
 		assert isBoolean(result)
 		if result
 			reader.close()   # allow premature termination
