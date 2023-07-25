@@ -21,10 +21,6 @@ import {
   execSync
 } from 'node:child_process';
 
-import readline from 'readline';
-
-import NReadLines from 'n-readlines';
-
 import {
   undef,
   pass,
@@ -42,7 +38,8 @@ import {
   OL,
   toBlock,
   getOptions,
-  isArrayOfStrings
+  isArrayOfStrings,
+  deepCopy
 } from '@jdeighan/base-utils';
 
 import {
@@ -50,7 +47,11 @@ import {
   isFile,
   isDir,
   rmFileSync,
-  mkdirSync
+  mkdirSync,
+  forEachLineInFile,
+  rmFile,
+  rmDir,
+  rmDirSync
 } from '@jdeighan/base-utils/fs';
 
 import {
@@ -78,7 +79,11 @@ export {
   isFile,
   isDir,
   rmFileSync,
-  mkdirSync
+  mkdirSync,
+  forEachLineInFile,
+  rmDir,
+  rmDirSync,
+  rmFile
 };
 
 fix = true;
@@ -86,25 +91,6 @@ fix = true;
 // ---------------------------------------------------------------------------
 export var doFixOutput = (flag = true) => {
   fix = flag;
-};
-
-// ---------------------------------------------------------------------------
-export var rmDir = async(dirpath) => {
-  await rmdir(dirpath, {
-    recursive: true
-  });
-};
-
-// ---------------------------------------------------------------------------
-export var rmDirSync = (dirpath) => {
-  fs.rmdirSync(dirpath, {
-    recursive: true
-  });
-};
-
-// ---------------------------------------------------------------------------
-export var rmFile = async(filepath) => {
-  await rm(filepath);
 };
 
 // --------------------------------------------------------------------------
@@ -274,45 +260,6 @@ export var getFullPath = (filepath) => {
 };
 
 // ---------------------------------------------------------------------------
-export var forEachLineInFile = (filepath, func) => {
-  var buffer, line, nLines, reader, result;
-  // --- func gets (line, lineNum, filepath) - lineNum starts at 1
-  reader = new NReadLines(filepath);
-  nLines = 0;
-  while ((buffer = reader.next())) {
-    nLines += 1;
-    // --- text is split on \n chars,
-    //     we also need to remove \r chars
-    line = buffer.toString().replace(/\r/g, '');
-    result = func(line, nLines, filepath);
-    assert(isBoolean(result));
-    if (result) {
-      reader.close(); // allow premature termination
-      return;
-    }
-  }
-};
-
-// ---------------------------------------------------------------------------
-export var mapEachLineInFile = (filepath, func) => {
-  var buffer, lLines, line, nLines, reader, result;
-  reader = new NReadLines(filepath);
-  nLines = 0;
-  lLines = [];
-  while ((buffer = reader.next())) {
-    nLines += 1;
-    // --- text is split on \n chars,
-    //     we also need to remove \r chars
-    line = buffer.toString().replace(/\r/g, '');
-    result = func(line, nLines);
-    if (defined(result)) {
-      lLines.push(result);
-    }
-  }
-  return lLines;
-};
-
-// ---------------------------------------------------------------------------
 export var forEachBlock = (filepath, func, regexp = /^-{16,}$/) => {
   var callback, earlyExit, firstLineNum, lLines;
   lLines = [];
@@ -345,22 +292,23 @@ export var forEachBlock = (filepath, func, regexp = /^-{16,}$/) => {
 // ---------------------------------------------------------------------------
 export var forEachSetOfBlocks = (filepath, func, block_regexp = /^-{16,}$/, set_regexp = /^={16,}$/) => {
   var callback, earlyExit, firstLineNum, lBlocks, lLines;
+  dbgEnter('forEachSetOfBlocks', filepath);
   lBlocks = [];
   lLines = [];
   firstLineNum = 1;
   earlyExit = false;
-  callback = function(line, lineNum) {
-    var result;
+  callback = function(line, hContext) {
+    var lineNum, result;
+    dbgEnter('callback', line, hContext.lineNum);
+    lineNum = hContext.lineNum;
     if (line.match(set_regexp)) {
       lBlocks.push(lLines.join('\n'));
       lLines = [];
-      if (result = func(lBlocks, firstLineNum, line)) {
-        if (result === true) {
-          earlyExit = true;
-          return true;
-        } else if (defined(result)) {
-          croak(`forEachSetOfBlocks() - callback returned '${result}'`);
-        }
+      result = func(deepCopy(lBlocks), firstLineNum, line);
+      if (result === true) {
+        earlyExit = true;
+        dbgReturn('callback', true);
+        return true;
       }
       lBlocks = [];
       firstLineNum = lineNum + 1;
@@ -370,6 +318,7 @@ export var forEachSetOfBlocks = (filepath, func, block_regexp = /^-{16,}$/, set_
     } else {
       lLines.push(line);
     }
+    dbgReturn('callback', false);
     return false;
   };
   forEachLineInFile(filepath, callback);
@@ -377,6 +326,7 @@ export var forEachSetOfBlocks = (filepath, func, block_regexp = /^-{16,}$/, set_
     lBlocks.push(lLines.join('\n'));
     func(lBlocks, firstLineNum);
   }
+  dbgReturn('forEachSetOfBlocks');
 };
 
 // ---------------------------------------------------------------------------
@@ -644,3 +594,5 @@ export var parseSource = (source) => {
   dbgReturn("parseSource", hSourceInfo);
   return hSourceInfo;
 };
+
+// ---------------------------------------------------------------------------

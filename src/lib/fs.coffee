@@ -8,23 +8,25 @@ import {
 	readFile, writeFile, rm, rmdir,   #  rmSync, rmdirSync,
 	} from 'node:fs/promises'
 import {execSync} from 'node:child_process'
-import readline from 'readline'
-import NReadLines from 'n-readlines'
 
 import {
 	undef, pass, defined, notdefined, rtrim, isEmpty, nonEmpty,
 	isString, isArray, isHash, isRegExp, isFunction, isBoolean,
-	OL, toBlock, getOptions, isArrayOfStrings,
+	OL, toBlock, getOptions, isArrayOfStrings, deepCopy,
 	} from '@jdeighan/base-utils'
 import {
-	mkpath, isFile, isDir, rmFileSync, mkdirSync,
+	mkpath, isFile, isDir, rmFileSync, mkdirSync, forEachLineInFile,
+	rmFile, rmDir, rmDirSync,
 	} from '@jdeighan/base-utils/fs'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
 import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
 import {fromTAML} from '@jdeighan/base-utils/taml'
 
-export {mkpath, isFile, isDir, rmFileSync, mkdirSync}
+export {
+	mkpath, isFile, isDir, rmFileSync, mkdirSync,
+	forEachLineInFile, rmDir, rmDirSync, rmFile,
+	}
 
 fix = true
 
@@ -33,27 +35,6 @@ fix = true
 export doFixOutput = (flag=true) =>
 
 	fix = flag
-	return
-
-# ---------------------------------------------------------------------------
-
-export rmDir = (dirpath) =>
-
-	await rmdir dirpath, {recursive: true}
-	return
-
-# ---------------------------------------------------------------------------
-
-export rmDirSync = (dirpath) =>
-
-	fs.rmdirSync dirpath, {recursive: true}
-	return
-
-# ---------------------------------------------------------------------------
-
-export rmFile = (filepath) =>
-
-	await rm filepath
 	return
 
 # --------------------------------------------------------------------------
@@ -212,44 +193,6 @@ export getFullPath = (filepath) =>
 
 # ---------------------------------------------------------------------------
 
-export forEachLineInFile = (filepath, func) =>
-	# --- func gets (line, lineNum, filepath) - lineNum starts at 1
-
-	reader = new NReadLines(filepath)
-	nLines = 0
-
-	while (buffer = reader.next())
-		nLines += 1
-		# --- text is split on \n chars,
-		#     we also need to remove \r chars
-		line = buffer.toString().replace(/\r/g, '')
-		result = func(line, nLines, filepath)
-		assert isBoolean(result)
-		if result
-			reader.close()   # allow premature termination
-			return
-	return
-
-# ---------------------------------------------------------------------------
-
-export mapEachLineInFile = (filepath, func) =>
-
-	reader = new NReadLines(filepath)
-	nLines = 0
-
-	lLines = []
-	while (buffer = reader.next())
-		nLines += 1
-		# --- text is split on \n chars,
-		#     we also need to remove \r chars
-		line = buffer.toString().replace(/\r/g, '')
-		result = func(line, nLines)
-		if defined(result)
-			lLines.push result
-	return lLines
-
-# ---------------------------------------------------------------------------
-
 export forEachBlock = (filepath, func, regexp = /^-{16,}$/) =>
 
 	lLines = []
@@ -277,25 +220,28 @@ export forEachBlock = (filepath, func, regexp = /^-{16,}$/) =>
 
 # ---------------------------------------------------------------------------
 
-export forEachSetOfBlocks = (filepath, func,
-		block_regexp = /^-{16,}$/,
-		set_regexp   = /^={16,}$/) =>
+export forEachSetOfBlocks = (filepath, func, \
+		block_regexp = /^-{16,}$/, \
+		set_regexp   = /^={16,}$/) \
+		=>
 
+	dbgEnter 'forEachSetOfBlocks', filepath
 	lBlocks = []
 	lLines = []
 	firstLineNum = 1
 	earlyExit = false
 
-	callback = (line, lineNum) ->
+	callback = (line, hContext) ->
+		dbgEnter 'callback', line, hContext.lineNum
+		lineNum = hContext.lineNum
 		if (line.match(set_regexp))
 			lBlocks.push(lLines.join('\n'))
 			lLines = []
-			if result = func(lBlocks, firstLineNum, line)
-				if (result == true)
-					earlyExit = true
-					return true
-				else if defined(result)
-					croak "forEachSetOfBlocks() - callback returned '#{result}'"
+			result = func(deepCopy(lBlocks), firstLineNum, line)
+			if (result == true)
+				earlyExit = true
+				dbgReturn 'callback', true
+				return true
 			lBlocks = []
 			firstLineNum = lineNum+1
 		else if (line.match(block_regexp))
@@ -303,12 +249,14 @@ export forEachSetOfBlocks = (filepath, func,
 			lLines = []
 		else
 			lLines.push line
+		dbgReturn 'callback', false
 		return false
 
 	forEachLineInFile filepath, callback
 	if ! earlyExit
 		lBlocks.push(lLines.join('\n'))
 		func(lBlocks, firstLineNum)
+	dbgReturn 'forEachSetOfBlocks'
 	return
 
 # ---------------------------------------------------------------------------
@@ -544,3 +492,5 @@ export parseSource = (source) =>
 			hSourceInfo.purpose = lMatches[1]
 	dbgReturn "parseSource", hSourceInfo
 	return hSourceInfo
+
+# ---------------------------------------------------------------------------

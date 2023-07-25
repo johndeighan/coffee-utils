@@ -45,14 +45,14 @@
 	},
 	"homepage": "https://github.com/johndeighan/coffee-utils#readme",
 	"dependencies": {
-		"@jdeighan/base-utils": "^8.0.0",
+		"@jdeighan/base-utils": "^8.0.7",
 		"cross-env": "^7.0.3",
 		"n-readlines": "^1.0.1",
 		"readline-sync": "^1.4.10",
-		"svelte": "^4.0.5"
+		"svelte": "^4.1.1"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^3.0.58",
+		"@jdeighan/unit-tester": "^3.0.61",
 		"ava": "^5.3.1"
 	}
 }
