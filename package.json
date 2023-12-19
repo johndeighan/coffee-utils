@@ -5,6 +5,7 @@
 	"description": "A set of utility functions for CoffeeScript",
 	"main": "coffee_utils.js",
 	"exports": {
+		".": "./src/lib/browser.js",
 		"./server": "./src/lib/server.js",
 		"./browser": "./src/lib/browser.js",
 		"./fs": "./src/lib/fs.js",

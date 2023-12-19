@@ -15,16 +15,17 @@ import {
 	OL, toBlock, getOptions, isArrayOfStrings, deepCopy,
 	} from '@jdeighan/base-utils'
 import {
-	mkpath, isFile, isDir, rmFileSync, mkdirSync, forEachLineInFile,
+	mydir, mkpath, isFile, isDir, rmFileSync, mkdirSync,
+	forEachLineInFile,
 	rmFile, rmDir, rmDirSync,
 	} from '@jdeighan/base-utils/fs'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
 import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
-import {fromTAML} from '@jdeighan/base-utils/taml'
+import {fromTAML} from '@jdeighan/base-utils/ll-taml'
 
 export {
-	mkpath, isFile, isDir, rmFileSync, mkdirSync,
+	mydir, mkpath, isFile, isDir, rmFileSync, mkdirSync,
 	forEachLineInFile, rmDir, rmDirSync, rmFile,
 	}
 
@@ -106,17 +107,6 @@ export cloneRepo = (user, repo, dir) =>
 
 	git_repo = "https://github.com/#{user}/#{repo}.git"
 	return execCmd "git clone #{git_repo} #{dir}"
-
-# ---------------------------------------------------------------------------
-#    mydir() - pass argument import.meta.url and it will return
-#              the directory your file is in
-
-export mydir = (url) =>
-
-	path = urllib.fileURLToPath(url)
-	dir = pathlib.dirname(path)
-	final = mkpath(dir)
-	return final
 
 # ---------------------------------------------------------------------------
 

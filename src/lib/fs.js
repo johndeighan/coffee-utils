@@ -43,6 +43,7 @@ import {
 } from '@jdeighan/base-utils';
 
 import {
+  mydir,
   mkpath,
   isFile,
   isDir,
@@ -72,9 +73,10 @@ import {
 
 import {
   fromTAML
-} from '@jdeighan/base-utils/taml';
+} from '@jdeighan/base-utils/ll-taml';
 
 export {
+  mydir,
   mkpath,
   isFile,
   isDir,
@@ -174,17 +176,6 @@ export var cloneRepo = (user, repo, dir) => {
   var git_repo;
   git_repo = `https://github.com/${user}/${repo}.git`;
   return execCmd(`git clone ${git_repo} ${dir}`);
-};
-
-// ---------------------------------------------------------------------------
-//    mydir() - pass argument import.meta.url and it will return
-//              the directory your file is in
-export var mydir = (url) => {
-  var dir, final, path;
-  path = urllib.fileURLToPath(url);
-  dir = pathlib.dirname(path);
-  final = mkpath(dir);
-  return final;
 };
 
 // ---------------------------------------------------------------------------

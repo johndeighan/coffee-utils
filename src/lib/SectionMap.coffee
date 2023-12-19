@@ -10,7 +10,7 @@ import {LOG, LOGVALUE, LOGTAML} from '@jdeighan/base-utils/log'
 import {
 	dbg, dbgEnter, dbgReturn, dbgYield, dbgResume,
 	} from '@jdeighan/base-utils/debug'
-import {isTAML, fromTAML} from '@jdeighan/base-utils/taml'
+import {isTAML, fromTAML} from '@jdeighan/base-utils/ll-taml'
 
 import {Section} from '@jdeighan/coffee-utils/section'
 
