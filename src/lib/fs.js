@@ -50,6 +50,7 @@ import {
   rmFileSync,
   mkdirSync,
   forEachLineInFile,
+  fixPath,
   rmFile,
   rmDir,
   rmDirSync
@@ -439,9 +440,9 @@ export var pathTo = (fname, searchDir, options = undef) => {
     if (relative) {
       return `./${fname}`;
     } else if (directory) {
-      return searchDir;
+      return fixPath(searchDir);
     } else {
-      return filepath;
+      return fixPath(filepath);
     }
   }
   if (direction === 'down') {
@@ -455,9 +456,9 @@ export var pathTo = (fname, searchDir, options = undef) => {
         if (relative) {
           return fpath.replace('./', `./${subdir}/`);
         } else if (directory) {
-          return dirPath;
+          return fixPath(dirPath);
         } else {
-          return fpath;
+          return fixPath(fpath);
         }
       }
     }
@@ -470,9 +471,9 @@ export var pathTo = (fname, searchDir, options = undef) => {
         if (relative) {
           return "../".repeat(nLevels) + fname;
         } else if (directory) {
-          return dirPath;
+          return fixPath(dirPath);
         } else {
-          return fpath;
+          return fixPath(fpath);
         }
       }
       searchDir = dirPath;

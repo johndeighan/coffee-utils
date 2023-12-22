@@ -16,7 +16,7 @@ import {
 	} from '@jdeighan/base-utils'
 import {
 	mydir, mkpath, isFile, isDir, rmFileSync, mkdirSync,
-	forEachLineInFile,
+	forEachLineInFile, fixPath,
 	rmFile, rmDir, rmDirSync,
 	} from '@jdeighan/base-utils/fs'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
@@ -352,9 +352,9 @@ export pathTo = (fname, searchDir, options=undef) =>
 		if relative
 			return "./#{fname}"
 		else if directory
-			return searchDir
+			return fixPath(searchDir)
 		else
-			return filepath
+			return fixPath(filepath)
 
 	if (direction == 'down')
 		# --- Search all directories in this directory
@@ -365,9 +365,9 @@ export pathTo = (fname, searchDir, options=undef) =>
 				if relative
 					return fpath.replace('./', "./#{subdir}/")
 				else if directory
-					return dirPath
+					return fixPath(dirPath)
 				else
-					return fpath
+					return fixPath(fpath)
 	else if (direction == 'up')
 		nLevels = 0
 		while defined(dirPath = getParentDir(searchDir))
@@ -377,9 +377,9 @@ export pathTo = (fname, searchDir, options=undef) =>
 				if relative
 					return "../".repeat(nLevels) + fname
 				else if directory
-					return dirPath
+					return fixPath(dirPath)
 				else
-					return fpath
+					return fixPath(fpath)
 			searchDir = dirPath
 	else
 		croak "pathTo(): Invalid direction '#{direction}'"
