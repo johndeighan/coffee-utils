@@ -43,7 +43,7 @@ import {
 import {
   isTAML,
   fromTAML
-} from '@jdeighan/base-utils/ll-taml';
+} from '@jdeighan/base-utils/taml';
 
 import {
   Section

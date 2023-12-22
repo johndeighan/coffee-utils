@@ -22,7 +22,7 @@ import {
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
 import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
-import {fromTAML} from '@jdeighan/base-utils/ll-taml'
+import {fromTAML} from '@jdeighan/base-utils/taml'
 
 export {
 	mydir, mkpath, isFile, isDir, rmFileSync, mkdirSync,
