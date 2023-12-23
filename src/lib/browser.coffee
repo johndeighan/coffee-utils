@@ -24,28 +24,37 @@ export beep = (volume=100, freq=520, duration=200) =>
 
 # ---------------------------------------------------------------------------
 
-export localStore = (key, value=undef) =>
-	# --- if value is undef, returns the current value
+export getLocalStore = (key, defValue={}) =>
 
-	if (typeof localStorage != 'undefined')
-		if defined(value)
-			localStorage.setItem key, JSON.stringify(value)
-		else
-			value = localStorage.getItem(key)
-			if defined(value)
-				return JSON.parse(localStorage.getItem(key))
-	return undef
+	if (typeof localStorage == 'undefined')
+		console.log "localStorage not available!"
+		return undef
 
-# ---------------------------------------------------------------------------
-
-storeKey = 'hPrefs'
-export hPrefs = localStore(storeKey) || {}
+	value = localStorage.getItem(key)
+	if defined(value)
+		return JSON.parse(value)
+	else
+		localStorage.setItem key, JSON.stringify(defValue)
+		return defValue
 
 # ---------------------------------------------------------------------------
 
-export setPref = (key, value) =>
+export setLocalStore = (key, value) =>
 
-	hPrefs[key] = value
-	localStore storeKey, hPrefs
+	if (typeof localStorage == 'undefined')
+		console.log "localStorage not available!"
+		return undef
+
+	localStorage.setItem key, JSON.stringify(value)
+	return
 
 # ---------------------------------------------------------------------------
+# --- only here for backward compatibility
+
+export localStore = (key, value) =>
+
+	if defined(value)
+		setLocalStore key, value
+	else
+		getLocalStore key, undef
+	return
