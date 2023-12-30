@@ -35,8 +35,27 @@ export var beep = (volume = 100, freq = 520, duration = 200) => {
 };
 
 // ---------------------------------------------------------------------------
+export var localStorageAvailable = function() {
+  var e, got, storage, x;
+  storage = window.localStorage;
+  if (notdefined(storage)) {
+    return false;
+  }
+  try {
+    x = '__storage_test__';
+    storage.setItem(x, x);
+    got = storage.getItem(x);
+    storage.removeItem(x);
+    return got === x;
+  } catch (error) {
+    e = error;
+    return false;
+  }
+};
+
+// ---------------------------------------------------------------------------
 export var getLocalStore = (key, defValue = {}) => {
-  assert(typeof localStorage !== 'undefined', "no localStorage");
+  assert(localStorageAvailable(), "no localStorage");
   if (localStorage.hasOwnProperty(key)) {
     return JSON.parse(localStorage.getItem(key));
   } else {
@@ -47,6 +66,6 @@ export var getLocalStore = (key, defValue = {}) => {
 
 // ---------------------------------------------------------------------------
 export var setLocalStore = (key, value) => {
-  assert(typeof localStorage !== 'undefined', "no localStorage");
+  assert(localStorageAvailable(), "no localStorage");
   localStorage.setItem(key, JSON.stringify(value));
 };
