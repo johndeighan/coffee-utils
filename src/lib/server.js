@@ -15,12 +15,3 @@ export var exec = (cmd) => {
   });
   return buffer.toString();
 };
-
-// ---------------------------------------------------------------------------
-//   ask - ask a question
-//         later, on a web page, prompt the user for answer to question
-export var ask = (prompt) => {
-  var answer;
-  answer = getline.question("{prompt}? ");
-  return answer;
-};

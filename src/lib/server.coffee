@@ -12,12 +12,3 @@ export exec = (cmd) =>
 		windowsHide: true
 		}
 	return buffer.toString()
-
-# ---------------------------------------------------------------------------
-#   ask - ask a question
-#         later, on a web page, prompt the user for answer to question
-
-export ask = (prompt) =>
-
-	answer = getline.question("{prompt}? ")
-	return answer

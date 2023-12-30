@@ -5,20 +5,15 @@
 	"description": "A set of utility functions for CoffeeScript",
 	"main": "coffee_utils.js",
 	"exports": {
-		".": "./src/lib/browser.js",
+		".": "./src/lib/fs.js",
 		"./server": "./src/lib/server.js",
-		"./browser": "./src/lib/browser.js",
 		"./fs": "./src/lib/fs.js",
-		"./log": "./src/lib/log.js",
+		"./fsa": "./src/lib/fsa.js",
 		"./block": "./src/lib/block.js",
 		"./indent": "./src/lib/indent.js",
 		"./html": "./src/lib/html.js",
-		"./stack": "./src/lib/stack.js",
-		"./taml": "./src/lib/taml.js",
 		"./section": "./src/lib/Section.js",
 		"./sectionmap": "./src/lib/SectionMap.js",
-		"./fsa": "./src/lib/fsa.js",
-		"./giftset": "./src/lib/GiftSet.js",
 		"./keyedset": "./src/lib/KeyedSet.js",
 		"./package.json": "./package.json"
 	},
@@ -53,7 +48,7 @@
 		"svelte": "^4.1.1"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^3.0.70",
+		"@jdeighan/unit-tester": "^3.0.71",
 		"ava": "^6.0.1"
 	}
 }
