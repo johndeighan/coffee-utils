@@ -8,7 +8,6 @@
 		".": "./src/lib/browser.js",
 		"./server": "./src/lib/server.js",
 		"./browser": "./src/lib/browser.js",
-		"./prefs": "./src/lib/prefs.js",
 		"./fs": "./src/lib/fs.js",
 		"./log": "./src/lib/log.js",
 		"./block": "./src/lib/block.js",
@@ -47,14 +46,14 @@
 	},
 	"homepage": "https://github.com/johndeighan/coffee-utils#readme",
 	"dependencies": {
-		"@jdeighan/base-utils": "^8.0.21",
+		"@jdeighan/base-utils": "^8.0.22",
 		"cross-env": "^7.0.3",
 		"n-readlines": "^1.0.1",
 		"readline-sync": "^1.4.10",
 		"svelte": "^4.1.1"
 	},
 	"devDependencies": {
-		"@jdeighan/unit-tester": "^3.0.69",
+		"@jdeighan/unit-tester": "^3.0.70",
 		"ava": "^6.0.1"
 	}
 }

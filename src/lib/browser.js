@@ -8,6 +8,11 @@ import {
   notdefined
 } from '@jdeighan/base-utils';
 
+import {
+  assert,
+  croak
+} from '@jdeighan/base-utils/exceptions';
+
 audio = undef; // audio context - create only when needed, then keep
 
 
@@ -31,14 +36,9 @@ export var beep = (volume = 100, freq = 520, duration = 200) => {
 
 // ---------------------------------------------------------------------------
 export var getLocalStore = (key, defValue = {}) => {
-  var value;
-  if (typeof localStorage === 'undefined') {
-    console.log("localStorage not available!");
-    return undef;
-  }
-  value = localStorage.getItem(key);
-  if (defined(value)) {
-    return JSON.parse(value);
+  assert(typeof localStorage !== 'undefined', "no localStorage");
+  if (localStorage.hasOwnProperty(key)) {
+    return JSON.parse(localStorage.getItem(key));
   } else {
     localStorage.setItem(key, JSON.stringify(defValue));
     return defValue;
@@ -47,19 +47,6 @@ export var getLocalStore = (key, defValue = {}) => {
 
 // ---------------------------------------------------------------------------
 export var setLocalStore = (key, value) => {
-  if (typeof localStorage === 'undefined') {
-    console.log("localStorage not available!");
-    return undef;
-  }
+  assert(typeof localStorage !== 'undefined', "no localStorage");
   localStorage.setItem(key, JSON.stringify(value));
-};
-
-// ---------------------------------------------------------------------------
-// --- only here for backward compatibility
-export var localStore = (key, value) => {
-  if (defined(value)) {
-    setLocalStore(key, value);
-  } else {
-    getLocalStore(key, undef);
-  }
 };
