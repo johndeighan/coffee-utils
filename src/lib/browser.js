@@ -3,6 +3,10 @@
 var audio;
 
 import {
+  browser
+} from "$app/env";
+
+import {
   undef,
   defined,
   notdefined
@@ -37,6 +41,9 @@ export var beep = (volume = 100, freq = 520, duration = 200) => {
 // ---------------------------------------------------------------------------
 export var localStorageAvailable = function() {
   var e, got, storage, x;
+  if (!browser) {
+    return false;
+  }
   storage = window.localStorage;
   if (notdefined(storage)) {
     return false;
@@ -55,7 +62,9 @@ export var localStorageAvailable = function() {
 
 // ---------------------------------------------------------------------------
 export var getLocalStore = (key, defValue = {}) => {
-  assert(localStorageAvailable(), "no localStorage");
+  if (!localStorageAvailable()) {
+    return undef;
+  }
   if (localStorage.hasOwnProperty(key)) {
     return JSON.parse(localStorage.getItem(key));
   } else {
@@ -66,6 +75,8 @@ export var getLocalStore = (key, defValue = {}) => {
 
 // ---------------------------------------------------------------------------
 export var setLocalStore = (key, value) => {
-  assert(localStorageAvailable(), "no localStorage");
+  if (!localStorageAvailable()) {
+    return;
+  }
   localStorage.setItem(key, JSON.stringify(value));
 };

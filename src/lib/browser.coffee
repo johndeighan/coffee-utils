@@ -1,5 +1,7 @@
 # browser.coffee
 
+import {browser} from "$app/env"
+
 import {undef, defined, notdefined} from '@jdeighan/base-utils'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 
@@ -27,6 +29,8 @@ export beep = (volume=100, freq=520, duration=200) =>
 
 export localStorageAvailable = () ->
 
+	if ! browser
+		return false
 	storage = window.localStorage
 	if notdefined(storage)
 		return false
@@ -43,7 +47,8 @@ export localStorageAvailable = () ->
 
 export getLocalStore = (key, defValue={}) =>
 
-	assert localStorageAvailable(), "no localStorage"
+	if ! localStorageAvailable()
+		return undef
 	if localStorage.hasOwnProperty(key)
 		return JSON.parse(localStorage.getItem(key))
 	else
@@ -54,6 +59,7 @@ export getLocalStore = (key, defValue={}) =>
 
 export setLocalStore = (key, value) =>
 
-	assert localStorageAvailable(), "no localStorage"
+	if ! localStorageAvailable()
+		return
 	localStorage.setItem key, JSON.stringify(value)
 	return
