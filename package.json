@@ -6,7 +6,6 @@
 	"main": "coffee_utils.js",
 	"exports": {
 		".": "./src/lib/fs.js",
-		"./server": "./src/lib/server.js",
 		"./fs": "./src/lib/fs.js",
 		"./block": "./src/lib/block.js",
 		"./html": "./src/lib/html.js",
