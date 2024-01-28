@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "formatHTML.test.js",
+  "sourceRoot": "..\\",
+  "sources": [
+    "test\\formatHTML.test.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAwB;AAAA,IAAA,YAAA,EAAA;;AAExB,OAAA;EAAQ,KAAR;CAAA,MAAA;;AACA,OAAA;EAAQ,KAAR;EAAe,UAAf;CAAA,MAAA;;AACA,OAAA;EAAQ,UAAR;CAAA,MAAA,8BAJwB;;;AAQlB,eAAN,MAAA,aAAA,QAA2B,WAA3B;EAEC,cAAgB,CAAC,IAAD,CAAA;AAEf,WAAO,UAAA,CAAW,IAAX,EAAiB;MAAC,SAAA,EAAW;IAAZ,CAAjB;EAFQ;;AAFjB;;AAMA,MAAA,GAAS,IAAI,YAAJ,CAAiB,MAAO,CAAA,IAAI,CAAC,GAA7B,EAde;;;AAkBxB,MAAM,CAAC,KAAP,CAAa,KAAb,EAAoB,EAApB;;AAEA,MAAM,CAAC,KAAP,CAAa,EAAb,EAAiB,EAAjB;;AAEA,MAAM,CAAC,KAAP,CAAa,eAAb,EAA8B,CAAA;OAAA,CAA9B;;AAKA,MAAM,CAAC,KAAP,CAAa,CAAA,0BAAA,CAAb,EAEM,CAAA;;;OAAA,CAFN;;AASA,MAAM,CAAC,KAAP,CAAa,CAAA;;;OAAA,CAAb,EAKM,CAAA;;;;;;;OAAA,CALN;;AAgBA,MAAM,CAAC,KAAP,CAAa,CAAA;;;;;;OAAA,CAAb,EAQM,CAAA;;;;;;;;OAAA,CARN",
+  "sourcesContent": [
+    "# formatHTML.test.coffee\n\nimport {undef} from '@jdeighan/base-utils'\nimport {utest, UnitTester} from '@jdeighan/base-utils/utest'\nimport {formatHTML} from '@jdeighan/coffee-utils/html'\n\n# ---------------------------------------------------------------------------\n\nclass FormatTester extends UnitTester\n\n\ttransformValue: (html) ->\n\n\t\treturn formatHTML(html, {oneIndent: \"\\t\"})\n\ntester = new FormatTester(import.meta.url)\n\n# ---------------------------------------------------------------------------\n\ntester.equal undef, ''\n\ntester.equal '', ''\n\ntester.equal \"<html></html>\", \"\"\"\n\t<html>\n\t</html>\n\t\"\"\"\n\ntester.equal \"\"\"\n\t<html><head></head></html>\n\t\"\"\", \"\"\"\n\t<html>\n\t\t<head>\n\t\t</head>\n\t</html>\n\t\"\"\"\n\ntester.equal \"\"\"\n\t<html>\n\t<head><title style=\"font-size: 22\">A title</title></head>\n\t<body><h1>Hello, World!</h1></body>\n\t</html>\n\t\"\"\", \"\"\"\n\t<html>\n\t\t<head>\n\t\t\t<title style=\"font-size: 22\">A title</title>\n\t\t</head>\n\t\t<body>\n\t\t\t<h1>Hello, World!</h1>\n\t\t</body>\n\t</html>\n\t\"\"\"\n\ntester.equal \"\"\"\n\t<html>\n\t<head><title>A title</title></head>\n\t<body>\n\t\t<h1>Hello, World!</h1>\n\t\t<input type=\"email\">\n\t</body>\n\t</html>\n\t\"\"\", \"\"\"\n\t<html>\n\t\t<head>\n\t\t\t<title>A title</title>\n\t\t</head>\n\t\t<body>\n\t\t\t<h1>Hello, World!</h1>\n\t\t\t<input type=\"email\">\n\t\t</body>\n\t</html>\n\t\"\"\"\n"
+  ]
+}

@@ -10,7 +10,6 @@
 		"./fs": "./src/lib/fs.js",
 		"./fsa": "./src/lib/fsa.js",
 		"./block": "./src/lib/block.js",
-		"./indent": "./src/lib/indent.js",
 		"./html": "./src/lib/html.js",
 		"./section": "./src/lib/Section.js",
 		"./sectionmap": "./src/lib/SectionMap.js",
@@ -24,7 +23,7 @@
 		"verbose": false
 	},
 	"scripts": {
-		"build": "cls && coffee -c .",
+		"build": "cls && coffee -cm .",
 		"test": "npm run build && npx ava ./test/*.test.js && git status"
 	},
 	"repository": {
@@ -41,14 +40,10 @@
 	},
 	"homepage": "https://github.com/johndeighan/coffee-utils#readme",
 	"dependencies": {
-		"@jdeighan/base-utils": "^8.0.28",
+		"@jdeighan/base-utils": "^12.0.1",
 		"cross-env": "^7.0.3",
 		"n-readlines": "^1.0.1",
 		"readline-sync": "^1.4.10",
-		"svelte": "^4.1.1"
-	},
-	"devDependencies": {
-		"@jdeighan/unit-tester": "^3.0.76",
-		"ava": "^6.0.1"
+		"svelte": "^4.2.9"
 	}
 }

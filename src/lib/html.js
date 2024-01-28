@@ -3,11 +3,6 @@
 var hNoEnd, i, len, ref, tagName;
 
 import {
-  assert,
-  croak
-} from '@jdeighan/base-utils/exceptions';
-
-import {
   undef,
   defined,
   notdefined,
@@ -20,6 +15,11 @@ import {
 } from '@jdeighan/base-utils';
 
 import {
+  assert,
+  croak
+} from '@jdeighan/base-utils/exceptions';
+
+import {
   dbgEnter,
   dbgReturn,
   dbg
@@ -27,7 +27,7 @@ import {
 
 import {
   indented
-} from '@jdeighan/coffee-utils/indent';
+} from '@jdeighan/base-utils/indent';
 
 hNoEnd = {};
 
@@ -282,3 +282,5 @@ col track source`);
   dbgReturn('formatHTML', result);
   return result;
 };
+
+//# sourceMappingURL=html.js.map

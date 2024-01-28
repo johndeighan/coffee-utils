@@ -116,3 +116,5 @@ export var joinBlocks = (...lBlocks) => {
   }
   return lNonEmptyBlocks.join('\n');
 };
+
+//# sourceMappingURL=block.js.map

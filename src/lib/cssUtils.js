@@ -19,3 +19,5 @@ export var setCSSVar = (name, value, elem = undef) => {
   }
   elem.style.setProperty(name, value);
 };
+
+//# sourceMappingURL=cssUtils.js.map

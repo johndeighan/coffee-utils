@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "server.test.js",
+  "sourceRoot": "..\\",
+  "sources": [
+    "test\\server.test.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAoB;AAEpB,OAAA;EAAQ,KAAR;CAAA,MAAA;;AACA,OAAA;EAAQ,KAAR;CAAA,MAAA;;AACA,OAAA;EAAQ,IAAR;CAAA,MAAA,gCAJoB;;;AAQpB,KAAK,CAAC,KAAN,CAAY,KAAA,CAAM,IAAA,CAAK,YAAL,CAAN,CAAZ,EAAuC,CAAA,KAAA,CAAvC;;AAGA,KAAK,CAAC,KAAN,CAAY,KAAA,CAAM,IAAA,CAAK,WAAL,CAAN,CAAZ,EAAsC,CAAA,IAAA,CAAtC",
+  "sourcesContent": [
+    "# server.test.coffee\r\n\r\nimport {rtrim} from '@jdeighan/base-utils'\r\nimport {utest} from '@jdeighan/base-utils/utest'\r\nimport {exec} from '@jdeighan/coffee-utils/server'\r\n\r\n# ---------------------------------------------------------------------------\r\n\r\nutest.equal rtrim(exec('echo hello')), \"\"\"\r\n\thello\r\n\t\"\"\"\r\nutest.equal rtrim(exec('echo why?')), \"\"\"\r\n\twhy?\r\n\t\"\"\"\r\n"
+  ]
+}

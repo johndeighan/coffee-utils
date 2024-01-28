@@ -1,12 +1,12 @@
 # html.coffee
 
-import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {
 	undef, defined, notdefined, words, isEmpty, nonEmpty,
 	toBlock, OL, getOptions,
 	} from '@jdeighan/base-utils'
+import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {dbgEnter, dbgReturn, dbg} from '@jdeighan/base-utils/debug'
-import {indented} from '@jdeighan/coffee-utils/indent'
+import {indented} from '@jdeighan/base-utils/indent'
 
 hNoEnd = {}
 for tagName in words('area base br col command embed hr img input' \

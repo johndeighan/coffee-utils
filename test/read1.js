@@ -40,3 +40,5 @@ console.timeEnd('func');
 block = arrayToBlock(lLines);
 
 LOGVALUE('block', block);
+
+//# sourceMappingURL=read1.js.map

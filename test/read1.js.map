@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "read1.js",
+  "sourceRoot": "..\\",
+  "sources": [
+    "test\\read1.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAc;AAAA,IAAA,KAAA,EAAA,QAAA,EAAA;;AAEd,OAAO,EAAP,MAAA;;AACA,OAAO,QAAP,MAAA;;AAEA,OAAA;EAAQ,KAAR;EAAe,GAAf;EAAoB,QAApB;CAAA,MAAA;;AACA,OAAA;EAAQ,YAAR;CAAA,MAAA;;AACA,OAAA;EACC,KADD;EACQ,WADR;CAAA,MAAA,4BAPc;;;AAad,QAAA,GAAW;;AAEX,OAAO,CAAC,IAAR,CAAa,MAAb;;AACA,MAAA,GAAS;;AACT,MAAM,WAAA,CAAY,QAAZ,EAAsB,QAAA,CAAC,IAAD,EAAO,OAAP,CAAA;EAC3B,MAAM,CAAC,IAAP,CAAY,IAAZ;EACA,IAAI,OAAA,IAAW,EAAf;AACC,WAAO,MADR;;AAF2B,CAAtB;;AAKN,OAAO,CAAC,OAAR,CAAgB,MAAhB;;AAEA,KAAA,GAAQ,YAAA,CAAa,MAAb;;AACR,QAAA,CAAS,OAAT,EAAkB,KAAlB",
+  "sourcesContent": [
+    "# read1.coffee\r\n\r\nimport fs from 'fs'\r\nimport readline from 'readline'\r\n\r\nimport {undef, LOG, LOGVALUE} from '@jdeighan/coffee-utils'\r\nimport {arrayToBlock} from '@jdeighan/coffee-utils/block'\r\nimport {\r\n\tslurp, forEachLine,\r\n\t} from '@jdeighan/coffee-utils/fs'\r\n\r\n# ---------------------------------------------------------------------------\r\n\r\nfilepath = 'c:/Users/johnd/coffee-utils/test/temp.txt'\r\n\r\nconsole.time('func')\r\nlLines = []\r\nawait forEachLine(filepath, (line, lineNum) ->\r\n\tlLines.push line\r\n\tif (lineNum >= 10)\r\n\t\treturn 'EOF'\r\n\t)\r\nconsole.timeEnd('func')\r\n\r\nblock = arrayToBlock(lLines)\r\nLOGVALUE 'block', block\r\n"
+  ]
+}

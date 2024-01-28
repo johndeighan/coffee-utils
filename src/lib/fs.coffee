@@ -5,7 +5,7 @@ import pathlib from 'path'
 import urllib from 'url'
 import fs from 'fs'
 import {
-	readFile, writeFile, rm, rmdir,   #  rmSync, rmdirSync,
+	readFile, writeFile, rm, rmdir,
 	} from 'node:fs/promises'
 import {execSync} from 'node:child_process'
 
@@ -13,11 +13,12 @@ import {
 	undef, pass, defined, notdefined, rtrim, isEmpty, nonEmpty,
 	isString, isArray, isHash, isRegExp, isFunction, isBoolean,
 	OL, toBlock, getOptions, isArrayOfStrings, deepCopy,
+	runCmd,
 	} from '@jdeighan/base-utils'
 import {
-	mydir, mkpath, isFile, isDir, rmFileSync, mkdirSync,
-	forEachLineInFile, fixPath,
-	rmFile, rmDir, rmDirSync,
+	fileExt, mydir, mkpath, isFile, mkDir, rmDir, rmFile,
+	forEachLineInFile, isDir, parsePath,
+	barf, barfJSON, slurp, slurpJSON, withExt,
 	} from '@jdeighan/base-utils/fs'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
 import {LOG, LOGVALUE} from '@jdeighan/base-utils/log'
@@ -25,8 +26,9 @@ import {dbg, dbgEnter, dbgReturn} from '@jdeighan/base-utils/debug'
 import {fromTAML} from '@jdeighan/base-utils/taml'
 
 export {
-	mydir, mkpath, isFile, isDir, rmFileSync, mkdirSync,
-	forEachLineInFile, rmDir, rmDirSync, rmFile,
+	fileExt, mydir, mkpath, isFile, mkDir, rmDir, rmFile,
+	forEachLineInFile, isDir, parsePath,
+	barf, barfJSON, slurp, slurpJSON, withExt,
 	}
 
 fix = true
@@ -59,29 +61,7 @@ export fixFile = (filepath, func) =>
 
 # --------------------------------------------------------------------------
 
-export fixJson = (filepath, func) =>
-
-	contents = await readFile(filepath, {encoding: 'utf8'})
-	hJson = JSON.parse(contents)
-	func(hJson)   # modify in place
-	output = JSON.stringify(hJson, null, 3)
-	output = fixOutput(output)
-	await writeFile(filepath, output, {encoding: 'utf8'})
-	return
-
-# --------------------------------------------------------------------------
-
-export fixFileSync = (filepath, func) =>
-
-	contents = fs.readFileSync(filepath, {encoding: 'utf8'})
-	output = func(contents) # returns modified contents
-	output = fixOutput(output)
-	fs.writeFileSync(filepath, output, {encoding: 'utf8'})
-	return
-
-# --------------------------------------------------------------------------
-
-export fixJsonSync = (filepath, func) =>
+export fixJSON = (filepath, func) =>
 
 	contents = fs.readFileSync(filepath, {encoding: 'utf8'})
 	hJson = JSON.parse(contents)
@@ -90,23 +70,13 @@ export fixJsonSync = (filepath, func) =>
 	output = fixOutput(output)
 	fs.writeFileSync(filepath, output, {encoding: 'utf8'})
 	return
-
-# --------------------------------------------------------------------------
-
-export execCmdSync = (cmdLine) =>
-
-	execSync cmdLine, {}, (error, stdout, stderr) =>
-		if (error)
-			LOG "ERROR in #{cmdLine}: #{error.code}"
-			process.exit 1
-	return stdout
 
 # ---------------------------------------------------------------------------
 
 export cloneRepo = (user, repo, dir) =>
 
 	git_repo = "https://github.com/#{user}/#{repo}.git"
-	return execCmd "git clone #{git_repo} #{dir}"
+	return runCmd "git clone #{git_repo} #{dir}"
 
 # ---------------------------------------------------------------------------
 
@@ -162,16 +132,6 @@ export fileStub = (path) =>
 	assert isString(path), "fileStub(): path not a string"
 	if lMatches = path.match(/^(.*)\.[A-Za-z0-9_]+$/)
 		return lMatches[1]
-	else
-		return ''
-
-# ---------------------------------------------------------------------------
-
-export fileExt = (path) =>
-
-	assert isString(path), "fileExt(): path not a string"
-	if lMatches = path.match(/\.[A-Za-z0-9_]+$/)
-		return lMatches[0]
 	else
 		return ''
 
@@ -250,18 +210,6 @@ export forEachSetOfBlocks = (filepath, func, \
 	return
 
 # ---------------------------------------------------------------------------
-#   withExt - change file extention in a file name
-
-export withExt = (path, newExt) =>
-
-	assert newExt, "withExt(): No newExt provided"
-	if newExt.indexOf('.') != 0
-		newExt = '.' + newExt
-
-	{dir, name, ext} = pathlib.parse(path)
-	return mkpath(dir, "#{name}#{newExt}")
-
-# ---------------------------------------------------------------------------
 #   removeFileWithExt - remove file with different ext
 
 export removeFileWithExt = (path, newExt, hOptions={}) =>
@@ -282,19 +230,46 @@ export removeFileWithExt = (path, newExt, hOptions={}) =>
 
 # ---------------------------------------------------------------------------
 
+isHiddenDir = (dir) ->
+
+	hFileInfo = parsePath(dir)
+	base = hFileInfo.lDirs.pop()
+	return (base.substring(0, 1) == '.')
+
+# ---------------------------------------------------------------------------
+
 isSystemDir = (dir) ->
 
 	return dir in ['$Recycle.Bin', '$WinREAgent']
 
 # ---------------------------------------------------------------------------
 #    Get all subdirectories of a directory
+#       don't return hidden or system subdirectories
+#    Return value is just named, not full paths
 
 export getSubDirs = (dir) =>
 
-	return fs.readdirSync(dir, {withFileTypes: true}) \
-		.filter((d) -> d.isDirectory() && !isSystemDir(d.name)) \
-		.map((d) -> mkpath(d.name)) \
-		.sort()
+	dbgEnter 'getSubDirs', dir
+	assert isDir(dir), "not a directory"
+
+	doInclude = (d) ->
+		if !d.isDirectory()
+			return false
+		dirName = d.name
+		if isSystemDir(dirName) || (dirName.substring(0,1) == '.')
+			return false
+		return true
+
+	hOptions = {
+		withFileTypes: true
+		recursive: false
+		}
+	lSubDirs = fs.readdirSync(dir, hOptions) \
+			.filter(doInclude) \
+			.map((d) -> d.name) \
+			.sort()
+	dbgReturn 'getSubDirs', lSubDirs
+	return lSubDirs
 
 # ---------------------------------------------------------------------------
 #    Get path to parent directory of a directory
@@ -335,39 +310,57 @@ export forEachFile = (dir, cb, filt=undef, level=0) =>
 
 # ---------------------------------------------------------------------------
 
-export pathTo = (fname, searchDir, options=undef) =>
+export pathTo = (fname, searchDir, hOptions={}) =>
 
-	{direction, relative, directory} = getOptions(options, {
+	dbgEnter 'pathTo', fname, searchDir, hOptions
+	{direction, relative, directory} = getOptions(hOptions, {
 		direction: 'down'
 		relative: false
 		directory: false    # return only the directory the file is in
 		})
+	dbg "direction = #{direction}"
+	dbg "relative = #{relative}"
+	dbg "directory = #{directory}"
 
-	assert !(relative && directory), "relative & directory are incompatible"
+	assert !(relative && directory),
+			"relative & directory are incompatible"
 	if ! searchDir
 		searchDir = process.cwd()
 	assert isDir(searchDir), "Not a directory: #{OL(searchDir)}"
+
+	# --- first check if the file is in searchDir
+
 	filepath = mkpath(searchDir, fname)
 	if isFile(filepath)
 		if relative
-			return "./#{fname}"
+			result = "./#{fname}"
 		else if directory
-			return fixPath(searchDir)
+			result = mkpath(searchDir)
 		else
-			return fixPath(filepath)
+			result = mkpath(filepath)
+		dbgReturn 'pathTo', result
+		return result
+
+	dbg "not found in searchDir '#{searchDir}'"
 
 	if (direction == 'down')
 		# --- Search all directories in this directory
 		#     getSubDirs() returns dirs sorted alphabetically
-		for subdir in getSubDirs(searchDir)
+		lSubDirs = getSubDirs(searchDir)
+		dbg 'lSubDirs', lSubDirs
+		for subdir in lSubDirs
+			# --- subdir is a simple name, not a full path
 			dirPath = mkpath(searchDir, subdir)
-			if defined(fpath = pathTo(fname, dirPath, options))
+			fpath = pathTo(fname, dirPath, hOptions)
+			if defined(fpath)
 				if relative
-					return fpath.replace('./', "./#{subdir}/")
+					result = fpath.replace('./', "./#{subdir}/")
 				else if directory
-					return fixPath(dirPath)
+					result = mkpath(dirPath)
 				else
-					return fixPath(fpath)
+					result = mkpath(fpath)
+				dbgReturn 'pathTo', result
+				return result
 	else if (direction == 'up')
 		nLevels = 0
 		while defined(dirPath = getParentDir(searchDir))
@@ -375,14 +368,17 @@ export pathTo = (fname, searchDir, options=undef) =>
 			fpath = mkpath(dirPath, fname)
 			if isFile(fpath)
 				if relative
-					return "../".repeat(nLevels) + fname
+					result = "../".repeat(nLevels) + fname
 				else if directory
-					return fixPath(dirPath)
+					result = mkpath(dirPath)
 				else
-					return fixPath(fpath)
+					result = mkpath(fpath)
+				dbgReturn 'pathTo', result
+				return result
 			searchDir = dirPath
 	else
 		croak "pathTo(): Invalid direction '#{direction}'"
+	dbgReturn 'pathTo', undef
 	return undef
 
 # ---------------------------------------------------------------------------
@@ -429,58 +425,5 @@ export shortenPath = (path) =>
 		return "~/#{tail}"
 	else
 		return str
-
-# ---------------------------------------------------------------------------
-
-export parseSource = (source) =>
-	# --- returns {
-	#        dir
-	#        filename
-	#        fullpath
-	#        stub
-	#        ext
-	#        purpose
-	#        }
-	# --- NOTE: source may be a file URL, e.g. import.meta.url
-
-	dbgEnter "parseSource", source
-	assert isString(source),\
-			"parseSource(): source not a string: #{OL(source)}"
-	if source == 'unit test'
-		croak "A source of 'unit test' is deprecated"
-	if source.match(/^file\:\/\//)
-		source = urllib.fileURLToPath(source)
-
-	if isDir(source)
-		hSourceInfo = {
-			dir: source
-			fullpath: source
-			}
-	else
-		hInfo = pathlib.parse(source)
-		if hInfo.dir
-			dir = mkpath(hInfo.dir)   # change \ to /
-			hSourceInfo = {
-				dir
-				fullpath: mkpath(dir, hInfo.base)
-				filename: hInfo.base
-				stub: hInfo.name
-				ext: hInfo.ext
-				}
-		else
-			hSourceInfo = {
-				filename: hInfo.base
-				stub: hInfo.name
-				ext: hInfo.ext
-				}
-
-		# --- check for a 'purpose'
-		if lMatches = hSourceInfo.stub.match(///
-				\.
-				([A-Za-z_]+)
-				$///)
-			hSourceInfo.purpose = lMatches[1]
-	dbgReturn "parseSource", hSourceInfo
-	return hSourceInfo
 
 # ---------------------------------------------------------------------------

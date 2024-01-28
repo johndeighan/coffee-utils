@@ -15,3 +15,5 @@ export var exec = (cmd) => {
   });
   return buffer.toString();
 };
+
+//# sourceMappingURL=server.js.map

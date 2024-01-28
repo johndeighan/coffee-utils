@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "cssUtils.js",
+  "sourceRoot": "..\\..\\",
+  "sources": [
+    "src\\lib\\cssUtils.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAAiB;AAEjB,OAAA;EAAQ,KAAR;CAAA,MAAA,uBAFiB;;;AAMjB,OAAA,IAAO,SAAA,GAAY,CAAC,IAAD,EAAO,OAAK,KAAZ,CAAA,GAAA;EAElB,IAAI,IAAA,KAAQ,KAAZ;IACC,IAAA,GAAO,SADR;;AAEA,SAAO,gBAAA,CAAiB,IAAjB,CAAsB,CAAC,gBAAvB,CAAwC,IAAxC;AAJW,EANF;;;AAcjB,OAAA,IAAO,SAAA,GAAY,CAAC,IAAD,EAAO,KAAP,EAAc,OAAK,KAAnB,CAAA,GAAA;EAElB,IAAI,IAAA,KAAQ,KAAZ;IACC,IAAA,GAAO,SADR;;EAEA,IAAI,CAAC,KAAK,CAAC,WAAX,CAAuB,IAAvB,EAA6B,KAA7B;AAJkB",
+  "sourcesContent": [
+    "# cssUtils.coffee\r\n\r\nimport {undef} from '@jdeighan/base-utils'\r\n\r\n# ---------------------------------------------------------------------------\r\n\r\nexport getCSSVar = (name, elem=undef) =>\r\n\r\n\tif (elem == undef)\r\n\t\telem = document\r\n\treturn getComputedStyle(elem).getPropertyValue(name)\r\n\r\n# ---------------------------------------------------------------------------\r\n\r\nexport setCSSVar = (name, value, elem=undef) =>\r\n\r\n\tif (elem == undef)\r\n\t\telem = document\r\n\telem.style.setProperty(name, value)\r\n\treturn\r\n"
+  ]
+}
