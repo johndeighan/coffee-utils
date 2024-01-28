@@ -8,7 +8,6 @@
 		".": "./src/lib/fs.js",
 		"./server": "./src/lib/server.js",
 		"./fs": "./src/lib/fs.js",
-		"./fsa": "./src/lib/fsa.js",
 		"./block": "./src/lib/block.js",
 		"./html": "./src/lib/html.js",
 		"./section": "./src/lib/Section.js",
