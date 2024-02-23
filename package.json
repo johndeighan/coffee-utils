@@ -38,10 +38,10 @@
 	},
 	"homepage": "https://github.com/johndeighan/coffee-utils#readme",
 	"dependencies": {
-		"@jdeighan/base-utils": "^14.0.0",
+		"@jdeighan/base-utils": "^14.0.12",
 		"cross-env": "^7.0.3",
 		"n-readlines": "^1.0.1",
 		"readline-sync": "^1.4.10",
-		"svelte": "^4.2.10"
+		"svelte": "^4.2.12"
 	}
 }
