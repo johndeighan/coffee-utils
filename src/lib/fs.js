@@ -54,6 +54,7 @@ import {
   forEachLineInFile,
   isDir,
   parsePath,
+  newerDestFileExists,
   barf,
   barfJSON,
   slurp,
@@ -92,6 +93,7 @@ export {
   forEachLineInFile,
   isDir,
   parsePath,
+  newerDestFileExists,
   barf,
   barfJSON,
   slurp,
@@ -494,21 +496,6 @@ export var allPathsTo = (fname, searchDir) => {
     return lPaths;
   } else {
     return [];
-  }
-};
-
-// ---------------------------------------------------------------------------
-export var newerDestFileExists = (srcPath, destPath) => {
-  var destModTime, srcModTime;
-  if (!fs.existsSync(destPath)) {
-    return false;
-  }
-  srcModTime = fs.statSync(srcPath).mtimeMs;
-  destModTime = fs.statSync(destPath).mtimeMs;
-  if (destModTime >= srcModTime) {
-    return true;
-  } else {
-    return false;
   }
 };
 

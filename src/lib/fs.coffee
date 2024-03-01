@@ -17,7 +17,7 @@ import {
 	} from '@jdeighan/base-utils'
 import {
 	fileExt, mydir, mkpath, isFile, mkDir, rmDir, rmFile,
-	forEachLineInFile, isDir, parsePath,
+	forEachLineInFile, isDir, parsePath, newerDestFileExists,
 	barf, barfJSON, slurp, slurpJSON, withExt,
 	} from '@jdeighan/base-utils/fs'
 import {assert, croak} from '@jdeighan/base-utils/exceptions'
@@ -27,7 +27,7 @@ import {fromTAML} from '@jdeighan/base-utils/taml'
 
 export {
 	fileExt, mydir, mkpath, isFile, mkDir, rmDir, rmFile,
-	forEachLineInFile, isDir, parsePath,
+	forEachLineInFile, isDir, parsePath, newerDestFileExists,
 	barf, barfJSON, slurp, slurpJSON, withExt,
 	}
 
@@ -398,19 +398,6 @@ export allPathsTo = (fname, searchDir) =>
 		return lPaths
 	else
 		return []
-
-# ---------------------------------------------------------------------------
-
-export newerDestFileExists = (srcPath, destPath) =>
-
-	if ! fs.existsSync(destPath)
-		return false
-	srcModTime = fs.statSync(srcPath).mtimeMs
-	destModTime = fs.statSync(destPath).mtimeMs
-	if destModTime >= srcModTime
-		return true
-	else
-		return false
 
 # ---------------------------------------------------------------------------
 
